@@ -175,8 +175,10 @@ function closeVideoDetail() {
 // 从详情页播放视频
 function playVideoFromDetail() {
   if (selectedVideo) {
+    const titleZh = selectedVideo.titleZh;
+    const youtubeId = selectedVideo.youtubeId;
     closeVideoDetail();
-    playVideo(selectedVideo.titleZh, selectedVideo.youtubeId);
+    playVideo(titleZh, youtubeId);
   }
 }
 
