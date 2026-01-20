@@ -2362,3 +2362,152 @@ body {
 .nav-label {
   font-size: 0.7rem;
 }
+
+/* ========== 数据管理 ========== */
+.data-management {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  margin-top: 20px;
+}
+
+.data-management-title {
+  text-align: center;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.data-btns {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-export,
+.btn-import {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-export {
+  background: linear-gradient(135deg, #45B7D1, #4ECDC4);
+  color: white;
+  box-shadow: 0 4px 15px rgba(69, 183, 209, 0.4);
+}
+
+.btn-import {
+  background: linear-gradient(135deg, #FF9F43, #FFD93D);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 159, 67, 0.4);
+}
+
+.btn-export:active,
+.btn-import:active {
+  transform: scale(0.95);
+}
+
+.btn-export .btn-icon,
+.btn-import .btn-icon {
+  font-size: 1.5rem;
+}
+
+.data-warning {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  margin-top: 16px;
+}
+
+/* 导入确认弹窗 */
+.confirm-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.confirm-modal.hidden {
+  display: none;
+}
+
+.confirm-modal-content {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  text-align: center;
+  animation: popIn 0.3s ease;
+  max-width: 320px;
+  width: 100%;
+}
+
+.confirm-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+}
+
+.confirm-title {
+  font-size: 1.3rem;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.confirm-message {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.confirm-btns {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-confirm-cancel,
+.btn-confirm-ok {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-confirm-cancel {
+  background: #f5f5f5;
+  color: var(--text-light);
+}
+
+.btn-confirm-cancel:active {
+  background: #eee;
+}
+
+.btn-confirm-ok {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+}
+
+.btn-confirm-ok:active {
+  transform: scale(0.95);
+}

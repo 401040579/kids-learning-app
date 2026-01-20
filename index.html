@@ -583,6 +583,22 @@
               💾 保存信息
             </button>
           </div>
+
+          <!-- 数据管理区域 -->
+          <div class="data-management">
+            <h3 class="data-management-title">📦 数据管理</h3>
+            <div class="data-btns">
+              <button class="btn-export" onclick="exportData()">
+                <span class="btn-icon">📤</span>
+                <span>导出数据</span>
+              </button>
+              <button class="btn-import" onclick="triggerImport()">
+                <span class="btn-icon">📥</span>
+                <span>导入数据</span>
+              </button>
+            </div>
+            <p class="data-warning">⚠️ 导入数据会覆盖当前所有数据</p>
+          </div>
         </div>
       </section>
 
@@ -604,9 +620,23 @@
         </div>
       </div>
 
+      <!-- 导入确认弹窗 -->
+      <div id="import-confirm-modal" class="confirm-modal hidden">
+        <div class="confirm-modal-content">
+          <div class="confirm-icon">⚠️</div>
+          <h3 class="confirm-title">确认导入</h3>
+          <p class="confirm-message">导入数据将覆盖当前所有数据，此操作不可撤销。</p>
+          <div class="confirm-btns">
+            <button class="btn-confirm-cancel" onclick="closeImportConfirm()">取消</button>
+            <button class="btn-confirm-ok" onclick="confirmImport()">确认导入</button>
+          </div>
+        </div>
+      </div>
+
       <!-- 隐藏的文件输入 -->
       <input type="file" id="photo-input-camera" accept="image/*" capture="user" style="display:none" onchange="handlePhotoSelect(event)">
       <input type="file" id="photo-input-gallery" accept="image/*" style="display:none" onchange="handlePhotoSelect(event)">
+      <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="handleImportFile(event)">
 
       <!-- 日历页 -->
       <section id="page-calendar" class="page">

@@ -1265,3 +1265,85 @@ function deleteEvent() {
     renderDayEvents();
   }
 }
+
+// ========== 数据导出/导入功能 ==========
+let pendingImportData = null;
+
+// 导出数据
+function exportData() {
+  const exportData = {
+    version: "1.0",
+    exportTime: new Date().toISOString(),
+    data: {
+      profile: JSON.parse(localStorage.getItem('kidsProfileData') || '{}'),
+      learning: JSON.parse(localStorage.getItem('kidsLearningData') || '{}'),
+      calendar: JSON.parse(localStorage.getItem('kidsCalendarData') || '{}')
+    }
+  };
+
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  a.href = url;
+  a.download = `宝贝学习乐园_备份_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // 播放成功音效
+  RewardSystem.playSound('correct');
+}
+
+// 触发导入文件选择
+function triggerImport() {
+  document.getElementById('import-file-input').click();
+}
+
+// 处理导入文件
+function handleImportFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      // 验证数据格式
+      if (!importedData.data) {
+        alert('❌ 文件格式不正确');
+        return;
+      }
+      // 保存待导入数据，显示确认弹窗
+      pendingImportData = importedData;
+      showImportConfirm();
+    } catch (error) {
+      alert('❌ 文件解析失败，请检查文件是否正确');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // 重置以支持重复选择
+}
+
+// 显示导入确认弹窗
+function showImportConfirm() {
+  document.getElementById('import-confirm-modal').classList.remove('hidden');
+}
+
+// 关闭导入确认弹窗
+function closeImportConfirm() {
+  document.getElementById('import-confirm-modal').classList.add('hidden');
+  pendingImportData = null;
+}
+
+// 确认导入
+function confirmImport() {
+  if (!pendingImportData) return;
+
+  const { data } = pendingImportData;
+  if (data.profile) localStorage.setItem('kidsProfileData', JSON.stringify(data.profile));
+  if (data.learning) localStorage.setItem('kidsLearningData', JSON.stringify(data.learning));
+  if (data.calendar) localStorage.setItem('kidsCalendarData', JSON.stringify(data.calendar));
+
+  closeImportConfirm();
+  location.reload();
+}
