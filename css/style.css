@@ -652,11 +652,16 @@ body {
 }
 
 #video-player {
+  position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 比例 (9/16 = 0.5625) */
 }
 
 #video-player iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   border: none;

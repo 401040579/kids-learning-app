@@ -1,10 +1,11 @@
-const CACHE_NAME = 'kids-learning-v1';
+const CACHE_NAME = 'kids-learning-v2';
 const urlsToCache = [
   '/',
   '/index.html',
   '/css/style.css',
   '/js/app.js',
-  '/js/rewards.js'
+  '/js/rewards.js',
+  '/js/videos.js'
 ];
 
 self.addEventListener('install', event => {
