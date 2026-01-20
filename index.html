@@ -108,33 +108,89 @@
           <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
           <h2>🎬 探索视频</h2>
         </div>
-        <div class="video-grid">
-          <div class="video-card" onclick="playVideo('abc-song', 'L_jWHffIx5E')">
-            <div class="video-thumb">🎵</div>
-            <p>ABC字母歌</p>
-          </div>
-          <div class="video-card" onclick="playVideo('colors', 'f99njZJod2c')">
-            <div class="video-thumb">🌈</div>
-            <p>认识颜色</p>
-          </div>
-          <div class="video-card" onclick="playVideo('animals', 'OwRmivbNgQk')">
-            <div class="video-thumb">🦁</div>
-            <p>动物世界</p>
-          </div>
-          <div class="video-card" onclick="playVideo('numbers', '0VLxWIHRD4E')">
-            <div class="video-thumb">🔢</div>
-            <p>数数歌</p>
-          </div>
-          <div class="video-card" onclick="playVideo('shapes', 'OEbRDtCAFdU')">
-            <div class="video-thumb">🔷</div>
-            <p>认识形状</p>
-          </div>
-          <div class="video-card" onclick="playVideo('nursery', 'yCjJyiqpAuU')">
-            <div class="video-thumb">🎶</div>
-            <p>儿歌合集</p>
-          </div>
+
+        <!-- 分类标签 -->
+        <div class="category-tabs" id="category-tabs">
+          <button class="category-tab active" data-category="all" onclick="filterVideos('all')">
+            <span class="tab-icon">📚</span>
+            <span class="tab-name">全部</span>
+          </button>
+          <button class="category-tab" data-category="math" onclick="filterVideos('math')">
+            <span class="tab-icon">🔢</span>
+            <span class="tab-name">数学</span>
+          </button>
+          <button class="category-tab" data-category="english" onclick="filterVideos('english')">
+            <span class="tab-icon">🔤</span>
+            <span class="tab-name">英语</span>
+          </button>
+          <button class="category-tab" data-category="science" onclick="filterVideos('science')">
+            <span class="tab-icon">🔬</span>
+            <span class="tab-name">科普</span>
+          </button>
+          <button class="category-tab" data-category="emotion" onclick="filterVideos('emotion')">
+            <span class="tab-icon">💝</span>
+            <span class="tab-name">情绪</span>
+          </button>
+          <button class="category-tab" data-category="brain" onclick="filterVideos('brain')">
+            <span class="tab-icon">🧠</span>
+            <span class="tab-name">脑力</span>
+          </button>
+          <button class="category-tab" data-category="music" onclick="filterVideos('music')">
+            <span class="tab-icon">🎵</span>
+            <span class="tab-name">音乐</span>
+          </button>
+        </div>
+
+        <!-- 当前分类描述 -->
+        <div class="category-info" id="category-info">
+          <p class="category-desc">精选30个适合6岁儿童的优质视频</p>
+        </div>
+
+        <!-- 视频网格 -->
+        <div class="video-grid" id="video-grid">
+          <!-- 视频卡片由 JS 动态生成 -->
         </div>
       </section>
+
+      <!-- 视频详情弹窗 -->
+      <div id="video-detail-modal" class="video-detail-modal hidden">
+        <div class="video-detail-content">
+          <button class="video-detail-close" onclick="closeVideoDetail()">✕</button>
+          <div class="video-detail-header">
+            <span class="video-detail-icon" id="detail-icon">🎬</span>
+            <div class="video-detail-title-area">
+              <h3 id="detail-title">视频标题</h3>
+              <p id="detail-title-zh" class="detail-title-zh">中文标题</p>
+            </div>
+          </div>
+          <div class="video-detail-meta">
+            <span class="meta-tag" id="detail-duration">⏱️ 5:00</span>
+            <span class="meta-tag" id="detail-channel">📺 频道</span>
+            <span class="meta-tag" id="detail-age">👶 5-7岁</span>
+          </div>
+          <div class="video-detail-section">
+            <h4>📖 简介</h4>
+            <p id="detail-desc">视频描述</p>
+          </div>
+          <div class="video-detail-section">
+            <h4>✅ 为什么推荐</h4>
+            <p id="detail-why">推荐理由</p>
+          </div>
+          <div class="video-detail-section">
+            <h4>🎯 技能培养</h4>
+            <div class="skill-tags" id="detail-skills">
+              <!-- 技能标签由 JS 生成 -->
+            </div>
+          </div>
+          <div class="video-detail-section parent-tip">
+            <h4>💡 家长贴士</h4>
+            <p id="detail-parent-tip">给家长的建议</p>
+          </div>
+          <button class="btn-play-video" id="btn-play-detail" onclick="playVideoFromDetail()">
+            ▶️ 播放视频
+          </button>
+        </div>
+      </div>
 
       <!-- 数学游戏页 -->
       <section id="page-math" class="page">
@@ -224,6 +280,7 @@
   </div>
 
   <script src="js/rewards.js"></script>
+  <script src="js/videos.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

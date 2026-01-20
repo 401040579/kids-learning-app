@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   RewardSystem.init();
 
   // 初始化各模块
+  initVideos();
   initMath();
   initEnglish();
   initChinese();
@@ -46,9 +47,125 @@ function getNavIndex(page) {
   return pages.indexOf(page);
 }
 
-// ========== 视频播放器 ==========
+// ========== 视频模块 ==========
 let videoPlayer = null;
+let currentVideoFilter = 'all';
+let selectedVideo = null;
 
+// 分类颜色映射
+const categoryColors = {
+  math: '#FF6B6B',
+  english: '#4ECDC4',
+  science: '#45B7D1',
+  emotion: '#96CEB4',
+  brain: '#DDA0DD',
+  music: '#FFD93D'
+};
+
+// 分类描述映射
+const categoryDescriptions = {
+  all: '精选30个适合6岁儿童的优质视频',
+  math: '数学启蒙：加减法、数感、规律认知',
+  english: '英语启蒙：自然拼读、词汇、简单对话',
+  science: '科普探索：动物、人体、太空、自然现象',
+  emotion: '情绪与品格：情绪管理、礼貌、合作、勇气',
+  brain: '专注力与脑力：逻辑、观察、记忆、思维训练',
+  music: '音乐与运动：儿歌、律动、亲子运动'
+};
+
+// 初始化视频列表
+function initVideos() {
+  renderVideoGrid('all');
+}
+
+// 渲染视频网格
+function renderVideoGrid(category) {
+  const grid = document.getElementById('video-grid');
+  if (!grid || typeof videoDatabase === 'undefined') return;
+
+  // 筛选视频
+  const videos = category === 'all'
+    ? videoDatabase.videos
+    : videoDatabase.videos.filter(v => v.category === category);
+
+  // 更新描述
+  const descEl = document.querySelector('.category-desc');
+  if (descEl) {
+    descEl.textContent = categoryDescriptions[category] || categoryDescriptions.all;
+  }
+
+  // 渲染视频卡片
+  grid.innerHTML = videos.map(video => {
+    const color = categoryColors[video.category] || '#FF69B4';
+    return `
+      <div class="video-card" style="--category-color: ${color}" onclick="showVideoDetail('${video.id}')">
+        <div class="video-thumb">${video.thumbnail}</div>
+        <div class="video-card-title">${video.titleZh}</div>
+        <div class="video-card-meta">
+          <span>⏱️ ${video.duration}</span>
+          <span>👶 ${video.ageMin}-${video.ageMax}岁</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// 筛选视频
+function filterVideos(category) {
+  currentVideoFilter = category;
+
+  // 更新标签状态
+  document.querySelectorAll('.category-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.category === category);
+  });
+
+  // 重新渲染视频
+  renderVideoGrid(category);
+}
+
+// 显示视频详情
+function showVideoDetail(videoId) {
+  const video = videoDatabase.videos.find(v => v.id === videoId);
+  if (!video) return;
+
+  selectedVideo = video;
+
+  // 填充详情内容
+  document.getElementById('detail-icon').textContent = video.thumbnail;
+  document.getElementById('detail-title').textContent = video.title;
+  document.getElementById('detail-title-zh').textContent = video.titleZh;
+  document.getElementById('detail-duration').textContent = '⏱️ ' + video.duration;
+  document.getElementById('detail-channel').textContent = '📺 ' + video.channel;
+  document.getElementById('detail-age').textContent = '👶 ' + video.ageMin + '-' + video.ageMax + '岁';
+  document.getElementById('detail-desc').textContent = video.description;
+  document.getElementById('detail-why').textContent = video.whyRecommend;
+  document.getElementById('detail-parent-tip').textContent = video.parentTips;
+
+  // 渲染技能标签
+  const skillsEl = document.getElementById('detail-skills');
+  skillsEl.innerHTML = video.skills.map(skill =>
+    `<span class="skill-tag">${skill}</span>`
+  ).join('');
+
+  // 显示弹窗
+  document.getElementById('video-detail-modal').classList.remove('hidden');
+}
+
+// 关闭视频详情
+function closeVideoDetail() {
+  document.getElementById('video-detail-modal').classList.add('hidden');
+  selectedVideo = null;
+}
+
+// 从详情页播放视频
+function playVideoFromDetail() {
+  if (selectedVideo) {
+    closeVideoDetail();
+    playVideo(selectedVideo.titleZh, selectedVideo.youtubeId);
+  }
+}
+
+// 播放视频
 function playVideo(name, videoId) {
   const modal = document.getElementById('video-modal');
   const player = document.getElementById('video-player');
