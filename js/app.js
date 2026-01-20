@@ -44,7 +44,9 @@ function navigateTo(page) {
 
 function getNavIndex(page) {
   const pages = ['home', 'explore', 'math', 'english', 'chinese'];
-  return pages.indexOf(page);
+  const index = pages.indexOf(page);
+  // 对于不在底部导航的页面（timer, profile），返回首页索引
+  return index >= 0 ? index : 0;
 }
 
 // ========== 视频模块 ==========
@@ -461,3 +463,324 @@ function shuffleArray(array) {
   }
   return array;
 }
+
+// ========== 倒计时功能 ==========
+let timerInterval = null;
+let timerSeconds = 300; // 默认5分钟
+let timerTotalSeconds = 300;
+let timerRunning = false;
+let timerPaused = false;
+
+// 设置倒计时分钟数
+function setTimerMinutes(minutes) {
+  timerSeconds = minutes * 60;
+  timerTotalSeconds = timerSeconds;
+
+  // 更新按钮状态
+  document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.closest('.time-btn').classList.add('active');
+
+  // 更新显示
+  updateTimerDisplay();
+}
+
+// 更新倒计时显示
+function updateTimerDisplay() {
+  const minutes = Math.floor(timerSeconds / 60);
+  const seconds = timerSeconds % 60;
+
+  document.getElementById('timer-minutes').textContent = String(minutes).padStart(2, '0');
+  document.getElementById('timer-seconds').textContent = String(seconds).padStart(2, '0');
+
+  // 更新进度环
+  const progress = document.getElementById('timer-progress');
+  const circumference = 2 * Math.PI * 90;
+  const offset = circumference - (timerSeconds / timerTotalSeconds) * circumference;
+  progress.style.strokeDasharray = circumference;
+  progress.style.strokeDashoffset = offset;
+
+  // 更新表情（根据剩余时间）
+  const emoji = document.getElementById('timer-emoji');
+  const percent = timerSeconds / timerTotalSeconds;
+  if (percent > 0.5) {
+    emoji.textContent = '🎮';
+  } else if (percent > 0.25) {
+    emoji.textContent = '⏳';
+  } else if (percent > 0) {
+    emoji.textContent = '⚡';
+  } else {
+    emoji.textContent = '⏰';
+  }
+
+  // 改变颜色
+  const circle = document.getElementById('timer-circle');
+  if (percent <= 0.25) {
+    circle.classList.add('warning');
+  } else {
+    circle.classList.remove('warning');
+  }
+}
+
+// 开始倒计时
+function startTimer() {
+  if (timerRunning) return;
+
+  timerRunning = true;
+  timerPaused = false;
+
+  // 切换显示
+  document.getElementById('timer-setup').classList.add('hidden');
+  document.getElementById('timer-controls').classList.remove('hidden');
+  document.getElementById('timer-message').innerHTML = '<p>玩得开心！时间到了要乖乖走哦~ 🌟</p>';
+
+  // 开始倒计时
+  timerInterval = setInterval(() => {
+    if (!timerPaused) {
+      timerSeconds--;
+      updateTimerDisplay();
+
+      // 最后10秒播放提示音
+      if (timerSeconds <= 10 && timerSeconds > 0) {
+        RewardSystem.playSound('tick');
+      }
+
+      // 时间到
+      if (timerSeconds <= 0) {
+        finishTimer();
+      }
+    }
+  }, 1000);
+}
+
+// 暂停/继续倒计时
+function togglePauseTimer() {
+  timerPaused = !timerPaused;
+
+  const btn = document.getElementById('btn-pause');
+  if (timerPaused) {
+    btn.innerHTML = '▶️ 继续';
+    document.getElementById('timer-message').innerHTML = '<p>已暂停 ⏸️</p>';
+  } else {
+    btn.innerHTML = '⏸️ 暂停';
+    document.getElementById('timer-message').innerHTML = '<p>玩得开心！时间到了要乖乖走哦~ 🌟</p>';
+  }
+}
+
+// 停止倒计时
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  timerRunning = false;
+  timerPaused = false;
+  timerSeconds = timerTotalSeconds;
+
+  // 切换显示
+  document.getElementById('timer-setup').classList.remove('hidden');
+  document.getElementById('timer-controls').classList.add('hidden');
+  document.getElementById('btn-pause').innerHTML = '⏸️ 暂停';
+
+  updateTimerDisplay();
+}
+
+// 倒计时结束
+function finishTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  timerRunning = false;
+
+  // 显示结束弹窗
+  document.getElementById('timer-finish-modal').classList.remove('hidden');
+
+  // 播放提示音和粒子效果
+  RewardSystem.playSound('complete');
+  RewardSystem.createParticles();
+
+  // 震动（如果支持）
+  if (navigator.vibrate) {
+    navigator.vibrate([200, 100, 200, 100, 200]);
+  }
+}
+
+// 关闭倒计时结束弹窗
+function closeTimerFinish() {
+  document.getElementById('timer-finish-modal').classList.add('hidden');
+  stopTimer();
+}
+
+// ========== 个人信息功能 ==========
+let profileData = {
+  name: '',
+  age: 6,
+  birthday: '',
+  hobbies: [],
+  avatar: ''
+};
+
+// 初始化个人信息
+function initProfile() {
+  // 从 localStorage 加载数据
+  const saved = localStorage.getItem('kidsProfileData');
+  if (saved) {
+    profileData = JSON.parse(saved);
+    loadProfileToForm();
+  }
+}
+
+// 加载数据到表单
+function loadProfileToForm() {
+  document.getElementById('profile-name').value = profileData.name || '';
+  document.getElementById('profile-age').textContent = profileData.age || 6;
+  document.getElementById('profile-birthday').value = profileData.birthday || '';
+
+  // 加载头像
+  if (profileData.avatar) {
+    document.getElementById('profile-avatar').src = profileData.avatar;
+    document.getElementById('profile-avatar').style.display = 'block';
+    document.getElementById('avatar-placeholder').style.display = 'none';
+  } else {
+    document.getElementById('profile-avatar').style.display = 'none';
+    document.getElementById('avatar-placeholder').style.display = 'flex';
+  }
+
+  // 加载兴趣爱好
+  document.querySelectorAll('.hobby-tag').forEach(tag => {
+    const hobby = tag.dataset.hobby;
+    if (profileData.hobbies && profileData.hobbies.includes(hobby)) {
+      tag.classList.add('active');
+    } else {
+      tag.classList.remove('active');
+    }
+  });
+}
+
+// 改变年龄
+function changeAge(delta) {
+  let age = parseInt(document.getElementById('profile-age').textContent) || 6;
+  age = Math.max(1, Math.min(12, age + delta));
+  document.getElementById('profile-age').textContent = age;
+  RewardSystem.playSound('click');
+}
+
+// 切换兴趣爱好
+function toggleHobby(btn) {
+  btn.classList.toggle('active');
+  RewardSystem.playSound('click');
+}
+
+// 显示照片选项
+function showPhotoOptions() {
+  document.getElementById('photo-options-modal').classList.remove('hidden');
+}
+
+// 关闭照片选项
+function closePhotoOptions() {
+  document.getElementById('photo-options-modal').classList.add('hidden');
+}
+
+// 拍照
+function takePhoto() {
+  closePhotoOptions();
+  document.getElementById('photo-input-camera').click();
+}
+
+// 选择照片
+function choosePhoto() {
+  closePhotoOptions();
+  document.getElementById('photo-input-gallery').click();
+}
+
+// 处理照片选择
+function handlePhotoSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // 检查文件类型
+  if (!file.type.startsWith('image/')) {
+    alert('请选择图片文件');
+    return;
+  }
+
+  // 读取并压缩图片
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    // 创建图片对象用于压缩
+    const img = new Image();
+    img.onload = function() {
+      // 创建 canvas 进行压缩
+      const canvas = document.createElement('canvas');
+      const maxSize = 300;
+      let width = img.width;
+      let height = img.height;
+
+      // 计算缩放比例
+      if (width > height) {
+        if (width > maxSize) {
+          height = height * maxSize / width;
+          width = maxSize;
+        }
+      } else {
+        if (height > maxSize) {
+          width = width * maxSize / height;
+          height = maxSize;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      // 绘制压缩后的图片
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // 转换为 base64
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+
+      // 显示头像
+      document.getElementById('profile-avatar').src = compressedBase64;
+      document.getElementById('profile-avatar').style.display = 'block';
+      document.getElementById('avatar-placeholder').style.display = 'none';
+
+      // 保存到 profileData
+      profileData.avatar = compressedBase64;
+
+      RewardSystem.playSound('success');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+
+  // 清空 input，允许重复选择同一文件
+  event.target.value = '';
+}
+
+// 保存个人信息
+function saveProfile() {
+  // 收集数据
+  profileData.name = document.getElementById('profile-name').value.trim();
+  profileData.age = parseInt(document.getElementById('profile-age').textContent) || 6;
+  profileData.birthday = document.getElementById('profile-birthday').value;
+
+  // 收集兴趣爱好
+  profileData.hobbies = [];
+  document.querySelectorAll('.hobby-tag.active').forEach(tag => {
+    profileData.hobbies.push(tag.dataset.hobby);
+  });
+
+  // 保存到 localStorage
+  localStorage.setItem('kidsProfileData', JSON.stringify(profileData));
+
+  // 显示成功提示
+  RewardSystem.showReward(5, '信息已保存!');
+}
+
+// 在 DOMContentLoaded 中初始化个人信息
+document.addEventListener('DOMContentLoaded', () => {
+  // 延迟初始化，确保其他模块先加载
+  setTimeout(() => {
+    initProfile();
+    updateTimerDisplay();
+  }, 100);
+});

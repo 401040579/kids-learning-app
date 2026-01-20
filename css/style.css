@@ -238,6 +238,8 @@ body {
 .card-math::before { background: linear-gradient(90deg, #4ECDC4, #44CF74); }
 .card-english::before { background: linear-gradient(90deg, #A78BFA, #818CF8); }
 .card-chinese::before { background: linear-gradient(90deg, #F472B6, #FB7185); }
+.card-timer::before { background: linear-gradient(90deg, #FFD93D, #FF9F43); }
+.card-profile::before { background: linear-gradient(90deg, #45B7D1, #4ECDC4); }
 
 /* ========== 进度条 ========== */
 .daily-progress {
@@ -994,10 +996,568 @@ body {
   display: none !important;
 }
 
+/* ========== 倒计时页面 ========== */
+.timer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.timer-display {
+  margin-bottom: 30px;
+}
+
+.timer-circle {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-bg {
+  fill: none;
+  stroke: #f0f0f0;
+  stroke-width: 12;
+}
+
+.timer-progress {
+  fill: none;
+  stroke: url(#timer-gradient);
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease;
+  stroke: linear-gradient(135deg, #FF69B4, #FFD700);
+  stroke: #FF69B4;
+}
+
+.timer-circle.warning .timer-progress {
+  stroke: #FF6B6B;
+  animation: pulse-warning 0.5s ease infinite;
+}
+
+@keyframes pulse-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.timer-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--text-dark);
+  z-index: 1;
+}
+
+.timer-minutes, .timer-seconds {
+  min-width: 60px;
+  text-align: center;
+}
+
+.timer-colon {
+  animation: blink 1s ease infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.timer-emoji {
+  position: absolute;
+  bottom: 35px;
+  font-size: 2rem;
+  animation: bounce 2s ease infinite;
+}
+
+.timer-setup {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  width: 100%;
+  max-width: 350px;
+  box-shadow: var(--card-shadow);
+}
+
+.timer-hint {
+  text-align: center;
+  color: var(--text-light);
+  margin-bottom: 16px;
+  font-size: 1rem;
+}
+
+.time-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.time-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border: 3px solid #eee;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.time-btn:active {
+  transform: scale(0.95);
+}
+
+.time-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+}
+
+.time-num {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.time-unit {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.btn-start-timer {
+  width: 100%;
+  background: linear-gradient(135deg, #32CD32, #90EE90);
+  border: none;
+  color: white;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
+  transition: all 0.3s;
+}
+
+.btn-start-timer:active {
+  transform: scale(0.98);
+}
+
+.timer-controls {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.timer-control-btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.timer-control-btn:active {
+  transform: scale(0.95);
+}
+
+.btn-pause {
+  background: linear-gradient(135deg, #FFD93D, #FFA500);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+}
+
+.btn-stop {
+  background: linear-gradient(135deg, #FF6B6B, #FF4757);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.timer-message {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.timer-message p {
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+/* 倒计时结束弹窗 */
+.timer-finish-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.timer-finish-modal.hidden {
+  display: none;
+}
+
+.timer-finish-content {
+  background: white;
+  border-radius: 30px;
+  padding: 40px;
+  text-align: center;
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  max-width: 320px;
+}
+
+.finish-emoji {
+  font-size: 5rem;
+  animation: shake 0.5s ease infinite;
+}
+
+.finish-title {
+  font-size: 2rem;
+  color: var(--primary);
+  margin: 15px 0;
+}
+
+.finish-message {
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.finish-animation {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.finish-animation span {
+  display: inline-block;
+  animation: bounce 1s ease infinite;
+}
+
+.finish-animation span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.finish-animation span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.btn-finish-ok {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+  transition: all 0.3s;
+}
+
+.btn-finish-ok:active {
+  transform: scale(0.95);
+}
+
+/* ========== 个人信息页面 ========== */
+.profile-container {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.profile-avatar-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+  border: 4px solid white;
+  background: linear-gradient(135deg, #FFE4F0, #E8F4FF);
+}
+
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.avatar-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--primary);
+}
+
+.avatar-placeholder span:first-child {
+  font-size: 2.5rem;
+}
+
+.avatar-hint {
+  font-size: 0.7rem;
+  margin-top: 4px;
+  color: var(--text-light);
+}
+
+.avatar-edit-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  border: 3px solid white;
+}
+
+.profile-form {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.label-icon {
+  font-size: 1.2rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 3px solid #eee;
+  border-radius: 14px;
+  font-size: 1rem;
+  color: var(--text-dark);
+  transition: all 0.3s;
+  background: #fafafa;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.1);
+}
+
+.form-input::placeholder {
+  color: #ccc;
+}
+
+.age-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: #fafafa;
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.age-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+}
+
+.age-btn:active {
+  transform: scale(0.9);
+}
+
+.age-display {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--primary);
+  min-width: 50px;
+  text-align: center;
+}
+
+.age-unit {
+  font-size: 1.2rem;
+  color: var(--text-light);
+}
+
+.hobbies-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hobby-tag {
+  padding: 10px 16px;
+  border: 2px solid #eee;
+  border-radius: 20px;
+  background: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.hobby-tag:active {
+  transform: scale(0.95);
+}
+
+.hobby-tag.active {
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+}
+
+.btn-save-profile {
+  width: 100%;
+  background: linear-gradient(135deg, #4ECDC4, #44CF74);
+  border: none;
+  color: white;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+.btn-save-profile:active {
+  transform: scale(0.98);
+}
+
+/* 照片选项弹窗 */
+.photo-options-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.photo-options-modal.hidden {
+  display: none;
+}
+
+.photo-options-content {
+  background: white;
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  animation: slideUp 0.3s ease;
+}
+
+.photo-options-content h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.photo-options-buttons {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.photo-option-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  border: 2px solid #eee;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.photo-option-btn:active {
+  transform: scale(0.95);
+  background: #f5f5f5;
+}
+
+.option-icon {
+  font-size: 2rem;
+}
+
+.photo-cancel-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: #f5f5f5;
+  color: var(--text-light);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.photo-cancel-btn:active {
+  background: #eee;
+}
+
 /* ========== 响应式 ========== */
 @media (min-width: 768px) {
   .menu-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .video-grid {
@@ -1006,5 +1566,14 @@ body {
 
   .answer-options {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .timer-circle {
+    width: 280px;
+    height: 280px;
+  }
+
+  .timer-text {
+    font-size: 4rem;
   }
 }
