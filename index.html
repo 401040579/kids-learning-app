@@ -41,6 +41,156 @@
     </div>
   </div>
 
+  <!-- 添加事件弹窗 -->
+  <div id="add-event-modal" class="event-modal hidden">
+    <div class="event-modal-content">
+      <button class="event-modal-close" onclick="closeAddEventModal()">✕</button>
+      <h3 class="event-modal-title">添加新事件</h3>
+
+      <!-- 事件类型选择 -->
+      <div class="event-type-selector">
+        <button class="event-type-btn active" data-type="class" onclick="selectEventType('class')">
+          <span class="type-icon">📚</span>
+          <span class="type-name">课外班</span>
+        </button>
+        <button class="event-type-btn" data-type="outing" onclick="selectEventType('outing')">
+          <span class="type-icon">🎡</span>
+          <span class="type-name">出去玩</span>
+        </button>
+        <button class="event-type-btn" data-type="holiday" onclick="selectEventType('holiday')">
+          <span class="type-icon">🏖️</span>
+          <span class="type-name">放假</span>
+        </button>
+        <button class="event-type-btn" data-type="study" onclick="selectEventType('study')">
+          <span class="type-icon">📖</span>
+          <span class="type-name">学习</span>
+        </button>
+      </div>
+
+      <!-- 事件表单 -->
+      <form id="event-form" class="event-form">
+        <div class="form-group">
+          <label>事件名称</label>
+          <input type="text" id="event-name" placeholder="例如：钢琴课、去动物园" required>
+        </div>
+
+        <!-- 课外班专属：课程类型 -->
+        <div class="form-group class-only">
+          <label>课程类型</label>
+          <div class="class-type-selector" id="class-type-selector">
+            <button type="button" class="class-type-btn active" data-class="piano" onclick="selectClassType('piano')">🎹 钢琴</button>
+            <button type="button" class="class-type-btn" data-class="art" onclick="selectClassType('art')">🎨 画画</button>
+            <button type="button" class="class-type-btn" data-class="swim" onclick="selectClassType('swim')">🏊 游泳</button>
+            <button type="button" class="class-type-btn" data-class="dance" onclick="selectClassType('dance')">💃 舞蹈</button>
+            <button type="button" class="class-type-btn" data-class="english" onclick="selectClassType('english')">🔤 英语</button>
+            <button type="button" class="class-type-btn" data-class="math" onclick="selectClassType('math')">🔢 数学</button>
+            <button type="button" class="class-type-btn" data-class="sports" onclick="selectClassType('sports')">⚽ 运动</button>
+            <button type="button" class="class-type-btn" data-class="other" onclick="selectClassType('other')">📝 其他</button>
+          </div>
+        </div>
+
+        <!-- 时间设置（课外班和学习专属） -->
+        <div class="form-group time-group class-only">
+          <label>上课时间</label>
+          <div class="time-inputs">
+            <input type="time" id="event-start-time" value="09:00">
+            <span>到</span>
+            <input type="time" id="event-end-time" value="10:00">
+          </div>
+        </div>
+
+        <!-- 重复设置 -->
+        <div class="form-group class-only">
+          <label>重复</label>
+          <div class="repeat-selector">
+            <button type="button" class="repeat-btn active" data-repeat="none" onclick="selectRepeat('none')">不重复</button>
+            <button type="button" class="repeat-btn" data-repeat="weekly" onclick="selectRepeat('weekly')">每周重复</button>
+          </div>
+        </div>
+
+        <!-- 备注 -->
+        <div class="form-group">
+          <label>备注 (选填)</label>
+          <textarea id="event-note" placeholder="可以写一些备注..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit-event">保存事件</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 事件详情/评价弹窗 -->
+  <div id="event-detail-modal" class="event-modal hidden">
+    <div class="event-modal-content">
+      <button class="event-modal-close" onclick="closeEventDetailModal()">✕</button>
+
+      <div class="event-detail-header">
+        <span class="event-detail-icon" id="event-detail-icon">📚</span>
+        <div class="event-detail-info">
+          <h3 id="event-detail-name">钢琴课</h3>
+          <p id="event-detail-time">09:00 - 10:00</p>
+        </div>
+      </div>
+
+      <div class="event-detail-date" id="event-detail-date">2026年1月20日</div>
+
+      <!-- 备注显示 -->
+      <div class="event-detail-note" id="event-detail-note-section">
+        <h4>📝 备注</h4>
+        <p id="event-detail-note">无</p>
+      </div>
+
+      <!-- 心情评价（仅已完成的课外班显示） -->
+      <div class="event-mood-section" id="event-mood-section">
+        <h4>这次课感觉怎么样?</h4>
+        <div class="mood-selector">
+          <button class="mood-btn" data-mood="happy" onclick="selectMood('happy')">
+            <span class="mood-emoji">😊</span>
+            <span class="mood-text">开心</span>
+          </button>
+          <button class="mood-btn" data-mood="neutral" onclick="selectMood('neutral')">
+            <span class="mood-emoji">😐</span>
+            <span class="mood-text">一般</span>
+          </button>
+          <button class="mood-btn" data-mood="sad" onclick="selectMood('sad')">
+            <span class="mood-emoji">😢</span>
+            <span class="mood-text">不开心</span>
+          </button>
+          <button class="mood-btn" data-mood="tired" onclick="selectMood('tired')">
+            <span class="mood-emoji">😫</span>
+            <span class="mood-text">好累</span>
+          </button>
+          <button class="mood-btn" data-mood="excited" onclick="selectMood('excited')">
+            <span class="mood-emoji">🤩</span>
+            <span class="mood-text">超棒</span>
+          </button>
+        </div>
+
+        <!-- 感受记录 -->
+        <div class="feeling-input">
+          <label>写写你的感受吧:</label>
+          <textarea id="event-feeling" placeholder="今天学了什么? 有趣吗?"></textarea>
+        </div>
+
+        <button class="btn-save-mood" onclick="saveMoodAndFeeling()">保存心情</button>
+      </div>
+
+      <!-- 已保存的心情显示 -->
+      <div class="saved-mood-display hidden" id="saved-mood-display">
+        <h4>我的心情记录</h4>
+        <div class="saved-mood-content">
+          <span class="saved-mood-emoji" id="saved-mood-emoji">😊</span>
+          <p class="saved-mood-feeling" id="saved-mood-feeling">很开心!</p>
+        </div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="event-actions">
+        <button class="btn-delete-event" onclick="deleteEvent()">🗑️ 删除</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 主应用 -->
   <div id="app">
     <!-- 顶部状态栏 -->
@@ -102,6 +252,12 @@
             <div class="card-icon">👤</div>
             <div class="card-title">我的信息</div>
             <div class="card-desc">编辑个人资料</div>
+          </div>
+
+          <div class="menu-card card-calendar" onclick="navigateTo('calendar')">
+            <div class="card-icon">📅</div>
+            <div class="card-title">我的日历</div>
+            <div class="card-desc">记录每一天</div>
           </div>
         </div>
 
@@ -451,6 +607,67 @@
       <!-- 隐藏的文件输入 -->
       <input type="file" id="photo-input-camera" accept="image/*" capture="user" style="display:none" onchange="handlePhotoSelect(event)">
       <input type="file" id="photo-input-gallery" accept="image/*" style="display:none" onchange="handlePhotoSelect(event)">
+
+      <!-- 日历页 -->
+      <section id="page-calendar" class="page">
+        <div class="page-header">
+          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
+          <h2>📅 我的日历</h2>
+        </div>
+
+        <!-- 月份切换 -->
+        <div class="calendar-header">
+          <button class="calendar-nav-btn" onclick="changeMonth(-1)">◀</button>
+          <h3 id="calendar-month-title">2026年1月</h3>
+          <button class="calendar-nav-btn" onclick="changeMonth(1)">▶</button>
+        </div>
+
+        <!-- 月度统计 -->
+        <div class="calendar-stats">
+          <div class="stat-item stat-class">
+            <span class="stat-icon">📚</span>
+            <span class="stat-value" id="stat-classes">0</span>
+            <span class="stat-label">节课外班</span>
+          </div>
+          <div class="stat-item stat-play">
+            <span class="stat-icon">🎡</span>
+            <span class="stat-value" id="stat-outings">0</span>
+            <span class="stat-label">次出去玩</span>
+          </div>
+          <div class="stat-item stat-holiday">
+            <span class="stat-icon">🏖️</span>
+            <span class="stat-value" id="stat-holidays">0</span>
+            <span class="stat-label">天假期</span>
+          </div>
+        </div>
+
+        <!-- 日历网格 -->
+        <div class="calendar-container">
+          <div class="calendar-weekdays">
+            <span>日</span>
+            <span>一</span>
+            <span>二</span>
+            <span>三</span>
+            <span>四</span>
+            <span>五</span>
+            <span>六</span>
+          </div>
+          <div class="calendar-grid" id="calendar-grid">
+            <!-- 日历日期由 JS 动态生成 -->
+          </div>
+        </div>
+
+        <!-- 选中日期的事件列表 -->
+        <div class="day-events" id="day-events">
+          <div class="day-events-header">
+            <h4 id="selected-date-title">今天</h4>
+            <button class="btn-add-event" onclick="showAddEventModal()">+ 添加</button>
+          </div>
+          <div class="events-list" id="events-list">
+            <p class="no-events">这一天还没有安排哦~</p>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- 底部导航 -->
@@ -474,6 +691,10 @@
       <div class="nav-item" onclick="navigateTo('chinese')">
         <span class="nav-icon">📝</span>
         <span class="nav-label">中文</span>
+      </div>
+      <div class="nav-item" onclick="navigateTo('calendar')">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">日历</span>
       </div>
     </nav>
   </div>

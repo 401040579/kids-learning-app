@@ -1,3 +1,90 @@
+// ========== 日历数据管理 ==========
+
+const CalendarData = {
+  // 数据存储
+  events: {},
+
+  // 初始化
+  init() {
+    this.loadData();
+  },
+
+  // 从本地存储加载数据
+  loadData() {
+    const saved = localStorage.getItem('kidsCalendarData');
+    if (saved) {
+      this.events = JSON.parse(saved);
+    }
+  },
+
+  // 保存数据到本地存储
+  saveData() {
+    localStorage.setItem('kidsCalendarData', JSON.stringify(this.events));
+  },
+
+  // 获取指定日期的事件
+  getEventsByDate(dateStr) {
+    return this.events[dateStr] || [];
+  },
+
+  // 添加事件
+  addEvent(dateStr, event) {
+    if (!this.events[dateStr]) {
+      this.events[dateStr] = [];
+    }
+    this.events[dateStr].push(event);
+    this.saveData();
+  },
+
+  // 更新事件心情
+  updateEventMood(dateStr, eventIndex, mood, feeling) {
+    if (this.events[dateStr] && this.events[dateStr][eventIndex]) {
+      this.events[dateStr][eventIndex].mood = mood;
+      this.events[dateStr][eventIndex].feeling = feeling;
+      this.saveData();
+    }
+  },
+
+  // 删除事件
+  deleteEvent(dateStr, eventIndex) {
+    if (this.events[dateStr]) {
+      this.events[dateStr].splice(eventIndex, 1);
+      if (this.events[dateStr].length === 0) {
+        delete this.events[dateStr];
+      }
+      this.saveData();
+    }
+  },
+
+  // 获取月度统计
+  getMonthStats(year, month) {
+    let classes = 0;
+    let outings = 0;
+    let holidays = 0;
+
+    // 遍历该月所有日期
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const events = this.events[dateStr] || [];
+
+      events.forEach(event => {
+        if (event.type === 'class') classes++;
+        if (event.type === 'outing') outings++;
+        if (event.type === 'holiday') holidays++;
+      });
+    }
+
+    return { classes, outings, holidays };
+  },
+
+  // 重置数据
+  reset() {
+    this.events = {};
+    this.saveData();
+  }
+};
+
 // ========== 奖励系统 ==========
 
 const RewardSystem = {
@@ -15,6 +102,7 @@ const RewardSystem = {
   init() {
     this.loadData();
     this.updateDisplay();
+    CalendarData.init(); // 初始化日历数据
   },
 
   // 从本地存储加载数据

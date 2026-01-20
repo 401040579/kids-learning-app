@@ -40,10 +40,11 @@ function navigateTo(page) {
   if (page === 'math') generateMathQuestion();
   if (page === 'english') generateEnglishQuestion();
   if (page === 'chinese') generateChineseQuestion();
+  if (page === 'calendar') initCalendar();
 }
 
 function getNavIndex(page) {
-  const pages = ['home', 'explore', 'math', 'english', 'chinese'];
+  const pages = ['home', 'explore', 'math', 'english', 'chinese', 'calendar'];
   const index = pages.indexOf(page);
   // 对于不在底部导航的页面（timer, profile），返回首页索引
   return index >= 0 ? index : 0;
@@ -788,7 +789,7 @@ function saveProfile() {
   RewardSystem.showReward(5, '信息已保存!');
 }
 
-// 在 DOMContentLoaded 中初始化个人信息
+// 在 DOMContentLoaded 中初始化个人信息和倒计时
 document.addEventListener('DOMContentLoaded', () => {
   // 延迟初始化，确保其他模块先加载
   setTimeout(() => {
@@ -796,3 +797,469 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimerDisplay();
   }, 100);
 });
+
+// ========== 日历模块 ==========
+let currentCalendarDate = new Date();
+let selectedDate = null;
+let currentEventType = 'class';
+let currentClassType = 'piano';
+let currentRepeat = 'none';
+let selectedMood = null;
+let currentEditingEvent = null;
+
+// 事件类型图标映射
+const eventTypeIcons = {
+  class: '📚',
+  outing: '🎡',
+  holiday: '🏖️',
+  study: '📖'
+};
+
+// 课程类型图标映射
+const classTypeIcons = {
+  piano: '🎹',
+  art: '🎨',
+  swim: '🏊',
+  dance: '💃',
+  english: '🔤',
+  math: '🔢',
+  sports: '⚽',
+  other: '📝'
+};
+
+// 心情图标映射
+const moodIcons = {
+  happy: '😊',
+  neutral: '😐',
+  sad: '😢',
+  tired: '😫',
+  excited: '🤩'
+};
+
+// 初始化日历
+function initCalendar() {
+  selectedDate = new Date();
+  renderCalendar();
+  renderDayEvents();
+}
+
+// 渲染日历
+function renderCalendar() {
+  const year = currentCalendarDate.getFullYear();
+  const month = currentCalendarDate.getMonth();
+
+  // 更新月份标题
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  document.getElementById('calendar-month-title').textContent = `${year}年${monthNames[month]}`;
+
+  // 获取本月第一天和最后一天
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDayOfWeek = firstDay.getDay();
+  const daysInMonth = lastDay.getDate();
+
+  // 获取上个月最后几天
+  const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+  // 生成日历网格
+  const grid = document.getElementById('calendar-grid');
+  grid.innerHTML = '';
+
+  // 上个月的日期
+  for (let i = startDayOfWeek - 1; i >= 0; i--) {
+    const day = prevMonthLastDay - i;
+    const dayEl = createDayElement(day, year, month - 1, true);
+    grid.appendChild(dayEl);
+  }
+
+  // 本月的日期
+  const today = new Date();
+  for (let day = 1; day <= daysInMonth; day++) {
+    const isToday = today.getFullYear() === year &&
+                    today.getMonth() === month &&
+                    today.getDate() === day;
+    const isSelected = selectedDate &&
+                       selectedDate.getFullYear() === year &&
+                       selectedDate.getMonth() === month &&
+                       selectedDate.getDate() === day;
+    const dayEl = createDayElement(day, year, month, false, isToday, isSelected);
+    grid.appendChild(dayEl);
+  }
+
+  // 下个月的日期（填满6行）
+  const totalCells = Math.ceil((startDayOfWeek + daysInMonth) / 7) * 7;
+  const nextMonthDays = totalCells - startDayOfWeek - daysInMonth;
+  for (let day = 1; day <= nextMonthDays; day++) {
+    const dayEl = createDayElement(day, year, month + 1, true);
+    grid.appendChild(dayEl);
+  }
+
+  // 更新统计
+  updateCalendarStats();
+}
+
+// 创建日期元素
+function createDayElement(day, year, month, isOtherMonth, isToday = false, isSelected = false) {
+  const dayEl = document.createElement('div');
+  dayEl.className = 'calendar-day';
+
+  if (isOtherMonth) {
+    dayEl.classList.add('other-month');
+  }
+  if (isToday) {
+    dayEl.classList.add('today');
+  }
+  if (isSelected) {
+    dayEl.classList.add('selected');
+  }
+
+  // 检查是否是周末
+  const date = new Date(year, month, day);
+  const dayOfWeek = date.getDay();
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    dayEl.classList.add('weekend');
+  }
+
+  dayEl.innerHTML = `<span>${day}</span>`;
+
+  // 添加事件标记点
+  const dateStr = formatDateStr(year, month, day);
+  const events = CalendarData.getEventsByDate(dateStr);
+  if (events.length > 0) {
+    const dotsEl = document.createElement('div');
+    dotsEl.className = 'day-dots';
+
+    // 只显示前3个事件类型的点
+    const types = [...new Set(events.map(e => e.type))].slice(0, 3);
+    types.forEach(type => {
+      const dot = document.createElement('div');
+      dot.className = `day-dot ${type}`;
+      dotsEl.appendChild(dot);
+    });
+
+    dayEl.appendChild(dotsEl);
+  }
+
+  // 点击事件
+  dayEl.onclick = () => selectDay(year, month, day, isOtherMonth);
+
+  return dayEl;
+}
+
+// 格式化日期字符串
+function formatDateStr(year, month, day) {
+  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+// 选择日期
+function selectDay(year, month, day, isOtherMonth) {
+  if (isOtherMonth) {
+    // 切换到对应月份
+    currentCalendarDate = new Date(year, month, 1);
+  }
+  selectedDate = new Date(year, month, day);
+  renderCalendar();
+  renderDayEvents();
+}
+
+// 切换月份
+function changeMonth(delta) {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+  renderCalendar();
+}
+
+// 渲染当日事件列表
+function renderDayEvents() {
+  if (!selectedDate) return;
+
+  const dateStr = formatDateStr(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth(),
+    selectedDate.getDate()
+  );
+
+  // 更新标题
+  const today = new Date();
+  const isToday = selectedDate.toDateString() === today.toDateString();
+  const titleEl = document.getElementById('selected-date-title');
+
+  if (isToday) {
+    titleEl.textContent = '今天';
+  } else {
+    titleEl.textContent = `${selectedDate.getMonth() + 1}月${selectedDate.getDate()}日`;
+  }
+
+  // 获取事件
+  const events = CalendarData.getEventsByDate(dateStr);
+  const listEl = document.getElementById('events-list');
+
+  if (events.length === 0) {
+    listEl.innerHTML = '<p class="no-events">这一天还没有安排哦~</p>';
+    return;
+  }
+
+  listEl.innerHTML = events.map((event, index) => {
+    const icon = event.type === 'class' ? classTypeIcons[event.classType] || '📚' : eventTypeIcons[event.type];
+    const timeStr = event.startTime ? `${event.startTime} - ${event.endTime}` : '';
+    const moodEl = event.mood ? `<span class="event-mood">${moodIcons[event.mood]}</span>` : '';
+
+    return `
+      <div class="event-item" onclick="showEventDetail('${dateStr}', ${index})">
+        <div class="event-icon ${event.type}">${icon}</div>
+        <div class="event-info">
+          <div class="event-name">${event.name}</div>
+          ${timeStr ? `<div class="event-time">${timeStr}</div>` : ''}
+        </div>
+        ${moodEl}
+      </div>
+    `;
+  }).join('');
+}
+
+// 更新统计
+function updateCalendarStats() {
+  const year = currentCalendarDate.getFullYear();
+  const month = currentCalendarDate.getMonth();
+
+  const stats = CalendarData.getMonthStats(year, month);
+
+  document.getElementById('stat-classes').textContent = stats.classes;
+  document.getElementById('stat-outings').textContent = stats.outings;
+  document.getElementById('stat-holidays').textContent = stats.holidays;
+}
+
+// 显示添加事件弹窗
+function showAddEventModal() {
+  if (!selectedDate) {
+    selectedDate = new Date();
+  }
+
+  // 重置表单
+  document.getElementById('event-form').reset();
+  currentEventType = 'class';
+  currentClassType = 'piano';
+  currentRepeat = 'none';
+
+  // 更新UI
+  updateEventTypeUI();
+  updateClassTypeUI();
+  updateRepeatUI();
+  updateFormFields();
+
+  document.getElementById('add-event-modal').classList.remove('hidden');
+}
+
+// 关闭添加事件弹窗
+function closeAddEventModal() {
+  document.getElementById('add-event-modal').classList.add('hidden');
+}
+
+// 选择事件类型
+function selectEventType(type) {
+  currentEventType = type;
+  updateEventTypeUI();
+  updateFormFields();
+}
+
+// 更新事件类型UI
+function updateEventTypeUI() {
+  document.querySelectorAll('.event-type-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.type === currentEventType);
+  });
+}
+
+// 更新表单字段显示
+function updateFormFields() {
+  const form = document.getElementById('event-form');
+  if (currentEventType === 'class' || currentEventType === 'study') {
+    form.classList.add('show-class-fields');
+  } else {
+    form.classList.remove('show-class-fields');
+  }
+}
+
+// 选择课程类型
+function selectClassType(type) {
+  currentClassType = type;
+  updateClassTypeUI();
+}
+
+// 更新课程类型UI
+function updateClassTypeUI() {
+  document.querySelectorAll('.class-type-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.class === currentClassType);
+  });
+}
+
+// 选择重复选项
+function selectRepeat(repeat) {
+  currentRepeat = repeat;
+  updateRepeatUI();
+}
+
+// 更新重复UI
+function updateRepeatUI() {
+  document.querySelectorAll('.repeat-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.repeat === currentRepeat);
+  });
+}
+
+// 处理表单提交
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('event-form');
+  if (form) {
+    form.addEventListener('submit', handleEventSubmit);
+  }
+});
+
+function handleEventSubmit(e) {
+  e.preventDefault();
+
+  const name = document.getElementById('event-name').value.trim();
+  if (!name) return;
+
+  const event = {
+    type: currentEventType,
+    name: name,
+    note: document.getElementById('event-note').value.trim(),
+    createdAt: new Date().toISOString()
+  };
+
+  // 课外班或学习任务添加时间和课程类型
+  if (currentEventType === 'class' || currentEventType === 'study') {
+    event.classType = currentClassType;
+    event.startTime = document.getElementById('event-start-time').value;
+    event.endTime = document.getElementById('event-end-time').value;
+    event.repeat = currentRepeat;
+  }
+
+  const dateStr = formatDateStr(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth(),
+    selectedDate.getDate()
+  );
+
+  // 保存事件
+  CalendarData.addEvent(dateStr, event);
+
+  // 如果是每周重复，则添加未来的事件
+  if (currentRepeat === 'weekly') {
+    const futureDate = new Date(selectedDate);
+    for (let i = 1; i <= 12; i++) { // 添加未来12周
+      futureDate.setDate(futureDate.getDate() + 7);
+      const futureDateStr = formatDateStr(
+        futureDate.getFullYear(),
+        futureDate.getMonth(),
+        futureDate.getDate()
+      );
+      CalendarData.addEvent(futureDateStr, { ...event, isRepeated: true });
+    }
+  }
+
+  closeAddEventModal();
+  renderCalendar();
+  renderDayEvents();
+
+  // 显示提示
+  RewardSystem.playSound('correct');
+}
+
+// 显示事件详情
+function showEventDetail(dateStr, eventIndex) {
+  const events = CalendarData.getEventsByDate(dateStr);
+  const event = events[eventIndex];
+  if (!event) return;
+
+  currentEditingEvent = { dateStr, eventIndex, event };
+
+  // 填充详情
+  const icon = event.type === 'class' ? classTypeIcons[event.classType] || '📚' : eventTypeIcons[event.type];
+  document.getElementById('event-detail-icon').textContent = icon;
+  document.getElementById('event-detail-name').textContent = event.name;
+
+  const timeStr = event.startTime ? `${event.startTime} - ${event.endTime}` : '全天';
+  document.getElementById('event-detail-time').textContent = timeStr;
+
+  // 格式化日期
+  const [year, month, day] = dateStr.split('-');
+  document.getElementById('event-detail-date').textContent = `${year}年${parseInt(month)}月${parseInt(day)}日`;
+
+  // 备注
+  const noteSection = document.getElementById('event-detail-note-section');
+  if (event.note) {
+    noteSection.style.display = 'block';
+    document.getElementById('event-detail-note').textContent = event.note;
+  } else {
+    noteSection.style.display = 'none';
+  }
+
+  // 心情部分
+  const moodSection = document.getElementById('event-mood-section');
+  const savedMoodDisplay = document.getElementById('saved-mood-display');
+
+  if (event.type === 'class' || event.type === 'study') {
+    if (event.mood) {
+      // 显示已保存的心情
+      moodSection.classList.add('hidden');
+      savedMoodDisplay.classList.remove('hidden');
+      document.getElementById('saved-mood-emoji').textContent = moodIcons[event.mood];
+      document.getElementById('saved-mood-feeling').textContent = event.feeling || '没有写感受';
+    } else {
+      // 显示心情选择器
+      moodSection.classList.remove('hidden');
+      savedMoodDisplay.classList.add('hidden');
+      selectedMood = null;
+      document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('event-feeling').value = '';
+    }
+  } else {
+    moodSection.classList.add('hidden');
+    savedMoodDisplay.classList.add('hidden');
+  }
+
+  document.getElementById('event-detail-modal').classList.remove('hidden');
+}
+
+// 关闭事件详情弹窗
+function closeEventDetailModal() {
+  document.getElementById('event-detail-modal').classList.add('hidden');
+  currentEditingEvent = null;
+}
+
+// 选择心情
+function selectMood(mood) {
+  selectedMood = mood;
+  document.querySelectorAll('.mood-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mood === mood);
+  });
+}
+
+// 保存心情和感受
+function saveMoodAndFeeling() {
+  if (!currentEditingEvent || !selectedMood) return;
+
+  const { dateStr, eventIndex } = currentEditingEvent;
+  const feeling = document.getElementById('event-feeling').value.trim();
+
+  CalendarData.updateEventMood(dateStr, eventIndex, selectedMood, feeling);
+
+  closeEventDetailModal();
+  renderDayEvents();
+
+  // 给记录心情一点奖励
+  RewardSystem.addPoints(5, '记录了今天的心情!');
+}
+
+// 删除事件
+function deleteEvent() {
+  if (!currentEditingEvent) return;
+
+  const { dateStr, eventIndex } = currentEditingEvent;
+
+  if (confirm('确定要删除这个事件吗?')) {
+    CalendarData.deleteEvent(dateStr, eventIndex);
+    closeEventDetailModal();
+    renderCalendar();
+    renderDayEvents();
+  }
+}
