@@ -91,6 +91,18 @@
             <div class="card-title">学中文</div>
             <div class="card-desc">认字和拼音</div>
           </div>
+
+          <div class="menu-card card-timer" onclick="navigateTo('timer')">
+            <div class="card-icon">⏰</div>
+            <div class="card-title">玩耍计时</div>
+            <div class="card-desc">设置倒计时</div>
+          </div>
+
+          <div class="menu-card card-profile" onclick="navigateTo('profile')">
+            <div class="card-icon">👤</div>
+            <div class="card-title">我的信息</div>
+            <div class="card-desc">编辑个人资料</div>
+          </div>
         </div>
 
         <div class="daily-progress">
@@ -252,6 +264,189 @@
           </div>
         </div>
       </section>
+
+      <!-- 倒计时页面 -->
+      <section id="page-timer" class="page">
+        <div class="page-header">
+          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
+          <h2>⏰ 玩耍倒计时</h2>
+        </div>
+
+        <div class="timer-container">
+          <!-- 倒计时显示 -->
+          <div class="timer-display" id="timer-display">
+            <div class="timer-circle" id="timer-circle">
+              <svg class="timer-svg" viewBox="0 0 200 200">
+                <circle class="timer-bg" cx="100" cy="100" r="90"/>
+                <circle class="timer-progress" id="timer-progress" cx="100" cy="100" r="90"/>
+              </svg>
+              <div class="timer-text">
+                <span class="timer-minutes" id="timer-minutes">05</span>
+                <span class="timer-colon">:</span>
+                <span class="timer-seconds" id="timer-seconds">00</span>
+              </div>
+              <div class="timer-emoji" id="timer-emoji">🎮</div>
+            </div>
+          </div>
+
+          <!-- 时间选择（未开始时显示） -->
+          <div class="timer-setup" id="timer-setup">
+            <p class="timer-hint">选择玩耍时间:</p>
+            <div class="time-options">
+              <button class="time-btn" onclick="setTimerMinutes(3)">
+                <span class="time-num">3</span>
+                <span class="time-unit">分钟</span>
+              </button>
+              <button class="time-btn active" onclick="setTimerMinutes(5)">
+                <span class="time-num">5</span>
+                <span class="time-unit">分钟</span>
+              </button>
+              <button class="time-btn" onclick="setTimerMinutes(10)">
+                <span class="time-num">10</span>
+                <span class="time-unit">分钟</span>
+              </button>
+              <button class="time-btn" onclick="setTimerMinutes(15)">
+                <span class="time-num">15</span>
+                <span class="time-unit">分钟</span>
+              </button>
+            </div>
+            <button class="btn-start-timer" onclick="startTimer()">
+              ▶️ 开始倒计时
+            </button>
+          </div>
+
+          <!-- 控制按钮（运行中显示） -->
+          <div class="timer-controls hidden" id="timer-controls">
+            <button class="timer-control-btn btn-pause" id="btn-pause" onclick="togglePauseTimer()">
+              ⏸️ 暂停
+            </button>
+            <button class="timer-control-btn btn-stop" onclick="stopTimer()">
+              ⏹️ 结束
+            </button>
+          </div>
+
+          <!-- 鼓励语 -->
+          <div class="timer-message" id="timer-message">
+            <p>玩得开心！时间到了要乖乖走哦~ 🌟</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 时间到弹窗 -->
+      <div id="timer-finish-modal" class="timer-finish-modal hidden">
+        <div class="timer-finish-content">
+          <div class="finish-emoji">⏰</div>
+          <h2 class="finish-title">时间到啦!</h2>
+          <p class="finish-message">玩得开心吗？现在该回家咯~ 🏠</p>
+          <div class="finish-animation">
+            <span>🌈</span><span>⭐</span><span>🎉</span>
+          </div>
+          <button class="btn-finish-ok" onclick="closeTimerFinish()">
+            好的，我知道了 👋
+          </button>
+        </div>
+      </div>
+
+      <!-- 个人信息页面 -->
+      <section id="page-profile" class="page">
+        <div class="page-header">
+          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
+          <h2>👤 我的信息</h2>
+        </div>
+
+        <div class="profile-container">
+          <!-- 头像区域 -->
+          <div class="profile-avatar-section">
+            <div class="avatar-wrapper" onclick="showPhotoOptions()">
+              <img id="profile-avatar" class="profile-avatar" src="" alt="头像">
+              <div class="avatar-placeholder" id="avatar-placeholder">
+                <span>📷</span>
+                <span class="avatar-hint">点击添加照片</span>
+              </div>
+              <div class="avatar-edit-icon">📷</div>
+            </div>
+          </div>
+
+          <!-- 个人信息表单 -->
+          <div class="profile-form">
+            <div class="form-group">
+              <label class="form-label">
+                <span class="label-icon">👶</span>
+                <span>我的名字</span>
+              </label>
+              <input type="text" id="profile-name" class="form-input" placeholder="输入你的名字" maxlength="20">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <span class="label-icon">🎂</span>
+                <span>我的年龄</span>
+              </label>
+              <div class="age-selector">
+                <button class="age-btn" onclick="changeAge(-1)">－</button>
+                <span class="age-display" id="profile-age">6</span>
+                <span class="age-unit">岁</span>
+                <button class="age-btn" onclick="changeAge(1)">＋</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <span class="label-icon">🎈</span>
+                <span>生日</span>
+              </label>
+              <input type="date" id="profile-birthday" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <span class="label-icon">💖</span>
+                <span>我喜欢的事情</span>
+              </label>
+              <div class="hobbies-grid" id="hobbies-grid">
+                <button class="hobby-tag" data-hobby="画画" onclick="toggleHobby(this)">🎨 画画</button>
+                <button class="hobby-tag" data-hobby="唱歌" onclick="toggleHobby(this)">🎤 唱歌</button>
+                <button class="hobby-tag" data-hobby="跳舞" onclick="toggleHobby(this)">💃 跳舞</button>
+                <button class="hobby-tag" data-hobby="运动" onclick="toggleHobby(this)">⚽ 运动</button>
+                <button class="hobby-tag" data-hobby="看书" onclick="toggleHobby(this)">📚 看书</button>
+                <button class="hobby-tag" data-hobby="积木" onclick="toggleHobby(this)">🧱 积木</button>
+                <button class="hobby-tag" data-hobby="恐龙" onclick="toggleHobby(this)">🦖 恐龙</button>
+                <button class="hobby-tag" data-hobby="动物" onclick="toggleHobby(this)">🐱 动物</button>
+                <button class="hobby-tag" data-hobby="汽车" onclick="toggleHobby(this)">🚗 汽车</button>
+                <button class="hobby-tag" data-hobby="公主" onclick="toggleHobby(this)">👸 公主</button>
+                <button class="hobby-tag" data-hobby="太空" onclick="toggleHobby(this)">🚀 太空</button>
+                <button class="hobby-tag" data-hobby="美食" onclick="toggleHobby(this)">🍰 美食</button>
+              </div>
+            </div>
+
+            <button class="btn-save-profile" onclick="saveProfile()">
+              💾 保存信息
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 照片选项弹窗 -->
+      <div id="photo-options-modal" class="photo-options-modal hidden">
+        <div class="photo-options-content">
+          <h3>选择照片来源</h3>
+          <div class="photo-options-buttons">
+            <button class="photo-option-btn" onclick="takePhoto()">
+              <span class="option-icon">📸</span>
+              <span>拍照</span>
+            </button>
+            <button class="photo-option-btn" onclick="choosePhoto()">
+              <span class="option-icon">🖼️</span>
+              <span>从相册选择</span>
+            </button>
+          </div>
+          <button class="photo-cancel-btn" onclick="closePhotoOptions()">取消</button>
+        </div>
+      </div>
+
+      <!-- 隐藏的文件输入 -->
+      <input type="file" id="photo-input-camera" accept="image/*" capture="user" style="display:none" onchange="handlePhotoSelect(event)">
+      <input type="file" id="photo-input-gallery" accept="image/*" style="display:none" onchange="handlePhotoSelect(event)">
     </main>
 
     <!-- 底部导航 -->

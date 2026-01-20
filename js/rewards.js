@@ -154,8 +154,10 @@ const RewardSystem = {
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
 
-      if (type === 'reward') {
-        // 奖励音效：上升音调
+      let duration = 0.3;
+
+      if (type === 'reward' || type === 'success') {
+        // 奖励/成功音效：上升音调
         oscillator.frequency.setValueAtTime(523, audioContext.currentTime); // C5
         oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1); // E5
         oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2); // G5
@@ -165,13 +167,28 @@ const RewardSystem = {
       } else if (type === 'wrong') {
         // 错误音效
         oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+      } else if (type === 'click') {
+        // 点击音效
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        duration = 0.1;
+      } else if (type === 'tick') {
+        // 滴答音效（倒计时）
+        oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+        duration = 0.05;
+      } else if (type === 'complete') {
+        // 完成音效：庆祝音调
+        oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.15);
+        oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.3);
+        oscillator.frequency.setValueAtTime(1047, audioContext.currentTime + 0.45);
+        duration = 0.6;
       }
 
       gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
 
       oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.3);
+      oscillator.stop(audioContext.currentTime + duration);
     } catch (e) {
       // 音频不可用，静默失败
     }
