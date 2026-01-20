@@ -83,7 +83,19 @@ function initVideos() {
 // 渲染视频网格
 function renderVideoGrid(category) {
   const grid = document.getElementById('video-grid');
-  if (!grid || typeof videoDatabase === 'undefined') return;
+  if (!grid) return;
+
+  // 检查视频数据是否加载
+  if (typeof videoDatabase === 'undefined' || !videoDatabase.videos) {
+    grid.innerHTML = `
+      <div class="video-error">
+        <span class="error-icon">😢</span>
+        <p>视频加载失败</p>
+        <button class="btn-retry" onclick="location.reload()">重新加载</button>
+      </div>
+    `;
+    return;
+  }
 
   // 筛选视频
   const videos = category === 'all'

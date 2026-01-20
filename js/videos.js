@@ -131,7 +131,7 @@ const videoDatabase = {
       ageMin: 5,
       ageMax: 7,
       skills: ["减法概念", "数学歌曲", "倒数"],
-      description: "用音乐和动作学习减法概念，理解"减少"的含义。",
+      description: "用音乐和动作学习减法概念，理解'减少'的含义。",
       whyRecommend: "与加法歌配套，帮助孩子理解加减法的对应关系，歌曲朗朗上口。",
       safetyNotes: "内容积极向上，无不适画面。",
       parentTips: "可用零食或玩具实物演示减法过程。"
@@ -460,7 +460,7 @@ const videoDatabase = {
       ageMin: 5,
       ageMax: 9,
       skills: ["成长心态", "自信心", "坚持不懈"],
-      description: "培养面对困难的勇气和"我能行"的心态。",
+      description: "培养面对困难的勇气和'我能行'的心态。",
       whyRecommend: "成长型心态是学业成功的关键，帮助孩子建立面对挑战的积极态度。",
       safetyNotes: "内容励志正面，配合动作充满活力。",
       parentTips: "孩子遇到困难时，一起唱：I can do hard things!"

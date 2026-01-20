@@ -373,6 +373,43 @@ body {
   gap: 16px;
 }
 
+/* 视频加载状态 */
+.video-loading,
+.video-error {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+}
+
+.video-loading .loading-icon,
+.video-error .error-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 16px;
+  animation: bounce 1s ease infinite;
+}
+
+.video-error .error-icon {
+  animation: none;
+}
+
+.video-loading p,
+.video-error p {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+}
+
+.btn-retry {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
 .video-card {
   background: white;
   border-radius: 20px;
