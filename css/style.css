@@ -994,6 +994,727 @@ body {
   display: none !important;
 }
 
+/* ========== 日历菜单卡片 ========== */
+.card-calendar::before { background: linear-gradient(90deg, #45B7D1, #96CEB4); }
+
+/* ========== 日历页面 ========== */
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.calendar-header h3 {
+  font-size: 1.3rem;
+  color: var(--text-dark);
+  min-width: 140px;
+  text-align: center;
+}
+
+.calendar-nav-btn {
+  background: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  color: var(--primary);
+}
+
+.calendar-nav-btn:active {
+  transform: scale(0.95);
+}
+
+/* 月度统计 */
+.calendar-stats {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--card-shadow);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-icon {
+  font-size: 1.5rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.stat-class .stat-value { color: #4ECDC4; }
+.stat-play .stat-value { color: #FF6B6B; }
+.stat-holiday .stat-value { color: #45B7D1; }
+
+/* 日历容器 */
+.calendar-container {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 20px;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f5f5f5;
+  margin-bottom: 10px;
+}
+
+.calendar-weekdays span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.calendar-weekdays span:first-child,
+.calendar-weekdays span:last-child {
+  color: #FF6B6B;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.calendar-day:hover {
+  background: #f5f5f5;
+}
+
+.calendar-day.other-month {
+  color: #ddd;
+}
+
+.calendar-day.today {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+}
+
+.calendar-day.selected {
+  background: linear-gradient(135deg, #FFE4F0, #E8F4FF);
+  border: 2px solid var(--primary);
+}
+
+.calendar-day.today.selected {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.calendar-day.weekend {
+  color: #FF6B6B;
+}
+
+.calendar-day.weekend.other-month {
+  color: #ffcdd2;
+}
+
+/* 日期下方的事件标记 */
+.day-dots {
+  display: flex;
+  gap: 2px;
+  position: absolute;
+  bottom: 4px;
+}
+
+.day-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.day-dot.class { background: #4ECDC4; }
+.day-dot.outing { background: #FF6B6B; }
+.day-dot.holiday { background: #45B7D1; }
+.day-dot.study { background: #9370DB; }
+
+/* 当天事件列表 */
+.day-events {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+.day-events-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.day-events-header h4 {
+  color: var(--text-dark);
+  font-size: 1.1rem;
+}
+
+.btn-add-event {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-add-event:active {
+  transform: scale(0.95);
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.no-events {
+  text-align: center;
+  color: var(--text-light);
+  padding: 20px;
+  font-size: 0.95rem;
+}
+
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f8f8;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.event-item:active {
+  transform: scale(0.98);
+}
+
+.event-item:hover {
+  background: #f0f0f0;
+}
+
+.event-icon {
+  font-size: 2rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.event-icon.class { background: linear-gradient(135deg, #E0F7FA, #B2EBF2); }
+.event-icon.outing { background: linear-gradient(135deg, #FFEBEE, #FFCDD2); }
+.event-icon.holiday { background: linear-gradient(135deg, #E3F2FD, #BBDEFB); }
+.event-icon.study { background: linear-gradient(135deg, #F3E5F5, #E1BEE7); }
+
+.event-info {
+  flex: 1;
+}
+
+.event-name {
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.event-time {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.event-mood {
+  font-size: 1.5rem;
+}
+
+/* ========== 事件弹窗 ========== */
+.event-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.event-modal.hidden {
+  display: none;
+}
+
+.event-modal-content {
+  background: white;
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+  position: relative;
+}
+
+.event-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #f5f5f5;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: var(--text-light);
+}
+
+.event-modal-close:active {
+  transform: scale(0.95);
+  background: #eee;
+}
+
+.event-modal-title {
+  text-align: center;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+/* 事件类型选择器 */
+.event-type-selector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.event-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-radius: 12px;
+  border: 2px solid #eee;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.event-type-btn:active {
+  transform: scale(0.95);
+}
+
+.event-type-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+}
+
+.event-type-btn .type-icon {
+  font-size: 1.5rem;
+}
+
+.event-type-btn .type-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* 事件表单 */
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+  padding: 12px 16px;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: none;
+}
+
+/* 课程类型选择 */
+.class-type-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.class-type-btn {
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 2px solid #eee;
+  background: white;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.class-type-btn:active {
+  transform: scale(0.95);
+}
+
+.class-type-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+}
+
+/* 时间输入 */
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.time-inputs input[type="time"] {
+  padding: 10px 14px;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.time-inputs input[type="time"]:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.time-inputs span {
+  color: var(--text-light);
+}
+
+/* 重复选择 */
+.repeat-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.repeat-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: 2px solid #eee;
+  background: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.repeat-btn:active {
+  transform: scale(0.95);
+}
+
+.repeat-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+}
+
+/* 提交按钮 */
+.btn-submit-event {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+  transition: all 0.3s;
+  margin-top: 8px;
+}
+
+.btn-submit-event:active {
+  transform: scale(0.98);
+}
+
+/* 隐藏/显示课外班专属字段 */
+.class-only {
+  display: none;
+}
+
+.show-class-fields .class-only {
+  display: flex;
+}
+
+/* ========== 事件详情弹窗 ========== */
+.event-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.event-detail-icon {
+  font-size: 3rem;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #E0F7FA, #B2EBF2);
+}
+
+.event-detail-info h3 {
+  font-size: 1.3rem;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.event-detail-info p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.event-detail-date {
+  text-align: center;
+  color: var(--primary);
+  font-weight: 600;
+  padding: 8px;
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.event-detail-note {
+  margin-bottom: 20px;
+}
+
+.event-detail-note h4 {
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.event-detail-note p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* 心情选择器 */
+.event-mood-section {
+  background: #FAFAFA;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.event-mood-section h4 {
+  text-align: center;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+.mood-selector {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 16px;
+}
+
+.mood-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.mood-btn:active {
+  transform: scale(0.95);
+}
+
+.mood-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+}
+
+.mood-emoji {
+  font-size: 2rem;
+}
+
+.mood-text {
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+
+.feeling-input {
+  margin-bottom: 16px;
+}
+
+.feeling-input label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.feeling-input textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  min-height: 70px;
+  resize: none;
+}
+
+.feeling-input textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.btn-save-mood {
+  width: 100%;
+  background: linear-gradient(135deg, #4ECDC4, #45B7D1);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-save-mood:active {
+  transform: scale(0.98);
+}
+
+/* 已保存心情显示 */
+.saved-mood-display {
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.saved-mood-display h4 {
+  color: #2E7D32;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.saved-mood-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.saved-mood-emoji {
+  font-size: 2.5rem;
+}
+
+.saved-mood-feeling {
+  flex: 1;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* 事件操作按钮 */
+.event-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-delete-event {
+  background: #FFEBEE;
+  color: #F44336;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-delete-event:active {
+  transform: scale(0.95);
+  background: #FFCDD2;
+}
+
 /* ========== 响应式 ========== */
 @media (min-width: 768px) {
   .menu-grid {
@@ -1007,4 +1728,33 @@ body {
   .answer-options {
     grid-template-columns: repeat(4, 1fr);
   }
+
+  .calendar-grid {
+    gap: 8px;
+  }
+
+  .calendar-day {
+    font-size: 1.1rem;
+  }
+
+  .event-type-selector {
+    gap: 12px;
+  }
+}
+
+/* 6个导航项时的样式调整 */
+.bottom-nav {
+  padding: 0 8px;
+}
+
+.nav-item {
+  padding: 6px 8px;
+}
+
+.nav-icon {
+  font-size: 1.3rem;
+}
+
+.nav-label {
+  font-size: 0.7rem;
 }
