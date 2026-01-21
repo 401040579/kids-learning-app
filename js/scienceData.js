@@ -17,7 +17,7 @@ const scienceQuestions = {
             id: "science_animal_001",
             theme: "animal",
             question: "这是什么动物？",
-            hint: "它被称为"森林之王"",
+            hint: "它被称为「森林之王」",
             image: "🦁",
             options: [
                 { id: "A", text: "老虎", emoji: "🐯" },
@@ -206,7 +206,7 @@ const scienceQuestions = {
                 { id: "D", text: "果实", emoji: "🍎" }
             ],
             answer: "A",
-            explanation: "植物的根藏在土壤里，负责吸收水分和养分。根就像植物的"嘴巴"，把营养送到全身。",
+            explanation: "植物的根藏在土壤里，负责吸收水分和养分。根就像植物的「嘴巴」，把营养送到全身。",
             difficulty: 1
         },
         {
@@ -302,7 +302,7 @@ const scienceQuestions = {
                 { id: "D", text: "山顶", emoji: "⛰️" }
             ],
             answer: "A",
-            explanation: "荷花生长在池塘或湖泊的水中，根扎在泥土里。"出淤泥而不染"说的就是荷花虽然生在泥里，但花朵却很干净美丽。",
+            explanation: "荷花生长在池塘或湖泊的水中，根扎在泥土里。「出淤泥而不染」说的就是荷花虽然生在泥里，但花朵却很干净美丽。",
             difficulty: 1
         },
         {
