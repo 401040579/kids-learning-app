@@ -1660,6 +1660,7 @@ let sleepMusicPlaying = false;
 let sleepTimerInterval = null;
 let sleepTimerSeconds = 0;
 let sleepTimerMinutes = 15; // 默认15分钟
+let sleepTimerEndTime = null; // 定时器结束时间戳（用于后台恢复计算）
 let currentSleepMusicIndex = -1;
 
 // 睡眠音乐列表
@@ -1736,6 +1737,9 @@ function initSleepMusic() {
 
   // 设置Media Session（锁屏控制）
   setupMediaSession();
+
+  // 监听页面可见性变化（处理后台恢复时同步状态）
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 }
 
 // 渲染音乐列表
@@ -1810,9 +1814,14 @@ function playSleepMusic() {
       startDiscAnimation();
       renderSleepMusicList();
 
-      // 启动定时器
+      // 启动或恢复定时器
       if (sleepTimerMinutes > 0) {
-        startSleepTimer();
+        // 如果有剩余时间，则从剩余时间继续；否则重新开始
+        if (sleepTimerSeconds > 0) {
+          resumeSleepTimer();
+        } else {
+          startSleepTimer();
+        }
       }
 
       // 更新Media Session
@@ -1835,10 +1844,14 @@ function pauseSleepMusic() {
   stopDiscAnimation();
   renderSleepMusicList();
 
-  // 暂停定时器但不重置
+  // 暂停定时器但保存剩余时间（用于恢复播放时继续）
   if (sleepTimerInterval) {
     clearInterval(sleepTimerInterval);
     sleepTimerInterval = null;
+    // 更新剩余秒数（基于时间戳）
+    if (sleepTimerEndTime) {
+      sleepTimerSeconds = Math.max(0, Math.ceil((sleepTimerEndTime - Date.now()) / 1000));
+    }
   }
 
   updateMediaSessionState();
@@ -1940,16 +1953,20 @@ function startSleepTimer() {
 
   // 如果是不限时，则不启动
   if (sleepTimerMinutes === 0) {
+    sleepTimerEndTime = null;
     updateTimerDisplay();
     return;
   }
 
-  // 初始化秒数
+  // 使用时间戳计算结束时间（解决后台节流问题）
+  sleepTimerEndTime = Date.now() + sleepTimerMinutes * 60 * 1000;
   sleepTimerSeconds = sleepTimerMinutes * 60;
   updateTimerDisplay();
 
   sleepTimerInterval = setInterval(() => {
-    sleepTimerSeconds--;
+    // 基于时间戳计算剩余秒数（后台恢复时也能准确计算）
+    const remaining = Math.max(0, Math.ceil((sleepTimerEndTime - Date.now()) / 1000));
+    sleepTimerSeconds = remaining;
     updateTimerDisplay();
 
     // 时间到
@@ -1966,7 +1983,37 @@ function stopSleepTimer() {
     sleepTimerInterval = null;
   }
   sleepTimerSeconds = 0;
+  sleepTimerEndTime = null;
   updateTimerDisplay();
+}
+
+// 恢复定时器（从剩余时间继续）
+function resumeSleepTimer() {
+  // 先停止之前的定时器
+  if (sleepTimerInterval) {
+    clearInterval(sleepTimerInterval);
+  }
+
+  // 如果没有剩余时间，不启动
+  if (sleepTimerSeconds <= 0) {
+    return;
+  }
+
+  // 根据剩余秒数计算新的结束时间
+  sleepTimerEndTime = Date.now() + sleepTimerSeconds * 1000;
+  updateTimerDisplay();
+
+  sleepTimerInterval = setInterval(() => {
+    // 基于时间戳计算剩余秒数
+    const remaining = Math.max(0, Math.ceil((sleepTimerEndTime - Date.now()) / 1000));
+    sleepTimerSeconds = remaining;
+    updateTimerDisplay();
+
+    // 时间到
+    if (sleepTimerSeconds <= 0) {
+      stopSleepMusicWithFadeOut();
+    }
+  }, 1000);
 }
 
 // 更新定时器显示
@@ -2019,6 +2066,43 @@ function stopSleepMusicWithFadeOut() {
       updateMediaSessionState();
     }
   }, fadeOutInterval);
+}
+
+// 处理页面可见性变化（后台恢复时同步状态）
+function handleVisibilityChange() {
+  if (document.hidden) {
+    // 页面进入后台 - 不做特殊处理，让音乐继续播放
+    return;
+  }
+
+  // 页面恢复可见时，同步定时器状态
+  if (sleepMusicPlaying && sleepTimerEndTime) {
+    const remaining = Math.max(0, Math.ceil((sleepTimerEndTime - Date.now()) / 1000));
+    sleepTimerSeconds = remaining;
+
+    // 如果定时器已到期，执行停止
+    if (remaining <= 0) {
+      stopSleepMusicWithFadeOut();
+    } else {
+      updateTimerDisplay();
+    }
+  }
+
+  // 同步 UI 状态（确保播放状态与实际音频状态一致）
+  if (sleepAudio) {
+    const actuallyPlaying = !sleepAudio.paused;
+    if (actuallyPlaying !== sleepMusicPlaying) {
+      sleepMusicPlaying = actuallyPlaying;
+      updatePlayButtonUI();
+      if (actuallyPlaying) {
+        startDiscAnimation();
+      } else {
+        stopDiscAnimation();
+      }
+      renderSleepMusicList();
+      updateMediaSessionState();
+    }
+  }
 }
 
 // 设置Media Session（锁屏控制）
