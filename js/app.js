@@ -191,13 +191,17 @@ function playVideo(name, videoId) {
   // 隐藏遮罩
   overlay.classList.add('hidden');
 
-  // 创建 YouTube iframe (使用 nocookie 域名，隐藏相关视频)
+  // 获取当前页面的 origin（用于本地开发兼容）
+  const currentOrigin = window.location.origin || 'https://www.youtube.com';
+
+  // 创建 YouTube iframe (使用标准域名，增加兼容性)
   player.innerHTML = `
     <iframe
       id="yt-player"
-      src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&rel=0&modestbranding=1&playsinline=1&autoplay=1"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen>
+      src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=1&fs=1"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+      allowfullscreen
+      frameborder="0">
     </iframe>
   `;
 
