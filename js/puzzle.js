@@ -10,6 +10,8 @@ let puzzleSlots = [];
 let puzzleStartTime = null;
 let puzzleTimerInterval = null;
 let puzzleCompleted = false;
+let currentImageUrl = null; // 当前使用的图片URL
+let isCustomImage = false;  // 是否是自定义图片
 
 // 触摸拖拽相关
 let draggedPiece = null;
@@ -19,11 +21,15 @@ let touchStartY = 0;
 let originalLeft = 0;
 let originalTop = 0;
 
+// 拼图尺寸配置
+const PUZZLE_SIZE = 280; // 拼图板尺寸
+
 // 初始化拼图模块
 function initPuzzle() {
   renderDifficultySelector();
   renderThemeSelector();
   renderImageSelector();
+  setupImageSearch();
 }
 
 // ========== 选择器渲染 ==========
@@ -50,19 +56,46 @@ function renderThemeSelector() {
   if (!container) return;
 
   const themes = getPuzzleThemes();
+  // 添加"自定义搜索"选项
+  const customTheme = { id: 'custom', name: '搜索图片', icon: '🔍' };
+
   container.innerHTML = themes.map(theme => `
     <button class="theme-btn ${theme.id === currentPuzzleTheme ? 'active' : ''}"
             onclick="selectPuzzleTheme('${theme.id}')">
       <span class="theme-icon">${theme.icon}</span>
       <span class="theme-name">${theme.name}</span>
     </button>
-  `).join('');
+  `).join('') + `
+    <button class="theme-btn ${currentPuzzleTheme === 'custom' ? 'active' : ''}"
+            onclick="selectPuzzleTheme('custom')">
+      <span class="theme-icon">${customTheme.icon}</span>
+      <span class="theme-name">${customTheme.name}</span>
+    </button>
+  `;
 }
 
 // 渲染图片选择器
 function renderImageSelector() {
   const container = document.getElementById('puzzle-image-selector');
   if (!container) return;
+
+  // 如果是自定义搜索模式
+  if (currentPuzzleTheme === 'custom') {
+    container.innerHTML = `
+      <div class="custom-image-search">
+        <div class="search-input-wrapper">
+          <input type="text" id="image-search-input" class="image-search-input"
+                 placeholder="输入关键词搜索图片（如：cat, dog, flower）"
+                 onkeypress="handleSearchKeyPress(event)">
+          <button class="search-btn" onclick="searchImages()">🔍 搜索</button>
+        </div>
+        <div class="search-results" id="search-results">
+          <p class="search-hint">输入英文关键词搜索精美图片</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   const theme = getPuzzleTheme(currentPuzzleTheme);
   if (!theme) return;
@@ -74,12 +107,118 @@ function renderImageSelector() {
 
   container.innerHTML = theme.images.map(image => `
     <button class="image-btn ${image.id === currentPuzzleImage.id ? 'active' : ''}"
-            style="background-color: ${image.backgroundColor}"
-            onclick="selectPuzzleImage('${image.id}')">
-      <span class="image-emoji">${image.emoji}</span>
-      <span class="image-name">${image.name}</span>
+            onclick="selectPuzzleImage('${image.id}')"
+            style="background-image: url('${image.imageUrl}'); background-size: cover; background-position: center;">
+      <span class="image-name-overlay">${image.name}</span>
     </button>
   `).join('');
+}
+
+// 设置图片搜索
+function setupImageSearch() {
+  // 搜索功能已在renderImageSelector中实现
+}
+
+// 处理搜索回车
+function handleSearchKeyPress(event) {
+  if (event.key === 'Enter') {
+    searchImages();
+  }
+}
+
+// 搜索图片 - 使用Lorem Picsum（支持随机种子）
+function searchImages() {
+  const input = document.getElementById('image-search-input');
+  const keyword = input.value.trim();
+  const resultsContainer = document.getElementById('search-results');
+
+  if (!keyword) {
+    resultsContainer.innerHTML = '<p class="search-hint">请输入搜索关键词</p>';
+    return;
+  }
+
+  resultsContainer.innerHTML = '<p class="search-loading">🔄 搜索中...</p>';
+
+  // 使用Lorem Picsum生成随机图片
+  // 每个关键词+序号组合会得到一个固定的随机图片
+  const searchResults = [];
+  const timestamp = Date.now();
+
+  for (let i = 1; i <= 6; i++) {
+    // 使用关键词和序号作为种子，确保每次搜索相同关键词得到相同图片
+    const seed = `${keyword}_${i}`;
+    searchResults.push({
+      id: `search_${seed}`,
+      name: `图片 ${i}`,
+      imageUrl: `https://picsum.photos/seed/${encodeURIComponent(seed)}/400/400`,
+      isSearch: true
+    });
+  }
+
+  // 渲染搜索结果
+  setTimeout(() => {
+    resultsContainer.innerHTML = `
+      <p class="search-result-hint">找到以下图片，点击开始拼图：</p>
+      <div class="search-results-grid">
+        ${searchResults.map(img => `
+          <button class="search-result-btn"
+                  onclick="selectSearchImage('${img.imageUrl}', '${img.name}')"
+                  style="background-image: url('${img.imageUrl}');">
+          </button>
+        `).join('')}
+      </div>
+      <p class="search-tip">💡 提示：输入不同关键词会得到不同的随机图片</p>
+    `;
+  }, 500);
+}
+
+// 选择搜索到的图片
+function selectSearchImage(imageUrl, name) {
+  isCustomImage = true;
+  currentImageUrl = imageUrl;
+  currentPuzzleImage = {
+    id: 'custom',
+    name: name,
+    imageUrl: imageUrl
+  };
+
+  RewardSystem.playSound('click');
+
+  // 预加载图片后开始游戏
+  preloadAndStartGame(imageUrl);
+}
+
+// 预加载图片
+function preloadAndStartGame(imageUrl) {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+
+  // 显示加载提示
+  const resultsContainer = document.getElementById('search-results');
+  if (resultsContainer) {
+    resultsContainer.innerHTML = '<p class="search-loading">🖼️ 加载图片中...</p>';
+  }
+
+  img.onload = () => {
+    startPuzzleGame();
+  };
+
+  img.onerror = () => {
+    // 图片加载失败，使用备用图片
+    currentImageUrl = `https://picsum.photos/400/400?random=${Date.now()}`;
+    currentPuzzleImage.imageUrl = currentImageUrl;
+    startPuzzleGame();
+  };
+
+  img.src = imageUrl;
+
+  // 超时处理
+  setTimeout(() => {
+    if (!img.complete) {
+      img.src = `https://picsum.photos/400/400?random=${Date.now()}`;
+      currentPuzzleImage.imageUrl = currentImageUrl;
+    }
+  }, 5000);
 }
 
 // ========== 选择逻辑 ==========
@@ -97,7 +236,8 @@ function selectDifficulty(difficultyId) {
 // 选择主题
 function selectPuzzleTheme(themeId) {
   currentPuzzleTheme = themeId;
-  currentPuzzleImage = null; // 重置图片选择
+  currentPuzzleImage = null;
+  isCustomImage = themeId === 'custom';
 
   renderThemeSelector();
   renderImageSelector();
@@ -108,13 +248,15 @@ function selectPuzzleTheme(themeId) {
 function selectPuzzleImage(imageId) {
   const theme = getPuzzleTheme(currentPuzzleTheme);
   currentPuzzleImage = theme.images.find(img => img.id === imageId);
+  currentImageUrl = currentPuzzleImage.imageUrl;
+  isCustomImage = false;
 
   renderImageSelector();
   RewardSystem.playSound('click');
 
-  // 短延迟后开始游戏
+  // 预加载图片后开始游戏
   setTimeout(() => {
-    startPuzzleGame();
+    preloadAndStartGame(currentImageUrl);
   }, 300);
 }
 
@@ -132,9 +274,14 @@ function startPuzzleGame() {
   const difficulty = getPuzzleDifficulty(currentPuzzleDifficulty);
   puzzleGrid = difficulty.grid;
   puzzleCompleted = false;
+  currentImageUrl = currentPuzzleImage.imageUrl;
 
-  // 更新参考图
-  document.getElementById('puzzle-reference-image').textContent = currentPuzzleImage.emoji;
+  // 更新参考图 - 使用真实图片
+  const refImage = document.getElementById('puzzle-reference-image');
+  refImage.innerHTML = '';
+  refImage.style.backgroundImage = `url('${currentImageUrl}')`;
+  refImage.style.backgroundSize = 'cover';
+  refImage.style.backgroundPosition = 'center';
 
   // 生成拼图
   generatePuzzle();
@@ -150,11 +297,15 @@ function generatePuzzle() {
   // 创建碎片数据
   puzzlePieces = [];
   for (let i = 0; i < totalPieces; i++) {
+    const row = Math.floor(i / puzzleGrid);
+    const col = i % puzzleGrid;
     puzzlePieces.push({
       id: i,
       correctPosition: i,
       currentPosition: null,
-      placed: false
+      placed: false,
+      row: row,
+      col: col
     });
   }
 
@@ -199,31 +350,49 @@ function renderPuzzleBoard() {
   `).join('');
 }
 
-// 渲染碎片区
+// 渲染碎片区 - 使用图片切割
 function renderPuzzlePieces(pieces) {
   const container = document.getElementById('puzzle-pieces');
   if (!container) return;
 
-  container.innerHTML = pieces.filter(p => !p.placed).map(piece => `
-    <div class="puzzle-piece"
-         data-piece-id="${piece.id}"
-         draggable="true"
-         ondragstart="handleDragStart(event, ${piece.id})"
-         ondragend="handleDragEnd(event)"
-         style="background-color: ${currentPuzzleImage.backgroundColor}">
-      ${getPieceContent(piece.id)}
-    </div>
-  `).join('');
+  const pieceSize = getPieceDisplaySize();
+
+  container.innerHTML = pieces.filter(p => !p.placed).map(piece => {
+    const bgPosition = calculateBackgroundPosition(piece.row, piece.col);
+    return `
+      <div class="puzzle-piece image-piece"
+           data-piece-id="${piece.id}"
+           draggable="true"
+           ondragstart="handleDragStart(event, ${piece.id})"
+           ondragend="handleDragEnd(event)"
+           style="
+             background-image: url('${currentImageUrl}');
+             background-size: ${puzzleGrid * 100}% ${puzzleGrid * 100}%;
+             background-position: ${bgPosition};
+             width: ${pieceSize}px;
+             height: ${pieceSize}px;
+           ">
+      </div>
+    `;
+  }).join('');
 
   // 添加触摸事件
   setupTouchEvents();
 }
 
-// 获取碎片内容（根据位置显示emoji的一部分视觉效果）
-function getPieceContent(pieceId) {
-  // 对于简单实现，每个碎片都显示完整emoji
-  // 实际可以用CSS clip-path实现真正的分割效果
-  return currentPuzzleImage.emoji;
+// 计算碎片的背景位置
+function calculateBackgroundPosition(row, col) {
+  const percentX = (col / (puzzleGrid - 1)) * 100 || 0;
+  const percentY = (row / (puzzleGrid - 1)) * 100 || 0;
+  return `${percentX}% ${percentY}%`;
+}
+
+// 获取碎片显示尺寸
+function getPieceDisplaySize() {
+  // 根据难度返回合适的碎片显示尺寸
+  if (puzzleGrid === 2) return 70;
+  if (puzzleGrid === 3) return 60;
+  return 50;
 }
 
 // ========== 桌面拖拽（Drag and Drop API）==========
@@ -384,12 +553,18 @@ function placePiece(pieceId, slotId) {
     slot.filled = true;
     slot.pieceId = pieceId;
 
-    // 更新UI
+    // 更新UI - 显示图片碎片
     const slotElement = document.querySelector(`.puzzle-slot[data-slot-id="${slotId}"]`);
     slotElement.classList.add('filled', 'correct');
+
+    const bgPosition = calculateBackgroundPosition(piece.row, piece.col);
     slotElement.innerHTML = `
-      <div class="placed-piece" style="background-color: ${currentPuzzleImage.backgroundColor}">
-        ${currentPuzzleImage.emoji}
+      <div class="placed-piece image-piece"
+           style="
+             background-image: url('${currentImageUrl}');
+             background-size: ${puzzleGrid * 100}% ${puzzleGrid * 100}%;
+             background-position: ${bgPosition};
+           ">
       </div>
     `;
 
@@ -439,8 +614,17 @@ function showPuzzleComplete() {
   const timeString = document.getElementById('puzzle-time').textContent;
   const points = difficulty.points;
 
-  // 更新完成弹窗内容
-  document.getElementById('puzzle-complete-image').textContent = currentPuzzleImage.emoji;
+  // 更新完成弹窗内容 - 使用图片
+  const completeImage = document.getElementById('puzzle-complete-image');
+  completeImage.innerHTML = '';
+  completeImage.style.backgroundImage = `url('${currentImageUrl}')`;
+  completeImage.style.backgroundSize = 'cover';
+  completeImage.style.backgroundPosition = 'center';
+  completeImage.style.width = '120px';
+  completeImage.style.height = '120px';
+  completeImage.style.borderRadius = '16px';
+  completeImage.style.margin = '0 auto 20px';
+
   document.getElementById('puzzle-complete-time').textContent = timeString;
   document.getElementById('puzzle-complete-points').textContent = '+' + points;
 
@@ -490,7 +674,16 @@ function stopPuzzleTimer() {
 
 // 显示提示（原图）
 function showPuzzleHint() {
-  document.getElementById('puzzle-hint-image').textContent = currentPuzzleImage.emoji;
+  const hintImage = document.getElementById('puzzle-hint-image');
+  hintImage.innerHTML = '';
+  hintImage.style.backgroundImage = `url('${currentImageUrl}')`;
+  hintImage.style.backgroundSize = 'cover';
+  hintImage.style.backgroundPosition = 'center';
+  hintImage.style.width = '200px';
+  hintImage.style.height = '200px';
+  hintImage.style.borderRadius = '16px';
+  hintImage.style.margin = '0 auto';
+
   document.getElementById('puzzle-hint-name').textContent = currentPuzzleImage.name;
   document.getElementById('puzzle-hint-modal').classList.remove('hidden');
   RewardSystem.playSound('click');
