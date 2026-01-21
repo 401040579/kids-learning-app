@@ -242,6 +242,12 @@
             <div class="card-desc">认字和拼音</div>
           </div>
 
+          <div class="menu-card card-science" onclick="navigateTo('science')">
+            <div class="card-icon">🔬</div>
+            <div class="card-title">科学探索</div>
+            <div class="card-desc">发现神奇世界</div>
+          </div>
+
           <div class="menu-card card-timer" onclick="navigateTo('timer')">
             <div class="card-icon">⏰</div>
             <div class="card-title">玩耍计时</div>
@@ -424,6 +430,85 @@
           </div>
         </div>
       </section>
+
+      <!-- 科学探索页 -->
+      <section id="page-science" class="page">
+        <div class="page-header">
+          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
+          <h2>🔬 科学探索</h2>
+        </div>
+
+        <!-- 主题选择界面 -->
+        <div class="science-themes" id="science-themes">
+          <p class="science-intro">选择你想探索的主题 🎯</p>
+          <div class="theme-list" id="theme-list">
+            <!-- 动态生成主题卡片 -->
+          </div>
+        </div>
+
+        <!-- 答题界面 -->
+        <div class="science-quiz hidden" id="science-quiz">
+          <!-- 进度指示 -->
+          <div class="quiz-progress">
+            <span class="quiz-progress-text">第 <span id="science-current">1</span>/<span id="science-total">10</span> 题</span>
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="science-progress-fill"></div>
+            </div>
+          </div>
+
+          <!-- 题目区域 -->
+          <div class="quiz-question-area">
+            <div class="quiz-image" id="science-image">🦁</div>
+            <div class="quiz-question-box">
+              <h3 class="quiz-question" id="science-question">这是什么动物？</h3>
+              <p class="quiz-hint" id="science-hint">它被称为"森林之王"</p>
+            </div>
+          </div>
+
+          <!-- 选项区域 -->
+          <div class="quiz-options" id="science-options">
+            <!-- 动态生成选项 -->
+          </div>
+
+          <!-- 返回主题按钮 -->
+          <button class="btn-back-themes" onclick="backToThemes()">← 返回主题选择</button>
+        </div>
+      </section>
+
+      <!-- 科学答题反馈弹窗 -->
+      <div id="science-feedback-modal" class="science-feedback-modal hidden">
+        <div class="science-feedback-content">
+          <div class="feedback-icon" id="science-feedback-icon">⭐</div>
+          <h2 class="feedback-title" id="science-feedback-title">答对啦！</h2>
+          <div class="feedback-answer" id="science-feedback-answer">🦁 狮子</div>
+          <div class="feedback-knowledge">
+            <h4 id="science-knowledge-title">💡 你知道吗？</h4>
+            <p id="science-knowledge-text">狮子是唯一群居的猫科动物哦！</p>
+          </div>
+          <div class="feedback-points" id="science-feedback-points">+15 积分 🎉</div>
+          <button class="btn-continue-science" id="btn-continue-science" onclick="continueScience()">继续探索 →</button>
+        </div>
+      </div>
+
+      <!-- 科学主题完成弹窗 -->
+      <div id="science-complete-modal" class="science-complete-modal hidden">
+        <div class="science-complete-content">
+          <div class="complete-stars">🌟⭐🌟</div>
+          <h2 class="complete-title">主题完成！</h2>
+          <div class="complete-stats">
+            <div class="complete-stat">
+              <span class="stat-num" id="science-correct-count">8</span>
+              <span class="stat-label">答对</span>
+            </div>
+            <div class="complete-stat">
+              <span class="stat-num" id="science-total-count">10</span>
+              <span class="stat-label">总题数</span>
+            </div>
+          </div>
+          <div class="complete-bonus" id="science-bonus">+50 积分奖励！🎊</div>
+          <button class="btn-back-themes-complete" onclick="backToThemesFromComplete()">选择其他主题</button>
+        </div>
+      </div>
 
       <!-- 倒计时页面 -->
       <section id="page-timer" class="page">
@@ -731,6 +816,7 @@
 
   <script src="js/rewards.js"></script>
   <script src="js/videos.js"></script>
+  <script src="js/scienceData.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

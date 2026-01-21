@@ -95,7 +95,8 @@ const RewardSystem = {
     mathCorrect: 0,
     mathStreak: 0,
     englishCorrect: 0,
-    chineseCorrect: 0
+    chineseCorrect: 0,
+    scienceCorrect: 0
   },
 
   // 初始化
@@ -174,6 +175,12 @@ const RewardSystem = {
   chineseCorrect() {
     this.data.chineseCorrect++;
     this.addPoints(15, '汉字认对了!');
+  },
+
+  // 科学答对
+  scienceCorrect() {
+    this.data.scienceCorrect++;
+    this.addPoints(15, '科学题答对了!');
   },
 
   // 显示奖励弹窗
@@ -290,7 +297,8 @@ const RewardSystem = {
       mathCorrect: 0,
       mathStreak: 0,
       englishCorrect: 0,
-      chineseCorrect: 0
+      chineseCorrect: 0,
+      scienceCorrect: 0
     };
     this.saveData();
     this.updateDisplay();

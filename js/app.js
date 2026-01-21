@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMath();
   initEnglish();
   initChinese();
+  initScience();
 });
 
 // ========== 页面导航 ==========
@@ -41,6 +42,7 @@ function navigateTo(page) {
   if (page === 'english') generateEnglishQuestion();
   if (page === 'chinese') generateChineseQuestion();
   if (page === 'calendar') initCalendar();
+  if (page === 'science') showScienceThemes();
 }
 
 function getNavIndex(page) {
@@ -472,6 +474,304 @@ function checkChineseAnswer(answer, btn) {
       btn.classList.remove('wrong');
     }, 500);
   }
+}
+
+// ========== 科学探索模块 ==========
+let currentScienceTheme = null;
+let currentScienceQuestions = [];
+let currentScienceIndex = 0;
+let currentScienceQuestion = null;
+let scienceCorrectCount = 0;
+
+// 初始化科学模块
+function initScience() {
+  // 从 localStorage 加载进度
+  loadScienceProgress();
+}
+
+// 加载科学进度
+function loadScienceProgress() {
+  const saved = localStorage.getItem('kidsLearningData');
+  if (saved) {
+    const data = JSON.parse(saved);
+    if (!data.scienceProgress) {
+      data.scienceProgress = {
+        animal: { completed: [], correct: 0, total: 0 },
+        plant: { completed: [], correct: 0, total: 0 },
+        nature: { completed: [], correct: 0, total: 0 }
+      };
+      data.scienceCorrect = 0;
+      localStorage.setItem('kidsLearningData', JSON.stringify(data));
+    }
+  }
+}
+
+// 获取科学进度
+function getScienceProgress() {
+  const saved = localStorage.getItem('kidsLearningData');
+  if (saved) {
+    const data = JSON.parse(saved);
+    return data.scienceProgress || {
+      animal: { completed: [], correct: 0, total: 0 },
+      plant: { completed: [], correct: 0, total: 0 },
+      nature: { completed: [], correct: 0, total: 0 }
+    };
+  }
+  return {
+    animal: { completed: [], correct: 0, total: 0 },
+    plant: { completed: [], correct: 0, total: 0 },
+    nature: { completed: [], correct: 0, total: 0 }
+  };
+}
+
+// 保存科学进度
+function saveScienceProgress(theme, questionId, isCorrect) {
+  const saved = localStorage.getItem('kidsLearningData');
+  let data = saved ? JSON.parse(saved) : {};
+
+  if (!data.scienceProgress) {
+    data.scienceProgress = {
+      animal: { completed: [], correct: 0, total: 0 },
+      plant: { completed: [], correct: 0, total: 0 },
+      nature: { completed: [], correct: 0, total: 0 }
+    };
+    data.scienceCorrect = 0;
+  }
+
+  const themeProgress = data.scienceProgress[theme];
+  if (!themeProgress.completed.includes(questionId)) {
+    themeProgress.completed.push(questionId);
+  }
+  themeProgress.total++;
+  if (isCorrect) {
+    themeProgress.correct++;
+    data.scienceCorrect = (data.scienceCorrect || 0) + 1;
+  }
+
+  localStorage.setItem('kidsLearningData', JSON.stringify(data));
+}
+
+// 显示主题选择界面
+function showScienceThemes() {
+  const themesEl = document.getElementById('science-themes');
+  const quizEl = document.getElementById('science-quiz');
+  const themeListEl = document.getElementById('theme-list');
+
+  themesEl.classList.remove('hidden');
+  quizEl.classList.add('hidden');
+
+  const progress = getScienceProgress();
+  const themes = getScienceThemes();
+
+  themeListEl.innerHTML = themes.map(theme => {
+    const themeProgress = progress[theme.id] || { completed: [], correct: 0, total: 0 };
+    const completedCount = themeProgress.completed.length;
+    const progressPercent = (completedCount / theme.totalQuestions) * 100;
+
+    return `
+      <div class="theme-card ${theme.id}" onclick="selectScienceTheme('${theme.id}')">
+        <div class="theme-icon">${theme.icon}</div>
+        <div class="theme-info">
+          <div class="theme-name">${theme.name}</div>
+          <div class="theme-desc">${theme.description}</div>
+          <div class="theme-progress-bar">
+            <div class="theme-progress-fill" style="width: ${progressPercent}%"></div>
+          </div>
+          <div class="theme-progress-text">${completedCount}/${theme.totalQuestions}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// 选择主题开始答题
+function selectScienceTheme(themeId) {
+  currentScienceTheme = themeId;
+  currentScienceQuestions = getScienceQuestions(themeId);
+  currentScienceIndex = 0;
+  scienceCorrectCount = 0;
+
+  // 打乱题目顺序
+  shuffleArray(currentScienceQuestions);
+
+  // 切换到答题界面
+  document.getElementById('science-themes').classList.add('hidden');
+  document.getElementById('science-quiz').classList.remove('hidden');
+
+  // 更新总题数
+  document.getElementById('science-total').textContent = currentScienceQuestions.length;
+
+  // 显示第一题
+  showScienceQuestion();
+
+  RewardSystem.playSound('click');
+}
+
+// 显示当前题目
+function showScienceQuestion() {
+  if (currentScienceIndex >= currentScienceQuestions.length) {
+    // 答完所有题目，显示完成弹窗
+    showScienceComplete();
+    return;
+  }
+
+  currentScienceQuestion = currentScienceQuestions[currentScienceIndex];
+
+  // 更新进度
+  document.getElementById('science-current').textContent = currentScienceIndex + 1;
+  const progressPercent = ((currentScienceIndex) / currentScienceQuestions.length) * 100;
+  document.getElementById('science-progress-fill').style.width = progressPercent + '%';
+
+  // 更新题目内容
+  document.getElementById('science-image').textContent = currentScienceQuestion.image;
+  document.getElementById('science-question').textContent = currentScienceQuestion.question;
+  document.getElementById('science-hint').textContent = currentScienceQuestion.hint;
+
+  // 生成选项
+  const optionsEl = document.getElementById('science-options');
+  const options = [...currentScienceQuestion.options];
+  shuffleArray(options);
+
+  optionsEl.innerHTML = options.map(opt => `
+    <button class="quiz-option-btn" onclick="checkScienceAnswer('${opt.id}', this)">
+      <span class="option-emoji">${opt.emoji}</span>
+      <span class="option-text">${opt.text}</span>
+    </button>
+  `).join('');
+}
+
+// 检查答案
+function checkScienceAnswer(answerId, btn) {
+  const isCorrect = answerId === currentScienceQuestion.answer;
+  const correctOption = currentScienceQuestion.options.find(opt => opt.id === currentScienceQuestion.answer);
+
+  // 禁用所有按钮
+  document.querySelectorAll('.quiz-option-btn').forEach(b => {
+    b.disabled = true;
+    b.style.pointerEvents = 'none';
+  });
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    scienceCorrectCount++;
+    RewardSystem.playSound('correct');
+  } else {
+    btn.classList.add('wrong');
+    // 显示正确答案
+    document.querySelectorAll('.quiz-option-btn').forEach(b => {
+      if (b.querySelector('.option-text').textContent === correctOption.text) {
+        b.classList.add('correct');
+      }
+    });
+    RewardSystem.playSound('wrong');
+  }
+
+  // 保存进度
+  saveScienceProgress(currentScienceTheme, currentScienceQuestion.id, isCorrect);
+
+  // 延迟显示反馈弹窗
+  setTimeout(() => {
+    showScienceFeedback(isCorrect, correctOption);
+  }, 800);
+}
+
+// 显示答题反馈
+function showScienceFeedback(isCorrect, correctOption) {
+  const modal = document.getElementById('science-feedback-modal');
+  const iconEl = document.getElementById('science-feedback-icon');
+  const titleEl = document.getElementById('science-feedback-title');
+  const answerEl = document.getElementById('science-feedback-answer');
+  const knowledgeTitleEl = document.getElementById('science-knowledge-title');
+  const knowledgeTextEl = document.getElementById('science-knowledge-text');
+  const pointsEl = document.getElementById('science-feedback-points');
+  const btnEl = document.getElementById('btn-continue-science');
+
+  if (isCorrect) {
+    iconEl.textContent = '⭐';
+    iconEl.className = 'feedback-icon correct';
+    titleEl.textContent = '答对啦！';
+    titleEl.className = 'feedback-title correct';
+    knowledgeTitleEl.textContent = '💡 你知道吗？';
+    pointsEl.textContent = '+15 积分 🎉';
+    pointsEl.classList.remove('hidden');
+
+    // 添加积分
+    RewardSystem.addPoints(15, '科学题答对了!');
+  } else {
+    iconEl.textContent = '😊';
+    iconEl.className = 'feedback-icon wrong';
+    titleEl.textContent = '没关系！';
+    titleEl.className = 'feedback-title wrong';
+    knowledgeTitleEl.textContent = '📖 小知识';
+    pointsEl.classList.add('hidden');
+  }
+
+  answerEl.textContent = `${correctOption.emoji} ${correctOption.text}`;
+  knowledgeTextEl.textContent = currentScienceQuestion.explanation;
+
+  // 更新按钮文字
+  const isLastQuestion = currentScienceIndex >= currentScienceQuestions.length - 1;
+  btnEl.textContent = isLastQuestion ? '查看结果 →' : '继续探索 →';
+
+  modal.classList.remove('hidden');
+}
+
+// 继续下一题
+function continueScience() {
+  document.getElementById('science-feedback-modal').classList.add('hidden');
+
+  currentScienceIndex++;
+
+  if (currentScienceIndex >= currentScienceQuestions.length) {
+    showScienceComplete();
+  } else {
+    showScienceQuestion();
+  }
+}
+
+// 显示主题完成弹窗
+function showScienceComplete() {
+  const modal = document.getElementById('science-complete-modal');
+  const correctCountEl = document.getElementById('science-correct-count');
+  const totalCountEl = document.getElementById('science-total-count');
+  const bonusEl = document.getElementById('science-bonus');
+
+  correctCountEl.textContent = scienceCorrectCount;
+  totalCountEl.textContent = currentScienceQuestions.length;
+
+  // 检查是否全部答对
+  const allCorrect = scienceCorrectCount === currentScienceQuestions.length;
+
+  // 完成主题奖励
+  const bonusPoints = allCorrect ? 100 : 50;
+  bonusEl.textContent = allCorrect ? '+100 积分奖励！全对太棒了！🎊' : '+50 积分奖励！🎊';
+
+  // 添加奖励积分
+  const saved = localStorage.getItem('kidsLearningData');
+  let data = saved ? JSON.parse(saved) : {};
+  data.totalScore = (data.totalScore || 0) + bonusPoints;
+  data.tasksDone = (data.tasksDone || 0) + 1;
+  localStorage.setItem('kidsLearningData', JSON.stringify(data));
+
+  // 更新显示
+  document.getElementById('total-score').textContent = data.totalScore;
+
+  // 播放完成音效和粒子效果
+  RewardSystem.playSound('complete');
+  RewardSystem.createParticles();
+
+  modal.classList.remove('hidden');
+}
+
+// 返回主题选择（从答题界面）
+function backToThemes() {
+  showScienceThemes();
+}
+
+// 返回主题选择（从完成弹窗）
+function backToThemesFromComplete() {
+  document.getElementById('science-complete-modal').classList.add('hidden');
+  showScienceThemes();
 }
 
 // ========== 工具函数 ==========
