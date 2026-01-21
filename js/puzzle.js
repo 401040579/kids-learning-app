@@ -126,7 +126,7 @@ function handleSearchKeyPress(event) {
   }
 }
 
-// 搜索图片 - 使用Lorem Picsum（支持随机种子）
+// 搜索图片 - 使用LoremFlickr（支持关键词搜索）
 function searchImages() {
   const input = document.getElementById('image-search-input');
   const keyword = input.value.trim();
@@ -139,18 +139,16 @@ function searchImages() {
 
   resultsContainer.innerHTML = '<p class="search-loading">🔄 搜索中...</p>';
 
-  // 使用Lorem Picsum生成随机图片
-  // 每个关键词+序号组合会得到一个固定的随机图片
+  // 使用LoremFlickr - 支持关键词搜索的免费图片服务
+  // lock参数确保每次相同关键词返回相同图片
   const searchResults = [];
-  const timestamp = Date.now();
+  const encodedKeyword = encodeURIComponent(keyword);
 
   for (let i = 1; i <= 6; i++) {
-    // 使用关键词和序号作为种子，确保每次搜索相同关键词得到相同图片
-    const seed = `${keyword}_${i}`;
     searchResults.push({
-      id: `search_${seed}`,
-      name: `图片 ${i}`,
-      imageUrl: `https://picsum.photos/seed/${encodeURIComponent(seed)}/400/400`,
+      id: `search_${keyword}_${i}`,
+      name: `${keyword} ${i}`,
+      imageUrl: `https://loremflickr.com/400/400/${encodedKeyword}?lock=${i}`,
       isSearch: true
     });
   }
@@ -158,7 +156,7 @@ function searchImages() {
   // 渲染搜索结果
   setTimeout(() => {
     resultsContainer.innerHTML = `
-      <p class="search-result-hint">找到以下图片，点击开始拼图：</p>
+      <p class="search-result-hint">找到「${keyword}」相关图片，点击开始拼图：</p>
       <div class="search-results-grid">
         ${searchResults.map(img => `
           <button class="search-result-btn"
@@ -167,7 +165,7 @@ function searchImages() {
           </button>
         `).join('')}
       </div>
-      <p class="search-tip">💡 提示：输入不同关键词会得到不同的随机图片</p>
+      <p class="search-tip">💡 提示：输入英文关键词效果更好，如 cat, dog, car, flower</p>
     `;
   }, 500);
 }
