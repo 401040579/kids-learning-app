@@ -44,6 +44,7 @@ function navigateTo(page) {
   if (page === 'calendar') initCalendar();
   if (page === 'science') showScienceThemes();
   if (page === 'sleep-music') initSleepMusic();
+  if (page === 'puzzle') initPuzzle();
 }
 
 function getNavIndex(page) {

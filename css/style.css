@@ -3318,3 +3318,611 @@ body {
     min-width: 70px;
   }
 }
+
+/* ========== 拼图游戏模块 ========== */
+
+/* 拼图卡片渐变色 */
+.card-puzzle::before { background: linear-gradient(90deg, #9B59B6, #E91E63); }
+
+/* 拼图选择界面 */
+.puzzle-select {
+  padding: 10px 0;
+}
+
+.puzzle-section {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+.puzzle-section-title {
+  color: var(--text-dark);
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* 难度选择器 */
+.difficulty-selector {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.difficulty-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 3px solid #eee;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 90px;
+}
+
+.difficulty-btn:active {
+  transform: scale(0.95);
+}
+
+.difficulty-btn.active {
+  border-color: #9B59B6;
+  background: linear-gradient(135deg, #F3E5F5, #FCE4EC);
+}
+
+.difficulty-icon {
+  font-size: 1.2rem;
+}
+
+.difficulty-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.difficulty-pieces {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+/* 主题选择器 */
+.theme-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.theme-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 2px solid #eee;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 70px;
+}
+
+.theme-btn:active {
+  transform: scale(0.95);
+}
+
+.theme-btn.active {
+  border-color: #E91E63;
+  background: linear-gradient(135deg, #FCE4EC, #F8BBD9);
+}
+
+.theme-icon {
+  font-size: 1.8rem;
+}
+
+.theme-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* 图片选择器 */
+.image-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.image-btn {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 3px solid #eee;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.image-btn:active {
+  transform: scale(0.95);
+}
+
+.image-btn.active {
+  border-color: #9B59B6;
+  box-shadow: 0 6px 20px rgba(155, 89, 182, 0.3);
+}
+
+.image-emoji {
+  font-size: 2.5rem;
+}
+
+.image-name {
+  font-size: 0.8rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+/* 拼图游戏界面 */
+.puzzle-game {
+  padding: 10px 0;
+}
+
+.puzzle-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+.puzzle-control-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: none;
+  background: #f5f5f5;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.8rem;
+  color: var(--text-dark);
+}
+
+.puzzle-control-btn:active {
+  transform: scale(0.95);
+  background: #eee;
+}
+
+.puzzle-control-btn span:first-child {
+  font-size: 1.2rem;
+}
+
+.puzzle-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #9B59B6;
+  font-family: monospace;
+}
+
+/* 原图参考 */
+.puzzle-reference {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.reference-image {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.reference-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+/* 拼图板容器 */
+.puzzle-board-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.puzzle-board {
+  display: grid;
+  gap: 4px;
+  background: white;
+  border-radius: 24px;
+  padding: 12px;
+  box-shadow: var(--card-shadow);
+}
+
+/* 动态设置grid列数 */
+.puzzle-board.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+  width: 200px;
+  height: 200px;
+}
+
+.puzzle-board.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+  width: 240px;
+  height: 240px;
+}
+
+.puzzle-board.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+  width: 280px;
+  height: 280px;
+}
+
+/* 拼图槽位 */
+.puzzle-slot {
+  background: linear-gradient(135deg, #FCE4EC, #F8BBD9);
+  border: 2px dashed #E91E63;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.puzzle-slot.drag-over {
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  border-color: #4CAF50;
+  transform: scale(1.05);
+}
+
+.puzzle-slot.filled {
+  background: white;
+  border: 2px solid #4CAF50;
+}
+
+.puzzle-slot.correct {
+  animation: slotCorrect 0.5s ease;
+}
+
+@keyframes slotCorrect {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* 槽位中的碎片 */
+.puzzle-slot .placed-piece {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  border-radius: 6px;
+}
+
+/* 碎片区容器 */
+.puzzle-pieces-container {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+.pieces-hint {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+.puzzle-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  min-height: 80px;
+}
+
+/* 碎片样式 */
+.puzzle-piece {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
+  border: 2px solid #9B59B6;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: grab;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+  user-select: none;
+  touch-action: none;
+}
+
+.puzzle-piece:active {
+  cursor: grabbing;
+}
+
+.puzzle-piece.dragging {
+  opacity: 0.8;
+  transform: scale(1.1);
+  z-index: 1000;
+  box-shadow: 0 8px 25px rgba(155, 89, 182, 0.5);
+}
+
+.puzzle-piece.wrong {
+  animation: pieceWrong 0.5s ease;
+}
+
+@keyframes pieceWrong {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-10px); }
+  80% { transform: translateX(10px); }
+}
+
+/* 返回选择按钮 */
+.btn-back-select {
+  width: 100%;
+  background: #f5f5f5;
+  border: none;
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 1rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-back-select:active {
+  background: #eee;
+}
+
+/* 拼图完成弹窗 */
+.puzzle-complete-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.puzzle-complete-modal.hidden {
+  display: none;
+}
+
+.puzzle-complete-content {
+  background: white;
+  border-radius: 30px;
+  padding: 32px;
+  text-align: center;
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  max-width: 320px;
+  width: 100%;
+}
+
+.complete-celebration {
+  font-size: 4rem;
+  animation: bounce 1s ease infinite;
+  margin-bottom: 12px;
+}
+
+.puzzle-complete-title {
+  font-size: 1.8rem;
+  background: linear-gradient(45deg, #9B59B6, #E91E63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.puzzle-complete-image {
+  font-size: 5rem;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.puzzle-complete-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 24px;
+}
+
+.complete-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.complete-stat-item .stat-icon {
+  font-size: 1.2rem;
+}
+
+.complete-stat-item .stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #9B59B6;
+}
+
+.complete-stat-item .stat-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.puzzle-complete-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-puzzle-again,
+.btn-puzzle-new {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-puzzle-again {
+  background: linear-gradient(135deg, #9B59B6, #8E44AD);
+  color: white;
+  box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+}
+
+.btn-puzzle-again:active {
+  transform: scale(0.95);
+}
+
+.btn-puzzle-new {
+  background: #f5f5f5;
+  color: var(--text-dark);
+}
+
+.btn-puzzle-new:active {
+  background: #eee;
+}
+
+/* 拼图提示弹窗 */
+.puzzle-hint-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.puzzle-hint-modal.hidden {
+  display: none;
+}
+
+.puzzle-hint-content {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  text-align: center;
+  animation: popIn 0.3s ease;
+  max-width: 280px;
+  width: 100%;
+  position: relative;
+}
+
+.puzzle-hint-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #f5f5f5;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: var(--text-light);
+}
+
+.puzzle-hint-close:active {
+  transform: scale(0.95);
+  background: #eee;
+}
+
+.puzzle-hint-content h3 {
+  color: var(--text-dark);
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+}
+
+.puzzle-hint-image {
+  font-size: 8rem;
+  margin-bottom: 12px;
+}
+
+.puzzle-hint-name {
+  font-size: 1.2rem;
+  color: #9B59B6;
+  font-weight: 600;
+}
+
+/* 响应式调整 */
+@media (min-width: 768px) {
+  .difficulty-selector {
+    gap: 20px;
+  }
+
+  .difficulty-btn {
+    padding: 20px 28px;
+    min-width: 110px;
+  }
+
+  .image-selector {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .puzzle-board.grid-2 {
+    width: 240px;
+    height: 240px;
+  }
+
+  .puzzle-board.grid-3 {
+    width: 300px;
+    height: 300px;
+  }
+
+  .puzzle-board.grid-4 {
+    width: 360px;
+    height: 360px;
+  }
+
+  .puzzle-piece {
+    width: 70px;
+    height: 70px;
+    font-size: 2.2rem;
+  }
+}

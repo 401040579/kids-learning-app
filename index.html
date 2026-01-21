@@ -26,6 +26,41 @@
     </div>
   </div>
 
+  <!-- 拼图完成弹窗 -->
+  <div id="puzzle-complete-modal" class="puzzle-complete-modal hidden">
+    <div class="puzzle-complete-content">
+      <div class="complete-celebration">🎉</div>
+      <h2 class="puzzle-complete-title">拼图完成!</h2>
+      <div class="puzzle-complete-image" id="puzzle-complete-image">🦁</div>
+      <div class="puzzle-complete-stats">
+        <div class="complete-stat-item">
+          <span class="stat-icon">⏱</span>
+          <span class="stat-value" id="puzzle-complete-time">01:23</span>
+          <span class="stat-label">用时</span>
+        </div>
+        <div class="complete-stat-item">
+          <span class="stat-icon">⭐</span>
+          <span class="stat-value" id="puzzle-complete-points">+20</span>
+          <span class="stat-label">积分</span>
+        </div>
+      </div>
+      <div class="puzzle-complete-buttons">
+        <button class="btn-puzzle-again" onclick="restartPuzzle()">再玩一次</button>
+        <button class="btn-puzzle-new" onclick="backToPuzzleSelect()">换一张</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 拼图提示弹窗 -->
+  <div id="puzzle-hint-modal" class="puzzle-hint-modal hidden">
+    <div class="puzzle-hint-content">
+      <button class="puzzle-hint-close" onclick="closePuzzleHint()">✕</button>
+      <h3>原图参考</h3>
+      <div class="puzzle-hint-image" id="puzzle-hint-image">🦁</div>
+      <p class="puzzle-hint-name" id="puzzle-hint-name">狮子</p>
+    </div>
+  </div>
+
   <!-- 视频播放器弹窗 -->
   <div id="video-modal" class="video-modal hidden">
     <div class="video-container">
@@ -270,6 +305,12 @@
             <div class="card-icon">🎵</div>
             <div class="card-title">睡眠音乐</div>
             <div class="card-desc">助眠好音乐</div>
+          </div>
+
+          <div class="menu-card card-puzzle" onclick="navigateTo('puzzle')">
+            <div class="card-icon">🧩</div>
+            <div class="card-title">拼图游戏</div>
+            <div class="card-desc">锻炼观察力</div>
           </div>
         </div>
 
@@ -857,6 +898,84 @@
           </div>
         </div>
       </section>
+
+      <!-- 拼图游戏页面 -->
+      <section id="page-puzzle" class="page">
+        <div class="page-header">
+          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
+          <h2>🧩 拼图游戏</h2>
+        </div>
+
+        <!-- 选择界面 -->
+        <div class="puzzle-select" id="puzzle-select">
+          <!-- 难度选择 -->
+          <div class="puzzle-section">
+            <h3 class="puzzle-section-title">选择难度</h3>
+            <div class="difficulty-selector" id="difficulty-selector">
+              <!-- 动态生成难度选项 -->
+            </div>
+          </div>
+
+          <!-- 主题选择 -->
+          <div class="puzzle-section">
+            <h3 class="puzzle-section-title">选择主题</h3>
+            <div class="theme-selector" id="puzzle-theme-selector">
+              <!-- 动态生成主题选项 -->
+            </div>
+          </div>
+
+          <!-- 图片选择 -->
+          <div class="puzzle-section">
+            <h3 class="puzzle-section-title">选择图片</h3>
+            <div class="image-selector" id="puzzle-image-selector">
+              <!-- 动态生成图片选项 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div class="puzzle-game hidden" id="puzzle-game">
+          <!-- 游戏控制栏 -->
+          <div class="puzzle-controls">
+            <button class="puzzle-control-btn" onclick="showPuzzleHint()">
+              <span>👁</span>
+              <span>提示</span>
+            </button>
+            <div class="puzzle-timer">
+              <span>⏱</span>
+              <span id="puzzle-time">00:00</span>
+            </div>
+            <button class="puzzle-control-btn" onclick="restartPuzzle()">
+              <span>🔄</span>
+              <span>重开</span>
+            </button>
+          </div>
+
+          <!-- 原图参考（小图） -->
+          <div class="puzzle-reference">
+            <div class="reference-image" id="puzzle-reference-image">🦁</div>
+            <span class="reference-label">原图参考</span>
+          </div>
+
+          <!-- 拼图板 -->
+          <div class="puzzle-board-container">
+            <div class="puzzle-board" id="puzzle-board">
+              <!-- 动态生成拼图槽位 -->
+            </div>
+          </div>
+
+          <!-- 碎片区 -->
+          <div class="puzzle-pieces-container">
+            <p class="pieces-hint">拖动碎片到上方拼图板</p>
+            <div class="puzzle-pieces" id="puzzle-pieces">
+              <!-- 动态生成碎片 -->
+            </div>
+          </div>
+
+          <!-- 返回选择按钮 -->
+          <button class="btn-back-select" onclick="backToPuzzleSelect()">← 返回选择</button>
+        </div>
+      </section>
     </main>
 
     <!-- 底部导航 -->
@@ -894,8 +1013,10 @@
   </audio>
 
   <script src="js/scienceData.js"></script>
+  <script src="js/puzzleData.js"></script>
   <script src="js/rewards.js"></script>
   <script src="js/videos.js"></script>
+  <script src="js/puzzle.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -183,6 +183,30 @@ const RewardSystem = {
     this.addPoints(15, '科学题答对了!');
   },
 
+  // 拼图完成
+  puzzleCorrect(difficulty) {
+    this.data.puzzleCorrect = (this.data.puzzleCorrect || 0) + 1;
+
+    // 根据难度给予不同积分
+    let points = 20;
+    let message = '拼图完成了!';
+
+    if (difficulty === 'medium') {
+      points = 40;
+      message = '中等拼图完成!';
+    } else if (difficulty === 'hard') {
+      points = 60;
+      message = '高难度拼图完成!';
+    }
+
+    this.data.totalScore += points;
+    this.data.tasksDone++;
+    this.saveData();
+    this.updateDisplay();
+
+    // 拼图完成不显示普通奖励弹窗，由拼图模块自己处理
+  },
+
   // 显示奖励弹窗
   showReward(points, message) {
     const popup = document.getElementById('reward-popup');
