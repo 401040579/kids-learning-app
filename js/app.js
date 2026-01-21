@@ -43,6 +43,7 @@ function navigateTo(page) {
   if (page === 'chinese') generateChineseQuestion();
   if (page === 'calendar') initCalendar();
   if (page === 'science') showScienceThemes();
+  if (page === 'sleep-music') initSleepMusic();
 }
 
 function getNavIndex(page) {
@@ -1651,3 +1652,414 @@ function confirmImport() {
   closeImportConfirm();
   location.reload();
 }
+
+// ========== 睡眠音乐模块 ==========
+let sleepAudio = null;
+let sleepMusicPlaying = false;
+let sleepTimerInterval = null;
+let sleepTimerSeconds = 0;
+let sleepTimerMinutes = 15; // 默认15分钟
+let currentSleepMusicIndex = -1;
+
+// 睡眠音乐列表
+const sleepMusicList = [
+  {
+    id: 'christmas',
+    name: '圣诞轻音乐',
+    icon: '🎄',
+    iconClass: 'christmas',
+    duration: '2小时',
+    size: '55MB',
+    file: 'music/christmas-light-music.mp3'
+  },
+  {
+    id: 'relax',
+    name: '超级放松音乐',
+    icon: '🌿',
+    iconClass: 'relax',
+    duration: '2小时',
+    size: '54MB',
+    file: 'music/super-relaxing-music.mp3'
+  },
+  {
+    id: 'whitenoise',
+    name: '白噪音助眠',
+    icon: '🌊',
+    iconClass: 'whitenoise',
+    duration: '30分钟',
+    size: '18MB',
+    file: 'music/white-noise-sleep.mp3'
+  },
+  {
+    id: 'orchestra',
+    name: '管弦乐摇篮曲',
+    icon: '🎻',
+    iconClass: 'orchestra',
+    duration: '1小时',
+    size: '29MB',
+    file: 'music/orchestral-lullabies.mp3'
+  }
+];
+
+// 初始化睡眠音乐
+function initSleepMusic() {
+  sleepAudio = document.getElementById('sleep-audio');
+  if (!sleepAudio) return;
+
+  // 加载保存的设置
+  const savedTimer = localStorage.getItem('sleepMusicTimer');
+  if (savedTimer) {
+    sleepTimerMinutes = parseInt(savedTimer);
+  }
+
+  // 渲染音乐列表
+  renderSleepMusicList();
+
+  // 更新定时器按钮状态
+  updateSleepTimerUI();
+
+  // 设置音频事件监听
+  sleepAudio.addEventListener('ended', () => {
+    // loop属性会自动循环，但如果不循环则停止
+  });
+
+  sleepAudio.addEventListener('error', (e) => {
+    console.error('音频加载失败:', e);
+    alert('音乐加载失败，请检查网络连接');
+    stopSleepMusic();
+  });
+
+  sleepAudio.addEventListener('canplay', () => {
+    // 音频准备好可以播放
+  });
+
+  // 设置Media Session（锁屏控制）
+  setupMediaSession();
+}
+
+// 渲染音乐列表
+function renderSleepMusicList() {
+  const container = document.getElementById('music-cards');
+  if (!container) return;
+
+  container.innerHTML = sleepMusicList.map((music, index) => `
+    <div class="music-card ${currentSleepMusicIndex === index ? 'active' : ''} ${currentSleepMusicIndex === index && sleepMusicPlaying ? 'playing' : ''}"
+         onclick="selectSleepMusic(${index})"
+         data-index="${index}">
+      <div class="music-card-icon ${music.iconClass}">${music.icon}</div>
+      <div class="music-card-info">
+        <div class="music-card-name">${music.name}</div>
+        <div class="music-card-meta">
+          <span>⏱ ${music.duration}</span>
+          <span>📦 ${music.size}</span>
+        </div>
+      </div>
+      <div class="music-card-status">
+        ${currentSleepMusicIndex === index && sleepMusicPlaying ?
+          '<div class="equalizer"><span></span><span></span><span></span></div>' :
+          ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// 选择音乐
+function selectSleepMusic(index) {
+  const music = sleepMusicList[index];
+  if (!music || !sleepAudio) return;
+
+  // 如果点击的是正在播放的音乐，则暂停/继续
+  if (currentSleepMusicIndex === index) {
+    toggleSleepMusic();
+    return;
+  }
+
+  currentSleepMusicIndex = index;
+
+  // 更新播放器信息
+  document.getElementById('player-song-name').textContent = music.name;
+  document.getElementById('player-song-duration').textContent = music.duration;
+
+  // 设置音频源
+  const source = document.getElementById('sleep-audio-source');
+  source.src = music.file;
+  sleepAudio.load();
+
+  // 启用按钮
+  document.getElementById('btn-play-music').disabled = false;
+  document.getElementById('btn-stop-music').disabled = false;
+
+  // 自动播放
+  playSleepMusic();
+
+  // 更新列表显示
+  renderSleepMusicList();
+}
+
+// 播放音乐
+function playSleepMusic() {
+  if (!sleepAudio || currentSleepMusicIndex < 0) return;
+
+  const playPromise = sleepAudio.play();
+
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      sleepMusicPlaying = true;
+      updatePlayButtonUI();
+      startDiscAnimation();
+      renderSleepMusicList();
+
+      // 启动定时器
+      if (sleepTimerMinutes > 0) {
+        startSleepTimer();
+      }
+
+      // 更新Media Session
+      updateMediaSessionState();
+    }).catch((error) => {
+      console.error('播放失败:', error);
+      // iOS需要用户交互才能播放
+      alert('请点击播放按钮开始播放');
+    });
+  }
+}
+
+// 暂停音乐
+function pauseSleepMusic() {
+  if (!sleepAudio) return;
+
+  sleepAudio.pause();
+  sleepMusicPlaying = false;
+  updatePlayButtonUI();
+  stopDiscAnimation();
+  renderSleepMusicList();
+
+  // 暂停定时器但不重置
+  if (sleepTimerInterval) {
+    clearInterval(sleepTimerInterval);
+    sleepTimerInterval = null;
+  }
+
+  updateMediaSessionState();
+}
+
+// 切换播放/暂停
+function toggleSleepMusic() {
+  if (sleepMusicPlaying) {
+    pauseSleepMusic();
+  } else {
+    playSleepMusic();
+  }
+}
+
+// 停止音乐
+function stopSleepMusic() {
+  if (!sleepAudio) return;
+
+  sleepAudio.pause();
+  sleepAudio.currentTime = 0;
+  sleepMusicPlaying = false;
+  currentSleepMusicIndex = -1;
+
+  // 重置UI
+  document.getElementById('player-song-name').textContent = '选择一首音乐';
+  document.getElementById('player-song-duration').textContent = '--:--';
+  document.getElementById('btn-play-music').disabled = true;
+  document.getElementById('btn-stop-music').disabled = true;
+
+  updatePlayButtonUI();
+  stopDiscAnimation();
+  renderSleepMusicList();
+
+  // 停止定时器
+  stopSleepTimer();
+
+  updateMediaSessionState();
+}
+
+// 更新播放按钮UI
+function updatePlayButtonUI() {
+  const playIcon = document.getElementById('play-icon');
+  if (playIcon) {
+    playIcon.textContent = sleepMusicPlaying ? '⏸' : '▶';
+  }
+}
+
+// 启动唱片动画
+function startDiscAnimation() {
+  const disc = document.getElementById('player-disc');
+  if (disc) {
+    disc.classList.add('playing');
+  }
+}
+
+// 停止唱片动画
+function stopDiscAnimation() {
+  const disc = document.getElementById('player-disc');
+  if (disc) {
+    disc.classList.remove('playing');
+  }
+}
+
+// 设置定时器
+function setSleepTimer(minutes) {
+  sleepTimerMinutes = minutes;
+
+  // 保存设置
+  localStorage.setItem('sleepMusicTimer', minutes.toString());
+
+  // 更新UI
+  updateSleepTimerUI();
+
+  // 如果正在播放，重新启动定时器
+  if (sleepMusicPlaying && minutes > 0) {
+    sleepTimerSeconds = minutes * 60;
+    startSleepTimer();
+  } else if (minutes === 0) {
+    // 不限时，停止定时器
+    stopSleepTimer();
+    updateTimerDisplay();
+  }
+}
+
+// 更新定时器按钮UI
+function updateSleepTimerUI() {
+  document.querySelectorAll('.sleep-timer-btn').forEach(btn => {
+    const btnMinutes = parseInt(btn.dataset.minutes);
+    btn.classList.toggle('active', btnMinutes === sleepTimerMinutes);
+  });
+}
+
+// 启动睡眠定时器
+function startSleepTimer() {
+  // 先停止之前的定时器
+  if (sleepTimerInterval) {
+    clearInterval(sleepTimerInterval);
+  }
+
+  // 如果是不限时，则不启动
+  if (sleepTimerMinutes === 0) {
+    updateTimerDisplay();
+    return;
+  }
+
+  // 初始化秒数
+  sleepTimerSeconds = sleepTimerMinutes * 60;
+  updateTimerDisplay();
+
+  sleepTimerInterval = setInterval(() => {
+    sleepTimerSeconds--;
+    updateTimerDisplay();
+
+    // 时间到
+    if (sleepTimerSeconds <= 0) {
+      stopSleepMusicWithFadeOut();
+    }
+  }, 1000);
+}
+
+// 停止定时器
+function stopSleepTimer() {
+  if (sleepTimerInterval) {
+    clearInterval(sleepTimerInterval);
+    sleepTimerInterval = null;
+  }
+  sleepTimerSeconds = 0;
+  updateTimerDisplay();
+}
+
+// 更新定时器显示
+function updateTimerDisplay() {
+  const displayEl = document.getElementById('timer-remaining');
+  if (!displayEl) return;
+
+  if (sleepTimerMinutes === 0) {
+    displayEl.textContent = '不限时';
+  } else if (sleepTimerSeconds > 0) {
+    const minutes = Math.floor(sleepTimerSeconds / 60);
+    const seconds = sleepTimerSeconds % 60;
+    displayEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  } else {
+    displayEl.textContent = '--:--';
+  }
+}
+
+// 带淡出效果的停止
+function stopSleepMusicWithFadeOut() {
+  if (!sleepAudio) return;
+
+  // 停止定时器
+  if (sleepTimerInterval) {
+    clearInterval(sleepTimerInterval);
+    sleepTimerInterval = null;
+  }
+
+  // 3秒淡出
+  const fadeOutDuration = 3000;
+  const fadeOutSteps = 30;
+  const fadeOutInterval = fadeOutDuration / fadeOutSteps;
+  const volumeStep = sleepAudio.volume / fadeOutSteps;
+
+  let currentStep = 0;
+  const fadeInterval = setInterval(() => {
+    currentStep++;
+    sleepAudio.volume = Math.max(0, sleepAudio.volume - volumeStep);
+
+    if (currentStep >= fadeOutSteps) {
+      clearInterval(fadeInterval);
+      sleepAudio.pause();
+      sleepAudio.currentTime = 0;
+      sleepAudio.volume = 1; // 重置音量
+      sleepMusicPlaying = false;
+      updatePlayButtonUI();
+      stopDiscAnimation();
+      renderSleepMusicList();
+      updateTimerDisplay();
+      updateMediaSessionState();
+    }
+  }, fadeOutInterval);
+}
+
+// 设置Media Session（锁屏控制）
+function setupMediaSession() {
+  if (!('mediaSession' in navigator)) return;
+
+  navigator.mediaSession.setActionHandler('play', () => {
+    if (currentSleepMusicIndex >= 0) {
+      playSleepMusic();
+    }
+  });
+
+  navigator.mediaSession.setActionHandler('pause', () => {
+    pauseSleepMusic();
+  });
+
+  navigator.mediaSession.setActionHandler('stop', () => {
+    stopSleepMusic();
+  });
+}
+
+// 更新Media Session状态
+function updateMediaSessionState() {
+  if (!('mediaSession' in navigator)) return;
+
+  if (currentSleepMusicIndex >= 0) {
+    const music = sleepMusicList[currentSleepMusicIndex];
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: music.name,
+      artist: '宝贝学习乐园',
+      album: '睡眠音乐'
+    });
+    navigator.mediaSession.playbackState = sleepMusicPlaying ? 'playing' : 'paused';
+  } else {
+    navigator.mediaSession.metadata = null;
+    navigator.mediaSession.playbackState = 'none';
+  }
+}
+
+// 在DOMContentLoaded中初始化睡眠音乐
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    initSleepMusic();
+  }, 200);
+});

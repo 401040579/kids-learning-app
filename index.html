@@ -265,6 +265,12 @@
             <div class="card-title">我的日历</div>
             <div class="card-desc">记录每一天</div>
           </div>
+
+          <div class="menu-card card-sleep-music" onclick="navigateTo('sleep-music')">
+            <div class="card-icon">🎵</div>
+            <div class="card-title">睡眠音乐</div>
+            <div class="card-desc">助眠好音乐</div>
+          </div>
         </div>
 
         <div class="daily-progress">
@@ -783,6 +789,74 @@
           </div>
         </div>
       </section>
+
+      <!-- 睡眠音乐页面 -->
+      <section id="page-sleep-music" class="page">
+        <div class="page-header">
+          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
+          <h2>🎵 睡眠音乐</h2>
+        </div>
+
+        <!-- 播放器区域 -->
+        <div class="sleep-music-player">
+          <div class="player-disc-container">
+            <div class="player-disc" id="player-disc">
+              <div class="disc-center">🎵</div>
+            </div>
+          </div>
+          <div class="player-info">
+            <h3 class="player-song-name" id="player-song-name">选择一首音乐</h3>
+            <p class="player-song-duration" id="player-song-duration">--:--</p>
+          </div>
+          <div class="player-controls">
+            <button class="player-btn btn-stop-music" onclick="stopSleepMusic()" id="btn-stop-music" disabled>
+              <span>⏹</span>
+            </button>
+            <button class="player-btn btn-play-music" onclick="toggleSleepMusic()" id="btn-play-music" disabled>
+              <span id="play-icon">▶</span>
+            </button>
+          </div>
+          <!-- 定时器显示 -->
+          <div class="sleep-timer-display" id="sleep-timer-display">
+            <span class="timer-icon">⏰</span>
+            <span class="timer-remaining" id="timer-remaining">--:--</span>
+          </div>
+        </div>
+
+        <!-- 定时器选项 -->
+        <div class="sleep-timer-section">
+          <h4 class="section-title">⏰ 定时关闭</h4>
+          <div class="sleep-timer-options">
+            <button class="sleep-timer-btn" data-minutes="0" onclick="setSleepTimer(0)">
+              <span class="timer-value">不限</span>
+            </button>
+            <button class="sleep-timer-btn active" data-minutes="15" onclick="setSleepTimer(15)">
+              <span class="timer-value">15</span>
+              <span class="timer-unit">分钟</span>
+            </button>
+            <button class="sleep-timer-btn" data-minutes="30" onclick="setSleepTimer(30)">
+              <span class="timer-value">30</span>
+              <span class="timer-unit">分钟</span>
+            </button>
+            <button class="sleep-timer-btn" data-minutes="45" onclick="setSleepTimer(45)">
+              <span class="timer-value">45</span>
+              <span class="timer-unit">分钟</span>
+            </button>
+            <button class="sleep-timer-btn" data-minutes="60" onclick="setSleepTimer(60)">
+              <span class="timer-value">60</span>
+              <span class="timer-unit">分钟</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 音乐列表 -->
+        <div class="sleep-music-list">
+          <h4 class="section-title">🎶 选择音乐</h4>
+          <div class="music-cards" id="music-cards">
+            <!-- 动态生成音乐卡片 -->
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- 底部导航 -->
@@ -814,9 +888,14 @@
     </nav>
   </div>
 
+  <!-- 睡眠音乐播放器 -->
+  <audio id="sleep-audio" preload="auto" playsinline loop>
+    <source id="sleep-audio-source" src="" type="audio/mpeg">
+  </audio>
+
+  <script src="js/scienceData.js"></script>
   <script src="js/rewards.js"></script>
   <script src="js/videos.js"></script>
-  <script src="js/scienceData.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
