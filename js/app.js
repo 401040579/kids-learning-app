@@ -48,10 +48,61 @@ function navigateTo(page) {
 }
 
 function getNavIndex(page) {
-  const pages = ['home', 'explore', 'math', 'english', 'chinese', 'calendar'];
-  const index = pages.indexOf(page);
-  // 对于不在底部导航的页面（timer, profile），返回首页索引
-  return index >= 0 ? index : 0;
+  // 新的底部导航: 首页、学习、游戏、工具、我的
+  if (page === 'home') return 0;
+  if (['math', 'english', 'chinese', 'science'].includes(page)) return 1; // 学习
+  if (['explore', 'puzzle'].includes(page)) return 2; // 游戏
+  if (['timer', 'calendar', 'sleep-music'].includes(page)) return 3; // 工具
+  if (page === 'profile') return 4; // 我的
+  return 0; // 默认首页
+}
+
+// ========== 首页分类筛选 ==========
+let currentHomeCategory = 'all';
+
+function filterHomeCards(category) {
+  currentHomeCategory = category;
+
+  // 更新Tab选中状态
+  document.querySelectorAll('.home-tab').forEach(tab => {
+    tab.classList.remove('active');
+    if (tab.dataset.category === category) {
+      tab.classList.add('active');
+    }
+  });
+
+  // 筛选卡片
+  const cards = document.querySelectorAll('#home-menu-grid .menu-card');
+  cards.forEach(card => {
+    const cardCategory = card.dataset.category;
+    if (category === 'all' || cardCategory === category) {
+      card.style.display = '';
+      card.style.animation = 'fadeInUp 0.3s ease forwards';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // 更新底部导航高亮（如果从底部导航触发）
+  updateBottomNavForCategory(category);
+}
+
+function updateBottomNavForCategory(category) {
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach((item, index) => {
+    item.classList.remove('active');
+  });
+
+  // 根据分类高亮对应的导航项
+  if (category === 'all') {
+    navItems[0].classList.add('active'); // 首页
+  } else if (category === 'learn') {
+    navItems[1].classList.add('active'); // 学习
+  } else if (category === 'play') {
+    navItems[2].classList.add('active'); // 游戏
+  } else if (category === 'tools') {
+    navItems[3].classList.add('active'); // 工具
+  }
 }
 
 // ========== 视频模块 ==========

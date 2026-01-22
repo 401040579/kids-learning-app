@@ -172,6 +172,72 @@ body {
   color: var(--text-light);
 }
 
+/* ========== 首页分类标签 ========== */
+.home-category-tabs {
+  display: flex;
+  gap: 10px;
+  padding: 16px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.home-category-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.home-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 20px;
+  background: white;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.home-tab .tab-emoji {
+  font-size: 1.1rem;
+}
+
+.home-tab:active {
+  transform: scale(0.95);
+}
+
+.home-tab.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+}
+
+.home-tab:not(.active):hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+}
+
+/* 卡片筛选动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-card {
+  animation: fadeInUp 0.3s ease forwards;
+}
+
 /* ========== 菜单卡片 ========== */
 .menu-grid {
   display: grid;

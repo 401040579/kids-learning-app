@@ -252,65 +252,88 @@
           <p class="welcome-subtitle">今天想学什么呢?</p>
         </div>
 
-        <div class="menu-grid">
-          <div class="menu-card card-explore" onclick="navigateTo('explore')">
-            <div class="card-icon">🎬</div>
-            <div class="card-title">探索视频</div>
-            <div class="card-desc">看有趣的视频</div>
-          </div>
+        <!-- 首页分类标签 -->
+        <div class="home-category-tabs">
+          <button class="home-tab active" data-category="all" onclick="filterHomeCards('all')">
+            <span class="tab-emoji">🌟</span>
+            <span>全部</span>
+          </button>
+          <button class="home-tab" data-category="learn" onclick="filterHomeCards('learn')">
+            <span class="tab-emoji">📚</span>
+            <span>学习</span>
+          </button>
+          <button class="home-tab" data-category="play" onclick="filterHomeCards('play')">
+            <span class="tab-emoji">🎮</span>
+            <span>游戏</span>
+          </button>
+          <button class="home-tab" data-category="tools" onclick="filterHomeCards('tools')">
+            <span class="tab-emoji">🔧</span>
+            <span>工具</span>
+          </button>
+        </div>
 
-          <div class="menu-card card-math" onclick="navigateTo('math')">
+        <div class="menu-grid" id="home-menu-grid">
+          <!-- 学习类 -->
+          <div class="menu-card card-math" data-category="learn" onclick="navigateTo('math')">
             <div class="card-icon">🔢</div>
             <div class="card-title">数学游戏</div>
             <div class="card-desc">加减法挑战</div>
           </div>
 
-          <div class="menu-card card-english" onclick="navigateTo('english')">
+          <div class="menu-card card-english" data-category="learn" onclick="navigateTo('english')">
             <div class="card-icon">🔤</div>
             <div class="card-title">学英语</div>
             <div class="card-desc">字母和单词</div>
           </div>
 
-          <div class="menu-card card-chinese" onclick="navigateTo('chinese')">
+          <div class="menu-card card-chinese" data-category="learn" onclick="navigateTo('chinese')">
             <div class="card-icon">📝</div>
             <div class="card-title">学中文</div>
             <div class="card-desc">认字和拼音</div>
           </div>
 
-          <div class="menu-card card-science" onclick="navigateTo('science')">
+          <div class="menu-card card-science" data-category="learn" onclick="navigateTo('science')">
             <div class="card-icon">🔬</div>
             <div class="card-title">科学探索</div>
             <div class="card-desc">发现神奇世界</div>
           </div>
 
-          <div class="menu-card card-timer" onclick="navigateTo('timer')">
+          <!-- 游戏类 -->
+          <div class="menu-card card-explore" data-category="play" onclick="navigateTo('explore')">
+            <div class="card-icon">🎬</div>
+            <div class="card-title">探索视频</div>
+            <div class="card-desc">看有趣的视频</div>
+          </div>
+
+          <div class="menu-card card-puzzle" data-category="play" onclick="navigateTo('puzzle')">
+            <div class="card-icon">🧩</div>
+            <div class="card-title">拼图游戏</div>
+            <div class="card-desc">锻炼观察力</div>
+          </div>
+
+          <!-- 工具类 -->
+          <div class="menu-card card-timer" data-category="tools" onclick="navigateTo('timer')">
             <div class="card-icon">⏰</div>
             <div class="card-title">玩耍计时</div>
             <div class="card-desc">设置倒计时</div>
           </div>
 
-          <div class="menu-card card-profile" onclick="navigateTo('profile')">
-            <div class="card-icon">👤</div>
-            <div class="card-title">我的信息</div>
-            <div class="card-desc">编辑个人资料</div>
-          </div>
-
-          <div class="menu-card card-calendar" onclick="navigateTo('calendar')">
+          <div class="menu-card card-calendar" data-category="tools" onclick="navigateTo('calendar')">
             <div class="card-icon">📅</div>
             <div class="card-title">我的日历</div>
             <div class="card-desc">记录每一天</div>
           </div>
 
-          <div class="menu-card card-sleep-music" onclick="navigateTo('sleep-music')">
+          <div class="menu-card card-sleep-music" data-category="tools" onclick="navigateTo('sleep-music')">
             <div class="card-icon">🎵</div>
             <div class="card-title">睡眠音乐</div>
             <div class="card-desc">助眠好音乐</div>
           </div>
 
-          <div class="menu-card card-puzzle" onclick="navigateTo('puzzle')">
-            <div class="card-icon">🧩</div>
-            <div class="card-title">拼图游戏</div>
-            <div class="card-desc">锻炼观察力</div>
+          <div class="menu-card card-profile" data-category="tools" onclick="navigateTo('profile')">
+            <div class="card-icon">👤</div>
+            <div class="card-title">我的信息</div>
+            <div class="card-desc">编辑个人资料</div>
           </div>
         </div>
 
@@ -984,25 +1007,21 @@
         <span class="nav-icon">🏠</span>
         <span class="nav-label">首页</span>
       </div>
-      <div class="nav-item" onclick="navigateTo('explore')">
-        <span class="nav-icon">🎬</span>
-        <span class="nav-label">视频</span>
+      <div class="nav-item" onclick="navigateTo('home'); filterHomeCards('learn')">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">学习</span>
       </div>
-      <div class="nav-item" onclick="navigateTo('math')">
-        <span class="nav-icon">🔢</span>
-        <span class="nav-label">数学</span>
+      <div class="nav-item" onclick="navigateTo('home'); filterHomeCards('play')">
+        <span class="nav-icon">🎮</span>
+        <span class="nav-label">游戏</span>
       </div>
-      <div class="nav-item" onclick="navigateTo('english')">
-        <span class="nav-icon">🔤</span>
-        <span class="nav-label">英语</span>
+      <div class="nav-item" onclick="navigateTo('home'); filterHomeCards('tools')">
+        <span class="nav-icon">🔧</span>
+        <span class="nav-label">工具</span>
       </div>
-      <div class="nav-item" onclick="navigateTo('chinese')">
-        <span class="nav-icon">📝</span>
-        <span class="nav-label">中文</span>
-      </div>
-      <div class="nav-item" onclick="navigateTo('calendar')">
-        <span class="nav-icon">📅</span>
-        <span class="nav-label">日历</span>
+      <div class="nav-item" onclick="navigateTo('profile')">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">我的</span>
       </div>
     </nav>
   </div>
