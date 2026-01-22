@@ -20,6 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
   WrongQuestions.init();
   DailyCheckin.init();
 
+  // 初始化 P1 功能模块
+  if (typeof MemoryGame !== 'undefined') {
+    MemoryGame.init();
+  }
+  if (typeof LearningPet !== 'undefined') {
+    LearningPet.init();
+  }
+
   // 初始化各模块
   initVideos();
   initMath();
@@ -2302,3 +2310,147 @@ document.addEventListener('DOMContentLoaded', () => {
     initSleepMusic();
   }, 200);
 });
+
+// ========== P1功能 - 记忆游戏控制 ==========
+
+function showMemoryGame() {
+  const modal = document.getElementById('memory-game-modal');
+  if (!modal) return;
+
+  // 显示游戏选择界面
+  MemoryGame.renderGameSelect();
+  modal.classList.remove('hidden');
+}
+
+function closeMemoryGame() {
+  const modal = document.getElementById('memory-game-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+    MemoryGame.stopCurrentGame();
+  }
+}
+
+function restartMemoryGame() {
+  document.getElementById('memory-result-modal').classList.add('hidden');
+  MemoryGame.restartCurrentGame();
+}
+
+function backToMemorySelect() {
+  document.getElementById('memory-result-modal').classList.add('hidden');
+  MemoryGame.renderGameSelect();
+  document.getElementById('memory-game-select').classList.remove('hidden');
+  document.getElementById('memory-game-area').classList.add('hidden');
+}
+
+// ========== P1功能 - 学习宠物控制 ==========
+
+function showLearningPet() {
+  const modal = document.getElementById('learning-pet-modal');
+  if (!modal) return;
+
+  LearningPet.renderPetUI();
+  modal.classList.remove('hidden');
+}
+
+function closeLearningPet() {
+  const modal = document.getElementById('learning-pet-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+function adoptPet() {
+  const typeList = document.getElementById('pet-type-list');
+  const selectedCard = typeList.querySelector('.pet-type-card.selected');
+  const nameInput = document.getElementById('pet-name-input');
+
+  if (!selectedCard) {
+    alert('请先选择一个宠物类型');
+    return;
+  }
+
+  const petType = selectedCard.dataset.type;
+  const petName = nameInput.value.trim() || '小可爱';
+
+  LearningPet.adoptPet(petType, petName);
+  LearningPet.renderPetUI();
+}
+
+function showPetFeed() {
+  const modal = document.getElementById('pet-feed-modal');
+  if (!modal) return;
+
+  LearningPet.renderFoodList();
+  modal.classList.remove('hidden');
+}
+
+function closePetFeed() {
+  const modal = document.getElementById('pet-feed-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+function petPet() {
+  const result = LearningPet.pet();
+  if (result) {
+    showPetMessage(result.message);
+    updatePetStatusBars();
+  }
+}
+
+function showPetAccessories() {
+  const modal = document.getElementById('pet-accessories-modal');
+  if (!modal) return;
+
+  LearningPet.renderAccessoriesList();
+  modal.classList.remove('hidden');
+}
+
+function closePetAccessories() {
+  const modal = document.getElementById('pet-accessories-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+function closePetEvolution() {
+  const modal = document.getElementById('pet-evolution-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+function showPetMessage(message) {
+  const messageEl = document.getElementById('pet-message');
+  if (messageEl) {
+    messageEl.querySelector('.message-text').textContent = message;
+  }
+}
+
+function updatePetStatusBars() {
+  const data = LearningPet.data;
+  if (!data) return;
+
+  const happinessFill = document.getElementById('happiness-fill');
+  const hungerFill = document.getElementById('hunger-fill');
+  const expFill = document.getElementById('exp-fill');
+  const happinessValue = document.getElementById('happiness-value');
+  const hungerValue = document.getElementById('hunger-value');
+  const expValue = document.getElementById('exp-value');
+
+  if (happinessFill) happinessFill.style.width = data.happiness + '%';
+  if (hungerFill) hungerFill.style.width = data.hunger + '%';
+  if (expFill) {
+    const expNeeded = LearningPet.getExpForNextLevel(data.level);
+    expFill.style.width = (data.exp / expNeeded * 100) + '%';
+    if (expValue) expValue.textContent = data.exp + '/' + expNeeded;
+  }
+  if (happinessValue) happinessValue.textContent = data.happiness;
+  if (hungerValue) hungerValue.textContent = data.hunger;
+}
+
+// ========== P1功能 - 学习报告控制 ==========
+
+// showLearningReport, closeLearningReport, changeReportPeriod, shareReport
+// 这些函数已在 learningReport.js 中定义

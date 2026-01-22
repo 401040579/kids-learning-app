@@ -355,6 +355,25 @@
             <div class="card-title">错题本</div>
             <div class="card-desc">复习巩固</div>
           </div>
+
+          <!-- P1新功能入口 -->
+          <div class="menu-card card-memory-game" data-category="play" onclick="showMemoryGame()">
+            <div class="card-icon">🧠</div>
+            <div class="card-title">记忆训练</div>
+            <div class="card-desc">锻炼记忆力</div>
+          </div>
+
+          <div class="menu-card card-learning-pet" data-category="play" onclick="showLearningPet()">
+            <div class="card-icon">🐱</div>
+            <div class="card-title">学习宠物</div>
+            <div class="card-desc">陪你一起学</div>
+          </div>
+
+          <div class="menu-card card-learning-report" data-category="tools" onclick="showLearningReport()">
+            <div class="card-icon">📊</div>
+            <div class="card-title">学习报告</div>
+            <div class="card-desc">查看进步</div>
+          </div>
         </div>
 
         <div class="daily-progress">
@@ -1123,6 +1142,171 @@
     </div>
   </div>
 
+  <!-- ========== P1功能弹窗 ========== -->
+
+  <!-- 记忆游戏选择弹窗 -->
+  <div id="memory-game-modal" class="memory-game-modal hidden">
+    <div class="memory-game-modal-content">
+      <button class="modal-close-btn" onclick="closeMemoryGame()">✕</button>
+      <h2 class="memory-game-title">🧠 记忆训练</h2>
+      <div id="memory-game-select" class="memory-game-select">
+        <!-- 游戏类型选择 -->
+      </div>
+      <div id="memory-game-area" class="memory-game-area hidden">
+        <!-- 游戏区域 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 记忆游戏结果弹窗 -->
+  <div id="memory-result-modal" class="memory-result-modal hidden">
+    <div class="memory-result-content">
+      <div class="memory-result-icon" id="memory-result-icon">🎉</div>
+      <div class="memory-result-title" id="memory-result-title">太棒了!</div>
+      <div class="memory-result-stats" id="memory-result-stats">
+        <!-- 游戏统计 -->
+      </div>
+      <div class="memory-result-points" id="memory-result-points">+20 积分</div>
+      <div class="memory-result-actions">
+        <button class="btn-memory-again" onclick="restartMemoryGame()">再玩一次</button>
+        <button class="btn-memory-back" onclick="backToMemorySelect()">返回选择</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 学习宠物弹窗 -->
+  <div id="learning-pet-modal" class="learning-pet-modal hidden">
+    <div class="learning-pet-modal-content">
+      <button class="modal-close-btn" onclick="closeLearningPet()">✕</button>
+      <h2 class="learning-pet-title">🐱 我的学习宠物</h2>
+
+      <!-- 宠物选择界面（首次使用） -->
+      <div id="pet-select-area" class="pet-select-area hidden">
+        <p class="pet-select-hint">选择你的学习伙伴:</p>
+        <div id="pet-type-list" class="pet-type-list">
+          <!-- 宠物类型选择 -->
+        </div>
+        <input type="text" id="pet-name-input" class="pet-name-input" placeholder="给宠物起个名字..." maxlength="10">
+        <button class="btn-adopt-pet" onclick="adoptPet()">领养宠物</button>
+      </div>
+
+      <!-- 宠物主界面 -->
+      <div id="pet-main-area" class="pet-main-area hidden">
+        <!-- 宠物展示 -->
+        <div class="pet-display-area">
+          <div class="pet-stage-badge" id="pet-stage-badge">蛋</div>
+          <div class="pet-avatar" id="pet-avatar">🥚</div>
+          <div class="pet-name" id="pet-display-name">小宠物</div>
+        </div>
+
+        <!-- 宠物状态条 -->
+        <div class="pet-status-bars">
+          <div class="pet-status-bar">
+            <span class="status-label">💖 幸福度</span>
+            <div class="status-bar-bg">
+              <div class="status-bar-fill happiness-fill" id="happiness-fill"></div>
+            </div>
+            <span class="status-value" id="happiness-value">100</span>
+          </div>
+          <div class="pet-status-bar">
+            <span class="status-label">🍖 饱食度</span>
+            <div class="status-bar-bg">
+              <div class="status-bar-fill hunger-fill" id="hunger-fill"></div>
+            </div>
+            <span class="status-value" id="hunger-value">100</span>
+          </div>
+          <div class="pet-status-bar">
+            <span class="status-label">⭐ 经验值</span>
+            <div class="status-bar-bg">
+              <div class="status-bar-fill exp-fill" id="exp-fill"></div>
+            </div>
+            <span class="status-value" id="exp-value">0/100</span>
+          </div>
+        </div>
+
+        <!-- 宠物操作按钮 -->
+        <div class="pet-actions">
+          <button class="pet-action-btn" onclick="showPetFeed()">
+            <span class="action-icon">🍖</span>
+            <span>喂食</span>
+          </button>
+          <button class="pet-action-btn" onclick="petPet()">
+            <span class="action-icon">🤗</span>
+            <span>抚摸</span>
+          </button>
+          <button class="pet-action-btn" onclick="showPetAccessories()">
+            <span class="action-icon">🎀</span>
+            <span>装扮</span>
+          </button>
+        </div>
+
+        <!-- 宠物消息 -->
+        <div class="pet-message" id="pet-message">
+          <span class="message-text">今天也要好好学习哦！</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 喂食菜单弹窗 -->
+  <div id="pet-feed-modal" class="pet-feed-modal hidden">
+    <div class="pet-feed-content">
+      <button class="modal-close-btn" onclick="closePetFeed()">✕</button>
+      <h3>🍖 喂食</h3>
+      <div id="food-list" class="food-list">
+        <!-- 食物列表 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 装扮菜单弹窗 -->
+  <div id="pet-accessories-modal" class="pet-accessories-modal hidden">
+    <div class="pet-accessories-content">
+      <button class="modal-close-btn" onclick="closePetAccessories()">✕</button>
+      <h3>🎀 装扮</h3>
+      <div id="accessories-list" class="accessories-list">
+        <!-- 配饰列表 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 宠物进化弹窗 -->
+  <div id="pet-evolution-modal" class="pet-evolution-modal hidden">
+    <div class="pet-evolution-content">
+      <div class="evolution-celebration">✨</div>
+      <div class="evolution-title">宠物进化了!</div>
+      <div class="evolution-stages">
+        <span class="old-stage" id="old-pet-stage">🥚</span>
+        <span class="evolution-arrow">→</span>
+        <span class="new-stage" id="new-pet-stage">🐱</span>
+      </div>
+      <div class="evolution-name" id="evolution-stage-name">幼年期</div>
+      <button class="btn-evolution-close" onclick="closePetEvolution()">太棒了!</button>
+    </div>
+  </div>
+
+  <!-- 学习报告弹窗 -->
+  <div id="learning-report-modal" class="learning-report-modal hidden">
+    <div class="learning-report-modal-content">
+      <button class="modal-close-btn" onclick="closeLearningReport()">✕</button>
+
+      <!-- 报告周期选择 -->
+      <div class="report-period-selector">
+        <button class="report-period-btn active" data-period="week" onclick="changeReportPeriod('week')">本周</button>
+        <button class="report-period-btn" data-period="month" onclick="changeReportPeriod('month')">本月</button>
+        <button class="report-period-btn" data-period="all" onclick="changeReportPeriod('all')">全部</button>
+      </div>
+
+      <!-- 报告内容 -->
+      <div id="learning-report-content" class="learning-report-content">
+        <!-- 动态生成 -->
+      </div>
+
+      <!-- 分享按钮 -->
+      <button class="btn-share-report" onclick="shareReport()">📤 分享报告</button>
+    </div>
+  </div>
+
     <!-- 底部导航 -->
     <nav class="bottom-nav">
       <div class="nav-item active" onclick="navigateTo('home')">
@@ -1159,6 +1343,9 @@
   <script src="js/achievements.js"></script>
   <script src="js/wrongQuestions.js"></script>
   <script src="js/dailyCheckin.js"></script>
+  <script src="js/memoryGame.js"></script>
+  <script src="js/learningPet.js"></script>
+  <script src="js/learningReport.js"></script>
   <script src="js/videos.js"></script>
   <script src="js/puzzle.js"></script>
   <script src="js/app.js"></script>
