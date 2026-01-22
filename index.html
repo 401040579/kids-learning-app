@@ -374,6 +374,25 @@
             <div class="card-title">学习报告</div>
             <div class="card-desc">查看进步</div>
           </div>
+
+          <!-- P2新功能入口 -->
+          <div class="menu-card card-picture-book" data-category="learn" onclick="showPictureBook()">
+            <div class="card-icon">📚</div>
+            <div class="card-title">绘本故事</div>
+            <div class="card-desc">听故事学知识</div>
+          </div>
+
+          <div class="menu-card card-pronunciation" data-category="learn" onclick="showPronunciation()">
+            <div class="card-icon">🎤</div>
+            <div class="card-title">跟读练习</div>
+            <div class="card-desc">练习发音</div>
+          </div>
+
+          <div class="menu-card card-cloud-sync" data-category="tools" onclick="showCloudSync()">
+            <div class="card-icon">☁️</div>
+            <div class="card-title">云端同步</div>
+            <div class="card-desc">数据备份</div>
+          </div>
         </div>
 
         <div class="daily-progress">
@@ -1307,6 +1326,163 @@
     </div>
   </div>
 
+  <!-- P2: 绘本阅读弹窗 -->
+  <div id="picture-book-modal" class="picture-book-modal hidden">
+    <div class="picture-book-content">
+      <button class="modal-close-btn" onclick="closePictureBook()">✕</button>
+
+      <!-- 书架选择区域 -->
+      <div id="book-select-area" class="book-select-area">
+        <div class="bookshelf-header">
+          <h2>📚 绘本故事</h2>
+          <div class="bookshelf-tabs" id="bookshelf-tabs">
+            <!-- 动态生成分类标签 -->
+          </div>
+        </div>
+        <div id="bookshelf-grid" class="bookshelf-grid">
+          <!-- 动态生成书籍 -->
+        </div>
+      </div>
+
+      <!-- 阅读区域 -->
+      <div id="book-read-area" class="book-read-area hidden">
+        <div class="book-reader-header">
+          <button class="btn-back-shelf" onclick="backToBookshelf()">← 返回书架</button>
+          <h3 id="current-book-title">故事标题</h3>
+          <button class="btn-toggle-auto" id="btn-auto-read" onclick="toggleAutoRead()">🔊 自动朗读</button>
+        </div>
+
+        <div class="book-page-container">
+          <div class="book-page" id="book-page">
+            <div class="page-illustration" id="page-illustration">📖</div>
+            <div class="page-text" id="page-text">故事内容...</div>
+          </div>
+        </div>
+
+        <div class="book-controls">
+          <button class="btn-page-nav" id="btn-prev-page" onclick="prevBookPage()">◀ 上一页</button>
+          <span class="page-indicator" id="page-indicator">1 / 5</span>
+          <button class="btn-page-nav" id="btn-next-page" onclick="nextBookPage()">下一页 ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 绘本完成弹窗 -->
+  <div id="book-complete-modal" class="book-complete-modal hidden">
+    <div class="book-complete-content">
+      <div class="complete-celebration">🎉</div>
+      <div class="complete-title">读完啦！</div>
+      <div class="complete-book-name" id="completed-book-name">三只小猪</div>
+      <div class="complete-message">你真棒！又读完一本故事书！</div>
+      <div class="complete-reward">
+        <span class="reward-icon">⭐</span>
+        <span class="reward-text">+10 积分</span>
+      </div>
+      <div class="complete-actions">
+        <button class="btn-read-again" onclick="readBookAgain()">再读一遍</button>
+        <button class="btn-back-books" onclick="closeBookComplete()">返回书架</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2: 跟读练习弹窗 -->
+  <div id="pronunciation-modal" class="pronunciation-modal hidden">
+    <div class="pronunciation-content">
+      <button class="modal-close-btn" onclick="closePronunciation()">✕</button>
+
+      <!-- 练习类型选择 -->
+      <div id="pronunciation-select-area" class="pronunciation-select-area">
+        <h2>🎤 跟读练习</h2>
+        <div class="pronunciation-types" id="pronunciation-types">
+          <!-- 动态生成练习类型 -->
+        </div>
+        <div class="pronunciation-stats" id="pronunciation-stats">
+          <!-- 练习统计 -->
+        </div>
+      </div>
+
+      <!-- 练习区域 -->
+      <div id="pronunciation-practice-area" class="pronunciation-practice-area hidden">
+        <div class="practice-header">
+          <button class="btn-back-select" onclick="backToPronunciationSelect()">← 返回</button>
+          <h3 id="practice-type-title">拼音练习</h3>
+          <span class="practice-progress" id="practice-progress">1 / 10</span>
+        </div>
+
+        <div class="practice-main">
+          <div class="practice-target">
+            <div class="target-text" id="target-text">妈妈</div>
+            <div class="target-pinyin" id="target-pinyin">mā ma</div>
+          </div>
+
+          <div class="practice-demo">
+            <button class="btn-demo-play" id="btn-demo-play" onclick="playDemonstration()">
+              🔊 听示范
+            </button>
+          </div>
+
+          <div class="practice-record">
+            <button class="btn-record" id="btn-record" onclick="toggleRecording()">
+              <span class="record-icon">🎙️</span>
+              <span class="record-text">点击录音</span>
+            </button>
+            <div class="record-status" id="record-status">准备好了</div>
+          </div>
+
+          <div class="practice-result hidden" id="practice-result">
+            <div class="result-score" id="result-score">90</div>
+            <div class="result-label">分</div>
+            <div class="result-feedback" id="result-feedback">非常棒！</div>
+            <div class="result-recognized" id="result-recognized">识别结果: 妈妈</div>
+          </div>
+        </div>
+
+        <div class="practice-actions">
+          <button class="btn-try-again" id="btn-try-again" onclick="tryAgain()">再试一次</button>
+          <button class="btn-next-item" id="btn-next-item" onclick="nextPracticeItem()">下一个 ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 跟读完成弹窗 -->
+  <div id="pronunciation-complete-modal" class="pronunciation-complete-modal hidden">
+    <div class="pronunciation-complete-content">
+      <div class="complete-celebration">🎉</div>
+      <div class="complete-title">练习完成!</div>
+      <div class="complete-summary">
+        <div class="summary-item">
+          <span class="summary-label">练习数量</span>
+          <span class="summary-value" id="summary-count">10</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">平均得分</span>
+          <span class="summary-value" id="summary-avg-score">85</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">最高得分</span>
+          <span class="summary-value" id="summary-max-score">95</span>
+        </div>
+      </div>
+      <div class="complete-reward">
+        <span class="reward-icon">⭐</span>
+        <span class="reward-text" id="pronunciation-reward">+15 积分</span>
+      </div>
+      <button class="btn-pronunciation-done" onclick="closePronunciationComplete()">太棒了!</button>
+    </div>
+  </div>
+
+  <!-- P2: 云端同步弹窗 -->
+  <div id="cloud-sync-modal" class="cloud-sync-modal hidden">
+    <div class="cloud-sync-content">
+      <button class="modal-close-btn" onclick="closeCloudSync()">✕</button>
+      <div id="cloud-sync-settings">
+        <!-- 动态生成同步设置界面 -->
+      </div>
+    </div>
+  </div>
+
     <!-- 底部导航 -->
     <nav class="bottom-nav">
       <div class="nav-item active" onclick="navigateTo('home')">
@@ -1346,6 +1522,9 @@
   <script src="js/memoryGame.js"></script>
   <script src="js/learningPet.js"></script>
   <script src="js/learningReport.js"></script>
+  <script src="js/pictureBook.js"></script>
+  <script src="js/pronunciation.js"></script>
+  <script src="js/cloudSync.js"></script>
   <script src="js/videos.js"></script>
   <script src="js/puzzle.js"></script>
   <script src="js/app.js"></script>

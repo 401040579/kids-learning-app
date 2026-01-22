@@ -28,6 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
     LearningPet.init();
   }
 
+  // 初始化 P2 功能模块
+  if (typeof PictureBook !== 'undefined') {
+    PictureBook.init();
+  }
+  if (typeof Pronunciation !== 'undefined') {
+    Pronunciation.init();
+  }
+  if (typeof CloudSync !== 'undefined') {
+    CloudSync.init();
+  }
+
   // 初始化各模块
   initVideos();
   initMath();
@@ -2454,3 +2465,96 @@ function updatePetStatusBars() {
 
 // showLearningReport, closeLearningReport, changeReportPeriod, shareReport
 // 这些函数已在 learningReport.js 中定义
+
+// ========== P2功能 - 绘本阅读控制 ==========
+
+function showPictureBook() {
+  const modal = document.getElementById('picture-book-modal');
+  if (!modal) return;
+
+  PictureBook.renderBookshelf();
+  modal.classList.remove('hidden');
+}
+
+function closePictureBook() {
+  const modal = document.getElementById('picture-book-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+    PictureBook.stopReading();
+  }
+}
+
+function backToBookshelf() {
+  PictureBook.backToBookshelf();
+}
+
+function toggleAutoRead() {
+  PictureBook.toggleAutoRead();
+}
+
+function prevBookPage() {
+  PictureBook.prevPage();
+}
+
+function nextBookPage() {
+  PictureBook.nextPage();
+}
+
+function readBookAgain() {
+  document.getElementById('book-complete-modal').classList.add('hidden');
+  PictureBook.readAgain();
+}
+
+function closeBookComplete() {
+  document.getElementById('book-complete-modal').classList.add('hidden');
+  PictureBook.backToBookshelf();
+}
+
+// ========== P2功能 - 跟读练习控制 ==========
+
+function showPronunciation() {
+  const modal = document.getElementById('pronunciation-modal');
+  if (!modal) return;
+
+  Pronunciation.renderPracticeSelect();
+  modal.classList.remove('hidden');
+}
+
+function closePronunciation() {
+  const modal = document.getElementById('pronunciation-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+    Pronunciation.stopPractice();
+  }
+}
+
+function backToPronunciationSelect() {
+  Pronunciation.backToSelect();
+}
+
+function playDemonstration() {
+  Pronunciation.playDemonstration();
+}
+
+function toggleRecording() {
+  Pronunciation.toggleRecording();
+}
+
+function tryAgain() {
+  Pronunciation.tryAgain();
+}
+
+function nextPracticeItem() {
+  Pronunciation.nextItem();
+}
+
+function closePronunciationComplete() {
+  document.getElementById('pronunciation-complete-modal').classList.add('hidden');
+  Pronunciation.backToSelect();
+}
+
+// ========== P2功能 - 云端同步控制 ==========
+
+// showCloudSync, closeCloudSync, toggleCloudSync, toggleAutoSync,
+// saveCloudSyncConfig, testCloudConnection, uploadToCloud, downloadFromCloud
+// 这些函数已在 cloudSync.js 中定义
