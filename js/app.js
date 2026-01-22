@@ -35,10 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof Pronunciation !== 'undefined') {
     Pronunciation.init();
   }
-  if (typeof CloudSync !== 'undefined') {
-    CloudSync.init();
-  }
-
   // 初始化各模块
   initVideos();
   initMath();
@@ -2552,9 +2548,3 @@ function closePronunciationComplete() {
   document.getElementById('pronunciation-complete-modal').classList.add('hidden');
   Pronunciation.backToSelect();
 }
-
-// ========== P2功能 - 云端同步控制 ==========
-
-// showCloudSync, closeCloudSync, toggleCloudSync, toggleAutoSync,
-// saveCloudSyncConfig, testCloudConnection, uploadToCloud, downloadFromCloud
-// 这些函数已在 cloudSync.js 中定义
