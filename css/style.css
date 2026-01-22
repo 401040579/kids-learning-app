@@ -4099,3 +4099,1073 @@ body {
     font-size: 2.2rem;
   }
 }
+
+/* ========== P0功能样式 - 成就系统 ========== */
+
+.achievements-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.achievements-modal.hidden {
+  display: none;
+}
+
+.achievements-modal-content {
+  background: white;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  position: relative;
+  animation: popIn 0.3s ease;
+}
+
+.achievements-modal-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.achievements-stats {
+  display: flex;
+  justify-content: space-around;
+  background: linear-gradient(135deg, #FFE4F0, #E8F4FF);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.achievements-stat {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.achievement-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.achievement-category-btn {
+  padding: 8px 14px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.achievement-category-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
+.achievements-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+.achievement-card.locked {
+  opacity: 0.7;
+}
+
+.achievement-card.unlocked {
+  background: linear-gradient(135deg, #FFF9E6, #FFFBF0);
+  border: 2px solid var(--secondary);
+}
+
+.achievement-icon {
+  font-size: 2.5rem;
+  min-width: 50px;
+  text-align: center;
+}
+
+.achievement-icon.grayscale {
+  filter: grayscale(0.8);
+  opacity: 0.5;
+}
+
+.achievement-info {
+  flex: 1;
+}
+
+.achievement-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.achievement-desc {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.achievement-progress-bar {
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.achievement-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #FF8FAB);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.achievement-progress-text {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.achievement-unlocked-badge {
+  font-size: 0.85rem;
+  color: #27AE60;
+  font-weight: 600;
+}
+
+/* 成就解锁弹窗 */
+.achievement-unlock-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achievement-unlock-modal.hidden {
+  display: none;
+}
+
+.achievement-unlock-content {
+  text-align: center;
+  padding: 32px;
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.unlock-celebration {
+  font-size: 3rem;
+  animation: bounce 0.5s ease;
+}
+
+.unlock-title {
+  font-size: 1.5rem;
+  color: var(--secondary);
+  font-weight: 700;
+  margin: 12px 0;
+}
+
+.unlock-icon {
+  font-size: 5rem;
+  animation: starDance 1s ease infinite;
+}
+
+.unlock-name {
+  font-size: 1.3rem;
+  color: white;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.unlock-desc {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 8px;
+}
+
+.btn-unlock-close {
+  margin-top: 24px;
+  padding: 12px 32px;
+  background: var(--secondary);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ========== P0功能样式 - 错题本 ========== */
+
+.wrong-questions-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.wrong-questions-modal.hidden {
+  display: none;
+}
+
+.wrong-questions-modal-content {
+  background: white;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  position: relative;
+  animation: popIn 0.3s ease;
+}
+
+.wq-modal-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.wrong-questions-stats {
+  display: flex;
+  justify-content: space-around;
+  background: linear-gradient(135deg, #FFE8E8, #FFF0F0);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.wq-stat {
+  text-align: center;
+}
+
+.wq-stat-number {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #E74C3C;
+}
+
+.wq-stat-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.wq-actions {
+  margin-bottom: 16px;
+}
+
+.btn-review-all {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--primary), #FF8FAB);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wq-filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.wq-filter-btn {
+  padding: 8px 12px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wq-filter-btn.active {
+  background: #E74C3C;
+  color: white;
+}
+
+.wq-empty {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.wq-empty-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+
+.wq-empty-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.wq-empty-subtext {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-top: 8px;
+}
+
+.wq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wq-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: #FAFAFA;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wq-item:active {
+  transform: scale(0.98);
+  background: #f0f0f0;
+}
+
+.wq-item-icon {
+  font-size: 1.8rem;
+}
+
+.wq-item-content {
+  flex: 1;
+}
+
+.wq-item-question {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.wq-item-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.wq-item-times {
+  color: #E74C3C;
+}
+
+.wq-item-reviewed {
+  color: #27AE60;
+}
+
+.wq-item-arrow {
+  font-size: 1.5rem;
+  color: #ccc;
+}
+
+/* 错题详情弹窗 */
+.wrong-question-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.wrong-question-detail-modal.hidden {
+  display: none;
+}
+
+.wqd-modal-content {
+  background: white;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+  position: relative;
+  animation: popIn 0.3s ease;
+}
+
+.wqd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.wqd-type {
+  font-size: 1.5rem;
+}
+
+.wqd-times {
+  font-size: 0.9rem;
+  color: #E74C3C;
+  font-weight: 500;
+}
+
+.wqd-question {
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 20px;
+  background: #FAFAFA;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.wqd-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.wqd-option {
+  padding: 12px 16px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  font-size: 1rem;
+}
+
+.wqd-option.correct {
+  background: #D5F5E3;
+  color: #27AE60;
+  font-weight: 600;
+}
+
+.wqd-option.wrong {
+  background: #FADBD8;
+  color: #E74C3C;
+  text-decoration: line-through;
+}
+
+.wqd-answer {
+  text-align: center;
+  padding: 16px;
+  background: linear-gradient(135deg, #D5F5E3, #E8F8F5);
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.wqd-answer-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.wqd-answer-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #27AE60;
+}
+
+.wqd-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-review-single,
+.btn-mark-mastered {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-review-single {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-mark-mastered {
+  background: #27AE60;
+  color: white;
+}
+
+/* 复习弹窗 */
+.review-question-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 1700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.review-question-modal.hidden {
+  display: none;
+}
+
+.review-modal-content {
+  background: white;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+  position: relative;
+  animation: popIn 0.3s ease;
+}
+
+.review-progress {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+
+.review-type {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.review-question {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 20px;
+  background: #FAFAFA;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.review-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-option-btn {
+  padding: 16px;
+  background: white;
+  border: 2px solid #eee;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.review-option-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.review-option-btn.correct {
+  background: #D5F5E3;
+  border-color: #27AE60;
+  color: #27AE60;
+}
+
+.review-option-btn.wrong {
+  background: #FADBD8;
+  border-color: #E74C3C;
+  color: #E74C3C;
+}
+
+.review-option-btn:disabled {
+  cursor: not-allowed;
+}
+
+.review-complete {
+  text-align: center;
+  padding: 20px;
+}
+
+.review-complete-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+
+.review-complete-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.review-complete-text {
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-bottom: 24px;
+}
+
+.btn-review-done {
+  padding: 14px 32px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ========== P0功能样式 - 每日签到 ========== */
+
+.checkin-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.checkin-modal.hidden {
+  display: none;
+}
+
+.checkin-modal-content {
+  background: white;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  position: relative;
+  animation: popIn 0.3s ease;
+}
+
+.checkin-modal-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.checkin-stats {
+  display: flex;
+  justify-content: space-around;
+  background: linear-gradient(135deg, #FFF8E1, #FFFDE7);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.checkin-stat {
+  text-align: center;
+}
+
+.checkin-stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #F39C12;
+}
+
+.checkin-stat-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.checkin-calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.checkin-nav-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.checkin-month-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.checkin-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.checkin-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.checkin-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  position: relative;
+}
+
+.checkin-day.empty {
+  visibility: hidden;
+}
+
+.checkin-day.today {
+  background: #FFF3E0;
+  border: 2px solid #F39C12;
+}
+
+.checkin-day.checked {
+  background: linear-gradient(135deg, #FFD54F, #FFCA28);
+}
+
+.checkin-day.future {
+  opacity: 0.4;
+}
+
+.checkin-day-num {
+  font-weight: 500;
+}
+
+.checkin-mark {
+  position: absolute;
+  bottom: 2px;
+  font-size: 0.7rem;
+  color: #27AE60;
+}
+
+.checkin-action {
+  margin-top: 20px;
+}
+
+.btn-checkin {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #F39C12, #F1C40F);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-checkin.checked {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* 签到提醒弹窗 */
+.checkin-reminder-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.checkin-reminder-modal.hidden {
+  display: none;
+}
+
+.checkin-reminder-content {
+  background: linear-gradient(135deg, #FFF8E1, #FFFDE7);
+  border-radius: 24px;
+  padding: 32px 24px;
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.reminder-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.reminder-star {
+  font-size: 1.5rem;
+  animation: starDance 1s ease infinite;
+}
+
+.reminder-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #F39C12;
+}
+
+.reminder-reward {
+  margin-bottom: 12px;
+}
+
+.reminder-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.reminder-points {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #E67E22;
+}
+
+.reminder-streak {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin-bottom: 24px;
+}
+
+.reminder-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-checkin-now {
+  padding: 14px;
+  background: linear-gradient(135deg, #F39C12, #F1C40F);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-checkin-later {
+  padding: 12px;
+  background: transparent;
+  color: var(--text-light);
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+/* 签到成功弹窗 */
+.checkin-success-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.checkin-success-modal.hidden {
+  display: none;
+}
+
+.checkin-success-content {
+  text-align: center;
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.success-icon {
+  font-size: 5rem;
+  animation: bounce 0.5s ease;
+}
+
+.success-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--secondary);
+  margin: 12px 0;
+}
+
+.success-points {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.success-streak {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 16px;
+}
+
+.success-badge {
+  font-size: 1rem;
+  color: var(--secondary);
+  margin-bottom: 16px;
+}
+
+.btn-success-close {
+  padding: 12px 32px;
+  background: var(--secondary);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 首页签到预览 */
+.checkin-preview-mini {
+  margin-top: 8px;
+}
+
+.checkin-preview-days {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.preview-day {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #f0f0f0;
+  font-size: 0.6rem;
+}
+
+.preview-day.checked {
+  background: linear-gradient(135deg, #FFD54F, #FFCA28);
+}
+
+.preview-day.today {
+  border: 2px solid #F39C12;
+}
+
+.preview-day-name {
+  font-size: 0.5rem;
+  color: var(--text-light);
+}
+
+.preview-day-icon {
+  font-size: 0.7rem;
+}
+
+.checkin-preview-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.checkin-reminder-dot {
+  color: #E74C3C;
+  font-size: 0.6rem;
+  animation: pulse 1s ease infinite;
+}
+
+/* 首页新功能卡片样式 */
+.card-checkin {
+  background: linear-gradient(135deg, #FFF8E1, #FFFDE7);
+}
+
+.card-achievements {
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+}
+
+.card-wrong-questions {
+  background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+}

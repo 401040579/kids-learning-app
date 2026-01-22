@@ -1,12 +1,17 @@
-const CACHE_NAME = 'kids-learning-v4';
+const CACHE_NAME = 'kids-learning-v5';
 const urlsToCache = [
   '/',
   '/index.html',
   '/css/style.css',
   '/js/app.js',
   '/js/rewards.js',
+  '/js/achievements.js',
+  '/js/wrongQuestions.js',
+  '/js/dailyCheckin.js',
   '/js/videos.js',
-  '/js/scienceData.js'
+  '/js/scienceData.js',
+  '/js/puzzle.js',
+  '/js/puzzleData.js'
 ];
 
 // 音乐文件列表（大文件，按需缓存）

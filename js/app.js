@@ -15,12 +15,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // 初始化奖励系统
   RewardSystem.init();
 
+  // 初始化 P0 功能模块
+  AchievementSystem.init();
+  WrongQuestions.init();
+  DailyCheckin.init();
+
   // 初始化各模块
   initVideos();
   initMath();
   initEnglish();
   initChinese();
   initScience();
+
+  // 更新首页签到预览
+  if (typeof renderCheckinPreview === 'function') {
+    renderCheckinPreview();
+  }
 });
 
 // ========== 页面导航 ==========
@@ -246,6 +256,11 @@ function playVideo(name, videoId) {
   // 隐藏遮罩
   overlay.classList.add('hidden');
 
+  // 记录视频观看（用于成就系统）
+  if (typeof AchievementSystem !== 'undefined') {
+    AchievementSystem.recordVideoWatch();
+  }
+
   // 获取当前页面的 origin（用于本地开发兼容）
   const currentOrigin = window.location.origin || 'https://www.youtube.com';
 
@@ -307,6 +322,7 @@ function closeVideo() {
 
 // ========== 数学游戏 ==========
 let mathAnswer = 0;
+let currentMathQuestion = null;  // 存储当前题目数据用于错题本
 
 function initMath() {
   generateMathQuestion();
@@ -333,6 +349,16 @@ function generateMathQuestion() {
   document.getElementById('operator').textContent = operator;
   document.getElementById('num2').textContent = num2;
 
+  // 存储当前题目数据
+  currentMathQuestion = {
+    questionId: `math_${num1}_${operator}_${num2}`,
+    question: `${num1} ${operator} ${num2} = ?`,
+    num1: num1,
+    num2: num2,
+    operator: operator,
+    correctAnswer: mathAnswer.toString()
+  };
+
   // 生成选项
   generateMathOptions(mathAnswer);
 }
@@ -351,6 +377,11 @@ function generateMathOptions(correctAnswer) {
   // 打乱顺序
   shuffleArray(options);
 
+  // 存储选项到当前题目
+  if (currentMathQuestion) {
+    currentMathQuestion.options = options.map(o => o.toString());
+  }
+
   // 渲染选项
   const container = document.getElementById('math-options');
   container.innerHTML = options.map(opt => `
@@ -363,6 +394,12 @@ function checkMathAnswer(answer, btn) {
     btn.classList.add('correct');
     RewardSystem.mathCorrect();
 
+    // 检查成就
+    AchievementSystem.checkProgress('mathCorrect', RewardSystem.data.mathCorrect);
+    AchievementSystem.checkProgress('mathStreak', RewardSystem.data.mathStreak);
+    AchievementSystem.checkProgress('totalScore', RewardSystem.data.totalScore);
+    AchievementSystem.checkProgress('tasksDone', RewardSystem.data.tasksDone);
+
     // 延迟后生成新题
     setTimeout(() => {
       generateMathQuestion();
@@ -371,6 +408,14 @@ function checkMathAnswer(answer, btn) {
     btn.classList.add('wrong');
     RewardSystem.mathWrong();
     RewardSystem.playSound('wrong');
+
+    // 添加到错题本
+    if (currentMathQuestion) {
+      WrongQuestions.addWrongQuestion('math', {
+        ...currentMathQuestion,
+        userAnswer: answer.toString()
+      });
+    }
 
     // 移除错误样式并允许再次尝试
     setTimeout(() => {
@@ -443,12 +488,32 @@ function checkEnglishAnswer(answer, btn) {
     btn.classList.add('correct');
     RewardSystem.englishCorrect();
 
+    // 检查成就
+    AchievementSystem.checkProgress('englishCorrect', RewardSystem.data.englishCorrect);
+    AchievementSystem.checkProgress('totalScore', RewardSystem.data.totalScore);
+    AchievementSystem.checkProgress('tasksDone', RewardSystem.data.tasksDone);
+    AchievementSystem.checkProgress('allRounder', 1);
+
     setTimeout(() => {
       generateEnglishQuestion();
     }, 1500);
   } else {
     btn.classList.add('wrong');
     RewardSystem.playSound('wrong');
+
+    // 添加到错题本
+    if (currentEnglishWord) {
+      const optionsEl = document.getElementById('english-options');
+      const options = Array.from(optionsEl.querySelectorAll('.option-btn')).map(b => b.textContent);
+      WrongQuestions.addWrongQuestion('english', {
+        questionId: `english_${currentEnglishWord.word}`,
+        question: `${currentEnglishWord.word} (${currentEnglishWord.image})`,
+        options: options,
+        correctAnswer: currentEnglishWord.meaning,
+        userAnswer: answer,
+        extra: { word: currentEnglishWord.word, image: currentEnglishWord.image }
+      });
+    }
 
     setTimeout(() => {
       btn.classList.remove('wrong');
@@ -516,12 +581,30 @@ function checkChineseAnswer(answer, btn) {
     btn.classList.add('correct');
     RewardSystem.chineseCorrect();
 
+    // 检查成就
+    AchievementSystem.checkProgress('chineseCorrect', RewardSystem.data.chineseCorrect);
+    AchievementSystem.checkProgress('totalScore', RewardSystem.data.totalScore);
+    AchievementSystem.checkProgress('tasksDone', RewardSystem.data.tasksDone);
+    AchievementSystem.checkProgress('allRounder', 1);
+
     setTimeout(() => {
       generateChineseQuestion();
     }, 1500);
   } else {
     btn.classList.add('wrong');
     RewardSystem.playSound('wrong');
+
+    // 添加到错题本
+    if (currentChineseChar) {
+      WrongQuestions.addWrongQuestion('chinese', {
+        questionId: `chinese_${currentChineseChar.char}`,
+        question: `${currentChineseChar.char} (${currentChineseChar.pinyin})`,
+        options: currentChineseChar.meanings,
+        correctAnswer: currentChineseChar.correct,
+        userAnswer: answer,
+        extra: { char: currentChineseChar.char, pinyin: currentChineseChar.pinyin }
+      });
+    }
 
     setTimeout(() => {
       btn.classList.remove('wrong');
@@ -697,6 +780,7 @@ function showScienceQuestion() {
 function checkScienceAnswer(answerId, btn) {
   const isCorrect = answerId === currentScienceQuestion.answer;
   const correctOption = currentScienceQuestion.options.find(opt => opt.id === currentScienceQuestion.answer);
+  const userOption = currentScienceQuestion.options.find(opt => opt.id === answerId);
 
   // 禁用所有按钮
   document.querySelectorAll('.quiz-option-btn').forEach(b => {
@@ -708,6 +792,9 @@ function checkScienceAnswer(answerId, btn) {
     btn.classList.add('correct');
     scienceCorrectCount++;
     RewardSystem.playSound('correct');
+
+    // 检查成就
+    AchievementSystem.checkProgress('scienceCorrect', RewardSystem.data.scienceCorrect + 1);
   } else {
     btn.classList.add('wrong');
     // 显示正确答案
@@ -717,6 +804,18 @@ function checkScienceAnswer(answerId, btn) {
       }
     });
     RewardSystem.playSound('wrong');
+
+    // 添加到错题本
+    if (currentScienceQuestion) {
+      WrongQuestions.addWrongQuestion('science', {
+        questionId: `science_${currentScienceQuestion.id}`,
+        question: currentScienceQuestion.question,
+        options: currentScienceQuestion.options.map(o => `${o.emoji} ${o.text}`),
+        correctAnswer: `${correctOption.emoji} ${correctOption.text}`,
+        userAnswer: userOption ? `${userOption.emoji} ${userOption.text}` : answerId,
+        extra: { theme: currentScienceTheme, explanation: currentScienceQuestion.explanation }
+      });
+    }
   }
 
   // 保存进度
@@ -750,6 +849,10 @@ function showScienceFeedback(isCorrect, correctOption) {
 
     // 添加积分
     RewardSystem.addPoints(15, '科学题答对了!');
+
+    // 检查成就
+    AchievementSystem.checkProgress('totalScore', RewardSystem.data.totalScore);
+    AchievementSystem.checkProgress('tasksDone', RewardSystem.data.tasksDone);
   } else {
     iconEl.textContent = '😊';
     iconEl.className = 'feedback-icon wrong';

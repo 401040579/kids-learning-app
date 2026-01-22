@@ -335,6 +335,26 @@
             <div class="card-title">我的信息</div>
             <div class="card-desc">编辑个人资料</div>
           </div>
+
+          <!-- P0新功能入口 -->
+          <div class="menu-card card-checkin" data-category="tools" onclick="showCheckin()">
+            <div class="card-icon">📅</div>
+            <div class="card-title">每日签到</div>
+            <div class="card-desc">签到领奖励</div>
+            <div id="checkin-preview" class="checkin-preview-mini"></div>
+          </div>
+
+          <div class="menu-card card-achievements" data-category="tools" onclick="showAchievements()">
+            <div class="card-icon">🏆</div>
+            <div class="card-title">我的成就</div>
+            <div class="card-desc">徽章收集</div>
+          </div>
+
+          <div class="menu-card card-wrong-questions" data-category="tools" onclick="showWrongQuestions()">
+            <div class="card-icon">📕</div>
+            <div class="card-title">错题本</div>
+            <div class="card-desc">复习巩固</div>
+          </div>
         </div>
 
         <div class="daily-progress">
@@ -1001,6 +1021,108 @@
       </section>
     </main>
 
+  <!-- ========== P0功能弹窗 ========== -->
+
+  <!-- 成就列表弹窗 -->
+  <div id="achievements-modal" class="achievements-modal hidden">
+    <div class="achievements-modal-content">
+      <button class="modal-close-btn" onclick="closeAchievements()">✕</button>
+      <h2 class="achievements-modal-title">🏆 我的成就</h2>
+      <div id="achievements-list" class="achievements-list">
+        <!-- 动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 成就解锁弹窗 -->
+  <div id="achievement-unlock-modal" class="achievement-unlock-modal hidden">
+    <div class="achievement-unlock-content">
+      <div class="unlock-celebration">🎉</div>
+      <div class="unlock-title">成就解锁!</div>
+      <div class="unlock-icon" id="unlock-achievement-icon">🏆</div>
+      <div class="unlock-name" id="unlock-achievement-name">成就名称</div>
+      <div class="unlock-desc" id="unlock-achievement-desc">成就描述</div>
+      <button class="btn-unlock-close" onclick="closeAchievementUnlock()">太棒了!</button>
+    </div>
+  </div>
+
+  <!-- 错题本列表弹窗 -->
+  <div id="wrong-questions-modal" class="wrong-questions-modal hidden">
+    <div class="wrong-questions-modal-content">
+      <button class="modal-close-btn" onclick="closeWrongQuestions()">✕</button>
+      <h2 class="wq-modal-title">📕 错题本</h2>
+      <div id="wrong-questions-list" class="wrong-questions-list">
+        <!-- 动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 错题详情弹窗 -->
+  <div id="wrong-question-detail-modal" class="wrong-question-detail-modal hidden">
+    <div class="wqd-modal-content">
+      <button class="modal-close-btn" onclick="closeWrongQuestionDetail()">✕</button>
+      <div id="wrong-question-detail-content">
+        <!-- 动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 复习题目弹窗 -->
+  <div id="review-question-modal" class="review-question-modal hidden">
+    <div class="review-modal-content">
+      <button class="modal-close-btn" onclick="closeReviewQuestion()">✕</button>
+      <div id="review-question-content">
+        <!-- 动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 签到页面弹窗 -->
+  <div id="checkin-modal" class="checkin-modal hidden">
+    <div class="checkin-modal-content">
+      <button class="modal-close-btn" onclick="closeCheckin()">✕</button>
+      <h2 class="checkin-modal-title">📅 每日签到</h2>
+      <div id="checkin-stats" class="checkin-stats">
+        <!-- 动态生成 -->
+      </div>
+      <div id="checkin-calendar" class="checkin-calendar">
+        <!-- 动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 签到提醒弹窗 -->
+  <div id="checkin-reminder-modal" class="checkin-reminder-modal hidden">
+    <div class="checkin-reminder-content">
+      <div class="reminder-header">
+        <span class="reminder-star">⭐</span>
+        <span class="reminder-title">今日签到</span>
+        <span class="reminder-star">⭐</span>
+      </div>
+      <div class="reminder-reward">
+        <span class="reminder-icon" id="checkin-reward-icon">🌟</span>
+        <span class="reminder-points" id="checkin-reward-points">+5分</span>
+      </div>
+      <div class="reminder-streak" id="checkin-streak-info">开始你的签到之旅吧!</div>
+      <div class="reminder-actions">
+        <button class="btn-checkin-now" onclick="doCheckinFromReminder()">立即签到</button>
+        <button class="btn-checkin-later" onclick="closeCheckinReminder()">稍后再说</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 签到成功弹窗 -->
+  <div id="checkin-success-modal" class="checkin-success-modal hidden">
+    <div class="checkin-success-content">
+      <div class="success-icon" id="checkin-success-icon">🌟</div>
+      <div class="success-title">签到成功!</div>
+      <div class="success-points" id="checkin-success-points">+5分</div>
+      <div class="success-streak" id="checkin-success-streak">连续签到 1 天</div>
+      <div class="success-badge hidden" id="checkin-success-badge"></div>
+      <button class="btn-success-close" onclick="closeCheckinSuccess()">继续加油!</button>
+    </div>
+  </div>
+
     <!-- 底部导航 -->
     <nav class="bottom-nav">
       <div class="nav-item active" onclick="navigateTo('home')">
@@ -1034,6 +1156,9 @@
   <script src="js/scienceData.js"></script>
   <script src="js/puzzleData.js"></script>
   <script src="js/rewards.js"></script>
+  <script src="js/achievements.js"></script>
+  <script src="js/wrongQuestions.js"></script>
+  <script src="js/dailyCheckin.js"></script>
   <script src="js/videos.js"></script>
   <script src="js/puzzle.js"></script>
   <script src="js/app.js"></script>
