@@ -1494,6 +1494,104 @@
     </nav>
   </div>
 
+  <!-- AI聊天入口按钮（悬浮） -->
+  <button id="ai-chat-fab" class="ai-chat-fab" onclick="openAIChat()">
+    <span class="fab-icon">🤖</span>
+    <span class="fab-text">小助手</span>
+  </button>
+
+  <!-- AI聊天弹窗 -->
+  <div id="ai-chat-modal" class="ai-chat-modal hidden">
+    <div class="ai-chat-container">
+      <!-- 头部 -->
+      <div class="ai-chat-header">
+        <div class="ai-chat-title">
+          <span>🤖</span>
+          <span>学习小助手</span>
+        </div>
+        <div class="ai-chat-actions">
+          <button onclick="clearAIChat()" title="清空聊天">🗑️</button>
+          <button onclick="closeAIChat()">✕</button>
+        </div>
+      </div>
+
+      <!-- 下载确认界面 -->
+      <div id="ai-chat-download-prompt" class="ai-chat-state hidden">
+        <div class="download-prompt-content">
+          <span class="prompt-icon">🤖</span>
+          <h3>启用AI小助手</h3>
+          <p>需要下载约 <strong>300MB</strong> 的数据</p>
+          <p class="prompt-note">下载后可以离线使用哦~</p>
+          <div class="download-buttons">
+            <button class="btn-download-start" onclick="startAIModelDownload()">
+              开始下载
+            </button>
+            <button class="btn-download-cancel" onclick="closeAIChat()">
+              以后再说
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 加载中界面 -->
+      <div id="ai-chat-loading" class="ai-chat-state hidden">
+        <div class="loading-content">
+          <span class="loading-icon">🤖</span>
+          <h3>小助手正在准备中...</h3>
+          <div class="loading-bar">
+            <div class="loading-bar-fill" id="ai-loading-bar-fill"></div>
+          </div>
+          <p class="loading-percent"><span id="ai-loading-percent">0</span>%</p>
+          <div class="loading-fun-fact" id="ai-loading-fact">
+            💡 小知识：大象是陆地上最大的动物哦！
+          </div>
+        </div>
+      </div>
+
+      <!-- 主聊天界面 -->
+      <div id="ai-chat-main" class="ai-chat-main hidden">
+        <!-- 消息区域 -->
+        <div class="ai-chat-messages" id="ai-chat-messages">
+          <div class="chat-welcome">
+            <span class="welcome-emoji">🤖</span>
+            <p>你好呀！我是学习小助手~</p>
+            <p>有什么想问我的吗？</p>
+          </div>
+        </div>
+
+        <!-- 预设问题 -->
+        <div class="ai-preset-questions">
+          <button onclick="usePresetQuestion('给我讲个小故事')">📖 讲故事</button>
+          <button onclick="usePresetQuestion('为什么天是蓝色的')">🌤️ 为什么</button>
+          <button onclick="usePresetQuestion('1+1等于多少')">🔢 数学题</button>
+          <button onclick="usePresetQuestion('苹果用英语怎么说')">🍎 学英语</button>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="ai-chat-input-area">
+          <input
+            type="text"
+            id="ai-chat-input"
+            placeholder="输入你想问的问题..."
+            onkeypress="if(event.key==='Enter')sendAIMessage()"
+          >
+          <button class="btn-send" onclick="sendAIMessage()">
+            发送 ✨
+          </button>
+        </div>
+      </div>
+
+      <!-- 错误/不支持界面 -->
+      <div id="ai-chat-error" class="ai-chat-state hidden">
+        <div class="error-content">
+          <span class="error-icon">😢</span>
+          <p id="ai-error-message">暂不支持</p>
+          <button onclick="closeAIChat()">知道了</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 睡眠音乐播放器 -->
   <audio id="sleep-audio" preload="auto" playsinline loop>
     <source id="sleep-audio-source" src="" type="audio/mpeg">
@@ -1512,6 +1610,7 @@
   <script src="js/pronunciation.js"></script>
   <script src="js/videos.js"></script>
   <script src="js/puzzle.js"></script>
+  <script src="js/aiChat.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
