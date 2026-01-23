@@ -6566,6 +6566,105 @@ body {
   text-align: justify;
 }
 
+/* 绘本阅读页面 - 新增样式 */
+.reading-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 2px dashed var(--accent);
+}
+
+.btn-back-books {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.reading-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.reading-progress {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.reading-progress-bar {
+  height: 4px;
+  background: #eee;
+  margin: 0 16px;
+}
+
+.reading-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s;
+}
+
+.reading-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  cursor: pointer;
+}
+
+.page-image {
+  font-size: 5rem;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.reading-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: white;
+  border-top: 2px dashed var(--accent);
+  gap: 12px;
+}
+
+.reading-nav-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reading-nav-btn:disabled {
+  background: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.reading-speak-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.reading-speak-btn:active {
+  transform: scale(0.95);
+}
+
 .book-controls {
   display: flex;
   align-items: center;
