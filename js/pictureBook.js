@@ -365,7 +365,7 @@ const PictureBook = {
 
   // 渲染分类标签
   renderCategoryTabs() {
-    const container = document.getElementById('book-category-tabs');
+    const container = document.getElementById('bookshelf-tabs');
     if (!container) return;
 
     let html = '';
@@ -384,7 +384,7 @@ const PictureBook = {
 
   // 渲染书籍网格
   renderBookGrid(category = 'all') {
-    const container = document.getElementById('book-grid');
+    const container = document.getElementById('bookshelf-grid');
     if (!container) return;
 
     const filteredBooks = category === 'all'

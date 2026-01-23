@@ -470,8 +470,8 @@ const Pronunciation = {
     // 显示完成弹窗
     const modal = document.getElementById('pronunciation-complete-modal');
     if (modal) {
-      document.getElementById('pronunciation-avg-score').textContent = avgScore;
-      document.getElementById('pronunciation-practice-count').textContent = this.scores.length;
+      document.getElementById('summary-avg-score').textContent = avgScore;
+      document.getElementById('summary-count').textContent = this.scores.length;
       modal.classList.remove('hidden');
     }
   },
