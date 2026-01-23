@@ -10,10 +10,10 @@ const AIChat = {
 
   // 配置
   config: {
-    // 首选模型：SmolLM2-360M（约300MB，加载快）
-    modelId: "SmolLM2-360M-Instruct-q4f32_1-MLC",
-    // 备选模型：Qwen2.5-0.5B（中文更好，约350MB）
-    // modelId: "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
+    // Qwen2.5-0.5B（中文更好，约350MB）
+    modelId: "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
+    // 备选模型：SmolLM2-360M（约300MB，加载快，但中文较差）
+    // modelId: "SmolLM2-360M-Instruct-q4f32_1-MLC",
     maxTokens: 150,
     temperature: 0.7
   },
