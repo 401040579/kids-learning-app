@@ -1571,17 +1571,35 @@
           <button onclick="usePresetQuestion('苹果用英语怎么说')">🍎 学英语</button>
         </div>
 
+        <!-- 语音模式开关 -->
+        <div class="ai-voice-toggle">
+          <label class="voice-switch">
+            <input type="checkbox" id="ai-auto-speak" checked>
+            <span class="voice-slider"></span>
+          </label>
+          <span>自动朗读回复</span>
+        </div>
+
         <!-- 输入区域 -->
         <div class="ai-chat-input-area">
+          <button class="btn-voice" id="ai-voice-btn" onclick="toggleVoiceInput()">
+            🎤
+          </button>
           <input
             type="text"
             id="ai-chat-input"
-            placeholder="输入你想问的问题..."
+            placeholder="输入或点击麦克风说话..."
             onkeypress="if(event.key==='Enter')sendAIMessage()"
           >
           <button class="btn-send" onclick="sendAIMessage()">
             发送 ✨
           </button>
+        </div>
+
+        <!-- 语音状态提示 -->
+        <div id="ai-voice-status" class="ai-voice-status hidden">
+          <span class="voice-wave">🎙️</span>
+          <span id="ai-voice-text">正在听你说话...</span>
         </div>
       </div>
 

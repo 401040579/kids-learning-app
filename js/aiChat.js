@@ -494,11 +494,259 @@ document.addEventListener('DOMContentLoaded', () => {
   AIChat.init();
 });
 
+// ========== 语音对话功能 ==========
+
+const AIVoice = {
+  // 语音识别对象
+  recognition: null,
+  isListening: false,
+  currentAudio: null,
+
+  // 初始化语音识别
+  init() {
+    // 检查浏览器支持
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.log('浏览器不支持语音识别');
+      return false;
+    }
+
+    this.recognition = new SpeechRecognition();
+    this.recognition.lang = 'zh-CN';
+    this.recognition.continuous = false;
+    this.recognition.interimResults = true;
+
+    // 识别结果
+    this.recognition.onresult = (event) => {
+      const result = event.results[event.results.length - 1];
+      const text = result[0].transcript;
+
+      // 更新输入框显示
+      const input = document.getElementById('ai-chat-input');
+      if (input) input.value = text;
+
+      // 如果是最终结果，自动发送
+      if (result.isFinal) {
+        this.stopListening();
+        if (text.trim()) {
+          setTimeout(() => sendAIMessage(), 300);
+        }
+      }
+    };
+
+    // 识别结束
+    this.recognition.onend = () => {
+      this.stopListening();
+    };
+
+    // 识别错误
+    this.recognition.onerror = (event) => {
+      console.error('语音识别错误:', event.error);
+      this.stopListening();
+
+      const statusText = document.getElementById('ai-voice-text');
+      if (statusText) {
+        if (event.error === 'no-speech') {
+          statusText.textContent = '没听到声音，再试一次吧~';
+        } else if (event.error === 'not-allowed') {
+          statusText.textContent = '请允许使用麦克风哦~';
+        } else {
+          statusText.textContent = '没听清楚，再说一次~';
+        }
+      }
+
+      // 2秒后隐藏状态
+      setTimeout(() => {
+        const status = document.getElementById('ai-voice-status');
+        if (status) status.classList.add('hidden');
+      }, 2000);
+    };
+
+    return true;
+  },
+
+  // 开始语音输入
+  startListening() {
+    if (!this.recognition) {
+      if (!this.init()) {
+        alert('你的浏览器不支持语音输入，试试用Chrome浏览器吧~');
+        return;
+      }
+    }
+
+    if (this.isListening) {
+      this.stopListening();
+      return;
+    }
+
+    // 停止当前播放的音频
+    this.stopSpeaking();
+
+    try {
+      this.recognition.start();
+      this.isListening = true;
+
+      // 更新UI
+      const btn = document.getElementById('ai-voice-btn');
+      const status = document.getElementById('ai-voice-status');
+      const statusText = document.getElementById('ai-voice-text');
+
+      if (btn) btn.classList.add('listening');
+      if (status) status.classList.remove('hidden');
+      if (statusText) statusText.textContent = '正在听你说话...';
+
+    } catch (error) {
+      console.error('启动语音识别失败:', error);
+    }
+  },
+
+  // 停止语音输入
+  stopListening() {
+    if (this.recognition && this.isListening) {
+      try {
+        this.recognition.stop();
+      } catch (e) {}
+    }
+    this.isListening = false;
+
+    // 更新UI
+    const btn = document.getElementById('ai-voice-btn');
+    const status = document.getElementById('ai-voice-status');
+
+    if (btn) btn.classList.remove('listening');
+    if (status) status.classList.add('hidden');
+  },
+
+  // 朗读文本（使用 Puter.js AI TTS）
+  async speak(text) {
+    // 先停止之前的播放
+    this.stopSpeaking();
+
+    try {
+      if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2speech) {
+        const audio = await puter.ai.txt2speech(text, {
+          voice: 'Zhiyu',
+          engine: 'neural',
+          language: 'cmn-CN'
+        });
+
+        this.currentAudio = audio;
+        audio.play();
+
+        audio.onended = () => {
+          this.currentAudio = null;
+        };
+      } else {
+        // 备选方案：Web Speech API
+        this.speakWithWebSpeech(text);
+      }
+    } catch (error) {
+      console.error('TTS失败，使用备选方案:', error);
+      this.speakWithWebSpeech(text);
+    }
+  },
+
+  // 备选语音方案
+  speakWithWebSpeech(text) {
+    if ('speechSynthesis' in window) {
+      speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'zh-CN';
+      utterance.rate = 0.9;
+      utterance.pitch = 1.1;
+      speechSynthesis.speak(utterance);
+    }
+  },
+
+  // 停止朗读
+  stopSpeaking() {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+    speechSynthesis.cancel();
+  },
+
+  // 检查是否开启自动朗读
+  isAutoSpeakEnabled() {
+    const checkbox = document.getElementById('ai-auto-speak');
+    return checkbox ? checkbox.checked : true;
+  }
+};
+
+// 切换语音输入
+function toggleVoiceInput() {
+  AIVoice.startListening();
+}
+
+// 修改发送消息函数，添加自动朗读
+const originalSendAIMessage = sendAIMessage;
+sendAIMessage = async function() {
+  const input = document.getElementById('ai-chat-input');
+  if (!input) return;
+
+  const message = input.value.trim();
+  if (!message) return;
+
+  // 清空输入
+  input.value = '';
+
+  // 添加用户消息到界面
+  appendChatMessage('user', message);
+
+  // 显示思考中
+  const thinkingEl = showAIThinking();
+
+  // 滚动到底部
+  scrollChatToBottom();
+
+  // 获取AI回复
+  const response = await AIChat.sendMessage(message);
+
+  // 移除思考中
+  if (thinkingEl) thinkingEl.remove();
+
+  // 添加AI回复
+  if (response.error) {
+    appendChatMessage('ai', response.error, true);
+  } else {
+    appendChatMessage('ai', response.content);
+
+    // 自动朗读回复
+    if (AIVoice.isAutoSpeakEnabled()) {
+      AIVoice.speak(response.content);
+    }
+
+    // 播放提示音
+    if (typeof playSound === 'function') {
+      playSound('correct');
+    }
+  }
+
+  // 滚动到底部
+  scrollChatToBottom();
+};
+
+// 关闭聊天时停止语音
+const originalCloseAIChat = closeAIChat;
+closeAIChat = function() {
+  AIVoice.stopListening();
+  AIVoice.stopSpeaking();
+  originalCloseAIChat();
+};
+
+// 页面加载时初始化语音
+document.addEventListener('DOMContentLoaded', () => {
+  AIVoice.init();
+});
+
 // 全局暴露
 window.AIChat = AIChat;
+window.AIVoice = AIVoice;
 window.openAIChat = openAIChat;
 window.closeAIChat = closeAIChat;
 window.sendAIMessage = sendAIMessage;
 window.usePresetQuestion = usePresetQuestion;
 window.clearAIChat = clearAIChat;
 window.startAIModelDownload = startAIModelDownload;
+window.toggleVoiceInput = toggleVoiceInput;
