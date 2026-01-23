@@ -1655,17 +1655,36 @@
           <p class="setting-desc">
             1. 在 iPhone 上安装 <strong>Bark</strong> App<br>
             2. 打开 Bark，复制推送 URL<br>
-            3. 粘贴到下方输入框
+            3. 分别粘贴到爸爸和妈妈的输入框
           </p>
-          <div class="bark-input-row">
-            <input
-              type="text"
-              id="bark-url-input"
-              placeholder="https://api.day.app/xxxxxx/"
-            >
-            <button onclick="saveBarkUrl()">保存并测试</button>
+
+          <!-- 爸爸的 Bark -->
+          <div class="bark-input-group">
+            <label>👨 爸爸的 Bark URL</label>
+            <div class="bark-input-row">
+              <input
+                type="text"
+                id="bark-url-dad"
+                placeholder="https://api.day.app/xxxxxx/"
+              >
+              <button onclick="saveBarkUrl('dad')">测试</button>
+            </div>
+            <div id="bark-status-dad" class="bark-status hidden"></div>
           </div>
-          <div id="bark-status" class="bark-status hidden"></div>
+
+          <!-- 妈妈的 Bark -->
+          <div class="bark-input-group">
+            <label>👩 妈妈的 Bark URL</label>
+            <div class="bark-input-row">
+              <input
+                type="text"
+                id="bark-url-mom"
+                placeholder="https://api.day.app/xxxxxx/"
+              >
+              <button onclick="saveBarkUrl('mom')">测试</button>
+            </div>
+            <div id="bark-status-mom" class="bark-status hidden"></div>
+          </div>
         </div>
 
         <!-- 通知选项 -->

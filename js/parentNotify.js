@@ -4,7 +4,8 @@
 const ParentNotify = {
   // 配置
   config: {
-    barkUrl: '',           // Bark 推送 URL
+    dadBarkUrl: '',        // 爸爸的 Bark 推送 URL
+    momBarkUrl: '',        // 妈妈的 Bark 推送 URL
     enabled: false,        // 是否启用
     notifyAchievement: true,  // 成就通知
     notifyProgress: true,     // 学习进度通知
@@ -34,71 +35,64 @@ const ParentNotify = {
   },
 
   // 设置 Bark URL
-  setBarkUrl(url) {
+  setBarkUrl(who, url) {
     // 确保 URL 格式正确
     if (url && !url.endsWith('/')) {
       url = url + '/';
     }
-    this.config.barkUrl = url;
-    this.config.enabled = !!url;
+    if (who === 'dad') {
+      this.config.dadBarkUrl = url;
+    } else if (who === 'mom') {
+      this.config.momBarkUrl = url;
+    }
+    // 只要有一个 URL 就启用
+    this.config.enabled = !!(this.config.dadBarkUrl || this.config.momBarkUrl);
     this.saveConfig();
   },
 
-  // 发送通知
-  async send(title, content, options = {}) {
-    if (!this.config.enabled || !this.config.barkUrl) {
-      console.log('家长通知未启用');
-      return false;
-    }
+  // 发送通知到单个端
+  async sendToOne(barkUrl, title, content, options = {}) {
+    if (!barkUrl) return false;
 
     try {
       // 构建 Bark URL
-      // 格式: https://api.day.app/YOUR_KEY/title/content?params
-      let url = this.config.barkUrl;
+      let url = barkUrl;
       url += encodeURIComponent(title) + '/';
       url += encodeURIComponent(content);
 
       // 添加参数
       const params = new URLSearchParams();
-
-      // 通知级别 (active, timeSensitive, passive)
-      if (options.level) {
-        params.append('level', options.level);
-      }
-
-      // 声音
-      if (options.sound) {
-        params.append('sound', options.sound);
-      }
-
-      // 图标
-      if (options.icon) {
-        params.append('icon', options.icon);
-      }
-
-      // 分组
+      if (options.level) params.append('level', options.level);
+      if (options.sound) params.append('sound', options.sound);
+      if (options.icon) params.append('icon', options.icon);
       params.append('group', options.group || '宝贝学习乐园');
 
       const paramStr = params.toString();
-      if (paramStr) {
-        url += '?' + paramStr;
-      }
+      if (paramStr) url += '?' + paramStr;
 
-      // 发送请求
       const response = await fetch(url);
       const result = await response.json();
-
-      if (result.code === 200) {
-        console.log('通知发送成功');
-        return true;
-      } else {
-        console.error('通知发送失败:', result);
-        return false;
-      }
+      return result.code === 200;
     } catch (error) {
       console.error('通知发送错误:', error);
       return false;
     }
+  },
+
+  // 发送通知（同时发给爸爸和妈妈）
+  async send(title, content, options = {}) {
+    if (!this.config.enabled) {
+      console.log('家长通知未启用');
+      return false;
+    }
+
+    const results = await Promise.all([
+      this.sendToOne(this.config.dadBarkUrl, title, content, options),
+      this.sendToOne(this.config.momBarkUrl, title, content, options)
+    ]);
+
+    // 只要有一个成功就算成功
+    return results.some(r => r === true);
   },
 
   // ========== 预设通知类型 ==========
@@ -178,11 +172,14 @@ const ParentNotify = {
     }
   },
 
-  // 测试通知
-  async testNotify() {
-    const success = await this.send(
+  // 测试通知（指定爸爸或妈妈）
+  async testNotify(who) {
+    const url = who === 'dad' ? this.config.dadBarkUrl : this.config.momBarkUrl;
+    const label = who === 'dad' ? '爸爸' : '妈妈';
+    const success = await this.sendToOne(
+      url,
       '🎉 测试成功！',
-      '家长通知已正确配置，可以收到宝贝的消息啦~',
+      `${label}的通知已配置好，可以收到宝贝的消息啦~`,
       { sound: 'chord', level: 'active' }
     );
     return success;
@@ -196,11 +193,11 @@ function openParentSettings() {
   const modal = document.getElementById('parent-settings-modal');
   if (!modal) return;
 
-  // 填充当前配置
-  const urlInput = document.getElementById('bark-url-input');
-  if (urlInput) {
-    urlInput.value = ParentNotify.config.barkUrl || '';
-  }
+  // 填充当前配置（爸爸和妈妈）
+  const dadInput = document.getElementById('bark-url-dad');
+  const momInput = document.getElementById('bark-url-mom');
+  if (dadInput) dadInput.value = ParentNotify.config.dadBarkUrl || '';
+  if (momInput) momInput.value = ParentNotify.config.momBarkUrl || '';
 
   // 更新开关状态
   updateSettingSwitches();
@@ -236,41 +233,45 @@ function updateSettingSwitches() {
   }
 }
 
-// 保存 Bark URL
-async function saveBarkUrl() {
-  const input = document.getElementById('bark-url-input');
+// 保存并测试 Bark URL（爸爸或妈妈）
+async function saveBarkUrl(who) {
+  const inputId = who === 'dad' ? 'bark-url-dad' : 'bark-url-mom';
+  const statusId = who === 'dad' ? 'bark-status-dad' : 'bark-status-mom';
+  const label = who === 'dad' ? '爸爸' : '妈妈';
+
+  const input = document.getElementById(inputId);
   if (!input) return;
 
   const url = input.value.trim();
 
   if (!url) {
-    ParentNotify.setBarkUrl('');
-    showSettingStatus('已关闭通知', 'info');
+    ParentNotify.setBarkUrl(who, '');
+    showSettingStatus(statusId, `已关闭${label}的通知`, 'info');
     return;
   }
 
   // 验证 URL 格式
   if (!url.includes('api.day.app') && !url.includes('bark')) {
-    showSettingStatus('URL 格式不正确，请检查', 'error');
+    showSettingStatus(statusId, 'URL 格式不正确，请检查', 'error');
     return;
   }
 
-  ParentNotify.setBarkUrl(url);
-  showSettingStatus('正在测试...', 'info');
+  ParentNotify.setBarkUrl(who, url);
+  showSettingStatus(statusId, '正在测试...', 'info');
 
   // 发送测试通知
-  const success = await ParentNotify.testNotify();
+  const success = await ParentNotify.testNotify(who);
 
   if (success) {
-    showSettingStatus('✅ 设置成功！请检查手机是否收到通知', 'success');
+    showSettingStatus(statusId, `✅ ${label}设置成功！`, 'success');
   } else {
-    showSettingStatus('❌ 发送失败，请检查URL是否正确', 'error');
+    showSettingStatus(statusId, '❌ 发送失败，请检查URL', 'error');
   }
 }
 
 // 显示设置状态
-function showSettingStatus(message, type) {
-  const statusEl = document.getElementById('bark-status');
+function showSettingStatus(elementId, message, type) {
+  const statusEl = document.getElementById(elementId);
   if (!statusEl) return;
 
   statusEl.textContent = message;

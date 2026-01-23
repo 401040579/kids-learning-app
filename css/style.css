@@ -8052,6 +8052,18 @@ body {
   margin-bottom: 12px;
 }
 
+.bark-input-group {
+  margin-bottom: 16px;
+}
+
+.bark-input-group label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
 .bark-input-row {
   display: flex;
   gap: 10px;
@@ -8059,10 +8071,10 @@ body {
 
 .bark-input-row input {
   flex: 1;
-  padding: 12px;
+  padding: 10px 12px;
   border: 2px solid #e0e0e0;
   border-radius: 12px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .bark-input-row input:focus {
