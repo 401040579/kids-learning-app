@@ -388,6 +388,25 @@
             <div class="card-desc">练习发音</div>
           </div>
 
+          <!-- 家长通知功能 -->
+          <div class="menu-card card-parent-notify" data-category="tools" onclick="openMessageToParent()">
+            <div class="card-icon">💬</div>
+            <div class="card-title">给爸妈留言</div>
+            <div class="card-desc">发消息给家长</div>
+          </div>
+
+          <div class="menu-card card-sos" data-category="tools" onclick="triggerSOS()">
+            <div class="card-icon">🆘</div>
+            <div class="card-title">紧急求助</div>
+            <div class="card-desc">通知爸爸妈妈</div>
+          </div>
+
+          <div class="menu-card card-parent-settings" data-category="tools" onclick="openParentSettings()">
+            <div class="card-icon">👨‍👩‍👧</div>
+            <div class="card-title">家长设置</div>
+            <div class="card-desc">配置通知</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -1724,21 +1743,6 @@
         </button>
       </div>
     </div>
-  </div>
-
-  <!-- SOS 浮动按钮 -->
-  <div id="sos-float-btn" class="sos-float-btn" onclick="triggerSOS()">
-    🆘
-  </div>
-
-  <!-- 家长通知快捷入口（主页显示） -->
-  <div id="parent-notify-bar" class="parent-notify-bar">
-    <button class="notify-quick-btn" onclick="openMessageToParent()">
-      💬 发消息
-    </button>
-    <button class="notify-quick-btn settings" onclick="openParentSettings()">
-      ⚙️ 设置
-    </button>
   </div>
 
   <!-- PWA 更新提示 -->

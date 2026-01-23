@@ -151,9 +151,9 @@ const ParentNotify = {
   },
 
   // 孩子发送的消息
-  notifyMessage(message) {
-    if (!this.config.notifyMessage) return;
-    this.send(
+  async notifyMessage(message) {
+    if (!this.config.notifyMessage) return false;
+    return await this.send(
       '💬 宝贝发来消息',
       message,
       { sound: 'bell', level: 'timeSensitive' }
@@ -161,8 +161,8 @@ const ParentNotify = {
   },
 
   // SOS 紧急通知
-  notifySOS() {
-    this.send(
+  async notifySOS() {
+    return await this.send(
       '🆘 紧急求助！',
       '宝贝按下了紧急求助按钮，请尽快查看！',
       { sound: 'alarm', level: 'timeSensitive' }
