@@ -503,20 +503,97 @@ const PictureBook = {
     }
   },
 
-  // 朗读当前页面
-  speakPageText() {
+  // 当前音频对象
+  currentAudio: null,
+
+  // 朗读当前页面（使用 Puter.js AI 语音）
+  async speakPageText() {
     if (!this.currentBook) return;
     const page = this.currentBook.pages[this.currentPage];
+    const speakBtn = document.querySelector('.reading-speak-btn');
 
+    // 如果正在播放，停止播放
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+      if (speakBtn) {
+        speakBtn.innerHTML = '🔊 朗读';
+        speakBtn.disabled = false;
+      }
+      return;
+    }
+
+    // 显示加载状态
+    if (speakBtn) {
+      speakBtn.innerHTML = '⏳ 加载中...';
+      speakBtn.disabled = true;
+    }
+
+    try {
+      // 使用 Puter.js AI TTS（神经网络语音，更自然）
+      if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2speech) {
+        const audio = await puter.ai.txt2speech(page.text, {
+          voice: 'Zhiyu',      // 中文女声
+          engine: 'neural',    // 神经网络引擎，声音更自然
+          language: 'cmn-CN'   // 普通话
+        });
+
+        this.currentAudio = audio;
+
+        // 更新按钮状态
+        if (speakBtn) {
+          speakBtn.innerHTML = '⏹️ 停止';
+          speakBtn.disabled = false;
+        }
+
+        // 播放完成后重置
+        audio.onended = () => {
+          this.currentAudio = null;
+          if (speakBtn) {
+            speakBtn.innerHTML = '🔊 朗读';
+          }
+        };
+
+        audio.play();
+      } else {
+        // 备选方案：使用 Web Speech API
+        this.speakWithWebSpeech(page.text, speakBtn);
+      }
+    } catch (error) {
+      console.error('Puter TTS 失败，使用备选方案:', error);
+      // 备选方案：使用 Web Speech API
+      this.speakWithWebSpeech(page.text, speakBtn);
+    }
+  },
+
+  // 备选语音方案（Web Speech API）
+  speakWithWebSpeech(text, speakBtn) {
     if ('speechSynthesis' in window) {
-      // 停止之前的朗读
       speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(page.text);
+      const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'zh-CN';
-      utterance.rate = 0.8; // 稍慢一点，适合儿童
-      utterance.pitch = 1.1; // 稍高一点，更活泼
+      utterance.rate = 0.8;
+      utterance.pitch = 1.1;
+
+      if (speakBtn) {
+        speakBtn.innerHTML = '🔊 朗读中...';
+        speakBtn.disabled = false;
+      }
+
+      utterance.onend = () => {
+        if (speakBtn) {
+          speakBtn.innerHTML = '🔊 朗读';
+        }
+      };
+
       speechSynthesis.speak(utterance);
+    } else {
+      if (speakBtn) {
+        speakBtn.innerHTML = '🔊 朗读';
+        speakBtn.disabled = false;
+      }
+      alert('您的浏览器不支持语音功能');
     }
   },
 
@@ -559,7 +636,13 @@ const PictureBook = {
 
   // 返回书架
   backToBookshelf() {
-    speechSynthesis.cancel(); // 停止朗读
+    // 停止所有朗读
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+    speechSynthesis.cancel();
+
     this.currentBook = null;
     this.currentPage = 0;
     this.renderBookshelf();
@@ -579,6 +662,11 @@ function showPictureBook() {
 function closePictureBook() {
   const modal = document.getElementById('picture-book-modal');
   if (modal) {
+    // 停止所有朗读
+    if (PictureBook.currentAudio) {
+      PictureBook.currentAudio.pause();
+      PictureBook.currentAudio = null;
+    }
     speechSynthesis.cancel();
     modal.classList.add('hidden');
   }
