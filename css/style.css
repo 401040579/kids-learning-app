@@ -2447,11 +2447,13 @@ body {
 
 .data-btns {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
 .btn-export,
-.btn-import {
+.btn-import,
+.btn-refresh {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -2478,13 +2480,21 @@ body {
   box-shadow: 0 4px 15px rgba(255, 159, 67, 0.4);
 }
 
+.btn-refresh {
+  background: linear-gradient(135deg, #A855F7, #EC4899);
+  color: white;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+}
+
 .btn-export:active,
-.btn-import:active {
+.btn-import:active,
+.btn-refresh:active {
   transform: scale(0.95);
 }
 
 .btn-export .btn-icon,
-.btn-import .btn-icon {
+.btn-import .btn-icon,
+.btn-refresh .btn-icon {
   font-size: 1.5rem;
 }
 

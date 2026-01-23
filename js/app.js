@@ -1823,6 +1823,38 @@ function confirmImport() {
   location.reload();
 }
 
+// 强制刷新（清除缓存）
+async function forceRefresh() {
+  if (!confirm('确定要强制刷新吗？这将清除所有缓存并重新加载页面。')) {
+    return;
+  }
+
+  try {
+    // 注销所有 Service Worker
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const registration of registrations) {
+        await registration.unregister();
+      }
+    }
+
+    // 清除所有缓存
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      for (const cacheName of cacheNames) {
+        await caches.delete(cacheName);
+      }
+    }
+
+    // 强制重新加载页面（跳过缓存）
+    location.reload(true);
+  } catch (error) {
+    console.error('强制刷新失败:', error);
+    // 即使出错也尝试刷新
+    location.reload(true);
+  }
+}
+
 // ========== 睡眠音乐模块 ==========
 let sleepAudio = null;
 let sleepMusicPlaying = false;
