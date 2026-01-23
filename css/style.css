@@ -7975,3 +7975,313 @@ body {
 .update-close:active {
   background: rgba(255, 255, 255, 0.3);
 }
+
+/* ========== 家长通知系统样式 ========== */
+
+/* 通用弹窗覆盖层 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* 家长设置弹窗 */
+.parent-settings-content {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 2px dashed var(--accent);
+}
+
+.modal-header h2 {
+  font-size: 1.2rem;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.btn-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: #f0f0f0;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-body {
+  padding: 20px;
+}
+
+.setting-section {
+  margin-bottom: 24px;
+}
+
+.setting-section h3 {
+  font-size: 1rem;
+  color: var(--text-dark);
+  margin: 0 0 12px 0;
+}
+
+.setting-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.bark-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.bark-input-row input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.bark-input-row input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.bark-input-row button {
+  padding: 12px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.bark-status {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.bark-status.success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.bark-status.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.bark-status.info {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+}
+
+.setting-item span {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.setting-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+}
+
+.setting-item select {
+  padding: 8px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.btn-primary {
+  padding: 12px 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 发消息给家长弹窗 */
+.message-parent-content {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.message-body {
+  padding: 20px;
+}
+
+.preset-messages {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.preset-messages button {
+  padding: 12px;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preset-messages button:active {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.message-input-area {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.message-input-area input {
+  flex: 1;
+  padding: 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+}
+
+.message-input-area .btn-voice {
+  width: 50px;
+  height: 50px;
+}
+
+.btn-send-message {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-send-message:active {
+  transform: scale(0.98);
+}
+
+/* SOS 浮动按钮 */
+.sos-float-btn {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #FF4757 0%, #FF6B81 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 4px 20px rgba(255, 71, 87, 0.4);
+  cursor: pointer;
+  z-index: 100;
+  animation: pulse-sos 2s infinite;
+}
+
+@keyframes pulse-sos {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(255, 71, 87, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(255, 71, 87, 0.6);
+  }
+}
+
+.sos-float-btn:active {
+  transform: scale(0.95);
+}
+
+/* 家长通知快捷栏 */
+.parent-notify-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+.notify-quick-btn {
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid var(--primary);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.notify-quick-btn:active {
+  background: var(--primary);
+  color: white;
+}
+
+.notify-quick-btn.settings {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.notify-quick-btn.settings:active {
+  background: #667eea;
+  color: white;
+}

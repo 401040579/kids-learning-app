@@ -124,6 +124,11 @@ const AchievementSystem = {
 
     // 显示解锁弹窗
     this.showUnlockPopup(achievement);
+
+    // 通知家长
+    if (typeof ParentNotify !== 'undefined') {
+      ParentNotify.notifyAchievement(achievement.name);
+    }
   },
 
   // 显示成就解锁弹窗

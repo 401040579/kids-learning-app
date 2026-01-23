@@ -479,6 +479,11 @@ function checkMathAnswer(answer, btn) {
     AchievementSystem.checkProgress('totalScore', RewardSystem.data.totalScore);
     AchievementSystem.checkProgress('tasksDone', RewardSystem.data.tasksDone);
 
+    // 通知家长学习进度
+    if (typeof ParentNotify !== 'undefined') {
+      ParentNotify.trackQuestion('数学');
+    }
+
     // 延迟后生成新题
     setTimeout(() => {
       generateMathQuestion();
@@ -573,6 +578,11 @@ function checkEnglishAnswer(answer, btn) {
     AchievementSystem.checkProgress('tasksDone', RewardSystem.data.tasksDone);
     AchievementSystem.checkProgress('allRounder', 1);
 
+    // 通知家长学习进度
+    if (typeof ParentNotify !== 'undefined') {
+      ParentNotify.trackQuestion('英语');
+    }
+
     setTimeout(() => {
       generateEnglishQuestion();
     }, 1500);
@@ -665,6 +675,11 @@ function checkChineseAnswer(answer, btn) {
     AchievementSystem.checkProgress('totalScore', RewardSystem.data.totalScore);
     AchievementSystem.checkProgress('tasksDone', RewardSystem.data.tasksDone);
     AchievementSystem.checkProgress('allRounder', 1);
+
+    // 通知家长学习进度
+    if (typeof ParentNotify !== 'undefined') {
+      ParentNotify.trackQuestion('中文');
+    }
 
     setTimeout(() => {
       generateChineseQuestion();

@@ -1619,6 +1619,128 @@
     <source id="sleep-audio-source" src="" type="audio/mpeg">
   </audio>
 
+  <!-- ========== 家长通知系统 ========== -->
+
+  <!-- 家长设置弹窗 -->
+  <div id="parent-settings-modal" class="modal-overlay hidden">
+    <div class="parent-settings-content">
+      <div class="modal-header">
+        <h2>👨‍👩‍👧 家长设置</h2>
+        <button class="btn-close" onclick="closeParentSettings()">✕</button>
+      </div>
+
+      <div class="settings-body">
+        <!-- Bark URL 设置 -->
+        <div class="setting-section">
+          <h3>📱 Bark 推送设置</h3>
+          <p class="setting-desc">
+            1. 在 iPhone 上安装 <strong>Bark</strong> App<br>
+            2. 打开 Bark，复制推送 URL<br>
+            3. 粘贴到下方输入框
+          </p>
+          <div class="bark-input-row">
+            <input
+              type="text"
+              id="bark-url-input"
+              placeholder="https://api.day.app/xxxxxx/"
+            >
+            <button onclick="saveBarkUrl()">保存并测试</button>
+          </div>
+          <div id="bark-status" class="bark-status hidden"></div>
+        </div>
+
+        <!-- 通知选项 -->
+        <div class="setting-section">
+          <h3>🔔 通知选项</h3>
+
+          <label class="setting-item">
+            <span>成就通知</span>
+            <input type="checkbox" id="notify-achievement" checked
+                   onchange="updateNotifySetting('notifyAchievement', this.checked)">
+          </label>
+
+          <label class="setting-item">
+            <span>学习进度通知</span>
+            <input type="checkbox" id="notify-progress" checked
+                   onchange="updateNotifySetting('notifyProgress', this.checked)">
+          </label>
+
+          <label class="setting-item">
+            <span>消息通知</span>
+            <input type="checkbox" id="notify-message" checked
+                   onchange="updateNotifySetting('notifyMessage', this.checked)">
+          </label>
+
+          <label class="setting-item">
+            <span>每答几题通知</span>
+            <select id="progress-threshold"
+                    onchange="updateNotifySetting('progressThreshold', parseInt(this.value))">
+              <option value="5">5题</option>
+              <option value="10" selected>10题</option>
+              <option value="20">20题</option>
+              <option value="50">50题</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="closeParentSettings()">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 发消息给家长弹窗 -->
+  <div id="message-parent-modal" class="modal-overlay hidden">
+    <div class="message-parent-content">
+      <div class="modal-header">
+        <h2>💬 给爸爸妈妈发消息</h2>
+        <button class="btn-close" onclick="closeMessageToParent()">✕</button>
+      </div>
+
+      <div class="message-body">
+        <!-- 预设消息 -->
+        <div class="preset-messages">
+          <button onclick="usePresetMessage('我想你们了~')">🥰 想你们了</button>
+          <button onclick="usePresetMessage('我饿了，想吃东西')">🍔 我饿了</button>
+          <button onclick="usePresetMessage('我完成学习任务啦！')">✅ 完成任务</button>
+          <button onclick="usePresetMessage('我有问题想问你们')">❓ 有问题</button>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="message-input-area">
+          <button class="btn-voice" id="msg-voice-btn" onclick="toggleMessageVoice()">
+            🎤
+          </button>
+          <input
+            type="text"
+            id="parent-message-input"
+            placeholder="输入或说出你想说的话..."
+          >
+        </div>
+
+        <button id="send-parent-msg-btn" class="btn-send-message" onclick="sendMessageToParent()">
+          发送给爸爸妈妈 💌
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOS 浮动按钮 -->
+  <div id="sos-float-btn" class="sos-float-btn" onclick="triggerSOS()">
+    🆘
+  </div>
+
+  <!-- 家长通知快捷入口（主页显示） -->
+  <div id="parent-notify-bar" class="parent-notify-bar">
+    <button class="notify-quick-btn" onclick="openMessageToParent()">
+      💬 发消息
+    </button>
+    <button class="notify-quick-btn settings" onclick="openParentSettings()">
+      ⚙️ 设置
+    </button>
+  </div>
+
   <!-- PWA 更新提示 -->
   <div id="update-notification" class="update-notification hidden">
     <div class="update-content">
@@ -1646,6 +1768,7 @@
   <script src="js/videos.js"></script>
   <script src="js/puzzle.js"></script>
   <script src="js/aiChat.js"></script>
+  <script src="js/parentNotify.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
