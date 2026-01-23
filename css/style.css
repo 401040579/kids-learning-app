@@ -6987,6 +6987,135 @@ body {
   color: white;
 }
 
+/* 练习内容区域 - 新增样式 */
+.practice-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.practice-pinyin {
+  font-size: 5rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+
+.practice-pinyin-small {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.practice-word {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.practice-english {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.practice-english-pinyin {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.practice-hint {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+}
+
+.practice-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.btn-listen {
+  background: var(--info);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-listen:active {
+  transform: scale(0.95);
+}
+
+.practice-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  border-top: 1px solid #eee;
+}
+
+.btn-prev,
+.btn-next {
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: 2px solid var(--primary);
+  background: white;
+  color: var(--primary);
+  transition: all 0.2s;
+}
+
+.btn-prev:disabled,
+.btn-next:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-next {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-back-practice {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.practice-progress-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.practice-progress-bar {
+  height: 4px;
+  background: #eee;
+  margin: 0 16px;
+}
+
+.practice-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s;
+}
+
 /* 跟读完成弹窗 */
 .pronunciation-complete-modal {
   position: fixed;
