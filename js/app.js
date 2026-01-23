@@ -3,14 +3,78 @@
 // 当前页面
 let currentPage = 'home';
 
+// Service Worker 更新相关
+let newWorker = null;
+
+// 注册 Service Worker 并监听更新
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+
+  navigator.serviceWorker.register('/sw.js')
+    .then(registration => {
+      console.log('SW registered');
+
+      // 检查更新
+      registration.addEventListener('updatefound', () => {
+        newWorker = registration.installing;
+
+        newWorker.addEventListener('statechange', () => {
+          // 新 SW 安装完成，等待激活
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // 有新版本可用，显示更新提示
+            showUpdateNotification();
+          }
+        });
+      });
+    })
+    .catch(err => console.log('SW registration failed:', err));
+
+  // 监听 SW 发来的消息
+  navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data && event.data.type === 'SW_UPDATED') {
+      console.log('SW updated to:', event.data.version);
+    }
+  });
+
+  // 当控制器变化时（新 SW 激活），刷新页面
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
+  });
+}
+
+// 显示更新提示
+function showUpdateNotification() {
+  const notification = document.getElementById('update-notification');
+  if (notification) {
+    notification.classList.remove('hidden');
+  }
+}
+
+// 隐藏更新提示
+function hideUpdateNotification() {
+  const notification = document.getElementById('update-notification');
+  if (notification) {
+    notification.classList.add('hidden');
+  }
+}
+
+// 应用更新
+function applyUpdate() {
+  if (newWorker) {
+    // 告诉新 SW 立即激活
+    newWorker.postMessage({ type: 'SKIP_WAITING' });
+  }
+  hideUpdateNotification();
+}
+
 // 初始化应用
 document.addEventListener('DOMContentLoaded', () => {
-  // 注册 Service Worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log('SW registered'))
-      .catch(err => console.log('SW registration failed:', err));
-  }
+  // 注册 Service Worker 并监听更新
+  registerServiceWorker();
 
   // 初始化奖励系统
   RewardSystem.init();

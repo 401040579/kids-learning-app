@@ -7470,3 +7470,78 @@ body {
     height: 80vh;
   }
 }
+
+/* ========== PWA 更新提示 ========== */
+.update-notification {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.update-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+  border-radius: 50px;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+}
+
+.update-icon {
+  font-size: 1.2rem;
+}
+
+.update-text {
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.update-btn {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.update-btn:active {
+  transform: scale(0.95);
+}
+
+.update-close {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.update-close:active {
+  background: rgba(255, 255, 255, 0.3);
+}

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v10';
+const CACHE_NAME = 'kids-learning-v11';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -43,8 +43,22 @@ self.addEventListener('activate', event => {
           .filter(name => name !== CACHE_NAME)
           .map(name => caches.delete(name))
       );
+    }).then(() => {
+      // 通知所有客户端有新版本已激活
+      return self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ type: 'SW_UPDATED', version: CACHE_NAME });
+        });
+      });
     })
   );
+});
+
+// 监听来自页面的消息
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('fetch', event => {
