@@ -611,27 +611,26 @@ const MemoryGame = {
 
 // 显示记忆游戏选择页面
 function showMemoryGameSelect() {
-  const container = document.getElementById('memory-game-area');
-  if (!container) return;
+  const selectContainer = document.getElementById('memory-game-select');
+  const gameArea = document.getElementById('memory-game-area');
 
-  let html = `<div class="memory-game-select">`;
-
-  MemoryGame.gameTypes.forEach(game => {
-    html += `
-      <div class="memory-game-card" onclick="selectMemoryGame('${game.id}')">
-        <div class="memory-game-icon">${game.icon}</div>
-        <div class="memory-game-name">${game.name}</div>
-        <div class="memory-game-desc">${game.desc}</div>
-      </div>
-    `;
-  });
-
-  html += `</div>`;
-  container.innerHTML = html;
+  // 显示选择界面，隐藏游戏区域
+  if (selectContainer) selectContainer.classList.remove('hidden');
+  if (gameArea) {
+    gameArea.classList.add('hidden');
+    gameArea.innerHTML = '';
+  }
 }
 
 // 选择记忆游戏
 function selectMemoryGame(gameId) {
+  // 隐藏选择界面，显示游戏区域
+  const selectContainer = document.getElementById('memory-game-select');
+  const gameArea = document.getElementById('memory-game-area');
+
+  if (selectContainer) selectContainer.classList.add('hidden');
+  if (gameArea) gameArea.classList.remove('hidden');
+
   if (gameId === 'flip') {
     showFlipDifficultySelect();
   } else if (gameId === 'sequence') {
