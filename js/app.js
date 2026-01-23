@@ -2472,13 +2472,7 @@ function showPictureBook() {
   modal.classList.remove('hidden');
 }
 
-function closePictureBook() {
-  const modal = document.getElementById('picture-book-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-    PictureBook.stopReading();
-  }
-}
+// closePictureBook 已在 pictureBook.js 中定义
 
 function backToBookshelf() {
   PictureBook.backToBookshelf();
@@ -2516,13 +2510,7 @@ function showPronunciation() {
   modal.classList.remove('hidden');
 }
 
-function closePronunciation() {
-  const modal = document.getElementById('pronunciation-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-    Pronunciation.stopPractice();
-  }
-}
+// closePronunciation 已在 pronunciation.js 中定义
 
 function backToPronunciationSelect() {
   Pronunciation.backToSelect();
