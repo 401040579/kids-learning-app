@@ -518,6 +518,28 @@
           <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
           <h2>🔢 数学游戏</h2>
         </div>
+
+        <!-- 数学设置 -->
+        <div class="math-settings">
+          <div class="math-setting-row">
+            <span class="setting-label">范围</span>
+            <div class="math-range-buttons">
+              <button class="math-range-btn active" data-range="10" onclick="setMathRange(10)">10以内</button>
+              <button class="math-range-btn" data-range="20" onclick="setMathRange(20)">20以内</button>
+              <button class="math-range-btn" data-range="30" onclick="setMathRange(30)">30以内</button>
+            </div>
+          </div>
+          <div class="math-setting-row">
+            <span class="setting-label">运算</span>
+            <div class="math-op-buttons">
+              <button class="math-op-btn active" data-op="+" onclick="toggleMathOperator('+')">➕ 加</button>
+              <button class="math-op-btn active" data-op="-" onclick="toggleMathOperator('-')">➖ 减</button>
+              <button class="math-op-btn" data-op="×" onclick="toggleMathOperator('×')">✖️ 乘</button>
+              <button class="math-op-btn" data-op="÷" onclick="toggleMathOperator('÷')">➗ 除</button>
+            </div>
+          </div>
+        </div>
+
         <div class="game-area">
           <div class="math-question">
             <span id="num1">3</span>

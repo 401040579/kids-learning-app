@@ -403,25 +403,103 @@ function closeVideo() {
 let mathAnswer = 0;
 let currentMathQuestion = null;  // 存储当前题目数据用于错题本
 
+// 数学游戏配置
+const MathConfig = {
+  // 默认配置
+  range: 10,           // 数字范围: 10, 20, 30
+  operators: ['+', '-'], // 运算符: +, -, ×, ÷
+
+  // 加载配置
+  load() {
+    const saved = localStorage.getItem('mathGameConfig');
+    if (saved) {
+      const config = JSON.parse(saved);
+      this.range = config.range || 10;
+      this.operators = config.operators || ['+', '-'];
+    }
+  },
+
+  // 保存配置
+  save() {
+    localStorage.setItem('mathGameConfig', JSON.stringify({
+      range: this.range,
+      operators: this.operators
+    }));
+  }
+};
+
 function initMath() {
+  MathConfig.load();
+  updateMathSettingsUI();
+  generateMathQuestion();
+}
+
+// 更新数学设置界面
+function updateMathSettingsUI() {
+  // 更新范围选择
+  document.querySelectorAll('.math-range-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.range) === MathConfig.range);
+  });
+
+  // 更新运算符选择
+  document.querySelectorAll('.math-op-btn').forEach(btn => {
+    btn.classList.toggle('active', MathConfig.operators.includes(btn.dataset.op));
+  });
+}
+
+// 设置数字范围
+function setMathRange(range) {
+  MathConfig.range = range;
+  MathConfig.save();
+  updateMathSettingsUI();
+  generateMathQuestion();
+}
+
+// 切换运算符
+function toggleMathOperator(op) {
+  const index = MathConfig.operators.indexOf(op);
+  if (index === -1) {
+    MathConfig.operators.push(op);
+  } else if (MathConfig.operators.length > 1) {
+    // 至少保留一个运算符
+    MathConfig.operators.splice(index, 1);
+  }
+  MathConfig.save();
+  updateMathSettingsUI();
   generateMathQuestion();
 }
 
 function generateMathQuestion() {
-  // 6岁适合的简单加减法
-  const operators = ['+', '-'];
+  const range = MathConfig.range;
+  const operators = MathConfig.operators;
   const operator = operators[Math.floor(Math.random() * operators.length)];
 
   let num1, num2;
 
   if (operator === '+') {
-    num1 = Math.floor(Math.random() * 10) + 1; // 1-10
-    num2 = Math.floor(Math.random() * 10) + 1; // 1-10
+    // 加法：两数之和不超过范围
+    num1 = Math.floor(Math.random() * range) + 1;
+    num2 = Math.floor(Math.random() * (range - num1)) + 1;
     mathAnswer = num1 + num2;
-  } else {
-    num1 = Math.floor(Math.random() * 10) + 5; // 5-14
-    num2 = Math.floor(Math.random() * num1); // 保证结果为正
+  } else if (operator === '-') {
+    // 减法：保证结果为正
+    num1 = Math.floor(Math.random() * range) + 1;
+    num2 = Math.floor(Math.random() * num1) + 1;
+    if (num2 > num1) [num1, num2] = [num2, num1];
     mathAnswer = num1 - num2;
+  } else if (operator === '×') {
+    // 乘法：根据范围调整
+    const maxFactor = range <= 10 ? 5 : (range <= 20 ? 9 : 10);
+    num1 = Math.floor(Math.random() * maxFactor) + 1;
+    num2 = Math.floor(Math.random() * maxFactor) + 1;
+    mathAnswer = num1 * num2;
+  } else if (operator === '÷') {
+    // 除法：保证整除
+    const maxFactor = range <= 10 ? 5 : (range <= 20 ? 9 : 10);
+    num2 = Math.floor(Math.random() * maxFactor) + 1; // 除数
+    const quotient = Math.floor(Math.random() * maxFactor) + 1; // 商
+    num1 = num2 * quotient; // 被除数
+    mathAnswer = quotient;
   }
 
   document.getElementById('num1').textContent = num1;
