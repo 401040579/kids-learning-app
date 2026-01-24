@@ -8542,3 +8542,189 @@ body {
     width: 180px;
   }
 }
+
+/* ========== 画画创作扩展 - 魔法画笔 & 涂色模板 ========== */
+
+/* 顶部按钮组 */
+.drawing-header .header-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.drawing-header .btn-template,
+.drawing-header .btn-dark-mode,
+.drawing-header .btn-save {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.drawing-header .btn-template {
+  background: #E8F5E9;
+}
+
+.drawing-header .btn-dark-mode {
+  background: #FFF3E0;
+}
+
+.drawing-header .btn-dark-mode.active {
+  background: #1a1a2e;
+  color: #FFD93D;
+}
+
+.drawing-header .btn-save {
+  background: var(--primary);
+  color: white;
+}
+
+/* 涂色模板面板 */
+.template-panel {
+  position: absolute;
+  top: 70px;
+  left: 12px;
+  right: 12px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  z-index: 100;
+  padding: 16px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.template-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.template-header button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.template-btn {
+  padding: 12px 8px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.template-btn:hover {
+  border-color: var(--primary);
+  background: #FFF0F5;
+}
+
+.template-btn:active {
+  transform: scale(0.95);
+}
+
+/* 魔法画笔区域 */
+.magic-section .toolbar-label {
+  color: #9B59B6;
+  background: linear-gradient(90deg, #FF69B4, #9B59B6, #4D96FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.magic-btn {
+  background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%) !important;
+  border-color: #4D96FF !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.magic-btn::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #FF69B4, #9B59B6, #4D96FF, #00D2D3);
+  border-radius: 14px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.magic-btn:hover::before,
+.magic-btn.active::before {
+  opacity: 1;
+}
+
+.magic-btn.active {
+  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%) !important;
+  animation: magicGlow 2s ease-in-out infinite;
+}
+
+@keyframes magicGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px #FF69B4, 0 0 20px #9B59B6;
+  }
+  50% {
+    box-shadow: 0 0 20px #4D96FF, 0 0 30px #00D2D3;
+  }
+}
+
+/* 黑底模式画布 */
+.drawing-canvas-container.dark-mode {
+  background: #1a1a2e;
+  box-shadow: 0 0 20px rgba(77, 150, 255, 0.3);
+}
+
+/* 填充工具光标 */
+.drawing-tool-btn[data-tool="fill"].active ~ #drawing-canvas,
+[data-tool="fill"] #drawing-canvas {
+  cursor: cell;
+}
+
+/* 填充工具提示 */
+.drawing-tool-btn[data-tool="fill"]::after {
+  content: '';
+}
+
+/* 响应式：小屏幕模板网格 */
+@media (max-width: 480px) {
+  .template-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .template-btn {
+    padding: 10px 6px;
+    font-size: 0.8rem;
+  }
+}

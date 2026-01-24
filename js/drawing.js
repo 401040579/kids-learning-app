@@ -1,5 +1,6 @@
 // ========== 画画创作模块 ==========
 // 支持 Apple Pencil 压感的儿童绘画工具
+// P0 扩展：魔法画笔 + 涂色模板
 
 const DrawingApp = {
   // 画布相关
@@ -11,24 +12,126 @@ const DrawingApp = {
 
   // 绘画设置
   settings: {
-    tool: 'pencil',      // pencil, marker, crayon, eraser
+    tool: 'pencil',      // pencil, marker, crayon, eraser, neon, rainbow, sparkle
     color: '#FF69B4',    // 当前颜色
     size: 8,             // 画笔大小
-    opacity: 1           // 透明度
+    opacity: 1,          // 透明度
+    darkMode: false      // 黑底模式（霓虹效果更好看）
   },
+
+  // 彩虹画笔状态
+  rainbowHue: 0,
 
   // 画笔预设
   brushes: {
-    pencil: { sizeMult: 1, opacity: 0.9, pressureSensitive: true },
-    marker: { sizeMult: 2, opacity: 0.7, pressureSensitive: true },
-    crayon: { sizeMult: 2.5, opacity: 0.6, pressureSensitive: false },
-    eraser: { sizeMult: 3, opacity: 1, pressureSensitive: true }
+    pencil: { sizeMult: 1, opacity: 0.9, pressureSensitive: true, magic: false },
+    marker: { sizeMult: 2, opacity: 0.7, pressureSensitive: true, magic: false },
+    crayon: { sizeMult: 2.5, opacity: 0.6, pressureSensitive: false, magic: false },
+    eraser: { sizeMult: 3, opacity: 1, pressureSensitive: true, magic: false },
+    fill: { sizeMult: 1, opacity: 1, pressureSensitive: false, magic: false },
+    // 魔法画笔
+    neon: { sizeMult: 1.5, opacity: 1, pressureSensitive: true, magic: true, glow: true },
+    rainbow: { sizeMult: 2, opacity: 0.9, pressureSensitive: true, magic: true, rainbow: true },
+    sparkle: { sizeMult: 1, opacity: 1, pressureSensitive: true, magic: true, sparkle: true }
   },
 
   // 颜色调色板（彩虹色 + 常用色）
   colors: [
     '#FF6B6B', '#FF8E53', '#FFD93D', '#6BCB77', '#4D96FF',
     '#9B59B6', '#FF69B4', '#00D2D3', '#FFFFFF', '#2C3E50'
+  ],
+
+  // 涂色模板数据
+  templates: [
+    {
+      id: 'star',
+      name: '⭐ 星星',
+      paths: [
+        { type: 'polygon', points: [[150,20], [180,90], [255,90], [195,140], [215,215], [150,175], [85,215], [105,140], [45,90], [120,90]], stroke: '#333', fill: 'none' }
+      ]
+    },
+    {
+      id: 'heart',
+      name: '❤️ 爱心',
+      paths: [
+        { type: 'path', d: 'M150,50 C120,20 60,20 60,80 C60,140 150,200 150,200 C150,200 240,140 240,80 C240,20 180,20 150,50 Z', stroke: '#333', fill: 'none' }
+      ]
+    },
+    {
+      id: 'fish',
+      name: '🐟 小鱼',
+      paths: [
+        { type: 'ellipse', cx: 150, cy: 120, rx: 80, ry: 50, stroke: '#333', fill: 'none' },
+        { type: 'polygon', points: [[230,120], [280,80], [280,160]], stroke: '#333', fill: 'none' },
+        { type: 'circle', cx: 100, cy: 110, r: 10, stroke: '#333', fill: '#333' },
+        { type: 'path', d: 'M120,140 Q135,155 150,140', stroke: '#333', fill: 'none' }
+      ]
+    },
+    {
+      id: 'flower',
+      name: '🌸 花朵',
+      paths: [
+        { type: 'circle', cx: 150, cy: 120, r: 25, stroke: '#333', fill: 'none' },
+        { type: 'ellipse', cx: 150, cy: 70, rx: 20, ry: 30, stroke: '#333', fill: 'none' },
+        { type: 'ellipse', cx: 195, cy: 95, rx: 20, ry: 30, stroke: '#333', fill: 'none', rotate: 72 },
+        { type: 'ellipse', cx: 180, cy: 150, rx: 20, ry: 30, stroke: '#333', fill: 'none', rotate: 144 },
+        { type: 'ellipse', cx: 120, cy: 150, rx: 20, ry: 30, stroke: '#333', fill: 'none', rotate: 216 },
+        { type: 'ellipse', cx: 105, cy: 95, rx: 20, ry: 30, stroke: '#333', fill: 'none', rotate: 288 },
+        { type: 'line', x1: 150, y1: 145, x2: 150, y2: 220, stroke: '#333' }
+      ]
+    },
+    {
+      id: 'house',
+      name: '🏠 房子',
+      paths: [
+        { type: 'rect', x: 80, y: 120, width: 140, height: 100, stroke: '#333', fill: 'none' },
+        { type: 'polygon', points: [[60,120], [150,50], [240,120]], stroke: '#333', fill: 'none' },
+        { type: 'rect', x: 130, y: 160, width: 40, height: 60, stroke: '#333', fill: 'none' },
+        { type: 'rect', x: 95, y: 140, width: 30, height: 30, stroke: '#333', fill: 'none' },
+        { type: 'rect', x: 175, y: 140, width: 30, height: 30, stroke: '#333', fill: 'none' }
+      ]
+    },
+    {
+      id: 'cat',
+      name: '🐱 小猫',
+      paths: [
+        { type: 'circle', cx: 150, cy: 130, r: 50, stroke: '#333', fill: 'none' },
+        { type: 'polygon', points: [[110,90], [100,50], [130,80]], stroke: '#333', fill: 'none' },
+        { type: 'polygon', points: [[190,90], [200,50], [170,80]], stroke: '#333', fill: 'none' },
+        { type: 'circle', cx: 130, cy: 120, r: 8, stroke: '#333', fill: '#333' },
+        { type: 'circle', cx: 170, cy: 120, r: 8, stroke: '#333', fill: '#333' },
+        { type: 'ellipse', cx: 150, cy: 145, rx: 8, ry: 5, stroke: '#333', fill: '#FFC0CB' },
+        { type: 'path', d: 'M142,155 Q150,165 158,155', stroke: '#333', fill: 'none' },
+        { type: 'line', x1: 100, y1: 140, x2: 60, y2: 135, stroke: '#333' },
+        { type: 'line', x1: 100, y1: 145, x2: 60, y2: 150, stroke: '#333' },
+        { type: 'line', x1: 200, y1: 140, x2: 240, y2: 135, stroke: '#333' },
+        { type: 'line', x1: 200, y1: 145, x2: 240, y2: 150, stroke: '#333' }
+      ]
+    },
+    {
+      id: 'butterfly',
+      name: '🦋 蝴蝶',
+      paths: [
+        { type: 'ellipse', cx: 100, cy: 100, rx: 45, ry: 35, stroke: '#333', fill: 'none' },
+        { type: 'ellipse', cx: 200, cy: 100, rx: 45, ry: 35, stroke: '#333', fill: 'none' },
+        { type: 'ellipse', cx: 110, cy: 155, rx: 30, ry: 25, stroke: '#333', fill: 'none' },
+        { type: 'ellipse', cx: 190, cy: 155, rx: 30, ry: 25, stroke: '#333', fill: 'none' },
+        { type: 'ellipse', cx: 150, cy: 130, rx: 8, ry: 50, stroke: '#333', fill: 'none' },
+        { type: 'path', d: 'M145,80 Q130,50 120,40', stroke: '#333', fill: 'none' },
+        { type: 'path', d: 'M155,80 Q170,50 180,40', stroke: '#333', fill: 'none' }
+      ]
+    },
+    {
+      id: 'rainbow',
+      name: '🌈 彩虹',
+      paths: [
+        { type: 'arc', cx: 150, cy: 180, r: 120, startAngle: Math.PI, endAngle: 0, stroke: '#333', fill: 'none' },
+        { type: 'arc', cx: 150, cy: 180, r: 100, startAngle: Math.PI, endAngle: 0, stroke: '#333', fill: 'none' },
+        { type: 'arc', cx: 150, cy: 180, r: 80, startAngle: Math.PI, endAngle: 0, stroke: '#333', fill: 'none' },
+        { type: 'arc', cx: 150, cy: 180, r: 60, startAngle: Math.PI, endAngle: 0, stroke: '#333', fill: 'none' },
+        { type: 'arc', cx: 150, cy: 180, r: 40, startAngle: Math.PI, endAngle: 0, stroke: '#333', fill: 'none' }
+      ]
+    }
   ],
 
   // 历史记录（用于撤销）
@@ -45,6 +148,7 @@ const DrawingApp = {
     this.resizeCanvas();
     this.bindEvents();
     this.renderToolbar();
+    this.renderTemplatePanel();
     this.clear();
     this.saveState();
   },
@@ -74,7 +178,13 @@ const DrawingApp = {
   // 绑定事件
   bindEvents() {
     // 使用 Pointer Events（支持触摸、鼠标、Apple Pencil）
-    this.canvas.addEventListener('pointerdown', (e) => this.startDrawing(e));
+    this.canvas.addEventListener('pointerdown', (e) => {
+      if (this.settings.tool === 'fill') {
+        this.handleFillClick(e);
+      } else {
+        this.startDrawing(e);
+      }
+    });
     this.canvas.addEventListener('pointermove', (e) => this.draw(e));
     this.canvas.addEventListener('pointerup', () => this.stopDrawing());
     this.canvas.addEventListener('pointerleave', () => this.stopDrawing());
@@ -138,11 +248,17 @@ const DrawingApp = {
     const brush = this.brushes[this.settings.tool];
     const size = this.calculateSize(pressure, brush);
 
+    // 魔法画笔特效
+    if (brush.magic) {
+      this.drawMagicPoint(x, y, size, brush);
+      return;
+    }
+
     this.ctx.beginPath();
     this.ctx.arc(x, y, size / 2, 0, Math.PI * 2);
 
     if (this.settings.tool === 'eraser') {
-      this.ctx.fillStyle = '#FFFFFF';
+      this.ctx.fillStyle = this.settings.darkMode ? '#1a1a2e' : '#FFFFFF';
     } else {
       this.ctx.fillStyle = this.settings.color;
       this.ctx.globalAlpha = brush.opacity;
@@ -152,10 +268,50 @@ const DrawingApp = {
     this.ctx.globalAlpha = 1;
   },
 
+  // 绘制魔法点
+  drawMagicPoint(x, y, size, brush) {
+    this.ctx.save();
+
+    if (brush.glow) {
+      // 霓虹发光效果
+      this.ctx.shadowColor = this.settings.color;
+      this.ctx.shadowBlur = 20;
+      this.ctx.fillStyle = this.settings.color;
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+      this.ctx.fill();
+      // 内层更亮
+      this.ctx.shadowBlur = 10;
+      this.ctx.fillStyle = '#FFFFFF';
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, size / 4, 0, Math.PI * 2);
+      this.ctx.fill();
+    } else if (brush.rainbow) {
+      // 彩虹效果
+      const color = `hsl(${this.rainbowHue}, 100%, 50%)`;
+      this.ctx.fillStyle = color;
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.rainbowHue = (this.rainbowHue + 5) % 360;
+    } else if (brush.sparkle) {
+      // 闪光星星效果
+      this.drawSparkle(x, y, size);
+    }
+
+    this.ctx.restore();
+  },
+
   // 绘制线条
   drawLine(x1, y1, x2, y2, pressure) {
     const brush = this.brushes[this.settings.tool];
     const size = this.calculateSize(pressure, brush);
+
+    // 魔法画笔特效
+    if (brush.magic) {
+      this.drawMagicLine(x1, y1, x2, y2, size, brush);
+      return;
+    }
 
     this.ctx.beginPath();
     this.ctx.moveTo(x1, y1);
@@ -163,7 +319,7 @@ const DrawingApp = {
     this.ctx.lineWidth = size;
 
     if (this.settings.tool === 'eraser') {
-      this.ctx.strokeStyle = '#FFFFFF';
+      this.ctx.strokeStyle = this.settings.darkMode ? '#1a1a2e' : '#FFFFFF';
       this.ctx.globalAlpha = 1;
     } else {
       this.ctx.strokeStyle = this.settings.color;
@@ -172,6 +328,94 @@ const DrawingApp = {
 
     this.ctx.stroke();
     this.ctx.globalAlpha = 1;
+  },
+
+  // 绘制魔法线条
+  drawMagicLine(x1, y1, x2, y2, size, brush) {
+    this.ctx.save();
+
+    if (brush.glow) {
+      // 霓虹发光效果
+      this.ctx.shadowColor = this.settings.color;
+      this.ctx.shadowBlur = 20;
+      this.ctx.strokeStyle = this.settings.color;
+      this.ctx.lineWidth = size;
+      this.ctx.lineCap = 'round';
+      this.ctx.beginPath();
+      this.ctx.moveTo(x1, y1);
+      this.ctx.lineTo(x2, y2);
+      this.ctx.stroke();
+      // 内层白色更亮
+      this.ctx.shadowBlur = 5;
+      this.ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      this.ctx.lineWidth = size / 3;
+      this.ctx.beginPath();
+      this.ctx.moveTo(x1, y1);
+      this.ctx.lineTo(x2, y2);
+      this.ctx.stroke();
+    } else if (brush.rainbow) {
+      // 彩虹渐变效果
+      const color = `hsl(${this.rainbowHue}, 100%, 50%)`;
+      this.ctx.strokeStyle = color;
+      this.ctx.lineWidth = size;
+      this.ctx.lineCap = 'round';
+      this.ctx.beginPath();
+      this.ctx.moveTo(x1, y1);
+      this.ctx.lineTo(x2, y2);
+      this.ctx.stroke();
+      this.rainbowHue = (this.rainbowHue + 3) % 360;
+    } else if (brush.sparkle) {
+      // 闪光效果 - 沿线条随机添加星星
+      const dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      const steps = Math.max(1, Math.floor(dist / 8));
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const x = x1 + (x2 - x1) * t;
+        const y = y1 + (y2 - y1) * t;
+        if (Math.random() > 0.3) {
+          this.drawSparkle(x, y, size * (0.5 + Math.random()));
+        }
+      }
+    }
+
+    this.ctx.restore();
+  },
+
+  // 绘制闪光星星
+  drawSparkle(x, y, size) {
+    const colors = ['#FFD700', '#FF69B4', '#00FFFF', '#FF6B6B', '#9B59B6', '#FFFFFF'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    this.ctx.save();
+    this.ctx.translate(x, y);
+    this.ctx.rotate(Math.random() * Math.PI);
+
+    // 发光效果
+    this.ctx.shadowColor = color;
+    this.ctx.shadowBlur = 10;
+    this.ctx.fillStyle = color;
+
+    // 四角星
+    this.ctx.beginPath();
+    const spikes = 4;
+    const outerRadius = size / 2;
+    const innerRadius = size / 5;
+
+    for (let i = 0; i < spikes * 2; i++) {
+      const radius = i % 2 === 0 ? outerRadius : innerRadius;
+      const angle = (i * Math.PI) / spikes;
+      const px = Math.cos(angle) * radius;
+      const py = Math.sin(angle) * radius;
+      if (i === 0) {
+        this.ctx.moveTo(px, py);
+      } else {
+        this.ctx.lineTo(px, py);
+      }
+    }
+    this.ctx.closePath();
+    this.ctx.fill();
+
+    this.ctx.restore();
   },
 
   // 计算画笔大小（考虑压感）
@@ -210,10 +454,28 @@ const DrawingApp = {
   },
 
   // 清空画布
-  clear() {
-    this.ctx.fillStyle = '#FFFFFF';
+  clear(saveHistory = true) {
+    this.ctx.fillStyle = this.settings.darkMode ? '#1a1a2e' : '#FFFFFF';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.saveState();
+    if (saveHistory) {
+      this.saveState();
+    }
+  },
+
+  // 切换黑底模式
+  toggleDarkMode() {
+    this.settings.darkMode = !this.settings.darkMode;
+    // 保存当前画布内容
+    const imageData = this.canvas.toDataURL();
+    this.clear(false);
+    // 恢复内容
+    const img = new Image();
+    img.onload = () => {
+      this.ctx.drawImage(img, 0, 0);
+      this.saveState();
+    };
+    img.src = imageData;
+    this.updateToolbarUI();
   },
 
   // 保存状态（用于撤销）
@@ -304,6 +566,185 @@ const DrawingApp = {
     this.updateToolbarUI();
   },
 
+  // 渲染模板选择面板
+  renderTemplatePanel() {
+    const panel = document.getElementById('template-panel');
+    if (!panel) return;
+
+    let html = '<div class="template-grid">';
+    this.templates.forEach(t => {
+      html += `<button class="template-btn" onclick="loadDrawingTemplate('${t.id}')" title="${t.name}">${t.name}</button>`;
+    });
+    html += '</div>';
+    panel.innerHTML = html;
+  },
+
+  // 加载涂色模板
+  loadTemplate(templateId) {
+    const template = this.templates.find(t => t.id === templateId);
+    if (!template) return;
+
+    // 清空画布
+    this.clear(false);
+
+    // 获取画布中心偏移
+    const rect = this.canvas.getBoundingClientRect();
+    const offsetX = (rect.width - 300) / 2;
+    const offsetY = (rect.height - 250) / 2;
+
+    this.ctx.save();
+    this.ctx.translate(offsetX, offsetY);
+    this.ctx.lineWidth = 3;
+    this.ctx.lineCap = 'round';
+    this.ctx.lineJoin = 'round';
+
+    // 绘制模板路径
+    template.paths.forEach(path => {
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = path.stroke || '#333';
+      this.ctx.fillStyle = path.fill || 'none';
+
+      switch (path.type) {
+        case 'circle':
+          this.ctx.arc(path.cx, path.cy, path.r, 0, Math.PI * 2);
+          break;
+
+        case 'ellipse':
+          this.ctx.save();
+          if (path.rotate) {
+            this.ctx.translate(path.cx, path.cy);
+            this.ctx.rotate(path.rotate * Math.PI / 180);
+            this.ctx.translate(-path.cx, -path.cy);
+          }
+          this.ctx.ellipse(path.cx, path.cy, path.rx, path.ry, 0, 0, Math.PI * 2);
+          this.ctx.restore();
+          break;
+
+        case 'rect':
+          this.ctx.rect(path.x, path.y, path.width, path.height);
+          break;
+
+        case 'line':
+          this.ctx.moveTo(path.x1, path.y1);
+          this.ctx.lineTo(path.x2, path.y2);
+          break;
+
+        case 'polygon':
+          path.points.forEach((p, i) => {
+            if (i === 0) this.ctx.moveTo(p[0], p[1]);
+            else this.ctx.lineTo(p[0], p[1]);
+          });
+          this.ctx.closePath();
+          break;
+
+        case 'path':
+          const path2d = new Path2D(path.d);
+          if (path.fill && path.fill !== 'none') {
+            this.ctx.fill(path2d);
+          }
+          this.ctx.stroke(path2d);
+          break;
+
+        case 'arc':
+          this.ctx.arc(path.cx, path.cy, path.r, path.startAngle, path.endAngle);
+          break;
+      }
+
+      if (path.fill && path.fill !== 'none' && path.type !== 'path') {
+        this.ctx.fill();
+      }
+      if (path.type !== 'path') {
+        this.ctx.stroke();
+      }
+    });
+
+    this.ctx.restore();
+    this.saveState();
+
+    // 播放音效
+    if (typeof RewardSystem !== 'undefined') {
+      RewardSystem.playSound('click');
+    }
+  },
+
+  // 油漆桶填充
+  floodFill(startX, startY, fillColor) {
+    const dpr = window.devicePixelRatio || 1;
+    const x = Math.floor(startX * dpr);
+    const y = Math.floor(startY * dpr);
+
+    const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    const data = imageData.data;
+    const width = imageData.width;
+    const height = imageData.height;
+
+    // 获取目标像素颜色
+    const targetIndex = (y * width + x) * 4;
+    const targetR = data[targetIndex];
+    const targetG = data[targetIndex + 1];
+    const targetB = data[targetIndex + 2];
+    const targetA = data[targetIndex + 3];
+
+    // 解析填充颜色
+    const fill = this.hexToRgb(fillColor);
+    if (!fill) return;
+
+    // 如果目标颜色和填充颜色相同，不需要填充
+    if (targetR === fill.r && targetG === fill.g && targetB === fill.b) {
+      return;
+    }
+
+    // BFS 填充
+    const stack = [[x, y]];
+    const visited = new Set();
+
+    const colorMatch = (idx) => {
+      const tolerance = 32;
+      return Math.abs(data[idx] - targetR) <= tolerance &&
+             Math.abs(data[idx + 1] - targetG) <= tolerance &&
+             Math.abs(data[idx + 2] - targetB) <= tolerance &&
+             Math.abs(data[idx + 3] - targetA) <= tolerance;
+    };
+
+    while (stack.length > 0) {
+      const [cx, cy] = stack.pop();
+      const key = `${cx},${cy}`;
+
+      if (visited.has(key)) continue;
+      if (cx < 0 || cx >= width || cy < 0 || cy >= height) continue;
+
+      const idx = (cy * width + cx) * 4;
+      if (!colorMatch(idx)) continue;
+
+      visited.add(key);
+
+      // 填充像素
+      data[idx] = fill.r;
+      data[idx + 1] = fill.g;
+      data[idx + 2] = fill.b;
+      data[idx + 3] = 255;
+
+      // 添加相邻像素
+      stack.push([cx + 1, cy]);
+      stack.push([cx - 1, cy]);
+      stack.push([cx, cy + 1]);
+      stack.push([cx, cy - 1]);
+    }
+
+    this.ctx.putImageData(imageData, 0, 0);
+    this.saveState();
+  },
+
+  // 十六进制转 RGB
+  hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  },
+
   // 更新工具栏 UI
   updateToolbarUI() {
     // 更新工具按钮
@@ -329,6 +770,27 @@ const DrawingApp = {
       sizePreview.style.height = this.settings.size + 'px';
       sizePreview.style.backgroundColor = this.settings.tool === 'eraser' ? '#ccc' : this.settings.color;
     }
+
+    // 更新黑底模式按钮
+    const darkModeBtn = document.getElementById('dark-mode-btn');
+    if (darkModeBtn) {
+      darkModeBtn.classList.toggle('active', this.settings.darkMode);
+      darkModeBtn.textContent = this.settings.darkMode ? '🌙' : '☀️';
+    }
+
+    // 更新画布容器背景（视觉提示）
+    const container = document.querySelector('.drawing-canvas-container');
+    if (container) {
+      container.classList.toggle('dark-mode', this.settings.darkMode);
+    }
+  },
+
+  // 处理填充点击
+  handleFillClick(e) {
+    if (this.settings.tool !== 'fill') return;
+
+    const coords = this.getCanvasCoords(e);
+    this.floodFill(coords.x, coords.y, this.settings.color);
   }
 };
 
@@ -382,6 +844,21 @@ function saveDrawing() {
   DrawingApp.saveArtwork();
 }
 
+function loadDrawingTemplate(templateId) {
+  DrawingApp.loadTemplate(templateId);
+}
+
+function toggleDrawingDarkMode() {
+  DrawingApp.toggleDarkMode();
+}
+
+function showTemplatePanel() {
+  const panel = document.getElementById('template-panel');
+  if (panel) {
+    panel.classList.toggle('hidden');
+  }
+}
+
 // 全局暴露
 window.DrawingApp = DrawingApp;
 window.openDrawing = openDrawing;
@@ -393,3 +870,6 @@ window.clearDrawing = clearDrawing;
 window.undoDrawing = undoDrawing;
 window.redoDrawing = redoDrawing;
 window.saveDrawing = saveDrawing;
+window.loadDrawingTemplate = loadDrawingTemplate;
+window.toggleDrawingDarkMode = toggleDrawingDarkMode;
+window.showTemplatePanel = showTemplatePanel;

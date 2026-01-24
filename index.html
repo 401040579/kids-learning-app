@@ -1800,7 +1800,20 @@
       <div class="drawing-header">
         <button class="btn-back" onclick="closeDrawing()">← 返回</button>
         <h2>🎨 画画创作</h2>
-        <button class="btn-save" onclick="saveDrawing()">💾 保存</button>
+        <div class="header-buttons">
+          <button class="btn-template" onclick="showTemplatePanel()" title="涂色模板">📋</button>
+          <button id="dark-mode-btn" class="btn-dark-mode" onclick="toggleDrawingDarkMode()" title="切换背景">☀️</button>
+          <button class="btn-save" onclick="saveDrawing()">💾</button>
+        </div>
+      </div>
+
+      <!-- 涂色模板面板 -->
+      <div id="template-panel" class="template-panel hidden">
+        <div class="template-header">
+          <span>🎨 选择涂色模板</span>
+          <button onclick="showTemplatePanel()">✕</button>
+        </div>
+        <div class="template-grid"></div>
       </div>
 
       <!-- 画布区域 -->
@@ -1810,14 +1823,25 @@
 
       <!-- 底部工具栏 -->
       <div class="drawing-toolbar">
-        <!-- 画笔工具 -->
+        <!-- 基础画笔 -->
         <div class="toolbar-section">
-          <div class="toolbar-label">画笔</div>
+          <div class="toolbar-label">基础</div>
           <div class="tool-buttons">
             <button class="drawing-tool-btn active" data-tool="pencil" onclick="setDrawingTool('pencil')" title="铅笔">✏️</button>
             <button class="drawing-tool-btn" data-tool="marker" onclick="setDrawingTool('marker')" title="马克笔">🖊️</button>
             <button class="drawing-tool-btn" data-tool="crayon" onclick="setDrawingTool('crayon')" title="蜡笔">🖍️</button>
             <button class="drawing-tool-btn" data-tool="eraser" onclick="setDrawingTool('eraser')" title="橡皮擦">🧽</button>
+            <button class="drawing-tool-btn" data-tool="fill" onclick="setDrawingTool('fill')" title="填充">🪣</button>
+          </div>
+        </div>
+
+        <!-- 魔法画笔 -->
+        <div class="toolbar-section magic-section">
+          <div class="toolbar-label">✨魔法</div>
+          <div class="tool-buttons">
+            <button class="drawing-tool-btn magic-btn" data-tool="neon" onclick="setDrawingTool('neon')" title="霓虹发光">💡</button>
+            <button class="drawing-tool-btn magic-btn" data-tool="rainbow" onclick="setDrawingTool('rainbow')" title="彩虹">🌈</button>
+            <button class="drawing-tool-btn magic-btn" data-tool="sparkle" onclick="setDrawingTool('sparkle')" title="闪光星星">✨</button>
           </div>
         </div>
 
@@ -1842,7 +1866,7 @@
         <div class="toolbar-section">
           <div class="toolbar-label">大小</div>
           <div class="size-control">
-            <input type="range" id="brush-size-slider" min="2" max="30" value="8" onchange="setDrawingSize(this.value)" oninput="setDrawingSize(this.value)">
+            <input type="range" id="brush-size-slider" min="2" max="50" value="8" onchange="setDrawingSize(this.value)" oninput="setDrawingSize(this.value)">
             <div id="brush-size-preview" class="size-preview"></div>
           </div>
         </div>
