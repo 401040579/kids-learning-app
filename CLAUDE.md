@@ -6,105 +6,116 @@
 
 ## 技术栈
 
-- **前端**: 原生 HTML/CSS/JavaScript（无框架）
-- **PWA**: Service Worker 支持离线访问
-- **AI**: WebLLM + Qwen2.5-0.5B 本地模型（AI 聊天功能）
-- **语音**: Web Speech API（发音和语音识别）
-- **部署**: GitHub Pages 静态托管
+| 技术 | 用途 |
+|------|------|
+| HTML/CSS/JS | 原生前端开发（无框架） |
+| PWA | Service Worker 离线缓存 |
+| Puter.js | AI 语音合成（TTS） |
+| Web Speech API | 语音识别（STT） |
+| WebLLM + Qwen2.5 | 本地 AI 聊天 |
+| Canvas API | 画画创作、图片处理 |
+| Bark API | iOS 家长推送通知 |
+| localStorage | 数据持久化 |
 
 ## 目录结构
 
 ```
 kids-learning-app/
-├── index.html          # 单页应用主文件（所有 HTML 结构）
+├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker 缓存策略
-├── css/
-│   └── style.css       # 所有样式（6000+ 行）
+├── sw.js               # Service Worker (当前 v22)
+├── css/style.css       # 所有样式
 ├── js/
-│   ├── app.js          # 主应用逻辑、路由、核心功能
-│   ├── videos.js       # 视频数据
+│   ├── app.js          # 主应用逻辑、数学/英语/中文
+│   ├── drawing.js      # 画画创作（P0+P1完成）
+│   ├── aiChat.js       # AI 聊天 + 语音对话
+│   ├── pictureBook.js  # 绘本阅读 + AI 朗读
+│   ├── parentNotify.js # 家长通知（Bark）
 │   ├── achievements.js # 成就系统
 │   ├── rewards.js      # 奖励系统
-│   ├── aiChat.js       # AI 聊天（WebLLM）
-│   ├── pictureBook.js  # 绘本阅读
-│   ├── pronunciation.js # 跟读练习
-│   ├── memoryGame.js   # 记忆训练游戏
+│   ├── memoryGame.js   # 记忆训练
 │   ├── puzzle.js       # 拼图游戏
+│   ├── pronunciation.js # 跟读练习
 │   ├── learningPet.js  # 学习宠物
 │   ├── learningReport.js # 学习报告
 │   ├── dailyCheckin.js # 每日签到
 │   ├── wrongQuestions.js # 错题本
-│   ├── parentNotify.js # 家长通知（Bark推送）
-│   └── drawing.js      # 画画创作
-├── data/
-│   └── *.json          # 静态数据文件
-├── music/              # 背景音乐资源
+│   ├── videos.js       # 视频数据
+│   └── scienceData.js  # 科学题库
+├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
 
 ## 开发规范
 
-### CSS
-- 使用 CSS 变量定义主题色（定义在 `:root`）
-- 主色调: `--primary: #FF69B4`（粉色）
-- 强调色: `--accent: #FFD93D`（黄色）
-- 组件样式按功能模块分区，用注释标注
-
-### JavaScript
-- 所有模块代码在 `js/` 目录下按功能拆分
-- 数据存储使用 `localStorage`
-- 使用中文注释说明复杂逻辑
-
 ### 命名约定
-- CSS 类名: 小写连字符（如 `reading-content`, `btn-back`）
-- JS 函数: 驼峰命名（如 `showScreen`, `playVideo`）
-- 常量数组: 驼峰命名（如 `englishWords`, `chineseChars`）
+- CSS 类名: `kebab-case` (如 `drawing-tool-btn`)
+- JS 函数: `camelCase` (如 `setDrawingTool`)
+- 文件名: `camelCase.js`
+
+### 主题色
+- 主色: `#FF69B4` (粉色)
+- 强调色: `#FFD93D` (黄色)
+- 定义在 CSS `:root` 变量中
+
+### 代码风格
+- 使用中文注释说明复杂逻辑
+- 模块化拆分，每个功能一个 JS 文件
+- 数据存储使用 localStorage
+
+## 核心功能模块
+
+| 模块 | 文件 | 状态 |
+|------|------|------|
+| 探索视频 | videos.js | ✅ 完成 |
+| 数学游戏 | app.js | ✅ 完成（加减乘除/10/20/30） |
+| 英语学习 | app.js | ✅ 完成 |
+| 中文学习 | app.js | ✅ 完成 |
+| AI 聊天 | aiChat.js | ✅ 完成（语音对话） |
+| 绘本阅读 | pictureBook.js | ✅ 完成（AI 朗读） |
+| 画画创作 | drawing.js | ✅ 完成（魔法画笔/贴纸/对称） |
+| 家长通知 | parentNotify.js | ✅ 完成（爸爸/妈妈双端） |
+| 成就系统 | achievements.js | ✅ 完成 |
+| 记忆训练 | memoryGame.js | ✅ 完成 |
+| 拼图游戏 | puzzle.js | ✅ 完成 |
+| 学习宠物 | learningPet.js | ✅ 完成 |
+| 学习报告 | learningReport.js | ✅ 完成 |
+| 跟读练习 | pronunciation.js | ✅ 完成 |
+| 每日签到 | dailyCheckin.js | ✅ 完成 |
+| 错题本 | wrongQuestions.js | ✅ 完成 |
 
 ## 常用命令
 
 ```bash
-# 本地运行（需要本地服务器支持 PWA）
+# 本地运行
 npx serve .
 # 或
 python3 -m http.server 8000
 
-# 部署（自动通过 GitHub Pages）
+# 部署（GitHub Pages 自动部署）
 git push origin main
+
+# 更新缓存版本（修改 sw.js）
+const CACHE_NAME = 'kids-learning-vXX';
 ```
 
-## 核心功能模块
+## 数据存储 (localStorage)
 
-| 模块 | 文件 | 说明 |
-|------|------|------|
-| 探索视频 | videos.js | YouTube 嵌入播放 |
-| 数学游戏 | app.js | 加减乘除（10/20/30以内） |
-| 英语学习 | app.js | 26个单词+发音 |
-| 中文学习 | app.js | 基础汉字认读 |
-| AI 聊天 | aiChat.js | 本地 Qwen2.5 模型+语音对话 |
-| 绘本阅读 | pictureBook.js | 图文故事+AI语音朗读 |
-| 跟读练习 | pronunciation.js | 语音识别评分 |
-| 记忆训练 | memoryGame.js | 翻牌配对游戏 |
-| 学习宠物 | learningPet.js | 虚拟宠物养成 |
-| 画画创作 | drawing.js | Apple Pencil 压感绘画 |
-| 家长通知 | parentNotify.js | Bark 推送到 iPhone |
+| 键名 | 说明 |
+|------|------|
+| learningProgress | 学习进度 |
+| achievements | 成就数据 |
+| dailyCheckin | 签到记录 |
+| wrongQuestions | 错题记录 |
+| petData | 宠物状态 |
+| artworkGallery | 画作作品集 |
+| parentNotifyConfig | 家长通知配置 |
+| mathConfig | 数学游戏设置 |
 
 ## 注意事项
 
-1. **单页应用**: 所有页面都在 `index.html` 中，通过 `showScreen()` 切换显示
-2. **PWA 缓存**: 修改资源后需更新 `sw.js` 中的版本号以清除缓存
-3. **儿童安全**: 视频使用 youtube-nocookie.com，结束后显示遮罩防止推荐
-4. **响应式**: 主要针对手机和平板设计，竖屏优先
+1. **单页应用**: 所有页面在 `index.html`，通过 `showScreen()` 切换
+2. **PWA 缓存**: 修改资源后必须更新 `sw.js` 版本号
+3. **儿童安全**: 视频用 youtube-nocookie.com，结束显示遮罩
+4. **响应式**: 主要针对手机/平板，竖屏优先
 5. **离线优先**: 核心功能支持完全离线使用
-
-## 数据存储
-
-所有用户数据保存在 `localStorage`：
-- `learningProgress` - 学习进度
-- `achievements` - 成就数据
-- `dailyCheckin` - 签到记录
-- `wrongQuestions` - 错题记录
-- `petData` - 宠物状态
-- `artworkGallery` - 画作作品集
-- `parentNotifyConfig` - 家长通知配置
-- `mathConfig` - 数学游戏设置
