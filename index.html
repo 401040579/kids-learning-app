@@ -414,6 +414,12 @@
             <div class="card-desc">自由绘画</div>
           </div>
 
+          <div class="menu-card card-music" data-category="play" onclick="openMusic()">
+            <div class="card-icon">🎵</div>
+            <div class="card-title">音乐创作</div>
+            <div class="card-desc">弹琴打鼓</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -1907,6 +1913,205 @@
     </div>
   </div>
 
+  <!-- ========== 音乐创作 ========== -->
+  <div id="music-modal" class="music-modal hidden">
+    <div class="music-container">
+      <!-- 顶部标题 -->
+      <div class="music-header">
+        <button class="btn-back" onclick="closeMusic()">← 返回</button>
+        <h2>🎵 音乐创作</h2>
+        <button class="btn-save" onclick="saveMusicComposition()">💾</button>
+      </div>
+
+      <!-- 模式切换标签 -->
+      <div class="music-tabs">
+        <button class="music-tab active" data-mode="piano" onclick="switchMusicMode('piano')">
+          <span class="tab-icon">🎹</span>
+          <span class="tab-name">魔法钢琴</span>
+        </button>
+        <button class="music-tab" data-mode="drums" onclick="switchMusicMode('drums')">
+          <span class="tab-icon">🥁</span>
+          <span class="tab-name">节奏鼓点</span>
+        </button>
+        <button class="music-tab" data-mode="sequencer" onclick="switchMusicMode('sequencer')">
+          <span class="tab-icon">🎨</span>
+          <span class="tab-name">音乐画板</span>
+        </button>
+      </div>
+
+      <!-- 钢琴面板 -->
+      <div id="music-piano" class="music-panel active">
+        <!-- 跳舞动物 -->
+        <div class="dancing-animals">
+          <span class="dancing-animal" data-index="0">🐱</span>
+          <span class="dancing-animal" data-index="1">🐶</span>
+          <span class="dancing-animal" data-index="2">🐰</span>
+          <span class="dancing-animal" data-index="3">🐻</span>
+          <span class="dancing-animal" data-index="4">🦊</span>
+          <span class="dancing-animal" data-index="5">🐼</span>
+          <span class="dancing-animal" data-index="6">🐸</span>
+          <span class="dancing-animal" data-index="7">🐵</span>
+        </div>
+
+        <!-- 钢琴键盘 -->
+        <div class="piano-keyboard">
+          <button class="piano-key" data-index="0" style="--key-color: #FF6B6B" onclick="playPianoKey(0)">
+            <span class="key-label">1</span>
+          </button>
+          <button class="piano-key" data-index="1" style="--key-color: #FF8E53" onclick="playPianoKey(1)">
+            <span class="key-label">2</span>
+          </button>
+          <button class="piano-key" data-index="2" style="--key-color: #FFD93D" onclick="playPianoKey(2)">
+            <span class="key-label">3</span>
+          </button>
+          <button class="piano-key" data-index="3" style="--key-color: #6BCB77" onclick="playPianoKey(3)">
+            <span class="key-label">4</span>
+          </button>
+          <button class="piano-key" data-index="4" style="--key-color: #4D96FF" onclick="playPianoKey(4)">
+            <span class="key-label">5</span>
+          </button>
+          <button class="piano-key" data-index="5" style="--key-color: #9B59B6" onclick="playPianoKey(5)">
+            <span class="key-label">6</span>
+          </button>
+          <button class="piano-key" data-index="6" style="--key-color: #FF69B4" onclick="playPianoKey(6)">
+            <span class="key-label">7</span>
+          </button>
+          <button class="piano-key" data-index="7" style="--key-color: #00D2D3" onclick="playPianoKey(7)">
+            <span class="key-label">8</span>
+          </button>
+        </div>
+
+        <!-- 音色选择 -->
+        <div class="sound-selector">
+          <span class="selector-label">音色:</span>
+          <button class="sound-btn active" data-sound="piano" onclick="setPianoSound('piano')">🎹 钢琴</button>
+          <button class="sound-btn" data-sound="xylophone" onclick="setPianoSound('xylophone')">🎵 木琴</button>
+          <button class="sound-btn" data-sound="bell" onclick="setPianoSound('bell')">🔔 铃铛</button>
+        </div>
+      </div>
+
+      <!-- 打击乐面板 -->
+      <div id="music-drums" class="music-panel">
+        <!-- 打击乐器 -->
+        <div class="drum-pads">
+          <button class="drum-pad" data-drum="kick" style="--drum-color: #FF6B6B" onclick="playDrumPad('kick')">
+            <span class="drum-emoji">🥁</span>
+            <span class="drum-name">大鼓</span>
+          </button>
+          <button class="drum-pad" data-drum="snare" style="--drum-color: #FF8E53" onclick="playDrumPad('snare')">
+            <span class="drum-emoji">🪘</span>
+            <span class="drum-name">小鼓</span>
+          </button>
+          <button class="drum-pad" data-drum="hihat" style="--drum-color: #FFD93D" onclick="playDrumPad('hihat')">
+            <span class="drum-emoji">🔔</span>
+            <span class="drum-name">铃鼓</span>
+          </button>
+          <button class="drum-pad" data-drum="shaker" style="--drum-color: #6BCB77" onclick="playDrumPad('shaker')">
+            <span class="drum-emoji">🪇</span>
+            <span class="drum-name">沙锤</span>
+          </button>
+          <button class="drum-pad" data-drum="clap" style="--drum-color: #4D96FF" onclick="playDrumPad('clap')">
+            <span class="drum-emoji">👏</span>
+            <span class="drum-name">拍手</span>
+          </button>
+          <button class="drum-pad" data-drum="triangle" style="--drum-color: #9B59B6" onclick="playDrumPad('triangle')">
+            <span class="drum-emoji">🎵</span>
+            <span class="drum-name">三角铁</span>
+          </button>
+        </div>
+
+        <!-- 节奏伴奏 -->
+        <div class="rhythm-section">
+          <span class="selector-label">节奏伴奏:</span>
+          <div class="rhythm-buttons">
+            <button class="rhythm-btn" data-rhythm="happy" onclick="toggleRhythm('happy')">🎉 欢快</button>
+            <button class="rhythm-btn" data-rhythm="lullaby" onclick="toggleRhythm('lullaby')">🌙 摇篮</button>
+            <button class="rhythm-btn" data-rhythm="march" onclick="toggleRhythm('march')">🎺 进行曲</button>
+          </div>
+          <button id="rhythm-play-btn" class="rhythm-stop-btn" onclick="stopRhythm()">⏹️ 停止</button>
+        </div>
+      </div>
+
+      <!-- 音乐画板面板 -->
+      <div id="music-sequencer" class="music-panel">
+        <!-- 网格 -->
+        <div class="sequencer-grid">
+          <div class="seq-row" data-row="0">
+            <span class="row-label">🎵</span>
+            <button class="seq-cell" data-row="0" data-col="0" onclick="toggleSeqCell(0,0)"></button>
+            <button class="seq-cell" data-row="0" data-col="1" onclick="toggleSeqCell(0,1)"></button>
+            <button class="seq-cell" data-row="0" data-col="2" onclick="toggleSeqCell(0,2)"></button>
+            <button class="seq-cell" data-row="0" data-col="3" onclick="toggleSeqCell(0,3)"></button>
+            <button class="seq-cell" data-row="0" data-col="4" onclick="toggleSeqCell(0,4)"></button>
+            <button class="seq-cell" data-row="0" data-col="5" onclick="toggleSeqCell(0,5)"></button>
+            <button class="seq-cell" data-row="0" data-col="6" onclick="toggleSeqCell(0,6)"></button>
+            <button class="seq-cell" data-row="0" data-col="7" onclick="toggleSeqCell(0,7)"></button>
+          </div>
+          <div class="seq-row" data-row="1">
+            <span class="row-label">🎵</span>
+            <button class="seq-cell" data-row="1" data-col="0" onclick="toggleSeqCell(1,0)"></button>
+            <button class="seq-cell" data-row="1" data-col="1" onclick="toggleSeqCell(1,1)"></button>
+            <button class="seq-cell" data-row="1" data-col="2" onclick="toggleSeqCell(1,2)"></button>
+            <button class="seq-cell" data-row="1" data-col="3" onclick="toggleSeqCell(1,3)"></button>
+            <button class="seq-cell" data-row="1" data-col="4" onclick="toggleSeqCell(1,4)"></button>
+            <button class="seq-cell" data-row="1" data-col="5" onclick="toggleSeqCell(1,5)"></button>
+            <button class="seq-cell" data-row="1" data-col="6" onclick="toggleSeqCell(1,6)"></button>
+            <button class="seq-cell" data-row="1" data-col="7" onclick="toggleSeqCell(1,7)"></button>
+          </div>
+          <div class="seq-row" data-row="2">
+            <span class="row-label">🎵</span>
+            <button class="seq-cell" data-row="2" data-col="0" onclick="toggleSeqCell(2,0)"></button>
+            <button class="seq-cell" data-row="2" data-col="1" onclick="toggleSeqCell(2,1)"></button>
+            <button class="seq-cell" data-row="2" data-col="2" onclick="toggleSeqCell(2,2)"></button>
+            <button class="seq-cell" data-row="2" data-col="3" onclick="toggleSeqCell(2,3)"></button>
+            <button class="seq-cell" data-row="2" data-col="4" onclick="toggleSeqCell(2,4)"></button>
+            <button class="seq-cell" data-row="2" data-col="5" onclick="toggleSeqCell(2,5)"></button>
+            <button class="seq-cell" data-row="2" data-col="6" onclick="toggleSeqCell(2,6)"></button>
+            <button class="seq-cell" data-row="2" data-col="7" onclick="toggleSeqCell(2,7)"></button>
+          </div>
+          <div class="seq-row" data-row="3">
+            <span class="row-label">🎵</span>
+            <button class="seq-cell" data-row="3" data-col="0" onclick="toggleSeqCell(3,0)"></button>
+            <button class="seq-cell" data-row="3" data-col="1" onclick="toggleSeqCell(3,1)"></button>
+            <button class="seq-cell" data-row="3" data-col="2" onclick="toggleSeqCell(3,2)"></button>
+            <button class="seq-cell" data-row="3" data-col="3" onclick="toggleSeqCell(3,3)"></button>
+            <button class="seq-cell" data-row="3" data-col="4" onclick="toggleSeqCell(3,4)"></button>
+            <button class="seq-cell" data-row="3" data-col="5" onclick="toggleSeqCell(3,5)"></button>
+            <button class="seq-cell" data-row="3" data-col="6" onclick="toggleSeqCell(3,6)"></button>
+            <button class="seq-cell" data-row="3" data-col="7" onclick="toggleSeqCell(3,7)"></button>
+          </div>
+          <div class="seq-row" data-row="4">
+            <span class="row-label">🎵</span>
+            <button class="seq-cell" data-row="4" data-col="0" onclick="toggleSeqCell(4,0)"></button>
+            <button class="seq-cell" data-row="4" data-col="1" onclick="toggleSeqCell(4,1)"></button>
+            <button class="seq-cell" data-row="4" data-col="2" onclick="toggleSeqCell(4,2)"></button>
+            <button class="seq-cell" data-row="4" data-col="3" onclick="toggleSeqCell(4,3)"></button>
+            <button class="seq-cell" data-row="4" data-col="4" onclick="toggleSeqCell(4,4)"></button>
+            <button class="seq-cell" data-row="4" data-col="5" onclick="toggleSeqCell(4,5)"></button>
+            <button class="seq-cell" data-row="4" data-col="6" onclick="toggleSeqCell(4,6)"></button>
+            <button class="seq-cell" data-row="4" data-col="7" onclick="toggleSeqCell(4,7)"></button>
+          </div>
+        </div>
+
+        <!-- 控制按钮 -->
+        <div class="sequencer-controls">
+          <button id="seq-play-btn" class="seq-btn seq-play" onclick="playSequencer()">▶️ 播放</button>
+          <button class="seq-btn seq-clear" onclick="clearSequencer()">🗑️ 清空</button>
+        </div>
+
+        <!-- 速度控制 -->
+        <div class="tempo-section">
+          <span class="selector-label">速度:</span>
+          <div class="tempo-buttons">
+            <button class="tempo-btn" data-tempo="80" onclick="setTempo(80)">🐢 慢</button>
+            <button class="tempo-btn active" data-tempo="120" onclick="setTempo(120)">🐰 中</button>
+            <button class="tempo-btn" data-tempo="160" onclick="setTempo(160)">🐆 快</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- PWA 更新提示 -->
   <div id="update-notification" class="update-notification hidden">
     <div class="update-content">
@@ -1936,6 +2141,7 @@
   <script src="js/aiChat.js"></script>
   <script src="js/parentNotify.js"></script>
   <script src="js/drawing.js"></script>
+  <script src="js/music.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

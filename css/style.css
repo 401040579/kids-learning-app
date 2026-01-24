@@ -8901,3 +8901,514 @@ body {
     font-size: 0.8rem;
   }
 }
+
+/* ========== 音乐创作模块 ========== */
+
+.music-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-gradient);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.music-modal.hidden {
+  display: none;
+}
+
+.music-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px 100px;
+}
+
+.music-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg-gradient);
+  z-index: 10;
+}
+
+.music-header h2 {
+  font-size: 1.3rem;
+  color: var(--text-dark);
+}
+
+/* 模式切换标签 */
+.music-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.music-tab {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s;
+}
+
+.music-tab .tab-icon {
+  font-size: 1.5rem;
+}
+
+.music-tab .tab-name {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.music-tab.active {
+  background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+}
+
+.music-tab.active .tab-name {
+  color: white;
+  font-weight: 600;
+}
+
+/* 音乐面板 */
+.music-panel {
+  display: none;
+}
+
+.music-panel.active {
+  display: block;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== 钢琴面板 ========== */
+
+/* 跳舞动物 */
+.dancing-animals {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px 0;
+  margin-bottom: 10px;
+}
+
+.dancing-animal {
+  font-size: 2rem;
+  transition: transform 0.15s;
+  cursor: default;
+}
+
+.dancing-animal.dancing {
+  animation: animalDance 0.3s ease-out;
+}
+
+@keyframes animalDance {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.2); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* 钢琴键盘 */
+.piano-keyboard {
+  display: flex;
+  gap: 6px;
+  padding: 20px;
+  background: linear-gradient(180deg, #2C3E50 0%, #1a252f 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  margin-bottom: 20px;
+}
+
+.piano-key {
+  flex: 1;
+  height: 150px;
+  border: none;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(180deg, white 0%, #f0f0f0 100%);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 15px;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: all 0.1s;
+}
+
+.piano-key::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: var(--key-color);
+  border-radius: 8px 8px 0 0;
+}
+
+.piano-key .key-label {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--key-color);
+}
+
+.piano-key:active,
+.piano-key.pressed {
+  transform: translateY(4px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+}
+
+/* 音色选择 */
+.sound-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.selector-label {
+  font-weight: 600;
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+
+.sound-btn {
+  padding: 10px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.sound-btn:hover {
+  border-color: var(--primary);
+}
+
+.sound-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+/* ========== 打击乐面板 ========== */
+
+.drum-pads {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.drum-pad {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--drum-color), color-mix(in srgb, var(--drum-color) 70%, black));
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  transition: all 0.1s;
+}
+
+.drum-pad .drum-emoji {
+  font-size: 2.5rem;
+}
+
+.drum-pad .drum-name {
+  font-size: 0.9rem;
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.drum-pad:active,
+.drum-pad.hit {
+  transform: scale(0.95);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* 节奏伴奏 */
+.rhythm-section {
+  padding: 16px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.rhythm-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+
+.rhythm-btn {
+  padding: 12px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.rhythm-btn:hover {
+  border-color: var(--primary);
+}
+
+.rhythm-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+  animation: rhythmPulse 0.5s infinite;
+}
+
+@keyframes rhythmPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.rhythm-stop-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  background: #e0e0e0;
+  color: var(--text-dark);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.rhythm-stop-btn:hover {
+  background: #d0d0d0;
+}
+
+#rhythm-play-btn.playing {
+  background: var(--primary);
+  color: white;
+}
+
+/* ========== 音乐画板面板 ========== */
+
+.sequencer-grid {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.seq-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+
+.seq-row:last-child {
+  margin-bottom: 0;
+}
+
+.row-label {
+  width: 30px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.seq-cell {
+  flex: 1;
+  aspect-ratio: 1;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: #f8f8f8;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.seq-cell:hover {
+  border-color: var(--primary);
+  background: #FFF0F5;
+}
+
+.seq-cell.active {
+  background: linear-gradient(135deg, #FF69B4, #FF1493);
+  border-color: #FF1493;
+  box-shadow: 0 2px 8px rgba(255, 105, 180, 0.4);
+}
+
+.seq-cell.playing {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
+}
+
+.seq-cell.active.playing {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border-color: #FFA500;
+}
+
+/* 控制按钮 */
+.sequencer-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.seq-btn {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.seq-play {
+  background: linear-gradient(135deg, #6BCB77, #4CAF50);
+  color: white;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.seq-play:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+.seq-play.playing {
+  background: linear-gradient(135deg, #FF6B6B, #FF4757);
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+}
+
+.seq-clear {
+  background: white;
+  border: 2px solid #e0e0e0;
+  color: var(--text-dark);
+}
+
+.seq-clear:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* 速度控制 */
+.tempo-section {
+  padding: 16px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tempo-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tempo-btn {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.tempo-btn:hover {
+  border-color: var(--primary);
+}
+
+.tempo-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+  font-weight: 600;
+}
+
+/* 音乐卡片样式 */
+.card-music {
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+}
+
+.card-music .card-icon {
+  background: linear-gradient(135deg, #66BB6A, #43A047);
+}
+
+/* Toast 提示 */
+.music-toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 10000;
+}
+
+.music-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* 响应式 */
+@media (max-width: 480px) {
+  .piano-key {
+    height: 120px;
+  }
+
+  .piano-key .key-label {
+    font-size: 1.2rem;
+  }
+
+  .dancing-animal {
+    font-size: 1.5rem;
+  }
+
+  .drum-pad .drum-emoji {
+    font-size: 2rem;
+  }
+
+  .music-tab .tab-icon {
+    font-size: 1.3rem;
+  }
+
+  .music-tab .tab-name {
+    font-size: 0.7rem;
+  }
+}
