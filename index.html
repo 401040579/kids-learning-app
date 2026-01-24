@@ -1802,6 +1802,8 @@
         <h2>🎨 画画创作</h2>
         <div class="header-buttons">
           <button class="btn-template" onclick="showTemplatePanel()" title="涂色模板">📋</button>
+          <button class="btn-sticker" onclick="showStickerPanel()" title="贴纸印章">🏷️</button>
+          <button id="symmetry-btn" class="btn-symmetry" onclick="toggleSymmetry()" title="对称模式">⬜</button>
           <button id="dark-mode-btn" class="btn-dark-mode" onclick="toggleDrawingDarkMode()" title="切换背景">☀️</button>
           <button class="btn-save" onclick="saveDrawing()">💾</button>
         </div>
@@ -1814,6 +1816,15 @@
           <button onclick="showTemplatePanel()">✕</button>
         </div>
         <div class="template-grid"></div>
+      </div>
+
+      <!-- 贴纸印章面板 -->
+      <div id="sticker-panel" class="sticker-panel hidden">
+        <div class="sticker-header">
+          <span>🏷️ 选择贴纸印章</span>
+          <button onclick="hideStickerPanel()">✕</button>
+        </div>
+        <div class="sticker-content"></div>
       </div>
 
       <!-- 画布区域 -->
@@ -1832,6 +1843,7 @@
             <button class="drawing-tool-btn" data-tool="crayon" onclick="setDrawingTool('crayon')" title="蜡笔">🖍️</button>
             <button class="drawing-tool-btn" data-tool="eraser" onclick="setDrawingTool('eraser')" title="橡皮擦">🧽</button>
             <button class="drawing-tool-btn" data-tool="fill" onclick="setDrawingTool('fill')" title="填充">🪣</button>
+            <button class="drawing-tool-btn" data-tool="sticker" onclick="showStickerPanel()" title="贴纸">🏷️</button>
           </div>
         </div>
 
@@ -1842,6 +1854,17 @@
             <button class="drawing-tool-btn magic-btn" data-tool="neon" onclick="setDrawingTool('neon')" title="霓虹发光">💡</button>
             <button class="drawing-tool-btn magic-btn" data-tool="rainbow" onclick="setDrawingTool('rainbow')" title="彩虹">🌈</button>
             <button class="drawing-tool-btn magic-btn" data-tool="sparkle" onclick="setDrawingTool('sparkle')" title="闪光星星">✨</button>
+          </div>
+        </div>
+
+        <!-- 对称模式 -->
+        <div class="toolbar-section symmetry-section">
+          <div class="toolbar-label">🪞对称</div>
+          <div class="tool-buttons">
+            <button class="symmetry-mode-btn" data-mode="off" onclick="setSymmetry('off')" title="关闭">⬜</button>
+            <button class="symmetry-mode-btn" data-mode="horizontal" onclick="setSymmetry('horizontal')" title="左右对称">↔️</button>
+            <button class="symmetry-mode-btn" data-mode="vertical" onclick="setSymmetry('vertical')" title="上下对称">↕️</button>
+            <button class="symmetry-mode-btn" data-mode="quad" onclick="setSymmetry('quad')" title="四向对称">✚</button>
           </div>
         </div>
 

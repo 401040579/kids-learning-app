@@ -1,6 +1,7 @@
 // ========== 画画创作模块 ==========
 // 支持 Apple Pencil 压感的儿童绘画工具
 // P0 扩展：魔法画笔 + 涂色模板
+// P1 扩展：贴纸印章 + 对称绘画
 
 const DrawingApp = {
   // 画布相关
@@ -12,15 +13,28 @@ const DrawingApp = {
 
   // 绘画设置
   settings: {
-    tool: 'pencil',      // pencil, marker, crayon, eraser, neon, rainbow, sparkle
+    tool: 'pencil',      // pencil, marker, crayon, eraser, neon, rainbow, sparkle, sticker
     color: '#FF69B4',    // 当前颜色
     size: 8,             // 画笔大小
     opacity: 1,          // 透明度
-    darkMode: false      // 黑底模式（霓虹效果更好看）
+    darkMode: false,     // 黑底模式（霓虹效果更好看）
+    symmetry: 'off',     // 对称模式: off, horizontal, vertical, quad
+    selectedSticker: null // 当前选中的贴纸
   },
 
   // 彩虹画笔状态
   rainbowHue: 0,
+
+  // 贴纸数据
+  stickers: {
+    animals: ['🐱', '🐶', '🐰', '🐻', '🦊', '🐼', '🐨', '🦁', '🐯', '🐮', '🐷', '🐸', '🐵', '🦋', '🐝', '🐞'],
+    nature: ['🌸', '🌺', '🌻', '🌹', '🌷', '🌼', '🍀', '🌈', '⭐', '🌙', '☀️', '⛅', '🌊', '🔥', '❄️', '🍎'],
+    faces: ['😊', '😍', '🥰', '😎', '🤩', '😋', '🤗', '😇', '🥳', '😺', '💖', '💕', '💗', '✨', '💫', '🎀'],
+    objects: ['🎈', '🎁', '🎂', '🍭', '🍦', '🍩', '🧁', '🎪', '🎠', '🚀', '🌟', '👑', '🎵', '🎨', '📚', '✏️']
+  },
+
+  // 当前贴纸大小
+  stickerSize: 50,
 
   // 画笔预设
   brushes: {
@@ -29,6 +43,7 @@ const DrawingApp = {
     crayon: { sizeMult: 2.5, opacity: 0.6, pressureSensitive: false, magic: false },
     eraser: { sizeMult: 3, opacity: 1, pressureSensitive: true, magic: false },
     fill: { sizeMult: 1, opacity: 1, pressureSensitive: false, magic: false },
+    sticker: { sizeMult: 1, opacity: 1, pressureSensitive: false, magic: false },
     // 魔法画笔
     neon: { sizeMult: 1.5, opacity: 1, pressureSensitive: true, magic: true, glow: true },
     rainbow: { sizeMult: 2, opacity: 0.9, pressureSensitive: true, magic: true, rainbow: true },
@@ -149,6 +164,7 @@ const DrawingApp = {
     this.bindEvents();
     this.renderToolbar();
     this.renderTemplatePanel();
+    this.renderStickerPanel();
     this.clear();
     this.saveState();
   },
@@ -181,6 +197,8 @@ const DrawingApp = {
     this.canvas.addEventListener('pointerdown', (e) => {
       if (this.settings.tool === 'fill') {
         this.handleFillClick(e);
+      } else if (this.settings.tool === 'sticker') {
+        this.placeSticker(e);
       } else {
         this.startDrawing(e);
       }
@@ -248,24 +266,55 @@ const DrawingApp = {
     const brush = this.brushes[this.settings.tool];
     const size = this.calculateSize(pressure, brush);
 
-    // 魔法画笔特效
-    if (brush.magic) {
-      this.drawMagicPoint(x, y, size, brush);
-      return;
+    // 获取对称点
+    const points = this.getSymmetryPoints(x, y);
+
+    points.forEach(p => {
+      // 魔法画笔特效
+      if (brush.magic) {
+        this.drawMagicPoint(p.x, p.y, size, brush);
+        return;
+      }
+
+      this.ctx.beginPath();
+      this.ctx.arc(p.x, p.y, size / 2, 0, Math.PI * 2);
+
+      if (this.settings.tool === 'eraser') {
+        this.ctx.fillStyle = this.settings.darkMode ? '#1a1a2e' : '#FFFFFF';
+      } else {
+        this.ctx.fillStyle = this.settings.color;
+        this.ctx.globalAlpha = brush.opacity;
+      }
+
+      this.ctx.fill();
+      this.ctx.globalAlpha = 1;
+    });
+  },
+
+  // 获取对称点
+  getSymmetryPoints(x, y) {
+    const rect = this.canvas.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const points = [{ x, y }];
+
+    if (this.settings.symmetry === 'horizontal' || this.settings.symmetry === 'quad') {
+      // 水平对称（左右镜像）
+      points.push({ x: centerX * 2 - x, y });
     }
 
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, size / 2, 0, Math.PI * 2);
-
-    if (this.settings.tool === 'eraser') {
-      this.ctx.fillStyle = this.settings.darkMode ? '#1a1a2e' : '#FFFFFF';
-    } else {
-      this.ctx.fillStyle = this.settings.color;
-      this.ctx.globalAlpha = brush.opacity;
+    if (this.settings.symmetry === 'vertical' || this.settings.symmetry === 'quad') {
+      // 垂直对称（上下镜像）
+      points.push({ x, y: centerY * 2 - y });
     }
 
-    this.ctx.fill();
-    this.ctx.globalAlpha = 1;
+    if (this.settings.symmetry === 'quad') {
+      // 四向对称（对角镜像）
+      points.push({ x: centerX * 2 - x, y: centerY * 2 - y });
+    }
+
+    return points;
   },
 
   // 绘制魔法点
@@ -307,27 +356,70 @@ const DrawingApp = {
     const brush = this.brushes[this.settings.tool];
     const size = this.calculateSize(pressure, brush);
 
-    // 魔法画笔特效
-    if (brush.magic) {
-      this.drawMagicLine(x1, y1, x2, y2, size, brush);
-      return;
-    }
+    // 获取对称线段
+    const lines = this.getSymmetryLines(x1, y1, x2, y2);
 
-    this.ctx.beginPath();
-    this.ctx.moveTo(x1, y1);
-    this.ctx.lineTo(x2, y2);
-    this.ctx.lineWidth = size;
+    lines.forEach(line => {
+      // 魔法画笔特效
+      if (brush.magic) {
+        this.drawMagicLine(line.x1, line.y1, line.x2, line.y2, size, brush);
+        return;
+      }
 
-    if (this.settings.tool === 'eraser') {
-      this.ctx.strokeStyle = this.settings.darkMode ? '#1a1a2e' : '#FFFFFF';
+      this.ctx.beginPath();
+      this.ctx.moveTo(line.x1, line.y1);
+      this.ctx.lineTo(line.x2, line.y2);
+      this.ctx.lineWidth = size;
+
+      if (this.settings.tool === 'eraser') {
+        this.ctx.strokeStyle = this.settings.darkMode ? '#1a1a2e' : '#FFFFFF';
+        this.ctx.globalAlpha = 1;
+      } else {
+        this.ctx.strokeStyle = this.settings.color;
+        this.ctx.globalAlpha = brush.opacity;
+      }
+
+      this.ctx.stroke();
       this.ctx.globalAlpha = 1;
-    } else {
-      this.ctx.strokeStyle = this.settings.color;
-      this.ctx.globalAlpha = brush.opacity;
+    });
+  },
+
+  // 获取对称线段
+  getSymmetryLines(x1, y1, x2, y2) {
+    const rect = this.canvas.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const lines = [{ x1, y1, x2, y2 }];
+
+    if (this.settings.symmetry === 'horizontal' || this.settings.symmetry === 'quad') {
+      lines.push({
+        x1: centerX * 2 - x1,
+        y1: y1,
+        x2: centerX * 2 - x2,
+        y2: y2
+      });
     }
 
-    this.ctx.stroke();
-    this.ctx.globalAlpha = 1;
+    if (this.settings.symmetry === 'vertical' || this.settings.symmetry === 'quad') {
+      lines.push({
+        x1: x1,
+        y1: centerY * 2 - y1,
+        x2: x2,
+        y2: centerY * 2 - y2
+      });
+    }
+
+    if (this.settings.symmetry === 'quad') {
+      lines.push({
+        x1: centerX * 2 - x1,
+        y1: centerY * 2 - y1,
+        x2: centerX * 2 - x2,
+        y2: centerY * 2 - y2
+      });
+    }
+
+    return lines;
   },
 
   // 绘制魔法线条
@@ -783,6 +875,25 @@ const DrawingApp = {
     if (container) {
       container.classList.toggle('dark-mode', this.settings.darkMode);
     }
+
+    // 更新对称模式按钮（顶部）
+    const symmetryBtn = document.getElementById('symmetry-btn');
+    if (symmetryBtn) {
+      const icons = { off: '⬜', horizontal: '↔️', vertical: '↕️', quad: '✚' };
+      symmetryBtn.textContent = icons[this.settings.symmetry];
+      symmetryBtn.classList.toggle('active', this.settings.symmetry !== 'off');
+    }
+
+    // 更新对称模式按钮（工具栏）
+    document.querySelectorAll('.symmetry-mode-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === this.settings.symmetry);
+    });
+
+    // 更新贴纸按钮状态
+    const stickerBtn = document.querySelector('.drawing-tool-btn[data-tool="sticker"]');
+    if (stickerBtn && this.settings.selectedSticker) {
+      stickerBtn.textContent = this.settings.selectedSticker;
+    }
   },
 
   // 处理填充点击
@@ -791,6 +902,171 @@ const DrawingApp = {
 
     const coords = this.getCanvasCoords(e);
     this.floodFill(coords.x, coords.y, this.settings.color);
+  },
+
+  // ========== P1: 贴纸印章 ==========
+
+  // 放置贴纸
+  placeSticker(e) {
+    if (!this.settings.selectedSticker) return;
+
+    const coords = this.getCanvasCoords(e);
+    const points = this.getSymmetryPoints(coords.x, coords.y);
+
+    points.forEach(p => {
+      this.drawSticker(p.x, p.y, this.settings.selectedSticker);
+    });
+
+    this.saveState();
+
+    // 播放音效
+    if (typeof RewardSystem !== 'undefined') {
+      RewardSystem.playSound('click');
+    }
+  },
+
+  // 绘制贴纸
+  drawSticker(x, y, emoji) {
+    this.ctx.save();
+    this.ctx.font = `${this.stickerSize}px Arial`;
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText(emoji, x, y);
+    this.ctx.restore();
+  },
+
+  // 选择贴纸
+  selectSticker(emoji) {
+    this.settings.selectedSticker = emoji;
+    this.settings.tool = 'sticker';
+    this.updateToolbarUI();
+    this.hideStickerPanel();
+
+    // 播放音效
+    if (typeof RewardSystem !== 'undefined') {
+      RewardSystem.playSound('click');
+    }
+  },
+
+  // 设置贴纸大小
+  setStickerSize(size) {
+    this.stickerSize = parseInt(size);
+  },
+
+  // 渲染贴纸面板
+  renderStickerPanel() {
+    const panel = document.getElementById('sticker-panel');
+    if (!panel) return;
+
+    let html = '';
+    const categories = [
+      { key: 'animals', name: '🐾 动物' },
+      { key: 'nature', name: '🌸 自然' },
+      { key: 'faces', name: '😊 表情' },
+      { key: 'objects', name: '🎁 物品' }
+    ];
+
+    categories.forEach(cat => {
+      html += `<div class="sticker-category">
+        <div class="sticker-category-name">${cat.name}</div>
+        <div class="sticker-grid">`;
+      this.stickers[cat.key].forEach(emoji => {
+        html += `<button class="sticker-item" onclick="selectSticker('${emoji}')">${emoji}</button>`;
+      });
+      html += '</div></div>';
+    });
+
+    // 贴纸大小控制
+    html += `<div class="sticker-size-control">
+      <span>大小：</span>
+      <input type="range" min="30" max="100" value="${this.stickerSize}"
+             onchange="setStickerSize(this.value)" oninput="setStickerSize(this.value)">
+    </div>`;
+
+    panel.querySelector('.sticker-content').innerHTML = html;
+  },
+
+  // 显示贴纸面板
+  showStickerPanel() {
+    const panel = document.getElementById('sticker-panel');
+    if (panel) {
+      panel.classList.remove('hidden');
+      this.renderStickerPanel();
+    }
+  },
+
+  // 隐藏贴纸面板
+  hideStickerPanel() {
+    const panel = document.getElementById('sticker-panel');
+    if (panel) {
+      panel.classList.add('hidden');
+    }
+  },
+
+  // ========== P1: 对称绘画 ==========
+
+  // 切换对称模式
+  toggleSymmetry() {
+    const modes = ['off', 'horizontal', 'vertical', 'quad'];
+    const currentIndex = modes.indexOf(this.settings.symmetry);
+    this.settings.symmetry = modes[(currentIndex + 1) % modes.length];
+    this.updateToolbarUI();
+    this.drawSymmetryGuide();
+
+    // 播放音效
+    if (typeof RewardSystem !== 'undefined') {
+      RewardSystem.playSound('click');
+    }
+  },
+
+  // 设置对称模式
+  setSymmetry(mode) {
+    this.settings.symmetry = mode;
+    this.updateToolbarUI();
+    this.drawSymmetryGuide();
+  },
+
+  // 绘制对称参考线（临时显示）
+  drawSymmetryGuide() {
+    if (this.settings.symmetry === 'off') return;
+
+    const rect = this.canvas.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    // 保存当前状态
+    const imageData = this.canvas.toDataURL();
+
+    this.ctx.save();
+    this.ctx.setLineDash([5, 5]);
+    this.ctx.strokeStyle = 'rgba(255, 105, 180, 0.5)';
+    this.ctx.lineWidth = 2;
+
+    if (this.settings.symmetry === 'horizontal' || this.settings.symmetry === 'quad') {
+      this.ctx.beginPath();
+      this.ctx.moveTo(centerX, 0);
+      this.ctx.lineTo(centerX, rect.height);
+      this.ctx.stroke();
+    }
+
+    if (this.settings.symmetry === 'vertical' || this.settings.symmetry === 'quad') {
+      this.ctx.beginPath();
+      this.ctx.moveTo(0, centerY);
+      this.ctx.lineTo(rect.width, centerY);
+      this.ctx.stroke();
+    }
+
+    this.ctx.restore();
+
+    // 1秒后恢复
+    setTimeout(() => {
+      const img = new Image();
+      img.onload = () => {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(img, 0, 0);
+      };
+      img.src = imageData;
+    }, 1000);
   }
 };
 
@@ -857,6 +1133,42 @@ function showTemplatePanel() {
   if (panel) {
     panel.classList.toggle('hidden');
   }
+  // 隐藏贴纸面板
+  const stickerPanel = document.getElementById('sticker-panel');
+  if (stickerPanel) {
+    stickerPanel.classList.add('hidden');
+  }
+}
+
+// P1: 贴纸相关
+function showStickerPanel() {
+  DrawingApp.showStickerPanel();
+  // 隐藏模板面板
+  const templatePanel = document.getElementById('template-panel');
+  if (templatePanel) {
+    templatePanel.classList.add('hidden');
+  }
+}
+
+function hideStickerPanel() {
+  DrawingApp.hideStickerPanel();
+}
+
+function selectSticker(emoji) {
+  DrawingApp.selectSticker(emoji);
+}
+
+function setStickerSize(size) {
+  DrawingApp.setStickerSize(size);
+}
+
+// P1: 对称绘画相关
+function toggleSymmetry() {
+  DrawingApp.toggleSymmetry();
+}
+
+function setSymmetry(mode) {
+  DrawingApp.setSymmetry(mode);
 }
 
 // 全局暴露
@@ -873,3 +1185,9 @@ window.saveDrawing = saveDrawing;
 window.loadDrawingTemplate = loadDrawingTemplate;
 window.toggleDrawingDarkMode = toggleDrawingDarkMode;
 window.showTemplatePanel = showTemplatePanel;
+window.showStickerPanel = showStickerPanel;
+window.hideStickerPanel = hideStickerPanel;
+window.selectSticker = selectSticker;
+window.setStickerSize = setStickerSize;
+window.toggleSymmetry = toggleSymmetry;
+window.setSymmetry = setSymmetry;

@@ -8717,6 +8717,179 @@ body {
   content: '';
 }
 
+/* ========== P1: 贴纸印章 ========== */
+
+/* 贴纸按钮 */
+.drawing-header .btn-sticker {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background: #E3F2FD;
+  transition: all 0.2s;
+}
+
+.drawing-header .btn-symmetry {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background: #F3E5F5;
+  transition: all 0.2s;
+}
+
+.drawing-header .btn-symmetry.active {
+  background: #9B59B6;
+  color: white;
+}
+
+/* 贴纸面板 */
+.sticker-panel {
+  position: absolute;
+  top: 70px;
+  left: 12px;
+  right: 12px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  z-index: 100;
+  padding: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+  animation: slideDown 0.3s ease;
+}
+
+.sticker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.sticker-header button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.sticker-category {
+  margin-bottom: 16px;
+}
+
+.sticker-category-name {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.sticker-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+}
+
+.sticker-item {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.sticker-item:hover {
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+
+.sticker-item:active {
+  transform: scale(0.95);
+}
+
+.sticker-size-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.sticker-size-control input[type="range"] {
+  flex: 1;
+  height: 8px;
+  -webkit-appearance: none;
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+
+.sticker-size-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* ========== P1: 对称绘画 ========== */
+
+.symmetry-section .toolbar-label {
+  color: #9B59B6;
+}
+
+.symmetry-mode-btn {
+  width: 44px;
+  height: 44px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.symmetry-mode-btn:hover {
+  border-color: #9B59B6;
+}
+
+.symmetry-mode-btn.active {
+  border-color: #9B59B6;
+  background: #F3E5F5;
+}
+
+/* 响应式：小屏幕贴纸网格 */
+@media (max-width: 480px) {
+  .sticker-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .sticker-item {
+    font-size: 1.2rem;
+  }
+}
+
 /* 响应式：小屏幕模板网格 */
 @media (max-width: 480px) {
   .template-grid {
