@@ -34,7 +34,9 @@ kids-learning-app/
 │   ├── learningPet.js  # 学习宠物
 │   ├── learningReport.js # 学习报告
 │   ├── dailyCheckin.js # 每日签到
-│   └── wrongQuestions.js # 错题本
+│   ├── wrongQuestions.js # 错题本
+│   ├── parentNotify.js # 家长通知（Bark推送）
+│   └── drawing.js      # 画画创作
 ├── data/
 │   └── *.json          # 静态数据文件
 ├── music/              # 背景音乐资源
@@ -76,14 +78,16 @@ git push origin main
 | 模块 | 文件 | 说明 |
 |------|------|------|
 | 探索视频 | videos.js | YouTube 嵌入播放 |
-| 数学游戏 | app.js | 10以内加减法 |
+| 数学游戏 | app.js | 加减乘除（10/20/30以内） |
 | 英语学习 | app.js | 26个单词+发音 |
 | 中文学习 | app.js | 基础汉字认读 |
-| AI 聊天 | aiChat.js | 本地 Qwen2.5 模型 |
-| 绘本阅读 | pictureBook.js | 图文故事 |
+| AI 聊天 | aiChat.js | 本地 Qwen2.5 模型+语音对话 |
+| 绘本阅读 | pictureBook.js | 图文故事+AI语音朗读 |
 | 跟读练习 | pronunciation.js | 语音识别评分 |
 | 记忆训练 | memoryGame.js | 翻牌配对游戏 |
 | 学习宠物 | learningPet.js | 虚拟宠物养成 |
+| 画画创作 | drawing.js | Apple Pencil 压感绘画 |
+| 家长通知 | parentNotify.js | Bark 推送到 iPhone |
 
 ## 注意事项
 
@@ -101,3 +105,6 @@ git push origin main
 - `dailyCheckin` - 签到记录
 - `wrongQuestions` - 错题记录
 - `petData` - 宠物状态
+- `artworkGallery` - 画作作品集
+- `parentNotifyConfig` - 家长通知配置
+- `mathConfig` - 数学游戏设置

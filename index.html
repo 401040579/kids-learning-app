@@ -407,6 +407,13 @@
             <div class="card-desc">配置通知</div>
           </div>
 
+          <!-- 创作功能 -->
+          <div class="menu-card card-drawing" data-category="play" onclick="openDrawing()">
+            <div class="card-icon">🎨</div>
+            <div class="card-title">画画创作</div>
+            <div class="card-desc">自由绘画</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -1786,6 +1793,73 @@
     </div>
   </div>
 
+  <!-- ========== 画画创作 ========== -->
+  <div id="drawing-modal" class="drawing-modal hidden">
+    <div class="drawing-container">
+      <!-- 顶部工具栏 -->
+      <div class="drawing-header">
+        <button class="btn-back" onclick="closeDrawing()">← 返回</button>
+        <h2>🎨 画画创作</h2>
+        <button class="btn-save" onclick="saveDrawing()">💾 保存</button>
+      </div>
+
+      <!-- 画布区域 -->
+      <div class="drawing-canvas-container">
+        <canvas id="drawing-canvas"></canvas>
+      </div>
+
+      <!-- 底部工具栏 -->
+      <div class="drawing-toolbar">
+        <!-- 画笔工具 -->
+        <div class="toolbar-section">
+          <div class="toolbar-label">画笔</div>
+          <div class="tool-buttons">
+            <button class="drawing-tool-btn active" data-tool="pencil" onclick="setDrawingTool('pencil')" title="铅笔">✏️</button>
+            <button class="drawing-tool-btn" data-tool="marker" onclick="setDrawingTool('marker')" title="马克笔">🖊️</button>
+            <button class="drawing-tool-btn" data-tool="crayon" onclick="setDrawingTool('crayon')" title="蜡笔">🖍️</button>
+            <button class="drawing-tool-btn" data-tool="eraser" onclick="setDrawingTool('eraser')" title="橡皮擦">🧽</button>
+          </div>
+        </div>
+
+        <!-- 颜色选择 -->
+        <div class="toolbar-section">
+          <div class="toolbar-label">颜色</div>
+          <div class="color-buttons">
+            <button class="drawing-color-btn" data-color="#FF6B6B" style="background:#FF6B6B" onclick="setDrawingColor('#FF6B6B')"></button>
+            <button class="drawing-color-btn" data-color="#FF8E53" style="background:#FF8E53" onclick="setDrawingColor('#FF8E53')"></button>
+            <button class="drawing-color-btn" data-color="#FFD93D" style="background:#FFD93D" onclick="setDrawingColor('#FFD93D')"></button>
+            <button class="drawing-color-btn" data-color="#6BCB77" style="background:#6BCB77" onclick="setDrawingColor('#6BCB77')"></button>
+            <button class="drawing-color-btn" data-color="#4D96FF" style="background:#4D96FF" onclick="setDrawingColor('#4D96FF')"></button>
+            <button class="drawing-color-btn" data-color="#9B59B6" style="background:#9B59B6" onclick="setDrawingColor('#9B59B6')"></button>
+            <button class="drawing-color-btn active" data-color="#FF69B4" style="background:#FF69B4" onclick="setDrawingColor('#FF69B4')"></button>
+            <button class="drawing-color-btn" data-color="#00D2D3" style="background:#00D2D3" onclick="setDrawingColor('#00D2D3')"></button>
+            <button class="drawing-color-btn" data-color="#FFFFFF" style="background:#FFFFFF;border:2px solid #ccc" onclick="setDrawingColor('#FFFFFF')"></button>
+            <button class="drawing-color-btn" data-color="#2C3E50" style="background:#2C3E50" onclick="setDrawingColor('#2C3E50')"></button>
+          </div>
+        </div>
+
+        <!-- 大小调节 -->
+        <div class="toolbar-section">
+          <div class="toolbar-label">大小</div>
+          <div class="size-control">
+            <input type="range" id="brush-size-slider" min="2" max="30" value="8" onchange="setDrawingSize(this.value)" oninput="setDrawingSize(this.value)">
+            <div id="brush-size-preview" class="size-preview"></div>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="toolbar-section">
+          <div class="toolbar-label">操作</div>
+          <div class="action-buttons">
+            <button class="drawing-action-btn" onclick="undoDrawing()" title="撤销">↩️</button>
+            <button class="drawing-action-btn" onclick="redoDrawing()" title="重做">↪️</button>
+            <button class="drawing-action-btn" onclick="clearDrawing()" title="清空">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- PWA 更新提示 -->
   <div id="update-notification" class="update-notification hidden">
     <div class="update-content">
@@ -1814,6 +1888,7 @@
   <script src="js/puzzle.js"></script>
   <script src="js/aiChat.js"></script>
   <script src="js/parentNotify.js"></script>
+  <script src="js/drawing.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -8309,3 +8309,236 @@ body {
 .card-parent-settings .card-desc {
   color: white;
 }
+
+/* 画画创作卡片 */
+.card-drawing {
+  background: linear-gradient(135deg, #FF69B4 0%, #FFD93D 100%);
+}
+
+.card-drawing .card-title,
+.card-drawing .card-desc {
+  color: white;
+}
+
+/* ========== 画画创作模块 ========== */
+.drawing-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f5f5f5;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawing-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.drawing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 2px solid var(--accent);
+  flex-shrink: 0;
+}
+
+.drawing-header h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.drawing-header .btn-back {
+  padding: 8px 16px;
+}
+
+.drawing-header .btn-save {
+  padding: 8px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* 画布容器 */
+.drawing-canvas-container {
+  flex: 1;
+  background: white;
+  margin: 12px;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  touch-action: none; /* 防止触摸事件干扰 */
+}
+
+#drawing-canvas {
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* 底部工具栏 */
+.drawing-toolbar {
+  background: white;
+  padding: 12px 16px;
+  border-top: 2px solid var(--accent);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  flex-shrink: 0;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.toolbar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toolbar-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* 工具按钮 */
+.tool-buttons,
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.drawing-tool-btn,
+.drawing-action-btn {
+  width: 44px;
+  height: 44px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.drawing-tool-btn.active {
+  border-color: var(--primary);
+  background: #FFF0F5;
+}
+
+.drawing-tool-btn:active,
+.drawing-action-btn:active {
+  transform: scale(0.95);
+}
+
+/* 颜色按钮 */
+.color-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.drawing-color-btn {
+  width: 32px;
+  height: 32px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.drawing-color-btn.active {
+  border-color: #333;
+  transform: scale(1.1);
+}
+
+.drawing-color-btn:active {
+  transform: scale(0.95);
+}
+
+/* 大小控制 */
+.size-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#brush-size-slider {
+  width: 120px;
+  height: 8px;
+  -webkit-appearance: none;
+  background: #e0e0e0;
+  border-radius: 4px;
+  outline: none;
+}
+
+#brush-size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.size-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  transition: all 0.2s;
+}
+
+/* 横屏优化 */
+@media (orientation: landscape) {
+  .drawing-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-height: 30vh;
+  }
+
+  .toolbar-section {
+    flex-shrink: 0;
+  }
+}
+
+/* iPad 优化 */
+@media (min-width: 768px) {
+  .drawing-canvas-container {
+    margin: 20px;
+  }
+
+  .drawing-toolbar {
+    padding: 16px 24px;
+  }
+
+  .drawing-tool-btn,
+  .drawing-action-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 1.5rem;
+  }
+
+  .drawing-color-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  #brush-size-slider {
+    width: 180px;
+  }
+}
