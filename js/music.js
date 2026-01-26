@@ -719,6 +719,10 @@ function openMusic() {
   const modal = document.getElementById('music-modal');
   if (modal) {
     modal.classList.remove('hidden');
+    // 📊 追踪模块点击
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackModuleClick('music', 'creative');
+    }
     MusicApp.init();
     MusicApp.switchMode('piano');
   }

@@ -126,6 +126,12 @@ function navigateTo(page) {
 
   currentPage = page;
 
+  // 📊 追踪模块点击
+  if (typeof Analytics !== 'undefined' && page !== 'home') {
+    const category = getModuleCategory(page);
+    Analytics.trackModuleClick(page, category);
+  }
+
   // 进入页面时初始化内容
   if (page === 'math') generateMathQuestion();
   if (page === 'english') generateEnglishQuestion();
@@ -134,6 +140,14 @@ function navigateTo(page) {
   if (page === 'science') showScienceThemes();
   if (page === 'sleep-music') initSleepMusic();
   if (page === 'puzzle') initPuzzle();
+}
+
+// 获取模块分类
+function getModuleCategory(page) {
+  if (['math', 'english', 'chinese', 'science'].includes(page)) return 'learning';
+  if (['explore', 'puzzle'].includes(page)) return 'game';
+  if (['timer', 'calendar', 'sleep-music'].includes(page)) return 'tools';
+  return 'other';
 }
 
 function getNavIndex(page) {
@@ -551,6 +565,11 @@ function checkMathAnswer(answer, btn) {
     btn.classList.add('correct');
     RewardSystem.mathCorrect();
 
+    // 📊 追踪答题
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackAnswer('math', true, currentMathQuestion?.operator || '');
+    }
+
     // 检查成就
     AchievementSystem.checkProgress('mathCorrect', RewardSystem.data.mathCorrect);
     AchievementSystem.checkProgress('mathStreak', RewardSystem.data.mathStreak);
@@ -570,6 +589,11 @@ function checkMathAnswer(answer, btn) {
     btn.classList.add('wrong');
     RewardSystem.mathWrong();
     RewardSystem.playSound('wrong');
+
+    // 📊 追踪答题
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackAnswer('math', false, currentMathQuestion?.operator || '');
+    }
 
     // 添加到错题本
     if (currentMathQuestion) {
@@ -650,6 +674,11 @@ function checkEnglishAnswer(answer, btn) {
     btn.classList.add('correct');
     RewardSystem.englishCorrect();
 
+    // 📊 追踪答题
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackAnswer('english', true, currentEnglishWord?.word || '');
+    }
+
     // 检查成就
     AchievementSystem.checkProgress('englishCorrect', RewardSystem.data.englishCorrect);
     AchievementSystem.checkProgress('totalScore', RewardSystem.data.totalScore);
@@ -667,6 +696,11 @@ function checkEnglishAnswer(answer, btn) {
   } else {
     btn.classList.add('wrong');
     RewardSystem.playSound('wrong');
+
+    // 📊 追踪答题
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackAnswer('english', false, currentEnglishWord?.word || '');
+    }
 
     // 添加到错题本
     if (currentEnglishWord) {
@@ -748,6 +782,11 @@ function checkChineseAnswer(answer, btn) {
     btn.classList.add('correct');
     RewardSystem.chineseCorrect();
 
+    // 📊 追踪答题
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackAnswer('chinese', true, currentChineseChar?.char || '');
+    }
+
     // 检查成就
     AchievementSystem.checkProgress('chineseCorrect', RewardSystem.data.chineseCorrect);
     AchievementSystem.checkProgress('totalScore', RewardSystem.data.totalScore);
@@ -765,6 +804,11 @@ function checkChineseAnswer(answer, btn) {
   } else {
     btn.classList.add('wrong');
     RewardSystem.playSound('wrong');
+
+    // 📊 追踪答题
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackAnswer('chinese', false, currentChineseChar?.char || '');
+    }
 
     // 添加到错题本
     if (currentChineseChar) {

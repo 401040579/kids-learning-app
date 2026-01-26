@@ -1076,6 +1076,10 @@ function openDrawing() {
   const modal = document.getElementById('drawing-modal');
   if (modal) {
     modal.classList.remove('hidden');
+    // 📊 追踪模块点击
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackModuleClick('drawing', 'creative');
+    }
     // 延迟初始化，确保 DOM 已渲染
     setTimeout(() => {
       DrawingApp.init();

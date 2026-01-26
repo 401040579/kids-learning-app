@@ -250,6 +250,12 @@ const WritingApp = {
           this.progress[char] = stars;
           this.saveProgress();
         }
+
+        // 📊 追踪汉字练习完成
+        if (typeof Analytics !== 'undefined') {
+          Analytics.trackCharacterComplete(char, stars, summary.totalMistakes);
+        }
+
         this.renderCharacterList();
         this.updateQuizUI();
       }
@@ -684,6 +690,10 @@ function openWriting() {
   const modal = document.getElementById('writing-modal');
   if (modal) {
     modal.classList.remove('hidden');
+    // 📊 追踪模块点击
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackModuleClick('writing', 'learning');
+    }
     WritingApp.init();
     WritingApp.switchMode('chinese');
   }
