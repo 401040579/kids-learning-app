@@ -420,6 +420,12 @@
             <div class="card-desc">弹琴打鼓</div>
           </div>
 
+          <div class="menu-card card-writing" data-category="learn" onclick="openWriting()">
+            <div class="card-icon">✍️</div>
+            <div class="card-title">书写练习</div>
+            <div class="card-desc">汉字笔顺</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -2112,6 +2118,125 @@
     </div>
   </div>
 
+  <!-- ========== 书写练习 ========== -->
+  <div id="writing-modal" class="writing-modal hidden">
+    <div class="writing-container">
+      <!-- 顶部标题 -->
+      <div class="writing-header">
+        <button class="btn-back" onclick="closeWriting()">← 返回</button>
+        <h2>✍️ 书写练习</h2>
+        <div class="header-spacer"></div>
+      </div>
+
+      <!-- 模式切换标签 -->
+      <div class="writing-tabs">
+        <button class="writing-tab active" data-mode="chinese" onclick="switchWritingMode('chinese')">
+          <span class="tab-icon">📝</span>
+          <span class="tab-name">汉字笔顺</span>
+        </button>
+        <button class="writing-tab" data-mode="free" onclick="switchWritingMode('free')">
+          <span class="tab-icon">🎯</span>
+          <span class="tab-name">自由练习</span>
+        </button>
+      </div>
+
+      <!-- 汉字练习面板 -->
+      <div id="writing-chinese" class="writing-panel active">
+        <!-- 汉字信息 -->
+        <div class="char-info-card">
+          <div class="char-display">
+            <span id="current-char" class="current-char">一</span>
+          </div>
+          <div class="char-details">
+            <div class="char-pinyin" id="char-pinyin">yī</div>
+            <div class="char-meaning" id="char-meaning">1</div>
+          </div>
+        </div>
+
+        <!-- Hanzi Writer 容器 -->
+        <div class="hanzi-writer-wrapper">
+          <div id="hanzi-writer-container" class="hanzi-writer-container"></div>
+          <div id="stroke-info" class="stroke-info">笔画: 0/0  错误: 0次</div>
+        </div>
+
+        <!-- 控制按钮 -->
+        <div class="char-controls">
+          <button id="animate-btn" class="char-btn animate-btn" onclick="animateCharacter()">
+            ▶️ 播放笔顺
+          </button>
+          <button id="start-quiz-btn" class="char-btn quiz-btn" onclick="startCharacterQuiz()">
+            ✏️ 开始练习
+          </button>
+          <button class="char-btn reset-btn" onclick="resetCharacter()">
+            🔄 重置
+          </button>
+        </div>
+
+        <!-- 导航按钮 -->
+        <div class="char-navigation">
+          <button id="prev-char-btn" class="nav-btn" onclick="prevCharacter()">◀️ 上一个</button>
+          <button id="next-char-btn" class="nav-btn" onclick="nextCharacter()">下一个 ▶️</button>
+        </div>
+
+        <!-- 汉字列表 -->
+        <div class="char-list-section">
+          <h3>选择汉字</h3>
+          <div id="character-list" class="character-list"></div>
+        </div>
+      </div>
+
+      <!-- 自由练习面板 -->
+      <div id="writing-free" class="writing-panel">
+        <!-- 画布 -->
+        <div class="free-canvas-wrapper">
+          <canvas id="free-writing-canvas"></canvas>
+        </div>
+
+        <!-- 背景选择 -->
+        <div class="free-toolbar">
+          <div class="toolbar-row">
+            <span class="toolbar-label">背景:</span>
+            <div class="bg-buttons">
+              <button class="bg-btn active" data-bg="blank" onclick="setFreeBackground('blank')">空白</button>
+              <button class="bg-btn" data-bg="grid" onclick="setFreeBackground('grid')">田字格</button>
+              <button class="bg-btn" data-bg="lines" onclick="setFreeBackground('lines')">四线格</button>
+            </div>
+          </div>
+
+          <!-- 颜色选择 -->
+          <div class="toolbar-row">
+            <span class="toolbar-label">笔色:</span>
+            <div class="free-color-buttons">
+              <button class="free-color-btn active" data-color="#333333" style="background:#333333" onclick="setFreeColor('#333333')"></button>
+              <button class="free-color-btn" data-color="#FF6B6B" style="background:#FF6B6B" onclick="setFreeColor('#FF6B6B')"></button>
+              <button class="free-color-btn" data-color="#FF8E53" style="background:#FF8E53" onclick="setFreeColor('#FF8E53')"></button>
+              <button class="free-color-btn" data-color="#4D96FF" style="background:#4D96FF" onclick="setFreeColor('#4D96FF')"></button>
+              <button class="free-color-btn" data-color="#6BCB77" style="background:#6BCB77" onclick="setFreeColor('#6BCB77')"></button>
+              <button class="free-color-btn" data-color="#9B59B6" style="background:#9B59B6" onclick="setFreeColor('#9B59B6')"></button>
+            </div>
+          </div>
+
+          <!-- 笔宽 -->
+          <div class="toolbar-row">
+            <span class="toolbar-label">笔宽:</span>
+            <input type="range" id="free-line-width" min="1" max="20" value="4"
+                   onchange="setFreeLineWidth(this.value)" oninput="setFreeLineWidth(this.value)">
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="toolbar-row">
+            <div class="action-buttons">
+              <button class="action-btn" onclick="undoFreeWriting()">↩️ 撤销</button>
+              <button class="action-btn" onclick="redoFreeWriting()">↪️ 重做</button>
+              <button class="action-btn" onclick="clearFreeWriting()">🗑️ 清空</button>
+              <button class="action-btn save-btn" onclick="saveFreeWriting()">💾 保存</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- PWA 更新提示 -->
   <div id="update-notification" class="update-notification hidden">
     <div class="update-content">
@@ -2124,6 +2249,9 @@
 
   <!-- Puter.js for AI TTS -->
   <script src="https://js.puter.com/v2/"></script>
+
+  <!-- Hanzi Writer for Chinese character stroke order -->
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 
   <script src="js/scienceData.js"></script>
   <script src="js/puzzleData.js"></script>
@@ -2142,6 +2270,7 @@
   <script src="js/parentNotify.js"></script>
   <script src="js/drawing.js"></script>
   <script src="js/music.js"></script>
+  <script src="js/writing.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

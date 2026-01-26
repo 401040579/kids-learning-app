@@ -9412,3 +9412,504 @@ body {
     font-size: 0.7rem;
   }
 }
+
+/* ========== 书写练习模块 ========== */
+
+.writing-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-gradient);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.writing-modal.hidden {
+  display: none;
+}
+
+.writing-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px 100px;
+}
+
+.writing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg-gradient);
+  z-index: 10;
+}
+
+.writing-header h2 {
+  font-size: 1.3rem;
+  color: var(--text-dark);
+}
+
+.header-spacer {
+  width: 60px;
+}
+
+/* 模式切换标签 */
+.writing-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.writing-tab {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s;
+}
+
+.writing-tab .tab-icon {
+  font-size: 1.5rem;
+}
+
+.writing-tab .tab-name {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.writing-tab.active {
+  background: linear-gradient(135deg, #87CEEB, #4D96FF);
+  box-shadow: 0 4px 12px rgba(77, 150, 255, 0.3);
+}
+
+.writing-tab.active .tab-name {
+  color: white;
+  font-weight: 600;
+}
+
+/* 面板 */
+.writing-panel {
+  display: none;
+}
+
+.writing-panel.active {
+  display: block;
+  animation: fadeIn 0.3s;
+}
+
+/* ========== 汉字练习 ========== */
+
+/* 汉字信息卡片 */
+.char-info-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.char-display {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FFE4E1, #FFF0F5);
+  border-radius: 16px;
+}
+
+.current-char {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.char-details {
+  flex: 1;
+}
+
+.char-pinyin {
+  font-size: 1.5rem;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.char-meaning {
+  font-size: 1rem;
+  color: var(--text-light);
+}
+
+/* Hanzi Writer 容器 */
+.hanzi-writer-wrapper {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hanzi-writer-container {
+  width: 250px;
+  height: 250px;
+  border: 3px solid #333;
+  border-radius: 8px;
+  background: #FAFAFA;
+  position: relative;
+}
+
+/* 田字格背景 */
+.hanzi-writer-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #DDD;
+  border-style: dashed;
+}
+
+.hanzi-writer-container::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #DDD;
+  border-style: dashed;
+}
+
+.stroke-info {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+/* 控制按钮 */
+.char-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.char-btn {
+  flex: 1;
+  padding: 14px 12px;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.animate-btn {
+  background: linear-gradient(135deg, #87CEEB, #4D96FF);
+  color: white;
+}
+
+.quiz-btn {
+  background: linear-gradient(135deg, #6BCB77, #4CAF50);
+  color: white;
+}
+
+.reset-btn {
+  background: #f0f0f0;
+  color: var(--text-dark);
+}
+
+.char-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.char-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 导航按钮 */
+.char-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 汉字列表 */
+.char-list-section {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.char-list-section h3 {
+  font-size: 1rem;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.character-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.char-btn {
+  padding: 10px 8px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.2s;
+}
+
+.char-btn:hover {
+  border-color: var(--primary);
+}
+
+.char-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+}
+
+.char-btn .char-text {
+  font-size: 1.2rem;
+}
+
+.char-btn .char-stars {
+  font-size: 0.5rem;
+  height: 10px;
+}
+
+/* ========== 自由练习 ========== */
+
+.free-canvas-wrapper {
+  background: white;
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  aspect-ratio: 1;
+}
+
+#free-writing-canvas {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* 工具栏 */
+.free-toolbar {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar-row:last-child {
+  margin-bottom: 0;
+}
+
+.toolbar-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  min-width: 50px;
+}
+
+.bg-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.bg-btn {
+  padding: 8px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  background: white;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bg-btn:hover {
+  border-color: var(--primary);
+}
+
+.bg-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
+  color: var(--primary-dark);
+}
+
+.free-color-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.free-color-btn {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e0e0e0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.free-color-btn:hover {
+  transform: scale(1.1);
+}
+
+.free-color-btn.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.3);
+}
+
+#free-line-width {
+  flex: 1;
+  max-width: 200px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 10px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.action-btn.save-btn {
+  background: linear-gradient(135deg, #6BCB77, #4CAF50);
+  color: white;
+  border-color: transparent;
+}
+
+.action-btn.save-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* 书写卡片样式 */
+.card-writing {
+  background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+}
+
+.card-writing .card-icon {
+  background: linear-gradient(135deg, #42A5F5, #1E88E5);
+}
+
+/* Toast 提示 */
+.writing-toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 10000;
+}
+
+.writing-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* 响应式 */
+@media (max-width: 480px) {
+  .hanzi-writer-container {
+    width: 200px;
+    height: 200px;
+  }
+
+  .character-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .char-btn .char-text {
+    font-size: 1rem;
+  }
+
+  .char-controls {
+    flex-wrap: wrap;
+  }
+
+  .char-btn {
+    flex: 1 1 calc(50% - 5px);
+  }
+}
