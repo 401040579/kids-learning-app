@@ -363,6 +363,11 @@ async function triggerSOS() {
   const confirmed = confirm('确定要发送紧急求助吗？');
   if (!confirmed) return;
 
+  // 📊 追踪 SOS
+  if (typeof Analytics !== 'undefined') {
+    Analytics.sendEvent('sos_triggered', {});
+  }
+
   // 发送 SOS 通知
   await ParentNotify.notifySOS();
 

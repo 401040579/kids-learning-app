@@ -626,6 +626,11 @@ const DrawingApp = {
     // 保存到作品集
     this.saveToGallery(dataUrl);
 
+    // 📊 追踪作品保存
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackWorkSave('drawing', this.settings.tool);
+    }
+
     // 显示成功提示
     alert('画作已保存！');
 

@@ -360,6 +360,13 @@ async function sendAIMessage() {
   const message = input.value.trim();
   if (!message) return;
 
+  // 📊 追踪 AI 聊天
+  if (typeof Analytics !== 'undefined') {
+    Analytics.sendEvent('ai_chat_message', {
+      message_length: message.length
+    });
+  }
+
   // 清空输入
   input.value = '';
 

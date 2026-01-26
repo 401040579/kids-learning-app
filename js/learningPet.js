@@ -347,6 +347,15 @@ const LearningPet = {
 
     this.saveData();
 
+    // 📊 追踪宠物喂食
+    if (typeof Analytics !== 'undefined') {
+      Analytics.sendEvent('pet_feed', {
+        food_id: foodId,
+        pet_level: this.data.level,
+        leveled_up: leveledUp
+      });
+    }
+
     return {
       success: true,
       message: `喂了${food.name}！`,
@@ -407,6 +416,14 @@ const LearningPet = {
 
     const leveledUp = this.checkLevelUp();
     this.saveData();
+
+    // 📊 追踪宠物互动
+    if (typeof Analytics !== 'undefined') {
+      Analytics.sendEvent('pet_play', {
+        pet_level: this.data.level,
+        happiness: this.data.happiness
+      });
+    }
 
     return { success: true, expGained: 2, leveledUp: leveledUp };
   },

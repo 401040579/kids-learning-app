@@ -605,6 +605,16 @@ const MemoryGame = {
     document.getElementById('memory-complete-stats').innerHTML = content;
     modal.classList.remove('hidden');
 
+    // 📊 追踪记忆游戏完成
+    if (typeof Analytics !== 'undefined') {
+      Analytics.sendEvent('memory_game_complete', {
+        game_type: gameType,
+        score: stats.score,
+        level: stats.level || 0,
+        moves: stats.moves || 0
+      });
+    }
+
     RewardSystem.createParticles();
   }
 };

@@ -629,6 +629,16 @@ function showPuzzleComplete() {
   // 显示弹窗
   document.getElementById('puzzle-complete-modal').classList.remove('hidden');
 
+  // 📊 追踪拼图完成
+  if (typeof Analytics !== 'undefined') {
+    Analytics.sendEvent('puzzle_complete', {
+      difficulty: currentPuzzleDifficulty,
+      time_seconds: puzzleElapsed,
+      points: points,
+      puzzle_name: currentPuzzleData?.name || ''
+    });
+  }
+
   // 添加奖励
   RewardSystem.puzzleCorrect(currentPuzzleDifficulty);
 

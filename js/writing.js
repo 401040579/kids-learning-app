@@ -593,6 +593,12 @@ const WritingApp = {
     link.download = `书写练习_${Date.now()}.png`;
     link.href = canvas.toDataURL();
     link.click();
+
+    // 📊 追踪作品保存
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackWorkSave('writing', this.free.background);
+    }
+
     this.showToast('作品已保存！');
   },
 

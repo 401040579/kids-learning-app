@@ -138,6 +138,11 @@ const DailyCheckin = {
 
     this.saveData();
 
+    // 📊 追踪签到
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackCheckin(this.data.currentStreak);
+    }
+
     // 添加积分到奖励系统
     RewardSystem.data.totalScore += reward.points;
     RewardSystem.saveData();

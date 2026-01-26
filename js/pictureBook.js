@@ -431,6 +431,15 @@ const PictureBook = {
     this.currentBook = book;
     this.currentPage = 0;
 
+    // 📊 追踪绘本阅读
+    if (typeof Analytics !== 'undefined') {
+      Analytics.sendEvent('book_open', {
+        book_id: bookId,
+        book_title: book.title,
+        total_pages: book.pages.length
+      });
+    }
+
     // 记录阅读历史
     if (!this.readingHistory.includes(bookId)) {
       this.readingHistory.push(bookId);

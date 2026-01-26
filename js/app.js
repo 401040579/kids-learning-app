@@ -349,6 +349,14 @@ function playVideo(name, videoId) {
   // 隐藏遮罩
   overlay.classList.add('hidden');
 
+  // 📊 追踪视频播放
+  if (typeof Analytics !== 'undefined') {
+    Analytics.sendEvent('video_play', {
+      video_name: name,
+      video_id: videoId
+    });
+  }
+
   // 记录视频观看（用于成就系统）
   if (typeof AchievementSystem !== 'undefined') {
     AchievementSystem.recordVideoWatch();

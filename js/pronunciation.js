@@ -467,6 +467,15 @@ const Pronunciation = {
       ? Math.round(this.scores.reduce((a, b) => a + b, 0) / this.scores.length)
       : 0;
 
+    // 📊 追踪跟读练习完成
+    if (typeof Analytics !== 'undefined') {
+      Analytics.sendEvent('pronunciation_complete', {
+        practice_type: this.currentType,
+        average_score: avgScore,
+        total_count: this.scores.length
+      });
+    }
+
     // 显示完成弹窗
     const modal = document.getElementById('pronunciation-complete-modal');
     if (modal) {

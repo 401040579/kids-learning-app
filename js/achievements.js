@@ -122,6 +122,11 @@ const AchievementSystem = {
     this.data.lastUnlockTime = new Date().toISOString();
     this.saveData();
 
+    // 📊 追踪成就解锁
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackAchievement(achievement.id, achievement.name);
+    }
+
     // 显示解锁弹窗
     this.showUnlockPopup(achievement);
 

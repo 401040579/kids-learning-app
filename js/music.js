@@ -685,6 +685,11 @@ const MusicApp = {
     compositions.push(composition);
     localStorage.setItem('musicCompositions', JSON.stringify(compositions));
 
+    // 📊 追踪作品保存
+    if (typeof Analytics !== 'undefined') {
+      Analytics.trackWorkSave('music', this.currentMode);
+    }
+
     // 显示保存成功提示
     this.showToast('作品已保存！');
 
