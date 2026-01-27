@@ -239,14 +239,15 @@ const SongPractice = {
     }
   },
 
-  // 使用 Puter.js 朗读
+  // 使用 Puter.js 朗读（神经网络语音）
   speak(text) {
     return new Promise((resolve, reject) => {
-      if (typeof puter !== 'undefined' && puter.ai) {
-        // 使用 Puter.js TTS
+      if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2speech) {
+        // 使用 Puter.js 神经网络 TTS（与 aiChat/pictureBook 一致）
         puter.ai.txt2speech(text, {
-          lang: 'cmn-CN',
-          rate: this.speed
+          voice: 'Zhiyu',      // 中文女声
+          engine: 'neural',    // 神经网络引擎，声音更自然
+          language: 'cmn-CN'   // 普通话
         }).then(audioBlob => {
           const audio = new Audio(URL.createObjectURL(audioBlob));
           audio.playbackRate = this.speed;
