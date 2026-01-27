@@ -240,38 +240,35 @@ const SongPractice = {
   },
 
   // 使用 Puter.js 朗读（神经网络语音）
-  speak(text) {
-    return new Promise((resolve, reject) => {
+  async speak(text) {
+    try {
       if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2speech) {
         // 使用 Puter.js 神经网络 TTS（与 aiChat/pictureBook 一致）
-        puter.ai.txt2speech(text, {
+        const audio = await puter.ai.txt2speech(text, {
           voice: 'Zhiyu',      // 中文女声
           engine: 'neural',    // 神经网络引擎，声音更自然
           language: 'cmn-CN'   // 普通话
-        }).then(audioBlob => {
-          const audio = new Audio(URL.createObjectURL(audioBlob));
-          audio.playbackRate = this.speed;
+        });
 
-          audio.onended = () => {
-            URL.revokeObjectURL(audio.src);
-            resolve();
-          };
+        // 设置播放速度
+        audio.playbackRate = this.speed;
+        this.currentAudio = audio;
 
-          audio.onerror = (e) => {
-            reject(e);
-          };
-
-          this.currentAudio = audio;
+        // 返回一个 Promise，等待播放完成
+        return new Promise((resolve, reject) => {
+          audio.onended = resolve;
+          audio.onerror = reject;
           audio.play().catch(reject);
-        }).catch(err => {
-          // 降级到 Web Speech API
-          this.speakWithWebSpeech(text).then(resolve).catch(reject);
         });
       } else {
         // 使用 Web Speech API 作为后备
-        this.speakWithWebSpeech(text).then(resolve).catch(reject);
+        return this.speakWithWebSpeech(text);
       }
-    });
+    } catch (err) {
+      console.error('Puter TTS 失败，使用备选方案:', err);
+      // 降级到 Web Speech API
+      return this.speakWithWebSpeech(text);
+    }
   },
 
   // Web Speech API 后备方案
