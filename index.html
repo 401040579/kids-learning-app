@@ -27,10 +27,10 @@
   <div id="reward-popup" class="reward-popup hidden">
     <div class="reward-content">
       <div class="reward-stars">⭐⭐⭐</div>
-      <h2 class="reward-title">太棒了!</h2>
-      <p class="reward-message">你获得了 <span id="reward-points">10</span> 分!</p>
+      <h2 class="reward-title" data-i18n="reward.title">太棒了!</h2>
+      <p class="reward-message" id="reward-message">你获得了 <span id="reward-points">10</span> 分!</p>
       <div class="reward-animation"></div>
-      <button class="btn-continue" onclick="closeReward()">继续学习</button>
+      <button class="btn-continue" onclick="closeReward()" data-i18n="reward.continue">继续学习</button>
     </div>
   </div>
 
@@ -38,23 +38,23 @@
   <div id="puzzle-complete-modal" class="puzzle-complete-modal hidden">
     <div class="puzzle-complete-content">
       <div class="complete-celebration">🎉</div>
-      <h2 class="puzzle-complete-title">拼图完成!</h2>
+      <h2 class="puzzle-complete-title" data-i18n="puzzle.complete">拼图完成!</h2>
       <div class="puzzle-complete-image" id="puzzle-complete-image">🦁</div>
       <div class="puzzle-complete-stats">
         <div class="complete-stat-item">
           <span class="stat-icon">⏱</span>
           <span class="stat-value" id="puzzle-complete-time">01:23</span>
-          <span class="stat-label">用时</span>
+          <span class="stat-label" data-i18n="puzzle.time">用时</span>
         </div>
         <div class="complete-stat-item">
           <span class="stat-icon">⭐</span>
           <span class="stat-value" id="puzzle-complete-points">+20</span>
-          <span class="stat-label">积分</span>
+          <span class="stat-label" data-i18n="puzzle.points">积分</span>
         </div>
       </div>
       <div class="puzzle-complete-buttons">
-        <button class="btn-puzzle-again" onclick="restartPuzzle()">再玩一次</button>
-        <button class="btn-puzzle-new" onclick="backToPuzzleSelect()">换一张</button>
+        <button class="btn-puzzle-again" onclick="restartPuzzle()" data-i18n="puzzle.playAgain">再玩一次</button>
+        <button class="btn-puzzle-new" onclick="backToPuzzleSelect()" data-i18n="puzzle.newPuzzle">换一张</button>
       </div>
     </div>
   </div>
@@ -63,7 +63,7 @@
   <div id="puzzle-hint-modal" class="puzzle-hint-modal hidden">
     <div class="puzzle-hint-content">
       <button class="puzzle-hint-close" onclick="closePuzzleHint()">✕</button>
-      <h3>原图参考</h3>
+      <h3 data-i18n="puzzle.hint">原图参考</h3>
       <div class="puzzle-hint-image" id="puzzle-hint-image">🦁</div>
       <p class="puzzle-hint-name" id="puzzle-hint-name">狮子</p>
     </div>
@@ -77,8 +77,8 @@
       <div id="video-overlay" class="video-overlay hidden">
         <div class="overlay-content">
           <span class="overlay-emoji">🌟</span>
-          <p>视频看完啦!</p>
-          <button class="btn-primary" onclick="closeVideo()">返回</button>
+          <p data-i18n="videos.ended">视频看完啦!</p>
+          <button class="btn-primary" onclick="closeVideo()" data-i18n="videos.return">返回</button>
         </div>
       </div>
     </div>
@@ -239,7 +239,7 @@
     <!-- 顶部状态栏 -->
     <header class="header">
       <div class="header-left">
-        <span class="app-title">🌈 学习乐园</span>
+        <span class="app-title">🌈 <span data-i18n="app.title">学习乐园</span></span>
       </div>
       <div class="header-right">
         <div class="score-display">
@@ -255,28 +255,28 @@
       <section id="page-home" class="page active">
         <div class="welcome-section">
           <h1 class="welcome-title">
-            <span class="wave">👋</span> 欢迎小朋友!
+            <span class="wave">👋</span> <span data-i18n="app.welcome">欢迎小朋友!</span>
           </h1>
-          <p class="welcome-subtitle">今天想学什么呢?</p>
+          <p class="welcome-subtitle" data-i18n="app.welcome.subtitle">今天想学什么呢?</p>
         </div>
 
         <!-- 首页分类标签 -->
         <div class="home-category-tabs">
           <button class="home-tab active" data-category="all" onclick="filterHomeCards('all')">
             <span class="tab-emoji">🌟</span>
-            <span>全部</span>
+            <span data-i18n="home.tab.all">全部</span>
           </button>
           <button class="home-tab" data-category="learn" onclick="filterHomeCards('learn')">
             <span class="tab-emoji">📚</span>
-            <span>学习</span>
+            <span data-i18n="home.tab.learn">学习</span>
           </button>
           <button class="home-tab" data-category="play" onclick="filterHomeCards('play')">
             <span class="tab-emoji">🎮</span>
-            <span>游戏</span>
+            <span data-i18n="home.tab.play">游戏</span>
           </button>
           <button class="home-tab" data-category="tools" onclick="filterHomeCards('tools')">
             <span class="tab-emoji">🔧</span>
-            <span>工具</span>
+            <span data-i18n="home.tab.tools">工具</span>
           </button>
         </div>
 
@@ -284,184 +284,184 @@
           <!-- 学习类 -->
           <div class="menu-card card-math" data-category="learn" onclick="navigateTo('math')">
             <div class="card-icon">🔢</div>
-            <div class="card-title">数学游戏</div>
-            <div class="card-desc">加减法挑战</div>
+            <div class="card-title" data-i18n="menu.math">数学游戏</div>
+            <div class="card-desc" data-i18n="menu.math.desc">加减法挑战</div>
           </div>
 
           <div class="menu-card card-english" data-category="learn" onclick="navigateTo('english')">
             <div class="card-icon">🔤</div>
-            <div class="card-title">学英语</div>
-            <div class="card-desc">字母和单词</div>
+            <div class="card-title" data-i18n="menu.english">学英语</div>
+            <div class="card-desc" data-i18n="menu.english.desc">字母和单词</div>
           </div>
 
           <div class="menu-card card-chinese" data-category="learn" onclick="navigateTo('chinese')">
             <div class="card-icon">📝</div>
-            <div class="card-title">学中文</div>
-            <div class="card-desc">认字和拼音</div>
+            <div class="card-title" data-i18n="menu.chinese">学中文</div>
+            <div class="card-desc" data-i18n="menu.chinese.desc">认字和拼音</div>
           </div>
 
           <div class="menu-card card-science" data-category="learn" onclick="navigateTo('science')">
             <div class="card-icon">🔬</div>
-            <div class="card-title">科学探索</div>
-            <div class="card-desc">发现神奇世界</div>
+            <div class="card-title" data-i18n="menu.science">科学探索</div>
+            <div class="card-desc" data-i18n="menu.science.desc">发现神奇世界</div>
           </div>
 
           <!-- 游戏类 -->
           <div class="menu-card card-explore" data-category="play" onclick="navigateTo('explore')">
             <div class="card-icon">🎬</div>
-            <div class="card-title">探索视频</div>
-            <div class="card-desc">看有趣的视频</div>
+            <div class="card-title" data-i18n="menu.explore">探索视频</div>
+            <div class="card-desc" data-i18n="menu.explore.desc">看有趣的视频</div>
           </div>
 
           <div class="menu-card card-puzzle" data-category="play" onclick="navigateTo('puzzle')">
             <div class="card-icon">🧩</div>
-            <div class="card-title">拼图游戏</div>
-            <div class="card-desc">锻炼观察力</div>
+            <div class="card-title" data-i18n="menu.puzzle">拼图游戏</div>
+            <div class="card-desc" data-i18n="menu.puzzle.desc">锻炼观察力</div>
           </div>
 
           <!-- 工具类 -->
           <div class="menu-card card-timer" data-category="tools" onclick="navigateTo('timer')">
             <div class="card-icon">⏰</div>
-            <div class="card-title">玩耍计时</div>
-            <div class="card-desc">设置倒计时</div>
+            <div class="card-title" data-i18n="menu.timer">玩耍计时</div>
+            <div class="card-desc" data-i18n="menu.timer.desc">设置倒计时</div>
           </div>
 
           <div class="menu-card card-calendar" data-category="tools" onclick="navigateTo('calendar')">
             <div class="card-icon">📅</div>
-            <div class="card-title">我的日历</div>
-            <div class="card-desc">记录每一天</div>
+            <div class="card-title" data-i18n="menu.calendar">我的日历</div>
+            <div class="card-desc" data-i18n="menu.calendar.desc">记录每一天</div>
           </div>
 
           <div class="menu-card card-sleep-music" data-category="tools" onclick="navigateTo('sleep-music')">
             <div class="card-icon">🎵</div>
-            <div class="card-title">睡眠音乐</div>
-            <div class="card-desc">助眠好音乐</div>
+            <div class="card-title" data-i18n="menu.sleepMusic">睡眠音乐</div>
+            <div class="card-desc" data-i18n="menu.sleepMusic.desc">助眠好音乐</div>
           </div>
 
           <div class="menu-card card-profile" data-category="tools" onclick="navigateTo('profile')">
             <div class="card-icon">👤</div>
-            <div class="card-title">我的信息</div>
-            <div class="card-desc">编辑个人资料</div>
+            <div class="card-title" data-i18n="menu.profile">我的信息</div>
+            <div class="card-desc" data-i18n="menu.profile.desc">编辑个人资料</div>
           </div>
 
           <!-- P0新功能入口 -->
           <div class="menu-card card-checkin" data-category="tools" onclick="showCheckin()">
             <div class="card-icon">📅</div>
-            <div class="card-title">每日签到</div>
-            <div class="card-desc">签到领奖励</div>
+            <div class="card-title" data-i18n="menu.checkin">每日签到</div>
+            <div class="card-desc" data-i18n="menu.checkin.desc">签到领奖励</div>
             <div id="checkin-preview" class="checkin-preview-mini"></div>
           </div>
 
           <div class="menu-card card-achievements" data-category="tools" onclick="showAchievements()">
             <div class="card-icon">🏆</div>
-            <div class="card-title">我的成就</div>
-            <div class="card-desc">徽章收集</div>
+            <div class="card-title" data-i18n="menu.achievements">我的成就</div>
+            <div class="card-desc" data-i18n="menu.achievements.desc">徽章收集</div>
           </div>
 
           <div class="menu-card card-wrong-questions" data-category="tools" onclick="showWrongQuestions()">
             <div class="card-icon">📕</div>
-            <div class="card-title">错题本</div>
-            <div class="card-desc">复习巩固</div>
+            <div class="card-title" data-i18n="menu.wrongQuestions">错题本</div>
+            <div class="card-desc" data-i18n="menu.wrongQuestions.desc">复习巩固</div>
           </div>
 
           <!-- P1新功能入口 -->
           <div class="menu-card card-memory-game" data-category="play" onclick="showMemoryGame()">
             <div class="card-icon">🧠</div>
-            <div class="card-title">记忆训练</div>
-            <div class="card-desc">锻炼记忆力</div>
+            <div class="card-title" data-i18n="menu.memory">记忆训练</div>
+            <div class="card-desc" data-i18n="menu.memory.desc">锻炼记忆力</div>
           </div>
 
           <div class="menu-card card-learning-pet" data-category="play" onclick="showLearningPet()">
             <div class="card-icon">🐱</div>
-            <div class="card-title">学习宠物</div>
-            <div class="card-desc">陪你一起学</div>
+            <div class="card-title" data-i18n="menu.pet">学习宠物</div>
+            <div class="card-desc" data-i18n="menu.pet.desc">陪你一起学</div>
           </div>
 
           <div class="menu-card card-learning-report" data-category="tools" onclick="showLearningReport()">
             <div class="card-icon">📊</div>
-            <div class="card-title">学习报告</div>
-            <div class="card-desc">查看进步</div>
+            <div class="card-title" data-i18n="menu.report">学习报告</div>
+            <div class="card-desc" data-i18n="menu.report.desc">查看进步</div>
           </div>
 
           <!-- P2新功能入口 -->
           <div class="menu-card card-picture-book" data-category="learn" onclick="showPictureBook()">
             <div class="card-icon">📚</div>
-            <div class="card-title">绘本故事</div>
-            <div class="card-desc">听故事学知识</div>
+            <div class="card-title" data-i18n="menu.pictureBook">绘本故事</div>
+            <div class="card-desc" data-i18n="menu.pictureBook.desc">听故事学知识</div>
           </div>
 
           <div class="menu-card card-pronunciation" data-category="learn" onclick="showPronunciation()">
             <div class="card-icon">🎤</div>
-            <div class="card-title">跟读练习</div>
-            <div class="card-desc">练习发音</div>
+            <div class="card-title" data-i18n="menu.pronunciation">跟读练习</div>
+            <div class="card-desc" data-i18n="menu.pronunciation.desc">练习发音</div>
           </div>
 
           <!-- 家长通知功能 -->
           <div class="menu-card card-parent-notify" data-category="tools" onclick="openMessageToParent()">
             <div class="card-icon">💬</div>
-            <div class="card-title">给爸妈留言</div>
-            <div class="card-desc">发消息给家长</div>
+            <div class="card-title" data-i18n="menu.parentMessage">给爸妈留言</div>
+            <div class="card-desc" data-i18n="menu.parentMessage.desc">发消息给家长</div>
           </div>
 
           <div class="menu-card card-sos" data-category="tools" onclick="triggerSOS()">
             <div class="card-icon">🆘</div>
-            <div class="card-title">紧急求助</div>
-            <div class="card-desc">通知爸爸妈妈</div>
+            <div class="card-title" data-i18n="menu.sos">紧急求助</div>
+            <div class="card-desc" data-i18n="menu.sos.desc">通知爸爸妈妈</div>
           </div>
 
           <div class="menu-card card-parent-settings" data-category="tools" onclick="openParentSettings()">
             <div class="card-icon">👨‍👩‍👧</div>
-            <div class="card-title">家长设置</div>
-            <div class="card-desc">配置通知</div>
+            <div class="card-title" data-i18n="menu.parentSettings">家长设置</div>
+            <div class="card-desc" data-i18n="menu.parentSettings.desc">配置通知</div>
           </div>
 
           <!-- 创作功能 -->
           <div class="menu-card card-drawing" data-category="play" onclick="openDrawing()">
             <div class="card-icon">🎨</div>
-            <div class="card-title">画画创作</div>
-            <div class="card-desc">自由绘画</div>
+            <div class="card-title" data-i18n="menu.drawing">画画创作</div>
+            <div class="card-desc" data-i18n="menu.drawing.desc">自由绘画</div>
           </div>
 
           <div class="menu-card card-music" data-category="play" onclick="openMusic()">
             <div class="card-icon">🎵</div>
-            <div class="card-title">音乐创作</div>
-            <div class="card-desc">弹琴打鼓</div>
+            <div class="card-title" data-i18n="menu.music">音乐创作</div>
+            <div class="card-desc" data-i18n="menu.music.desc">弹琴打鼓</div>
           </div>
 
           <div class="menu-card card-writing" data-category="learn" onclick="openWriting()">
             <div class="card-icon">✍️</div>
-            <div class="card-title">书写练习</div>
-            <div class="card-desc">汉字笔顺</div>
+            <div class="card-title" data-i18n="menu.writing">书写练习</div>
+            <div class="card-desc" data-i18n="menu.writing.desc">汉字笔顺</div>
           </div>
 
           <div class="menu-card card-life-skills" data-category="learn" onclick="openLifeSkills()">
             <div class="card-icon">🏠</div>
-            <div class="card-title">生活技能</div>
-            <div class="card-desc">时钟钱币日历</div>
+            <div class="card-title" data-i18n="menu.lifeSkills">生活技能</div>
+            <div class="card-desc" data-i18n="menu.lifeSkills.desc">时钟钱币日历</div>
           </div>
 
           <div class="menu-card card-song-practice" data-category="learn" onclick="openSongPractice()">
             <div class="card-icon">🎤</div>
-            <div class="card-title">歌曲练习</div>
-            <div class="card-desc">跟唱新年歌</div>
+            <div class="card-title" data-i18n="menu.songPractice">歌曲练习</div>
+            <div class="card-desc" data-i18n="menu.songPractice.desc">跟唱新年歌</div>
           </div>
 
         </div>
 
         <div class="daily-progress">
-          <h3>今日进度</h3>
+          <h3 data-i18n="progress.title">今日进度</h3>
           <div class="progress-bar">
             <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
           </div>
-          <p class="progress-text">完成 <span id="tasks-done">0</span>/10 个任务解锁奖励视频!</p>
+          <p class="progress-text" id="progress-text">完成 <span id="tasks-done">0</span>/10 个任务解锁奖励视频!</p>
         </div>
       </section>
 
       <!-- 探索视频页 -->
       <section id="page-explore" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>🎬 探索视频</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>🎬 <span data-i18n="videos.title">探索视频</span></h2>
         </div>
 
         <!-- 分类标签 -->
@@ -798,8 +798,8 @@
       <!-- 个人信息页面 -->
       <section id="page-profile" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>👤 我的信息</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>👤 <span data-i18n="profile.title">我的信息</span></h2>
         </div>
 
         <div class="profile-container">
@@ -809,7 +809,7 @@
               <img id="profile-avatar" class="profile-avatar" src="" alt="头像">
               <div class="avatar-placeholder" id="avatar-placeholder">
                 <span>📷</span>
-                <span class="avatar-hint">点击添加照片</span>
+                <span class="avatar-hint" data-i18n="profile.avatar.add">点击添加照片</span>
               </div>
               <div class="avatar-edit-icon">📷</div>
             </div>
@@ -820,20 +820,20 @@
             <div class="form-group">
               <label class="form-label">
                 <span class="label-icon">👶</span>
-                <span>我的名字</span>
+                <span data-i18n="profile.name">我的名字</span>
               </label>
-              <input type="text" id="profile-name" class="form-input" placeholder="输入你的名字" maxlength="20">
+              <input type="text" id="profile-name" class="form-input" data-i18n-placeholder="profile.name.placeholder" placeholder="输入你的名字" maxlength="20">
             </div>
 
             <div class="form-group">
               <label class="form-label">
                 <span class="label-icon">🎂</span>
-                <span>我的年龄</span>
+                <span data-i18n="profile.age">我的年龄</span>
               </label>
               <div class="age-selector">
                 <button class="age-btn" onclick="changeAge(-1)">－</button>
                 <span class="age-display" id="profile-age">6</span>
-                <span class="age-unit">岁</span>
+                <span class="age-unit" data-i18n="profile.age.unit">岁</span>
                 <button class="age-btn" onclick="changeAge(1)">＋</button>
               </div>
             </div>
@@ -841,7 +841,7 @@
             <div class="form-group">
               <label class="form-label">
                 <span class="label-icon">🎈</span>
-                <span>生日</span>
+                <span data-i18n="profile.birthday">生日</span>
               </label>
               <input type="date" id="profile-birthday" class="form-input">
             </div>
@@ -849,47 +849,58 @@
             <div class="form-group">
               <label class="form-label">
                 <span class="label-icon">💖</span>
-                <span>我喜欢的事情</span>
+                <span data-i18n="profile.hobbies">我喜欢的事情</span>
               </label>
               <div class="hobbies-grid" id="hobbies-grid">
-                <button class="hobby-tag" data-hobby="画画" onclick="toggleHobby(this)">🎨 画画</button>
-                <button class="hobby-tag" data-hobby="唱歌" onclick="toggleHobby(this)">🎤 唱歌</button>
-                <button class="hobby-tag" data-hobby="跳舞" onclick="toggleHobby(this)">💃 跳舞</button>
-                <button class="hobby-tag" data-hobby="运动" onclick="toggleHobby(this)">⚽ 运动</button>
-                <button class="hobby-tag" data-hobby="看书" onclick="toggleHobby(this)">📚 看书</button>
-                <button class="hobby-tag" data-hobby="积木" onclick="toggleHobby(this)">🧱 积木</button>
-                <button class="hobby-tag" data-hobby="恐龙" onclick="toggleHobby(this)">🦖 恐龙</button>
-                <button class="hobby-tag" data-hobby="动物" onclick="toggleHobby(this)">🐱 动物</button>
-                <button class="hobby-tag" data-hobby="汽车" onclick="toggleHobby(this)">🚗 汽车</button>
-                <button class="hobby-tag" data-hobby="公主" onclick="toggleHobby(this)">👸 公主</button>
-                <button class="hobby-tag" data-hobby="太空" onclick="toggleHobby(this)">🚀 太空</button>
-                <button class="hobby-tag" data-hobby="美食" onclick="toggleHobby(this)">🍰 美食</button>
+                <button class="hobby-tag" data-hobby="drawing" onclick="toggleHobby(this)">🎨 <span data-i18n="hobby.drawing">画画</span></button>
+                <button class="hobby-tag" data-hobby="singing" onclick="toggleHobby(this)">🎤 <span data-i18n="hobby.singing">唱歌</span></button>
+                <button class="hobby-tag" data-hobby="dancing" onclick="toggleHobby(this)">💃 <span data-i18n="hobby.dancing">跳舞</span></button>
+                <button class="hobby-tag" data-hobby="sports" onclick="toggleHobby(this)">⚽ <span data-i18n="hobby.sports">运动</span></button>
+                <button class="hobby-tag" data-hobby="reading" onclick="toggleHobby(this)">📚 <span data-i18n="hobby.reading">看书</span></button>
+                <button class="hobby-tag" data-hobby="blocks" onclick="toggleHobby(this)">🧱 <span data-i18n="hobby.blocks">积木</span></button>
+                <button class="hobby-tag" data-hobby="dinosaurs" onclick="toggleHobby(this)">🦖 <span data-i18n="hobby.dinosaurs">恐龙</span></button>
+                <button class="hobby-tag" data-hobby="animals" onclick="toggleHobby(this)">🐱 <span data-i18n="hobby.animals">动物</span></button>
+                <button class="hobby-tag" data-hobby="cars" onclick="toggleHobby(this)">🚗 <span data-i18n="hobby.cars">汽车</span></button>
+                <button class="hobby-tag" data-hobby="princess" onclick="toggleHobby(this)">👸 <span data-i18n="hobby.princess">公主</span></button>
+                <button class="hobby-tag" data-hobby="space" onclick="toggleHobby(this)">🚀 <span data-i18n="hobby.space">太空</span></button>
+                <button class="hobby-tag" data-hobby="food" onclick="toggleHobby(this)">🍰 <span data-i18n="hobby.food">美食</span></button>
               </div>
             </div>
 
             <button class="btn-save-profile" onclick="saveProfile()">
-              💾 保存信息
+              💾 <span data-i18n="profile.save">保存信息</span>
             </button>
+          </div>
+
+          <!-- 语言设置 -->
+          <div class="language-settings">
+            <h3 class="language-settings-title">
+              <span class="label-icon">🌐</span>
+              <span data-i18n="settings.language">语言</span>
+            </h3>
+            <div class="language-selector" id="language-selector">
+              <!-- 语言按钮由 I18n.initLanguageSelector() 动态生成 -->
+            </div>
           </div>
 
           <!-- 数据管理区域 -->
           <div class="data-management">
-            <h3 class="data-management-title">📦 数据管理</h3>
+            <h3 class="data-management-title">📦 <span data-i18n="profile.data">数据管理</span></h3>
             <div class="data-btns">
               <button class="btn-export" onclick="exportData()">
                 <span class="btn-icon">📤</span>
-                <span>导出数据</span>
+                <span data-i18n="profile.export">导出数据</span>
               </button>
               <button class="btn-import" onclick="triggerImport()">
                 <span class="btn-icon">📥</span>
-                <span>导入数据</span>
+                <span data-i18n="profile.import">导入数据</span>
               </button>
               <button class="btn-refresh" onclick="forceRefresh()">
                 <span class="btn-icon">🔄</span>
-                <span>强制刷新</span>
+                <span data-i18n="profile.refresh">强制刷新</span>
               </button>
             </div>
-            <p class="data-warning">⚠️ 导入数据会覆盖当前所有数据</p>
+            <p class="data-warning" data-i18n="profile.data.warning">⚠️ 导入数据会覆盖当前所有数据</p>
           </div>
         </div>
       </section>
@@ -897,18 +908,18 @@
       <!-- 照片选项弹窗 -->
       <div id="photo-options-modal" class="photo-options-modal hidden">
         <div class="photo-options-content">
-          <h3>选择照片来源</h3>
+          <h3 data-i18n="photo.options">选择照片来源</h3>
           <div class="photo-options-buttons">
             <button class="photo-option-btn" onclick="takePhoto()">
               <span class="option-icon">📸</span>
-              <span>拍照</span>
+              <span data-i18n="photo.take">拍照</span>
             </button>
             <button class="photo-option-btn" onclick="choosePhoto()">
               <span class="option-icon">🖼️</span>
-              <span>从相册选择</span>
+              <span data-i18n="photo.choose">从相册选择</span>
             </button>
           </div>
-          <button class="photo-cancel-btn" onclick="closePhotoOptions()">取消</button>
+          <button class="photo-cancel-btn" onclick="closePhotoOptions()" data-i18n="btn.cancel">取消</button>
         </div>
       </div>
 
@@ -2363,8 +2374,8 @@
   <div id="update-notification" class="update-notification hidden">
     <div class="update-content">
       <span class="update-icon">🎉</span>
-      <span class="update-text">发现新版本！</span>
-      <button class="update-btn" onclick="applyUpdate()">立即更新</button>
+      <span class="update-text" data-i18n="update.title">发现新版本！</span>
+      <button class="update-btn" onclick="applyUpdate()" data-i18n="update.button">立即更新</button>
       <button class="update-close" onclick="hideUpdateNotification()">✕</button>
     </div>
   </div>
@@ -2374,6 +2385,16 @@
 
   <!-- Hanzi Writer for Chinese character stroke order -->
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+
+  <!-- i18n System -->
+  <script src="js/i18n.js"></script>
+  <script src="js/locales/en.js"></script>
+  <script src="js/locales/zh.js"></script>
+  <script src="js/locales/ja.js"></script>
+  <script src="js/locales/ko.js"></script>
+  <script src="js/locales/es.js"></script>
+  <script src="js/locales/de.js"></script>
+  <script src="js/locales/fr.js"></script>
 
   <script src="js/analytics.js"></script>
   <script src="js/scienceData.js"></script>

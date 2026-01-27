@@ -76,6 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 注册 Service Worker 并监听更新
   registerServiceWorker();
 
+  // 初始化国际化系统
+  if (typeof I18n !== 'undefined') {
+    I18n.init();
+  }
+
   // 初始化奖励系统
   RewardSystem.init();
 

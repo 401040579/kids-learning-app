@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v29';
+const CACHE_NAME = 'kids-learning-v32';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -26,7 +26,16 @@ const urlsToCache = [
   '/js/lifeSkillsData.js',
   '/js/lifeSkills.js',
   '/js/songData.js',
-  '/js/songPractice.js'
+  '/js/songPractice.js',
+  // i18n files
+  '/js/i18n.js',
+  '/js/locales/en.js',
+  '/js/locales/zh.js',
+  '/js/locales/ja.js',
+  '/js/locales/ko.js',
+  '/js/locales/es.js',
+  '/js/locales/de.js',
+  '/js/locales/fr.js'
 ];
 
 // 音乐文件列表（大文件，按需缓存）
