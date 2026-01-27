@@ -496,6 +496,18 @@ const LifeSkills = {
     const isCoin = item.emoji !== undefined;
     const displayValue = this.formatMoney(item.value, currencyData.symbol);
 
+    // 使用图片显示货币，如果图片不存在则回退到彩色方块
+    const moneyDisplay = item.image
+      ? `<img src="${item.image}" alt="${item.name}" class="money-image ${isCoin ? 'coin' : 'bill'}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+         <div class="money-item ${isCoin ? 'coin' : 'bill'}" style="background-color: ${item.color}; display: none;">
+           ${isCoin ? item.emoji : ''}
+           <span class="money-value">${item.name}</span>
+         </div>`
+      : `<div class="money-item ${isCoin ? 'coin' : 'bill'}" style="background-color: ${item.color}">
+           ${isCoin ? item.emoji : ''}
+           <span class="money-value">${item.name}</span>
+         </div>`;
+
     container.innerHTML = `
       <div class="money-game">
         <div class="money-header">
@@ -503,10 +515,7 @@ const LifeSkills = {
           <span class="money-progress">${this.questionsAnswered + 1}/10</span>
         </div>
         <div class="money-display">
-          <div class="money-item ${isCoin ? 'coin' : 'bill'}" style="background-color: ${item.color}">
-            ${isCoin ? item.emoji : ''}
-            <span class="money-value">${item.name}</span>
-          </div>
+          ${moneyDisplay}
         </div>
         <p class="money-question">这是多少钱?</p>
         <div class="money-options">
@@ -559,6 +568,25 @@ const LifeSkills = {
     }
     options.sort(() => Math.random() - 0.5);
 
+    // 渲染小钱币项目（使用图片或回退到彩色方块）
+    const renderMoneyItemSmall = (item) => {
+      const isCoin = item.emoji !== undefined;
+      if (item.image) {
+        return `<div class="money-item-wrapper">
+          <img src="${item.image}" alt="${item.name}" class="money-image-small ${isCoin ? 'coin' : 'bill'}"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="money-item-small ${isCoin ? 'coin' : 'bill'}" style="background-color: ${item.color}; display: none;">
+            ${item.emoji || ''}
+            <span>${item.name}</span>
+          </div>
+        </div>`;
+      }
+      return `<div class="money-item-small ${isCoin ? 'coin' : 'bill'}" style="background-color: ${item.color}">
+        ${item.emoji || ''}
+        <span>${item.name}</span>
+      </div>`;
+    };
+
     container.innerHTML = `
       <div class="money-game">
         <div class="money-header">
@@ -567,12 +595,7 @@ const LifeSkills = {
         </div>
         <p class="money-question">这些一共多少钱?</p>
         <div class="money-items-display">
-          ${items.map(item => `
-            <div class="money-item-small ${item.emoji ? 'coin' : 'bill'}" style="background-color: ${item.color}">
-              ${item.emoji || ''}
-              <span>${item.name}</span>
-            </div>
-          `).join('')}
+          ${items.map(item => renderMoneyItemSmall(item)).join('')}
         </div>
         <div class="money-options">
           ${options.map(opt => `
@@ -610,6 +633,29 @@ const LifeSkills = {
 
     const availableItems = [...currencyData.coins, ...currencyData.bills].filter(item => item.value <= target);
 
+    // 渲染可选择的钱币项目
+    const renderPickableItem = (item, idx) => {
+      const isCoin = item.emoji !== undefined;
+      if (item.image) {
+        return `<button class="money-pick-btn" data-value="${item.value}" data-idx="${idx}"
+                    onclick="LifeSkills.toggleMoneyItem(${item.value}, '${item.name}', '${item.color}', ${idx}, '${item.image}')">
+          <img src="${item.image}" alt="${item.name}" class="money-image-small ${isCoin ? 'coin' : 'bill'}"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="money-item-small ${isCoin ? 'coin' : 'bill'}" style="background-color: ${item.color}; display: none;">
+            ${item.emoji || ''}
+            <span>${item.name}</span>
+          </div>
+        </button>`;
+      }
+      return `<button class="money-pick-btn" data-value="${item.value}" data-idx="${idx}"
+                  onclick="LifeSkills.toggleMoneyItem(${item.value}, '${item.name}', '${item.color}', ${idx}, '')">
+        <div class="money-item-small ${isCoin ? 'coin' : 'bill'}" style="background-color: ${item.color}">
+          ${item.emoji || ''}
+          <span>${item.name}</span>
+        </div>
+      </button>`;
+    };
+
     container.innerHTML = `
       <div class="money-game">
         <div class="money-header">
@@ -622,15 +668,7 @@ const LifeSkills = {
           <div class="selected-total">已选: <span id="selected-total">${currencyData.symbol}0</span></div>
         </div>
         <div class="money-available">
-          ${availableItems.map((item, idx) => `
-            <button class="money-pick-btn" data-value="${item.value}" data-idx="${idx}"
-                    onclick="LifeSkills.toggleMoneyItem(${item.value}, '${item.name}', '${item.color}', ${idx})">
-              <div class="money-item-small ${item.emoji ? 'coin' : 'bill'}" style="background-color: ${item.color}">
-                ${item.emoji || ''}
-                <span>${item.name}</span>
-              </div>
-            </button>
-          `).join('')}
+          ${availableItems.map((item, idx) => renderPickableItem(item, idx)).join('')}
         </div>
         <button class="btn-check-make" onclick="LifeSkills.checkMakeAnswer()">确认</button>
       </div>
@@ -638,7 +676,7 @@ const LifeSkills = {
   },
 
   // 切换选择钱币
-  toggleMoneyItem(value, name, color, idx) {
+  toggleMoneyItem(value, name, color, idx, image) {
     const question = this.moneyState.currentQuestion;
     const existingIdx = question.selected.findIndex(s => s.idx === idx);
 
@@ -646,7 +684,7 @@ const LifeSkills = {
       question.selected.splice(existingIdx, 1);
       document.querySelector(`[data-idx="${idx}"]`).classList.remove('selected');
     } else {
-      question.selected.push({ value, name, color, idx });
+      question.selected.push({ value, name, color, idx, image });
       document.querySelector(`[data-idx="${idx}"]`).classList.add('selected');
     }
 
@@ -656,9 +694,13 @@ const LifeSkills = {
     document.getElementById('selected-total').textContent = this.formatMoney(total, currencyData.symbol);
 
     const selectedArea = document.getElementById('selected-money-items');
-    selectedArea.innerHTML = question.selected.map(s => `
-      <div class="mini-money-item" style="background-color: ${s.color}">${s.name}</div>
-    `).join('');
+    selectedArea.innerHTML = question.selected.map(s => {
+      if (s.image) {
+        return `<img src="${s.image}" alt="${s.name}" class="mini-money-image"
+                     onerror="this.outerHTML='<div class=\\'mini-money-item\\' style=\\'background-color: ${s.color}\\'>${s.name}</div>'">`;
+      }
+      return `<div class="mini-money-item" style="background-color: ${s.color}">${s.name}</div>`;
+    }).join('');
   },
 
   // 检查凑钱答案

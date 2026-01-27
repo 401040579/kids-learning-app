@@ -81,17 +81,17 @@ const LifeSkillsData = {
       symbol: '¥',
       flag: '🇨🇳',
       coins: [
-        { value: 0.1, name: '1角', emoji: '🪙', color: '#C0C0C0' },
-        { value: 0.5, name: '5角', emoji: '🪙', color: '#FFD700' },
-        { value: 1, name: '1元', emoji: '🪙', color: '#FFD700' }
+        { value: 0.1, name: '1角', emoji: '🪙', color: '#C0C0C0', image: 'images/money/rmb/1jiao.png' },
+        { value: 0.5, name: '5角', emoji: '🪙', color: '#FFD700', image: 'images/money/rmb/5jiao.png' },
+        { value: 1, name: '1元', emoji: '🪙', color: '#FFD700', image: 'images/money/rmb/1yuan-coin.png' }
       ],
       bills: [
-        { value: 1, name: '1元', color: '#8B7355' },
-        { value: 5, name: '5元', color: '#9370DB' },
-        { value: 10, name: '10元', color: '#4169E1' },
-        { value: 20, name: '20元', color: '#CD853F' },
-        { value: 50, name: '50元', color: '#2E8B57' },
-        { value: 100, name: '100元', color: '#DC143C' }
+        { value: 1, name: '1元', color: '#8B7355', image: 'images/money/rmb/1yuan.png' },
+        { value: 5, name: '5元', color: '#9370DB', image: 'images/money/rmb/5yuan.png' },
+        { value: 10, name: '10元', color: '#4169E1', image: 'images/money/rmb/10yuan.png' },
+        { value: 20, name: '20元', color: '#CD853F', image: 'images/money/rmb/20yuan.png' },
+        { value: 50, name: '50元', color: '#2E8B57', image: 'images/money/rmb/50yuan.png' },
+        { value: 100, name: '100元', color: '#DC143C', image: 'images/money/rmb/100yuan.png' }
       ]
     },
     usd: {
@@ -99,17 +99,17 @@ const LifeSkillsData = {
       symbol: '$',
       flag: '🇺🇸',
       coins: [
-        { value: 0.01, name: '1美分', emoji: '🪙', color: '#CD7F32' },
-        { value: 0.05, name: '5美分', emoji: '🪙', color: '#C0C0C0' },
-        { value: 0.10, name: '10美分', emoji: '🪙', color: '#C0C0C0' },
-        { value: 0.25, name: '25美分', emoji: '🪙', color: '#C0C0C0' },
-        { value: 1, name: '1美元', emoji: '🪙', color: '#FFD700' }
+        { value: 0.01, name: '1美分', emoji: '🪙', color: '#CD7F32', image: 'images/money/usd/1cent.png' },
+        { value: 0.05, name: '5美分', emoji: '🪙', color: '#C0C0C0', image: 'images/money/usd/5cent.png' },
+        { value: 0.10, name: '10美分', emoji: '🪙', color: '#C0C0C0', image: 'images/money/usd/10cent.png' },
+        { value: 0.25, name: '25美分', emoji: '🪙', color: '#C0C0C0', image: 'images/money/usd/25cent.png' },
+        { value: 1, name: '1美元', emoji: '🪙', color: '#FFD700', image: 'images/money/usd/1dollar-coin.png' }
       ],
       bills: [
-        { value: 1, name: '$1', color: '#228B22' },
-        { value: 5, name: '$5', color: '#228B22' },
-        { value: 10, name: '$10', color: '#228B22' },
-        { value: 20, name: '$20', color: '#228B22' }
+        { value: 1, name: '$1', color: '#228B22', image: 'images/money/usd/1dollar.png' },
+        { value: 5, name: '$5', color: '#228B22', image: 'images/money/usd/5dollar.png' },
+        { value: 10, name: '$10', color: '#228B22', image: 'images/money/usd/10dollar.png' },
+        { value: 20, name: '$20', color: '#228B22', image: 'images/money/usd/20dollar.png' }
       ]
     }
   },
