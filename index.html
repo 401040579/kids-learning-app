@@ -246,6 +246,19 @@
           <span class="star-icon">⭐</span>
           <span id="total-score">0</span>
         </div>
+        <button class="lang-switch-btn" id="header-lang-btn" onclick="toggleLanguageDropdown()">
+          <span class="lang-icon">🌐</span>
+          <span class="lang-code" id="current-lang-code">EN</span>
+        </button>
+        <div class="lang-dropdown hidden" id="lang-dropdown">
+          <button class="lang-option" data-lang="en" onclick="selectLanguage('en')">English</button>
+          <button class="lang-option" data-lang="zh" onclick="selectLanguage('zh')">中文</button>
+          <button class="lang-option" data-lang="ja" onclick="selectLanguage('ja')">日本語</button>
+          <button class="lang-option" data-lang="ko" onclick="selectLanguage('ko')">한국어</button>
+          <button class="lang-option" data-lang="es" onclick="selectLanguage('es')">Español</button>
+          <button class="lang-option" data-lang="de" onclick="selectLanguage('de')">Deutsch</button>
+          <button class="lang-option" data-lang="fr" onclick="selectLanguage('fr')">Français</button>
+        </div>
       </div>
     </header>
 

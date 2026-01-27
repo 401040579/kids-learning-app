@@ -112,6 +112,81 @@ body {
   to { transform: rotate(360deg); }
 }
 
+/* 顶部右侧区域 */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+/* 语言切换按钮 */
+.lang-switch-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 16px;
+  background: rgba(255, 105, 180, 0.1);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.lang-switch-btn:hover {
+  background: rgba(255, 105, 180, 0.2);
+}
+
+.lang-switch-btn .lang-icon {
+  font-size: 1rem;
+}
+
+.lang-switch-btn .lang-code {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+/* 语言下拉菜单 */
+.lang-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 200;
+  min-width: 120px;
+}
+
+.lang-dropdown.hidden {
+  display: none;
+}
+
+.lang-option {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: white;
+  text-align: left;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.lang-option:hover {
+  background: #f5f5f5;
+}
+
+.lang-option.active {
+  background: linear-gradient(135deg, var(--primary) 0%, #FF85C1 100%);
+  color: white;
+  font-weight: 600;
+}
+
 /* ========== 主内容区 ========== */
 #main-content {
   padding-top: 70px;
@@ -7358,7 +7433,7 @@ body {
   color: white;
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
   cursor: pointer;
-  z-index: 90;
+  z-index: 500;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9361,10 +9436,6 @@ body {
   background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
 }
 
-.card-music .card-icon {
-  background: linear-gradient(135deg, #66BB6A, #43A047);
-}
-
 /* Toast 提示 */
 .music-toast {
   position: fixed;
@@ -9863,10 +9934,6 @@ body {
 /* 书写卡片样式 */
 .card-writing {
   background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
-}
-
-.card-writing .card-icon {
-  background: linear-gradient(135deg, #42A5F5, #1E88E5);
 }
 
 /* Toast 提示 */

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v32';
+const CACHE_NAME = 'kids-learning-v33';
 const urlsToCache = [
   '/',
   '/index.html',

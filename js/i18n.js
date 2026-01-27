@@ -15,6 +15,16 @@ const I18n = {
     fr: 'Français'
   },
 
+  languageCodes: {
+    en: 'EN',
+    zh: '中',
+    ja: '日',
+    ko: '한',
+    es: 'ES',
+    de: 'DE',
+    fr: 'FR'
+  },
+
   // 初始化
   init() {
     // 从 localStorage 读取语言设置，默认英语
@@ -25,7 +35,17 @@ const I18n = {
 
     this.applyTranslations();
     this.initLanguageSelector();
+    this.initHeaderDropdown();
     this.updateHtmlLang();
+
+    // 点击外部关闭下拉菜单
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('lang-dropdown');
+      const btn = document.getElementById('header-lang-btn');
+      if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
   },
 
   // 获取翻译文本
@@ -50,7 +70,12 @@ const I18n = {
     localStorage.setItem('appLanguage', lang);
     this.applyTranslations();
     this.updateLanguageSelector();
+    this.updateHeaderDropdown();
     this.updateHtmlLang();
+
+    // 关闭下拉菜单
+    const dropdown = document.getElementById('lang-dropdown');
+    if (dropdown) dropdown.classList.add('hidden');
 
     // 触发语言变化事件，供其他模块监听
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
@@ -91,7 +116,7 @@ const I18n = {
     });
   },
 
-  // 初始化语言选择器
+  // 初始化个人信息页面语言选择器
   initLanguageSelector() {
     const selector = document.getElementById('language-selector');
     if (!selector) return;
@@ -108,7 +133,29 @@ const I18n = {
     });
   },
 
-  // 更新语言选择器状态
+  // 初始化顶部语言下拉菜单
+  initHeaderDropdown() {
+    this.updateHeaderDropdown();
+  },
+
+  // 更新顶部语言下拉菜单状态
+  updateHeaderDropdown() {
+    // 更新当前语言代码显示
+    const codeEl = document.getElementById('current-lang-code');
+    if (codeEl) {
+      codeEl.textContent = this.languageCodes[this.currentLang];
+    }
+
+    // 更新下拉菜单选项的 active 状态
+    const dropdown = document.getElementById('lang-dropdown');
+    if (dropdown) {
+      dropdown.querySelectorAll('.lang-option').forEach(opt => {
+        opt.classList.toggle('active', opt.getAttribute('data-lang') === this.currentLang);
+      });
+    }
+  },
+
+  // 更新个人信息页面语言选择器状态
   updateLanguageSelector() {
     const selector = document.getElementById('language-selector');
     if (!selector) return;
@@ -146,4 +193,17 @@ const I18n = {
 // 快捷函数
 function t(key, fallback) {
   return I18n.t(key, fallback);
+}
+
+// 切换语言下拉菜单
+function toggleLanguageDropdown() {
+  const dropdown = document.getElementById('lang-dropdown');
+  if (dropdown) {
+    dropdown.classList.toggle('hidden');
+  }
+}
+
+// 选择语言
+function selectLanguage(lang) {
+  I18n.setLanguage(lang);
 }
