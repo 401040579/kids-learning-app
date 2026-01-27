@@ -434,6 +434,18 @@
             <div class="card-desc">汉字笔顺</div>
           </div>
 
+          <div class="menu-card card-life-skills" data-category="learn" onclick="openLifeSkills()">
+            <div class="card-icon">🏠</div>
+            <div class="card-title">生活技能</div>
+            <div class="card-desc">时钟钱币日历</div>
+          </div>
+
+          <div class="menu-card card-song-practice" data-category="learn" onclick="openSongPractice()">
+            <div class="card-icon">🎤</div>
+            <div class="card-title">歌曲练习</div>
+            <div class="card-desc">跟唱新年歌</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -2245,6 +2257,108 @@
     </div>
   </div>
 
+  <!-- 生活技能弹窗 -->
+  <div id="life-skills-modal" class="life-skills-modal hidden">
+    <div class="life-skills-modal-content">
+      <button class="modal-close-btn" onclick="closeLifeSkills()">✕</button>
+      <h2 class="life-skills-title">🏠 生活技能</h2>
+      <div id="life-skills-select" class="life-skills-select">
+        <!-- 模块选择 -->
+      </div>
+      <div id="life-skills-game" class="life-skills-game hidden">
+        <!-- 游戏区域 -->
+      </div>
+      <button class="btn-back-select" id="btn-back-life-select" onclick="backToLifeSkillsSelect()">← 返回选择</button>
+    </div>
+  </div>
+
+  <!-- 生活技能完成弹窗 -->
+  <div id="life-skills-complete-modal" class="life-skills-complete-modal hidden">
+    <div class="life-skills-complete-content">
+      <div class="complete-celebration">🎉</div>
+      <h3 class="complete-title" id="life-skills-complete-title">练习完成!</h3>
+      <div class="complete-stats" id="life-skills-complete-stats">
+        <!-- 统计信息 -->
+      </div>
+      <div class="complete-actions">
+        <button class="btn-play-again" onclick="playLifeSkillsAgain()">再玩一次</button>
+        <button class="btn-back-menu" onclick="closeLifeSkillsComplete()">返回</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 歌曲练习弹窗 -->
+  <div id="song-practice-modal" class="song-practice-modal hidden">
+    <div class="song-practice-content">
+      <button class="modal-close-btn" onclick="closeSongPractice()">✕</button>
+
+      <!-- 歌曲标题 -->
+      <div class="song-header">
+        <span class="song-header-emoji">🎤</span>
+        <h2 class="song-header-title">新年歌 RAP</h2>
+      </div>
+
+      <!-- 分组筛选 -->
+      <div class="song-filter-bar">
+        <button class="song-filter-btn active" data-group="all" onclick="setSongFilter('all')">
+          <span>🌟</span> 全部
+        </button>
+        <button class="song-filter-btn" data-group="black" onclick="setSongFilter('black')">
+          <span>⬛</span> 黑组
+        </button>
+        <button class="song-filter-btn" data-group="blue" onclick="setSongFilter('blue')">
+          <span>🔵</span> 蓝组
+        </button>
+        <button class="song-filter-btn" data-group="red" onclick="setSongFilter('red')">
+          <span>🔴</span> 红组
+        </button>
+      </div>
+
+      <!-- 歌词区域 -->
+      <div class="song-lyrics-container">
+        <div id="song-lyrics" class="song-lyrics">
+          <!-- 歌词动态生成 -->
+        </div>
+      </div>
+
+      <!-- 控制区域 -->
+      <div class="song-controls">
+        <!-- 速度控制 -->
+        <div class="speed-control">
+          <button class="speed-btn" data-speed="0.7" onclick="setSongSpeed(0.7)">🐢 慢</button>
+          <button class="speed-btn active" data-speed="1" onclick="setSongSpeed(1)">正常</button>
+          <button class="speed-btn" data-speed="1.3" onclick="setSongSpeed(1.3)">🐇 快</button>
+        </div>
+
+        <!-- 播放控制 -->
+        <div class="play-control">
+          <button class="btn-song-control" id="btn-song-play" onclick="playSong()">
+            <span class="control-icon">▶️</span>
+            <span>播放</span>
+          </button>
+          <button class="btn-song-control hidden" id="btn-song-pause" onclick="pauseSong()">
+            <span class="control-icon">⏸️</span>
+            <span>暂停</span>
+          </button>
+          <button class="btn-song-control stop" onclick="stopSong()">
+            <span class="control-icon">⏹️</span>
+            <span>停止</span>
+          </button>
+        </div>
+
+        <!-- 拼音切换 -->
+        <button class="btn-toggle-pinyin" id="btn-toggle-pinyin" onclick="toggleSongPinyin()">
+          隐藏拼音
+        </button>
+      </div>
+
+      <!-- 提示 -->
+      <div class="song-tip">
+        💡 点击任意一行歌词，从该行开始朗读
+      </div>
+    </div>
+  </div>
+
   <!-- PWA 更新提示 -->
   <div id="update-notification" class="update-notification hidden">
     <div class="update-content">
@@ -2280,6 +2394,10 @@
   <script src="js/drawing.js"></script>
   <script src="js/music.js"></script>
   <script src="js/writing.js"></script>
+  <script src="js/lifeSkillsData.js"></script>
+  <script src="js/lifeSkills.js"></script>
+  <script src="js/songData.js"></script>
+  <script src="js/songPractice.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

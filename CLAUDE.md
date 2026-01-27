@@ -23,7 +23,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v22)
+├── sw.js               # Service Worker (当前 v29)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文
@@ -41,7 +41,11 @@ kids-learning-app/
 │   ├── dailyCheckin.js # 每日签到
 │   ├── wrongQuestions.js # 错题本
 │   ├── videos.js       # 视频数据
-│   └── scienceData.js  # 科学题库
+│   ├── scienceData.js  # 科学题库
+│   ├── lifeSkills.js   # 生活技能（时钟/钱币/日历）
+│   ├── lifeSkillsData.js # 生活技能数据
+│   ├── songPractice.js # 歌曲练习
+│   └── songData.js     # 歌曲数据
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -83,6 +87,8 @@ kids-learning-app/
 | 跟读练习 | pronunciation.js | ✅ 完成 |
 | 每日签到 | dailyCheckin.js | ✅ 完成 |
 | 错题本 | wrongQuestions.js | ✅ 完成 |
+| 生活技能 | lifeSkills.js | ✅ 完成（时钟/钱币/日历） |
+| 歌曲练习 | songPractice.js | ✅ 完成（新年歌RAP） |
 
 ## 常用命令
 
@@ -111,6 +117,7 @@ const CACHE_NAME = 'kids-learning-vXX';
 | artworkGallery | 画作作品集 |
 | parentNotifyConfig | 家长通知配置 |
 | mathConfig | 数学游戏设置 |
+| lifeSkillsStats | 生活技能统计 |
 
 ## 注意事项
 
