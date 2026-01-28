@@ -115,7 +115,121 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof renderCheckinPreview === 'function') {
     renderCheckinPreview();
   }
+
+  // 初始化最近使用
+  RecentlyUsed.init();
 });
+
+// ========== 最近使用 ==========
+const RecentlyUsed = {
+  MAX_ITEMS: 6,
+  STORAGE_KEY: 'recentlyUsed',
+
+  // 功能映射表
+  features: {
+    // 页面类
+    'math': { icon: '🔢', nameKey: 'menu.math', action: () => navigateTo('math') },
+    'english': { icon: '🔤', nameKey: 'menu.english', action: () => navigateTo('english') },
+    'chinese': { icon: '📝', nameKey: 'menu.chinese', action: () => navigateTo('chinese') },
+    'science': { icon: '🔬', nameKey: 'menu.science', action: () => navigateTo('science') },
+    'explore': { icon: '🎬', nameKey: 'menu.explore', action: () => navigateTo('explore') },
+    'puzzle': { icon: '🧩', nameKey: 'menu.puzzle', action: () => navigateTo('puzzle') },
+    'timer': { icon: '⏰', nameKey: 'menu.timer', action: () => navigateTo('timer') },
+    'calendar': { icon: '📅', nameKey: 'menu.calendar', action: () => navigateTo('calendar') },
+    'sleep-music': { icon: '🎵', nameKey: 'menu.sleepMusic', action: () => navigateTo('sleep-music') },
+    'profile': { icon: '👤', nameKey: 'menu.profile', action: () => navigateTo('profile') },
+    // 弹窗类
+    'checkin': { icon: '📅', nameKey: 'menu.checkin', action: () => showCheckin() },
+    'achievements': { icon: '🏆', nameKey: 'menu.achievements', action: () => showAchievements() },
+    'wrongQuestions': { icon: '📕', nameKey: 'menu.wrongQuestions', action: () => showWrongQuestions() },
+    'report': { icon: '📊', nameKey: 'menu.report', action: () => showLearningReport() },
+    'memory': { icon: '🧠', nameKey: 'menu.memory', action: () => showMemoryGame() },
+    'pet': { icon: '🐱', nameKey: 'menu.pet', action: () => showLearningPet() },
+    'drawing': { icon: '🎨', nameKey: 'menu.drawing', action: () => openDrawing() },
+    'music': { icon: '🎵', nameKey: 'menu.music', action: () => openMusic() },
+    'pictureBook': { icon: '📚', nameKey: 'menu.pictureBook', action: () => showPictureBook() },
+    'pronunciation': { icon: '🎤', nameKey: 'menu.pronunciation', action: () => showPronunciation() },
+    'writing': { icon: '✍️', nameKey: 'menu.writing', action: () => openWriting() },
+    'lifeSkills': { icon: '🏠', nameKey: 'menu.lifeSkills', action: () => openLifeSkills() },
+    'songPractice': { icon: '🎤', nameKey: 'menu.songPractice', action: () => openSongPractice() },
+    'parentMessage': { icon: '💬', nameKey: 'menu.parentMessage', action: () => openMessageToParent() },
+    'parentSettings': { icon: '👨‍👩‍👧', nameKey: 'menu.parentSettings', action: () => openParentSettings() }
+  },
+
+  init() {
+    this.render();
+  },
+
+  // 记录使用
+  track(featureId) {
+    if (!this.features[featureId]) return;
+
+    let recent = this.getList();
+
+    // 移除已存在的
+    recent = recent.filter(id => id !== featureId);
+
+    // 添加到开头
+    recent.unshift(featureId);
+
+    // 限制数量
+    if (recent.length > this.MAX_ITEMS) {
+      recent = recent.slice(0, this.MAX_ITEMS);
+    }
+
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(recent));
+
+    // 更新显示
+    this.render();
+  },
+
+  // 获取列表
+  getList() {
+    try {
+      return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || [];
+    } catch {
+      return [];
+    }
+  },
+
+  // 渲染
+  render() {
+    const section = document.getElementById('recent-used-section');
+    const list = document.getElementById('recent-used-list');
+    if (!section || !list) return;
+
+    const recent = this.getList();
+
+    if (recent.length === 0) {
+      section.classList.add('hidden');
+      return;
+    }
+
+    section.classList.remove('hidden');
+
+    list.innerHTML = recent.map(id => {
+      const feature = this.features[id];
+      if (!feature) return '';
+
+      const name = typeof I18n !== 'undefined' ? I18n.t(feature.nameKey, feature.nameKey) : feature.nameKey;
+
+      return `
+        <div class="recent-item" onclick="RecentlyUsed.open('${id}')">
+          <span class="recent-icon">${feature.icon}</span>
+          <span class="recent-name">${name}</span>
+        </div>
+      `;
+    }).join('');
+  },
+
+  // 打开功能
+  open(featureId) {
+    const feature = this.features[featureId];
+    if (feature && feature.action) {
+      feature.action();
+    }
+  }
+};
 
 // ========== 页面导航 ==========
 function navigateTo(page) {
@@ -135,6 +249,11 @@ function navigateTo(page) {
   if (typeof Analytics !== 'undefined' && page !== 'home') {
     const category = getModuleCategory(page);
     Analytics.trackModuleClick(page, category);
+  }
+
+  // 🕐 记录最近使用（排除首页和个人信息页）
+  if (page !== 'home' && page !== 'profile' && typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track(page);
   }
 
   // 进入页面时初始化内容
@@ -2570,6 +2689,11 @@ function showMemoryGame() {
   const modal = document.getElementById('memory-game-modal');
   if (!modal) return;
 
+  // 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('memory');
+  }
+
   // 显示游戏选择界面
   MemoryGame.renderGameSelect();
   modal.classList.remove('hidden');
@@ -2600,6 +2724,11 @@ function backToMemorySelect() {
 function showLearningPet() {
   const modal = document.getElementById('learning-pet-modal');
   if (!modal) return;
+
+  // 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('pet');
+  }
 
   LearningPet.renderPetUI();
   modal.classList.remove('hidden');

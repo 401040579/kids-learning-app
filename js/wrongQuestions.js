@@ -193,6 +193,11 @@ function showWrongQuestions() {
   const modal = document.getElementById('wrong-questions-modal');
   if (!modal) return;
 
+  // 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('wrongQuestions');
+  }
+
   renderWrongQuestionsList();
   modal.classList.remove('hidden');
 }

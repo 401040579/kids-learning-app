@@ -304,6 +304,9 @@ I18n.translations['ko'] = {
   'photo.choose': '사진 선택',
   'photo.remove': '사진 삭제',
 
+  // Recently Used
+  'recent.title': '최근 사용',
+
   // Bottom Navigation
   'nav.home': '홈',
   'nav.learn': '학습',

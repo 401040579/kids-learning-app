@@ -304,6 +304,9 @@ I18n.translations['ja'] = {
   'photo.choose': '写真を選ぶ',
   'photo.remove': '写真を削除',
 
+  // Recently Used
+  'recent.title': '最近使用',
+
   // Bottom Navigation
   'nav.home': 'ホーム',
   'nav.learn': '学習',

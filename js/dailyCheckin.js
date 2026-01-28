@@ -222,6 +222,11 @@ function showCheckin() {
   const modal = document.getElementById('checkin-modal');
   if (!modal) return;
 
+  // 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('checkin');
+  }
+
   checkinCalendarDate = new Date();
   renderCheckinCalendar();
   updateCheckinStats();

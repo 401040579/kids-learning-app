@@ -728,6 +728,10 @@ function openMusic() {
     if (typeof Analytics !== 'undefined') {
       Analytics.trackModuleClick('music', 'creative');
     }
+    // 🕐 记录最近使用
+    if (typeof RecentlyUsed !== 'undefined') {
+      RecentlyUsed.track('music');
+    }
     MusicApp.init();
     MusicApp.switchMode('piano');
   }

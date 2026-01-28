@@ -1085,6 +1085,10 @@ function openDrawing() {
     if (typeof Analytics !== 'undefined') {
       Analytics.trackModuleClick('drawing', 'creative');
     }
+    // 🕐 记录最近使用
+    if (typeof RecentlyUsed !== 'undefined') {
+      RecentlyUsed.track('drawing');
+    }
     // 延迟初始化，确保 DOM 已渲染
     setTimeout(() => {
       DrawingApp.init();

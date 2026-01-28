@@ -501,6 +501,11 @@ function showPronunciation() {
   const modal = document.getElementById('pronunciation-modal');
   if (!modal) return;
 
+  // 🕐 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('pronunciation');
+  }
+
   Pronunciation.renderPracticeSelect();
   modal.classList.remove('hidden');
 }

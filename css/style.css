@@ -247,6 +247,82 @@ body {
   color: var(--text-light);
 }
 
+/* ========== 最近使用 ========== */
+.recent-used-section {
+  margin: 16px 0;
+  padding: 0;
+}
+
+.recent-used-section .section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.recent-used-section .section-icon {
+  font-size: 1.2rem;
+}
+
+.recent-used-section .section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.recent-used-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 0 8px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.recent-used-list::-webkit-scrollbar {
+  display: none;
+}
+
+.recent-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(255, 105, 180, 0.15);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.recent-item:active {
+  transform: scale(0.95);
+}
+
+.recent-item:hover {
+  box-shadow: 0 4px 16px rgba(255, 105, 180, 0.25);
+}
+
+.recent-item .recent-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.recent-item .recent-name {
+  font-size: 0.75rem;
+  color: var(--text-dark);
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70px;
+}
+
 /* ========== 首页分类标签 ========== */
 .home-category-tabs {
   display: flex;

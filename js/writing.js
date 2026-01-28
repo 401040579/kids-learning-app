@@ -700,6 +700,10 @@ function openWriting() {
     if (typeof Analytics !== 'undefined') {
       Analytics.trackModuleClick('writing', 'learning');
     }
+    // 🕐 记录最近使用
+    if (typeof RecentlyUsed !== 'undefined') {
+      RecentlyUsed.track('writing');
+    }
     WritingApp.init();
     WritingApp.switchMode('chinese');
   }

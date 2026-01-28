@@ -193,6 +193,11 @@ function openParentSettings() {
   const modal = document.getElementById('parent-settings-modal');
   if (!modal) return;
 
+  // 🕐 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('parentSettings');
+  }
+
   // 填充当前配置（爸爸和妈妈）
   const dadInput = document.getElementById('bark-url-dad');
   const momInput = document.getElementById('bark-url-mom');
@@ -289,6 +294,10 @@ function updateNotifySetting(key, value) {
 function openMessageToParent() {
   const modal = document.getElementById('message-parent-modal');
   if (modal) {
+    // 🕐 记录最近使用
+    if (typeof RecentlyUsed !== 'undefined') {
+      RecentlyUsed.track('parentMessage');
+    }
     modal.classList.remove('hidden');
   }
 }

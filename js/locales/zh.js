@@ -304,6 +304,9 @@ I18n.translations['zh'] = {
   'photo.choose': '选择照片',
   'photo.remove': '删除照片',
 
+  // Recently Used
+  'recent.title': '最近使用',
+
   // Bottom Navigation
   'nav.home': '首页',
   'nav.learn': '学习',

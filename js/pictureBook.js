@@ -664,6 +664,11 @@ function showPictureBook() {
   const modal = document.getElementById('picture-book-modal');
   if (!modal) return;
 
+  // 🕐 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('pictureBook');
+  }
+
   PictureBook.renderBookshelf();
   modal.classList.remove('hidden');
 }

@@ -304,6 +304,9 @@ I18n.translations['en'] = {
   'photo.choose': 'Choose Photo',
   'photo.remove': 'Remove Photo',
 
+  // Recently Used
+  'recent.title': 'Recently Used',
+
   // Bottom Navigation
   'nav.home': 'Home',
   'nav.learn': 'Learn',

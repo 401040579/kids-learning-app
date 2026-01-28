@@ -237,6 +237,11 @@ function showAchievements() {
   const modal = document.getElementById('achievements-modal');
   if (!modal) return;
 
+  // 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('achievements');
+  }
+
   renderAchievementsList();
   modal.classList.remove('hidden');
 }

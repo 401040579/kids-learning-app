@@ -341,6 +341,11 @@ function openSongPractice() {
   if (typeof Analytics !== 'undefined') {
     Analytics.sendEvent('open_song_practice');
   }
+
+  // 🕐 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('songPractice');
+  }
 }
 
 // 关闭歌曲练习

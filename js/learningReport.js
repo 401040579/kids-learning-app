@@ -282,6 +282,11 @@ function showLearningReport(period = 'week') {
   const modal = document.getElementById('learning-report-modal');
   if (!modal) return;
 
+  // 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('report');
+  }
+
   const report = LearningReport.generateReport(period);
   const reportHTML = LearningReport.generateReportHTML(report);
 

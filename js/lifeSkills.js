@@ -1186,6 +1186,11 @@ function openLifeSkills() {
   if (typeof Analytics !== 'undefined') {
     Analytics.sendEvent('open_life_skills');
   }
+
+  // 🕐 记录最近使用
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('lifeSkills');
+  }
 }
 
 // 关闭生活技能弹窗
