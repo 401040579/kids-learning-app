@@ -9703,6 +9703,31 @@ body {
   color: var(--text-light);
 }
 
+.char-speak-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: linear-gradient(135deg, #4D96FF, #6BCB77);
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(77, 150, 255, 0.3);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.char-speak-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(77, 150, 255, 0.4);
+}
+
+.char-speak-btn:active {
+  transform: scale(0.95);
+}
+
 /* Hanzi Writer 容器 */
 .hanzi-writer-wrapper {
   background: white;

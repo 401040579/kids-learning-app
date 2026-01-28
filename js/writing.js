@@ -814,6 +814,39 @@ function resetCharacter() {
   WritingApp.resetCharacter();
 }
 
+// 朗读当前汉字
+async function speakCurrentChar() {
+  const char = WritingApp.chinese.characters[WritingApp.chinese.currentIndex];
+  if (!char) return;
+
+  try {
+    // 使用 Puter.js TTS
+    if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2speech) {
+      const audio = await puter.ai.txt2speech(char.char, {
+        voice: 'Zhiyu',
+        engine: 'neural',
+        language: 'cmn-CN'
+      });
+      audio.play();
+    } else if ('speechSynthesis' in window) {
+      // 使用 Web Speech API 作为后备
+      const utterance = new SpeechSynthesisUtterance(char.char);
+      utterance.lang = 'zh-CN';
+      utterance.rate = 0.8;
+      window.speechSynthesis.speak(utterance);
+    }
+  } catch (err) {
+    console.error('TTS 失败:', err);
+    // 降级到 Web Speech API
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(char.char);
+      utterance.lang = 'zh-CN';
+      utterance.rate = 0.8;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+}
+
 function prevCharacter() {
   WritingApp.prevCharacter();
 }
