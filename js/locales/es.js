@@ -302,5 +302,130 @@ I18n.translations['es'] = {
   'photo.options': 'Opciones de Foto',
   'photo.take': 'Tomar Foto',
   'photo.choose': 'Elegir Foto',
-  'photo.remove': 'Eliminar Foto'
+  'photo.remove': 'Eliminar Foto',
+
+  // Bottom Navigation
+  'nav.home': 'Inicio',
+  'nav.learn': 'Aprender',
+  'nav.play': 'Jugar',
+  'nav.tools': 'Herramientas',
+  'nav.profile': 'Yo',
+
+  // Sleep Music
+  'sleep.title': 'Música para Dormir',
+  'sleep.selectMusic': 'Elegir una canción',
+  'sleep.autoStop': 'Auto Parar',
+  'sleep.noLimit': 'Sin límite',
+  'sleep.minutes': 'min',
+  'sleep.chooseMusic': 'Elegir Música',
+
+  // Puzzle Extended
+  'puzzle.selectDifficulty': 'Elegir Dificultad',
+  'puzzle.selectTheme': 'Elegir Tema',
+  'puzzle.selectImage': 'Elegir Imagen',
+  'puzzle.restart': 'Reiniciar',
+  'puzzle.reference': 'Referencia',
+  'puzzle.dragHint': 'Arrastra las piezas al tablero',
+  'puzzle.backToSelect': '← Volver',
+
+  // Achievements Extended
+  'achievements.unlocked': '¡Logro Desbloqueado!',
+  'achievements.awesome': '¡Genial!',
+
+  // Check-in Extended
+  'checkin.today': 'Registro Diario',
+  'checkin.startJourney': '¡Comienza tu racha!',
+  'checkin.checkInNow': 'Registrar Ahora',
+  'checkin.later': 'Más Tarde',
+  'checkin.success': '¡Registro Exitoso!',
+  'checkin.keepGoing': '¡Sigue así!',
+
+  // Memory Extended
+  'memory.playAgain': 'Jugar de Nuevo',
+  'memory.backToSelect': 'Volver',
+
+  // Pet
+  'pet.title': 'Mi Mascota',
+  'pet.selectHint': 'Elige tu compañero:',
+  'pet.namePlaceholder': 'Dale un nombre...',
+  'pet.adopt': 'Adoptar',
+  'pet.happiness': 'Felicidad',
+  'pet.fullness': 'Saciedad',
+  'pet.experience': 'Experiencia',
+  'pet.feed': 'Alimentar',
+  'pet.pet': 'Acariciar',
+  'pet.dress': 'Vestir',
+  'pet.evolved': '¡Tu mascota evolucionó!',
+
+  // Report Extended
+  'report.all': 'Todo',
+  'report.share': 'Compartir',
+
+  // Picture Book
+  'pictureBook.title': 'Cuentos Ilustrados',
+  'pictureBook.backToShelf': '← Volver',
+  'pictureBook.autoRead': 'Auto Leer',
+  'pictureBook.prevPage': 'Anterior',
+  'pictureBook.nextPage': 'Siguiente',
+  'pictureBook.finished': '¡Terminado!',
+  'pictureBook.completeMessage': '¡Muy bien! ¡Terminaste otro cuento!',
+  'pictureBook.readAgain': 'Leer de Nuevo',
+
+  // Pronunciation
+  'pronunciation.title': 'Práctica de Lectura',
+  'pronunciation.listen': 'Escuchar',
+  'pronunciation.record': 'Toca para Grabar',
+  'pronunciation.ready': 'Listo',
+  'pronunciation.complete': '¡Práctica Completada!',
+  'pronunciation.practiceCount': 'Cantidad',
+  'pronunciation.avgScore': 'Promedio',
+  'pronunciation.maxScore': 'Mejor Puntaje',
+
+  // AI Chat
+  'ai.assistant': 'Asistente',
+  'ai.title': 'Asistente de Aprendizaje',
+  'ai.clearChat': 'Borrar Chat',
+  'ai.enableAssistant': 'Activar Asistente IA',
+  'ai.downloadSize': 'Descargar ~300MB de datos',
+  'ai.offlineNote': 'Después funciona sin conexión~',
+  'ai.startDownload': 'Iniciar Descarga',
+  'ai.later': 'Más Tarde',
+  'ai.preparing': 'Preparando asistente...',
+  'ai.welcome1': '¡Hola! Soy tu asistente~',
+  'ai.welcome2': '¿Qué quieres preguntar?',
+  'ai.preset.story': 'Cuento',
+  'ai.preset.why': 'Por qué',
+  'ai.preset.math': 'Matemáticas',
+  'ai.preset.english': 'Inglés',
+  'ai.autoRead': 'Leer Respuestas',
+  'ai.inputPlaceholder': 'Escribe o toca el micrófono...',
+  'ai.send': 'Enviar',
+  'ai.listening': 'Escuchando...',
+  'ai.notSupported': 'No Soportado',
+  'ai.gotIt': 'Entendido',
+
+  // Parent Settings
+  'parent.barkSettings': 'Configuración Bark',
+  'parent.notifyOptions': 'Opciones de Notificación',
+  'parent.notifyAchievement': 'Notificar Logros',
+  'parent.notifyProgress': 'Notificar Progreso',
+  'parent.notifyMessage': 'Notificar Mensajes',
+  'parent.notifyThreshold': 'Notificar cada N preguntas',
+  'parent.inputPlaceholder': 'Escribe o habla...',
+
+  // Writing
+  'writing.title': 'Práctica de Escritura',
+  'writing.strokeOrder': 'Orden de Trazos',
+  'writing.freePractice': 'Práctica Libre',
+  'writing.playStroke': 'Ver Trazo',
+  'writing.startPractice': 'Comenzar',
+  'writing.reset': 'Reiniciar',
+  'writing.prev': 'Anterior',
+  'writing.next': 'Siguiente',
+  'writing.selectChar': 'Elegir Carácter',
+
+  // Life Skills Extended
+  'lifeSkills.backToSelect': '← Volver',
+  'lifeSkills.complete': '¡Completado!',
+  'lifeSkills.playAgain': 'Jugar de Nuevo'
 };

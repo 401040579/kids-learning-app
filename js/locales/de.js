@@ -302,5 +302,130 @@ I18n.translations['de'] = {
   'photo.options': 'Foto-Optionen',
   'photo.take': 'Foto Aufnehmen',
   'photo.choose': 'Foto Auswählen',
-  'photo.remove': 'Foto Entfernen'
+  'photo.remove': 'Foto Entfernen',
+
+  // Bottom Navigation
+  'nav.home': 'Start',
+  'nav.learn': 'Lernen',
+  'nav.play': 'Spielen',
+  'nav.tools': 'Werkzeuge',
+  'nav.profile': 'Ich',
+
+  // Sleep Music
+  'sleep.title': 'Schlafmusik',
+  'sleep.selectMusic': 'Musik wählen',
+  'sleep.autoStop': 'Auto-Stopp',
+  'sleep.noLimit': 'Unbegrenzt',
+  'sleep.minutes': 'Min',
+  'sleep.chooseMusic': 'Musik Wählen',
+
+  // Puzzle Extended
+  'puzzle.selectDifficulty': 'Schwierigkeit Wählen',
+  'puzzle.selectTheme': 'Thema Wählen',
+  'puzzle.selectImage': 'Bild Wählen',
+  'puzzle.restart': 'Neustart',
+  'puzzle.reference': 'Vorlage',
+  'puzzle.dragHint': 'Teile auf das Brett ziehen',
+  'puzzle.backToSelect': '← Zurück',
+
+  // Achievements Extended
+  'achievements.unlocked': 'Erfolg Freigeschaltet!',
+  'achievements.awesome': 'Super!',
+
+  // Check-in Extended
+  'checkin.today': 'Tägliches Check-in',
+  'checkin.startJourney': 'Starte deine Serie!',
+  'checkin.checkInNow': 'Jetzt Einchecken',
+  'checkin.later': 'Später',
+  'checkin.success': 'Check-in Erfolgreich!',
+  'checkin.keepGoing': 'Weiter so!',
+
+  // Memory Extended
+  'memory.playAgain': 'Nochmal Spielen',
+  'memory.backToSelect': 'Zurück',
+
+  // Pet
+  'pet.title': 'Mein Lernhaustier',
+  'pet.selectHint': 'Wähle deinen Begleiter:',
+  'pet.namePlaceholder': 'Gib einen Namen...',
+  'pet.adopt': 'Adoptieren',
+  'pet.happiness': 'Glück',
+  'pet.fullness': 'Sättigung',
+  'pet.experience': 'Erfahrung',
+  'pet.feed': 'Füttern',
+  'pet.pet': 'Streicheln',
+  'pet.dress': 'Anziehen',
+  'pet.evolved': 'Haustier entwickelt!',
+
+  // Report Extended
+  'report.all': 'Gesamt',
+  'report.share': 'Teilen',
+
+  // Picture Book
+  'pictureBook.title': 'Bilderbücher',
+  'pictureBook.backToShelf': '← Zurück',
+  'pictureBook.autoRead': 'Auto-Vorlesen',
+  'pictureBook.prevPage': 'Vorherige',
+  'pictureBook.nextPage': 'Nächste',
+  'pictureBook.finished': 'Fertig!',
+  'pictureBook.completeMessage': 'Toll! Du hast noch ein Buch gelesen!',
+  'pictureBook.readAgain': 'Nochmal Lesen',
+
+  // Pronunciation
+  'pronunciation.title': 'Laut Vorlesen',
+  'pronunciation.listen': 'Anhören',
+  'pronunciation.record': 'Tippen zum Aufnehmen',
+  'pronunciation.ready': 'Bereit',
+  'pronunciation.complete': 'Übung Abgeschlossen!',
+  'pronunciation.practiceCount': 'Übungszahl',
+  'pronunciation.avgScore': 'Durchschnitt',
+  'pronunciation.maxScore': 'Bestleistung',
+
+  // AI Chat
+  'ai.assistant': 'Assistent',
+  'ai.title': 'Lernassistent',
+  'ai.clearChat': 'Chat Löschen',
+  'ai.enableAssistant': 'KI-Assistent Aktivieren',
+  'ai.downloadSize': '~300MB Daten herunterladen',
+  'ai.offlineNote': 'Funktioniert danach offline~',
+  'ai.startDownload': 'Download Starten',
+  'ai.later': 'Später',
+  'ai.preparing': 'Assistent wird vorbereitet...',
+  'ai.welcome1': 'Hallo! Ich bin dein Lernassistent~',
+  'ai.welcome2': 'Was möchtest du fragen?',
+  'ai.preset.story': 'Geschichte',
+  'ai.preset.why': 'Warum',
+  'ai.preset.math': 'Mathe',
+  'ai.preset.english': 'Englisch',
+  'ai.autoRead': 'Antworten Vorlesen',
+  'ai.inputPlaceholder': 'Tippen oder Mikrofon antippen...',
+  'ai.send': 'Senden',
+  'ai.listening': 'Höre zu...',
+  'ai.notSupported': 'Nicht Unterstützt',
+  'ai.gotIt': 'Verstanden',
+
+  // Parent Settings
+  'parent.barkSettings': 'Bark-Einstellungen',
+  'parent.notifyOptions': 'Benachrichtigungen',
+  'parent.notifyAchievement': 'Erfolge Benachrichtigen',
+  'parent.notifyProgress': 'Fortschritt Benachrichtigen',
+  'parent.notifyMessage': 'Nachrichten Benachrichtigen',
+  'parent.notifyThreshold': 'Alle N Fragen Benachrichtigen',
+  'parent.inputPlaceholder': 'Tippen oder sprechen...',
+
+  // Writing
+  'writing.title': 'Schreibübung',
+  'writing.strokeOrder': 'Strichreihenfolge',
+  'writing.freePractice': 'Freies Üben',
+  'writing.playStroke': 'Striche Abspielen',
+  'writing.startPractice': 'Übung Starten',
+  'writing.reset': 'Zurücksetzen',
+  'writing.prev': 'Vorheriges',
+  'writing.next': 'Nächstes',
+  'writing.selectChar': 'Zeichen Wählen',
+
+  // Life Skills Extended
+  'lifeSkills.backToSelect': '← Zurück',
+  'lifeSkills.complete': 'Übung Abgeschlossen!',
+  'lifeSkills.playAgain': 'Nochmal Spielen'
 };

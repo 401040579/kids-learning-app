@@ -302,5 +302,130 @@ I18n.translations['ko'] = {
   'photo.options': '사진 옵션',
   'photo.take': '사진 찍기',
   'photo.choose': '사진 선택',
-  'photo.remove': '사진 삭제'
+  'photo.remove': '사진 삭제',
+
+  // Bottom Navigation
+  'nav.home': '홈',
+  'nav.learn': '학습',
+  'nav.play': '놀이',
+  'nav.tools': '도구',
+  'nav.profile': '나',
+
+  // Sleep Music
+  'sleep.title': '수면 음악',
+  'sleep.selectMusic': '음악 선택',
+  'sleep.autoStop': '자동 정지',
+  'sleep.noLimit': '제한 없음',
+  'sleep.minutes': '분',
+  'sleep.chooseMusic': '음악 선택',
+
+  // Puzzle Extended
+  'puzzle.selectDifficulty': '난이도 선택',
+  'puzzle.selectTheme': '테마 선택',
+  'puzzle.selectImage': '이미지 선택',
+  'puzzle.restart': '다시 시작',
+  'puzzle.reference': '참고 이미지',
+  'puzzle.dragHint': '조각을 위의 퍼즐 보드로 드래그',
+  'puzzle.backToSelect': '← 선택으로 돌아가기',
+
+  // Achievements Extended
+  'achievements.unlocked': '업적 달성!',
+  'achievements.awesome': '대단해!',
+
+  // Check-in Extended
+  'checkin.today': '오늘의 출석',
+  'checkin.startJourney': '출석을 시작해요!',
+  'checkin.checkInNow': '지금 출석',
+  'checkin.later': '나중에',
+  'checkin.success': '출석 성공!',
+  'checkin.keepGoing': '계속 화이팅!',
+
+  // Memory Extended
+  'memory.playAgain': '다시 하기',
+  'memory.backToSelect': '선택으로 돌아가기',
+
+  // Pet
+  'pet.title': '학습 펫',
+  'pet.selectHint': '친구를 선택해요:',
+  'pet.namePlaceholder': '펫 이름을 지어주세요...',
+  'pet.adopt': '펫 입양',
+  'pet.happiness': '행복도',
+  'pet.fullness': '포만감',
+  'pet.experience': '경험치',
+  'pet.feed': '먹이주기',
+  'pet.pet': '쓰다듬기',
+  'pet.dress': '꾸미기',
+  'pet.evolved': '펫이 진화했어요!',
+
+  // Report Extended
+  'report.all': '전체',
+  'report.share': '보고서 공유',
+
+  // Picture Book
+  'pictureBook.title': '그림책',
+  'pictureBook.backToShelf': '← 책장으로',
+  'pictureBook.autoRead': '자동 읽기',
+  'pictureBook.prevPage': '이전 페이지',
+  'pictureBook.nextPage': '다음 페이지',
+  'pictureBook.finished': '다 읽었어요!',
+  'pictureBook.completeMessage': '잘했어요! 또 한 권 읽었네요!',
+  'pictureBook.readAgain': '다시 읽기',
+
+  // Pronunciation
+  'pronunciation.title': '따라 읽기',
+  'pronunciation.listen': '시범 듣기',
+  'pronunciation.record': '탭하여 녹음',
+  'pronunciation.ready': '준비됐어요',
+  'pronunciation.complete': '연습 완료!',
+  'pronunciation.practiceCount': '연습 횟수',
+  'pronunciation.avgScore': '평균 점수',
+  'pronunciation.maxScore': '최고 점수',
+
+  // AI Chat
+  'ai.assistant': '도우미',
+  'ai.title': '학습 도우미',
+  'ai.clearChat': '채팅 지우기',
+  'ai.enableAssistant': 'AI 도우미 활성화',
+  'ai.downloadSize': '약 300MB 데이터 다운로드 필요',
+  'ai.offlineNote': '다운로드 후 오프라인에서 사용 가능~',
+  'ai.startDownload': '다운로드 시작',
+  'ai.later': '나중에',
+  'ai.preparing': '도우미 준비 중...',
+  'ai.welcome1': '안녕! 나는 학습 도우미야~',
+  'ai.welcome2': '무엇이 궁금해?',
+  'ai.preset.story': '이야기',
+  'ai.preset.why': '왜',
+  'ai.preset.math': '수학',
+  'ai.preset.english': '영어',
+  'ai.autoRead': '자동 읽어주기',
+  'ai.inputPlaceholder': '입력하거나 마이크를 탭...',
+  'ai.send': '보내기',
+  'ai.listening': '듣고 있어요...',
+  'ai.notSupported': '지원 안 됨',
+  'ai.gotIt': '알겠어요',
+
+  // Parent Settings
+  'parent.barkSettings': 'Bark 알림 설정',
+  'parent.notifyOptions': '알림 옵션',
+  'parent.notifyAchievement': '업적 알림',
+  'parent.notifyProgress': '학습 진도 알림',
+  'parent.notifyMessage': '메시지 알림',
+  'parent.notifyThreshold': '몇 문제마다 알림',
+  'parent.inputPlaceholder': '입력하거나 말해주세요...',
+
+  // Writing
+  'writing.title': '쓰기 연습',
+  'writing.strokeOrder': '획순',
+  'writing.freePractice': '자유 연습',
+  'writing.playStroke': '획순 재생',
+  'writing.startPractice': '연습 시작',
+  'writing.reset': '초기화',
+  'writing.prev': '이전',
+  'writing.next': '다음',
+  'writing.selectChar': '글자 선택',
+
+  // Life Skills Extended
+  'lifeSkills.backToSelect': '← 선택으로',
+  'lifeSkills.complete': '연습 완료!',
+  'lifeSkills.playAgain': '다시 하기'
 };

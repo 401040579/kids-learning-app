@@ -302,5 +302,130 @@ I18n.translations['zh'] = {
   'photo.options': '照片选项',
   'photo.take': '拍照',
   'photo.choose': '选择照片',
-  'photo.remove': '删除照片'
+  'photo.remove': '删除照片',
+
+  // Bottom Navigation
+  'nav.home': '首页',
+  'nav.learn': '学习',
+  'nav.play': '游戏',
+  'nav.tools': '工具',
+  'nav.profile': '我的',
+
+  // Sleep Music
+  'sleep.title': '睡眠音乐',
+  'sleep.selectMusic': '选择一首音乐',
+  'sleep.autoStop': '定时关闭',
+  'sleep.noLimit': '不限',
+  'sleep.minutes': '分钟',
+  'sleep.chooseMusic': '选择音乐',
+
+  // Puzzle Extended
+  'puzzle.selectDifficulty': '选择难度',
+  'puzzle.selectTheme': '选择主题',
+  'puzzle.selectImage': '选择图片',
+  'puzzle.restart': '重开',
+  'puzzle.reference': '原图参考',
+  'puzzle.dragHint': '拖动碎片到上方拼图板',
+  'puzzle.backToSelect': '← 返回选择',
+
+  // Achievements Extended
+  'achievements.unlocked': '成就解锁!',
+  'achievements.awesome': '太棒了!',
+
+  // Check-in Extended
+  'checkin.today': '今日签到',
+  'checkin.startJourney': '开始你的签到之旅吧!',
+  'checkin.checkInNow': '立即签到',
+  'checkin.later': '稍后再说',
+  'checkin.success': '签到成功!',
+  'checkin.keepGoing': '继续加油!',
+
+  // Memory Extended
+  'memory.playAgain': '再玩一次',
+  'memory.backToSelect': '返回选择',
+
+  // Pet
+  'pet.title': '我的学习宠物',
+  'pet.selectHint': '选择你的学习伙伴:',
+  'pet.namePlaceholder': '给宠物起个名字...',
+  'pet.adopt': '领养宠物',
+  'pet.happiness': '幸福度',
+  'pet.fullness': '饱食度',
+  'pet.experience': '经验值',
+  'pet.feed': '喂食',
+  'pet.pet': '抚摸',
+  'pet.dress': '装扮',
+  'pet.evolved': '宠物进化了!',
+
+  // Report Extended
+  'report.all': '全部',
+  'report.share': '分享报告',
+
+  // Picture Book
+  'pictureBook.title': '绘本故事',
+  'pictureBook.backToShelf': '← 返回书架',
+  'pictureBook.autoRead': '自动朗读',
+  'pictureBook.prevPage': '上一页',
+  'pictureBook.nextPage': '下一页',
+  'pictureBook.finished': '读完啦！',
+  'pictureBook.completeMessage': '你真棒！又读完一本故事书！',
+  'pictureBook.readAgain': '再读一遍',
+
+  // Pronunciation
+  'pronunciation.title': '跟读练习',
+  'pronunciation.listen': '听示范',
+  'pronunciation.record': '点击录音',
+  'pronunciation.ready': '准备好了',
+  'pronunciation.complete': '练习完成!',
+  'pronunciation.practiceCount': '练习数量',
+  'pronunciation.avgScore': '平均得分',
+  'pronunciation.maxScore': '最高得分',
+
+  // AI Chat
+  'ai.assistant': '小助手',
+  'ai.title': '学习小助手',
+  'ai.clearChat': '清空聊天',
+  'ai.enableAssistant': '启用AI小助手',
+  'ai.downloadSize': '需要下载约 300MB 的数据',
+  'ai.offlineNote': '下载后可以离线使用哦~',
+  'ai.startDownload': '开始下载',
+  'ai.later': '以后再说',
+  'ai.preparing': '小助手正在准备中...',
+  'ai.welcome1': '你好呀！我是学习小助手~',
+  'ai.welcome2': '有什么想问我的吗？',
+  'ai.preset.story': '讲故事',
+  'ai.preset.why': '为什么',
+  'ai.preset.math': '数学题',
+  'ai.preset.english': '学英语',
+  'ai.autoRead': '自动朗读回复',
+  'ai.inputPlaceholder': '输入或点击麦克风说话...',
+  'ai.send': '发送',
+  'ai.listening': '正在听你说话...',
+  'ai.notSupported': '暂不支持',
+  'ai.gotIt': '知道了',
+
+  // Parent Settings
+  'parent.barkSettings': 'Bark 推送设置',
+  'parent.notifyOptions': '通知选项',
+  'parent.notifyAchievement': '成就通知',
+  'parent.notifyProgress': '学习进度通知',
+  'parent.notifyMessage': '消息通知',
+  'parent.notifyThreshold': '每答几题通知',
+  'parent.inputPlaceholder': '输入或说出你想说的话...',
+
+  // Writing
+  'writing.title': '书写练习',
+  'writing.strokeOrder': '汉字笔顺',
+  'writing.freePractice': '自由练习',
+  'writing.playStroke': '播放笔顺',
+  'writing.startPractice': '开始练习',
+  'writing.reset': '重置',
+  'writing.prev': '上一个',
+  'writing.next': '下一个',
+  'writing.selectChar': '选择汉字',
+
+  // Life Skills Extended
+  'lifeSkills.backToSelect': '← 返回选择',
+  'lifeSkills.complete': '练习完成!',
+  'lifeSkills.playAgain': '再玩一次'
 };

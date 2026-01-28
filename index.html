@@ -567,27 +567,27 @@
       <!-- 数学游戏页 -->
       <section id="page-math" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>🔢 数学游戏</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>🔢 <span data-i18n="math.title">数学游戏</span></h2>
         </div>
 
         <!-- 数学设置 -->
         <div class="math-settings">
           <div class="math-setting-row">
-            <span class="setting-label">范围</span>
+            <span class="setting-label" data-i18n="math.range">范围</span>
             <div class="math-range-buttons">
-              <button class="math-range-btn active" data-range="10" onclick="setMathRange(10)">10以内</button>
-              <button class="math-range-btn" data-range="20" onclick="setMathRange(20)">20以内</button>
-              <button class="math-range-btn" data-range="30" onclick="setMathRange(30)">30以内</button>
+              <button class="math-range-btn active" data-range="10" onclick="setMathRange(10)" data-i18n="math.range10">10以内</button>
+              <button class="math-range-btn" data-range="20" onclick="setMathRange(20)" data-i18n="math.range20">20以内</button>
+              <button class="math-range-btn" data-range="30" onclick="setMathRange(30)" data-i18n="math.range30">30以内</button>
             </div>
           </div>
           <div class="math-setting-row">
-            <span class="setting-label">运算</span>
+            <span class="setting-label" data-i18n="math.operation">运算</span>
             <div class="math-op-buttons">
-              <button class="math-op-btn active" data-op="+" onclick="toggleMathOperator('+')">➕ 加</button>
-              <button class="math-op-btn active" data-op="-" onclick="toggleMathOperator('-')">➖ 减</button>
-              <button class="math-op-btn" data-op="×" onclick="toggleMathOperator('×')">✖️ 乘</button>
-              <button class="math-op-btn" data-op="÷" onclick="toggleMathOperator('÷')">➗ 除</button>
+              <button class="math-op-btn active" data-op="+" onclick="toggleMathOperator('+')">➕ <span data-i18n="math.add">加</span></button>
+              <button class="math-op-btn active" data-op="-" onclick="toggleMathOperator('-')">➖ <span data-i18n="math.subtract">减</span></button>
+              <button class="math-op-btn" data-op="×" onclick="toggleMathOperator('×')">✖️ <span data-i18n="math.multiply">乘</span></button>
+              <button class="math-op-btn" data-op="÷" onclick="toggleMathOperator('÷')">➗ <span data-i18n="math.divide">除</span></button>
             </div>
           </div>
         </div>
@@ -604,8 +604,8 @@
             <!-- 动态生成选项 -->
           </div>
           <div class="math-stats">
-            <span>正确: <span id="math-correct">0</span></span>
-            <span>连续答对: <span id="math-streak">0</span> 🔥</span>
+            <span><span data-i18n="math.correct">正确</span>: <span id="math-correct">0</span></span>
+            <span><span data-i18n="math.streak">连续答对</span>: <span id="math-streak">0</span> 🔥</span>
           </div>
         </div>
       </section>
@@ -613,16 +613,16 @@
       <!-- 英语学习页 -->
       <section id="page-english" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>🔤 学英语</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>🔤 <span data-i18n="english.title">学英语</span></h2>
         </div>
         <div class="game-area">
           <div class="word-display">
             <div class="word-image" id="english-image">🍎</div>
             <div class="word-text" id="english-word">Apple</div>
-            <button class="btn-sound" onclick="speakWord()">🔊 听发音</button>
+            <button class="btn-sound" onclick="speakWord()">🔊 <span data-i18n="english.listen">听发音</span></button>
           </div>
-          <p class="question-text">这是什么?</p>
+          <p class="question-text" data-i18n="english.whatIsThis">这是什么?</p>
           <div class="answer-options" id="english-options">
             <!-- 动态生成选项 -->
           </div>
@@ -632,15 +632,15 @@
       <!-- 中文学习页 -->
       <section id="page-chinese" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>📝 学中文</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>📝 <span data-i18n="chinese.title">学中文</span></h2>
         </div>
         <div class="game-area">
           <div class="character-display">
             <div class="big-character" id="chinese-char">大</div>
             <div class="pinyin" id="chinese-pinyin">dà</div>
           </div>
-          <p class="question-text">选择正确的意思:</p>
+          <p class="question-text" data-i18n="chinese.selectMeaning">选择正确的意思:</p>
           <div class="answer-options" id="chinese-options">
             <!-- 动态生成选项 -->
           </div>
@@ -650,13 +650,13 @@
       <!-- 科学探索页 -->
       <section id="page-science" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>🔬 科学探索</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>🔬 <span data-i18n="science.title">科学探索</span></h2>
         </div>
 
         <!-- 主题选择界面 -->
         <div class="science-themes" id="science-themes">
-          <p class="science-intro">选择你想探索的主题 🎯</p>
+          <p class="science-intro" data-i18n="science.selectTheme">选择你想探索的主题 🎯</p>
           <div class="theme-list" id="theme-list">
             <!-- 动态生成主题卡片 -->
           </div>
@@ -729,8 +729,8 @@
       <!-- 倒计时页面 -->
       <section id="page-timer" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>⏰ 玩耍倒计时</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>⏰ <span data-i18n="timer.title">玩耍倒计时</span></h2>
         </div>
 
         <div class="timer-container">
@@ -752,43 +752,43 @@
 
           <!-- 时间选择（未开始时显示） -->
           <div class="timer-setup" id="timer-setup">
-            <p class="timer-hint">选择玩耍时间:</p>
+            <p class="timer-hint" data-i18n="timer.selectTime">选择玩耍时间:</p>
             <div class="time-options">
               <button class="time-btn" onclick="setTimerMinutes(3)">
                 <span class="time-num">3</span>
-                <span class="time-unit">分钟</span>
+                <span class="time-unit" data-i18n="timer.minutes">分钟</span>
               </button>
               <button class="time-btn active" onclick="setTimerMinutes(5)">
                 <span class="time-num">5</span>
-                <span class="time-unit">分钟</span>
+                <span class="time-unit" data-i18n="timer.minutes">分钟</span>
               </button>
               <button class="time-btn" onclick="setTimerMinutes(10)">
                 <span class="time-num">10</span>
-                <span class="time-unit">分钟</span>
+                <span class="time-unit" data-i18n="timer.minutes">分钟</span>
               </button>
               <button class="time-btn" onclick="setTimerMinutes(15)">
                 <span class="time-num">15</span>
-                <span class="time-unit">分钟</span>
+                <span class="time-unit" data-i18n="timer.minutes">分钟</span>
               </button>
             </div>
             <button class="btn-start-timer" onclick="startTimer()">
-              ▶️ 开始倒计时
+              ▶️ <span data-i18n="timer.start">开始倒计时</span>
             </button>
           </div>
 
           <!-- 控制按钮（运行中显示） -->
           <div class="timer-controls hidden" id="timer-controls">
             <button class="timer-control-btn btn-pause" id="btn-pause" onclick="togglePauseTimer()">
-              ⏸️ 暂停
+              ⏸️ <span data-i18n="btn.pause">暂停</span>
             </button>
             <button class="timer-control-btn btn-stop" onclick="stopTimer()">
-              ⏹️ 结束
+              ⏹️ <span data-i18n="timer.end">结束</span>
             </button>
           </div>
 
           <!-- 鼓励语 -->
           <div class="timer-message" id="timer-message">
-            <p>玩得开心！时间到了要乖乖走哦~ 🌟</p>
+            <p data-i18n="timer.encouragement">玩得开心！时间到了要乖乖走哦~ 🌟</p>
           </div>
         </div>
       </section>
@@ -797,8 +797,8 @@
       <div id="timer-finish-modal" class="timer-finish-modal hidden">
         <div class="timer-finish-content">
           <div class="finish-emoji">⏰</div>
-          <h2 class="finish-title">时间到啦!</h2>
-          <p class="finish-message">玩得开心吗？现在该回家咯~ 🏠</p>
+          <h2 class="finish-title" data-i18n="timer.timeUp">时间到啦!</h2>
+          <p class="finish-message" data-i18n="timer.timeUpMessage">玩得开心吗？现在该回家咯~ 🏠</p>
           <div class="finish-animation">
             <span>🌈</span><span>⭐</span><span>🎉</span>
           </div>
@@ -957,8 +957,8 @@
       <!-- 日历页 -->
       <section id="page-calendar" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>📅 我的日历</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>📅 <span data-i18n="calendar.title">我的日历</span></h2>
         </div>
 
         <!-- 月份切换 -->
@@ -1018,8 +1018,8 @@
       <!-- 睡眠音乐页面 -->
       <section id="page-sleep-music" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>🎵 睡眠音乐</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>🎵 <span data-i18n="sleep.title">睡眠音乐</span></h2>
         </div>
 
         <!-- 播放器区域 -->
@@ -1030,7 +1030,7 @@
             </div>
           </div>
           <div class="player-info">
-            <h3 class="player-song-name" id="player-song-name">选择一首音乐</h3>
+            <h3 class="player-song-name" id="player-song-name" data-i18n="sleep.selectMusic">选择一首音乐</h3>
             <p class="player-song-duration" id="player-song-duration">--:--</p>
           </div>
           <div class="player-controls">
@@ -1050,33 +1050,33 @@
 
         <!-- 定时器选项 -->
         <div class="sleep-timer-section">
-          <h4 class="section-title">⏰ 定时关闭</h4>
+          <h4 class="section-title">⏰ <span data-i18n="sleep.autoStop">定时关闭</span></h4>
           <div class="sleep-timer-options">
             <button class="sleep-timer-btn" data-minutes="0" onclick="setSleepTimer(0)">
-              <span class="timer-value">不限</span>
+              <span class="timer-value" data-i18n="sleep.noLimit">不限</span>
             </button>
             <button class="sleep-timer-btn active" data-minutes="15" onclick="setSleepTimer(15)">
               <span class="timer-value">15</span>
-              <span class="timer-unit">分钟</span>
+              <span class="timer-unit" data-i18n="sleep.minutes">分钟</span>
             </button>
             <button class="sleep-timer-btn" data-minutes="30" onclick="setSleepTimer(30)">
               <span class="timer-value">30</span>
-              <span class="timer-unit">分钟</span>
+              <span class="timer-unit" data-i18n="sleep.minutes">分钟</span>
             </button>
             <button class="sleep-timer-btn" data-minutes="45" onclick="setSleepTimer(45)">
               <span class="timer-value">45</span>
-              <span class="timer-unit">分钟</span>
+              <span class="timer-unit" data-i18n="sleep.minutes">分钟</span>
             </button>
             <button class="sleep-timer-btn" data-minutes="60" onclick="setSleepTimer(60)">
               <span class="timer-value">60</span>
-              <span class="timer-unit">分钟</span>
+              <span class="timer-unit" data-i18n="sleep.minutes">分钟</span>
             </button>
           </div>
         </div>
 
         <!-- 音乐列表 -->
         <div class="sleep-music-list">
-          <h4 class="section-title">🎶 选择音乐</h4>
+          <h4 class="section-title">🎶 <span data-i18n="sleep.chooseMusic">选择音乐</span></h4>
           <div class="music-cards" id="music-cards">
             <!-- 动态生成音乐卡片 -->
           </div>
@@ -1086,15 +1086,15 @@
       <!-- 拼图游戏页面 -->
       <section id="page-puzzle" class="page">
         <div class="page-header">
-          <button class="btn-back" onclick="navigateTo('home')">← 返回</button>
-          <h2>🧩 拼图游戏</h2>
+          <button class="btn-back" onclick="navigateTo('home')" data-i18n="btn.back">← 返回</button>
+          <h2>🧩 <span data-i18n="puzzle.title">拼图游戏</span></h2>
         </div>
 
         <!-- 选择界面 -->
         <div class="puzzle-select" id="puzzle-select">
           <!-- 难度选择 -->
           <div class="puzzle-section">
-            <h3 class="puzzle-section-title">选择难度</h3>
+            <h3 class="puzzle-section-title" data-i18n="puzzle.selectDifficulty">选择难度</h3>
             <div class="difficulty-selector" id="difficulty-selector">
               <!-- 动态生成难度选项 -->
             </div>
@@ -1102,7 +1102,7 @@
 
           <!-- 主题选择 -->
           <div class="puzzle-section">
-            <h3 class="puzzle-section-title">选择主题</h3>
+            <h3 class="puzzle-section-title" data-i18n="puzzle.selectTheme">选择主题</h3>
             <div class="theme-selector" id="puzzle-theme-selector">
               <!-- 动态生成主题选项 -->
             </div>
@@ -1110,7 +1110,7 @@
 
           <!-- 图片选择 -->
           <div class="puzzle-section">
-            <h3 class="puzzle-section-title">选择图片</h3>
+            <h3 class="puzzle-section-title" data-i18n="puzzle.selectImage">选择图片</h3>
             <div class="image-selector" id="puzzle-image-selector">
               <!-- 动态生成图片选项 -->
             </div>
@@ -1123,7 +1123,7 @@
           <div class="puzzle-controls">
             <button class="puzzle-control-btn" onclick="showPuzzleHint()">
               <span>👁</span>
-              <span>提示</span>
+              <span data-i18n="puzzle.hint">提示</span>
             </button>
             <div class="puzzle-timer">
               <span>⏱</span>
@@ -1131,14 +1131,14 @@
             </div>
             <button class="puzzle-control-btn" onclick="restartPuzzle()">
               <span>🔄</span>
-              <span>重开</span>
+              <span data-i18n="puzzle.restart">重开</span>
             </button>
           </div>
 
           <!-- 原图参考（小图） -->
           <div class="puzzle-reference">
             <div class="reference-image" id="puzzle-reference-image">🦁</div>
-            <span class="reference-label">原图参考</span>
+            <span class="reference-label" data-i18n="puzzle.reference">原图参考</span>
           </div>
 
           <!-- 拼图板 -->
@@ -1150,14 +1150,14 @@
 
           <!-- 碎片区 -->
           <div class="puzzle-pieces-container">
-            <p class="pieces-hint">拖动碎片到上方拼图板</p>
+            <p class="pieces-hint" data-i18n="puzzle.dragHint">拖动碎片到上方拼图板</p>
             <div class="puzzle-pieces" id="puzzle-pieces">
               <!-- 动态生成碎片 -->
             </div>
           </div>
 
           <!-- 返回选择按钮 -->
-          <button class="btn-back-select" onclick="backToPuzzleSelect()">← 返回选择</button>
+          <button class="btn-back-select" onclick="backToPuzzleSelect()" data-i18n="puzzle.backToSelect">← 返回选择</button>
         </div>
       </section>
     </main>
@@ -1168,7 +1168,7 @@
   <div id="achievements-modal" class="achievements-modal hidden">
     <div class="achievements-modal-content">
       <button class="modal-close-btn" onclick="closeAchievements()">✕</button>
-      <h2 class="achievements-modal-title">🏆 我的成就</h2>
+      <h2 class="achievements-modal-title">🏆 <span data-i18n="achievements.title">我的成就</span></h2>
       <div id="achievements-list" class="achievements-list">
         <!-- 动态生成 -->
       </div>
@@ -1179,11 +1179,11 @@
   <div id="achievement-unlock-modal" class="achievement-unlock-modal hidden">
     <div class="achievement-unlock-content">
       <div class="unlock-celebration">🎉</div>
-      <div class="unlock-title">成就解锁!</div>
+      <div class="unlock-title" data-i18n="achievements.unlocked">成就解锁!</div>
       <div class="unlock-icon" id="unlock-achievement-icon">🏆</div>
       <div class="unlock-name" id="unlock-achievement-name">成就名称</div>
       <div class="unlock-desc" id="unlock-achievement-desc">成就描述</div>
-      <button class="btn-unlock-close" onclick="closeAchievementUnlock()">太棒了!</button>
+      <button class="btn-unlock-close" onclick="closeAchievementUnlock()" data-i18n="achievements.awesome">太棒了!</button>
     </div>
   </div>
 
@@ -1191,7 +1191,7 @@
   <div id="wrong-questions-modal" class="wrong-questions-modal hidden">
     <div class="wrong-questions-modal-content">
       <button class="modal-close-btn" onclick="closeWrongQuestions()">✕</button>
-      <h2 class="wq-modal-title">📕 错题本</h2>
+      <h2 class="wq-modal-title">📕 <span data-i18n="wrongQuestions.title">错题本</span></h2>
       <div id="wrong-questions-list" class="wrong-questions-list">
         <!-- 动态生成 -->
       </div>
@@ -1222,7 +1222,7 @@
   <div id="checkin-modal" class="checkin-modal hidden">
     <div class="checkin-modal-content">
       <button class="modal-close-btn" onclick="closeCheckin()">✕</button>
-      <h2 class="checkin-modal-title">📅 每日签到</h2>
+      <h2 class="checkin-modal-title">📅 <span data-i18n="checkin.title">每日签到</span></h2>
       <div id="checkin-stats" class="checkin-stats">
         <!-- 动态生成 -->
       </div>
@@ -1237,17 +1237,17 @@
     <div class="checkin-reminder-content">
       <div class="reminder-header">
         <span class="reminder-star">⭐</span>
-        <span class="reminder-title">今日签到</span>
+        <span class="reminder-title" data-i18n="checkin.today">今日签到</span>
         <span class="reminder-star">⭐</span>
       </div>
       <div class="reminder-reward">
         <span class="reminder-icon" id="checkin-reward-icon">🌟</span>
         <span class="reminder-points" id="checkin-reward-points">+5分</span>
       </div>
-      <div class="reminder-streak" id="checkin-streak-info">开始你的签到之旅吧!</div>
+      <div class="reminder-streak" id="checkin-streak-info" data-i18n="checkin.startJourney">开始你的签到之旅吧!</div>
       <div class="reminder-actions">
-        <button class="btn-checkin-now" onclick="doCheckinFromReminder()">立即签到</button>
-        <button class="btn-checkin-later" onclick="closeCheckinReminder()">稍后再说</button>
+        <button class="btn-checkin-now" onclick="doCheckinFromReminder()" data-i18n="checkin.checkInNow">立即签到</button>
+        <button class="btn-checkin-later" onclick="closeCheckinReminder()" data-i18n="checkin.later">稍后再说</button>
       </div>
     </div>
   </div>
@@ -1256,11 +1256,11 @@
   <div id="checkin-success-modal" class="checkin-success-modal hidden">
     <div class="checkin-success-content">
       <div class="success-icon" id="checkin-success-icon">🌟</div>
-      <div class="success-title">签到成功!</div>
+      <div class="success-title" data-i18n="checkin.success">签到成功!</div>
       <div class="success-points" id="checkin-success-points">+5分</div>
       <div class="success-streak" id="checkin-success-streak">连续签到 1 天</div>
       <div class="success-badge hidden" id="checkin-success-badge"></div>
-      <button class="btn-success-close" onclick="closeCheckinSuccess()">继续加油!</button>
+      <button class="btn-success-close" onclick="closeCheckinSuccess()" data-i18n="checkin.keepGoing">继续加油!</button>
     </div>
   </div>
 
@@ -1270,7 +1270,7 @@
   <div id="memory-game-modal" class="memory-game-modal hidden">
     <div class="memory-game-modal-content">
       <button class="modal-close-btn" onclick="closeMemoryGame()">✕</button>
-      <h2 class="memory-game-title">🧠 记忆训练</h2>
+      <h2 class="memory-game-title">🧠 <span data-i18n="memory.title">记忆训练</span></h2>
       <div id="memory-game-select" class="memory-game-select">
         <!-- 游戏类型选择 -->
       </div>
@@ -1290,8 +1290,8 @@
       </div>
       <div class="memory-result-points" id="memory-result-points">+20 积分</div>
       <div class="memory-result-actions">
-        <button class="btn-memory-again" onclick="restartMemoryGame()">再玩一次</button>
-        <button class="btn-memory-back" onclick="backToMemorySelect()">返回选择</button>
+        <button class="btn-memory-again" onclick="restartMemoryGame()" data-i18n="memory.playAgain">再玩一次</button>
+        <button class="btn-memory-back" onclick="backToMemorySelect()" data-i18n="memory.backToSelect">返回选择</button>
       </div>
     </div>
   </div>
@@ -1300,16 +1300,16 @@
   <div id="learning-pet-modal" class="learning-pet-modal hidden">
     <div class="learning-pet-modal-content">
       <button class="modal-close-btn" onclick="closeLearningPet()">✕</button>
-      <h2 class="learning-pet-title">🐱 我的学习宠物</h2>
+      <h2 class="learning-pet-title">🐱 <span data-i18n="pet.title">我的学习宠物</span></h2>
 
       <!-- 宠物选择界面（首次使用） -->
       <div id="pet-select-area" class="pet-select-area hidden">
-        <p class="pet-select-hint">选择你的学习伙伴:</p>
+        <p class="pet-select-hint" data-i18n="pet.selectHint">选择你的学习伙伴:</p>
         <div id="pet-type-list" class="pet-type-list">
           <!-- 宠物类型选择 -->
         </div>
-        <input type="text" id="pet-name-input" class="pet-name-input" placeholder="给宠物起个名字..." maxlength="10">
-        <button class="btn-adopt-pet" onclick="adoptPet()">领养宠物</button>
+        <input type="text" id="pet-name-input" class="pet-name-input" data-i18n-placeholder="pet.namePlaceholder" placeholder="给宠物起个名字..." maxlength="10">
+        <button class="btn-adopt-pet" onclick="adoptPet()" data-i18n="pet.adopt">领养宠物</button>
       </div>
 
       <!-- 宠物主界面 -->
@@ -1324,21 +1324,21 @@
         <!-- 宠物状态条 -->
         <div class="pet-status-bars">
           <div class="pet-status-bar">
-            <span class="status-label">💖 幸福度</span>
+            <span class="status-label">💖 <span data-i18n="pet.happiness">幸福度</span></span>
             <div class="status-bar-bg">
               <div class="status-bar-fill happiness-fill" id="happiness-fill"></div>
             </div>
             <span class="status-value" id="happiness-value">100</span>
           </div>
           <div class="pet-status-bar">
-            <span class="status-label">🍖 饱食度</span>
+            <span class="status-label">🍖 <span data-i18n="pet.fullness">饱食度</span></span>
             <div class="status-bar-bg">
               <div class="status-bar-fill hunger-fill" id="hunger-fill"></div>
             </div>
             <span class="status-value" id="hunger-value">100</span>
           </div>
           <div class="pet-status-bar">
-            <span class="status-label">⭐ 经验值</span>
+            <span class="status-label">⭐ <span data-i18n="pet.experience">经验值</span></span>
             <div class="status-bar-bg">
               <div class="status-bar-fill exp-fill" id="exp-fill"></div>
             </div>
@@ -1350,15 +1350,15 @@
         <div class="pet-actions">
           <button class="pet-action-btn" onclick="showPetFeed()">
             <span class="action-icon">🍖</span>
-            <span>喂食</span>
+            <span data-i18n="pet.feed">喂食</span>
           </button>
           <button class="pet-action-btn" onclick="petPet()">
             <span class="action-icon">🤗</span>
-            <span>抚摸</span>
+            <span data-i18n="pet.pet">抚摸</span>
           </button>
           <button class="pet-action-btn" onclick="showPetAccessories()">
             <span class="action-icon">🎀</span>
-            <span>装扮</span>
+            <span data-i18n="pet.dress">装扮</span>
           </button>
         </div>
 
@@ -1374,7 +1374,7 @@
   <div id="pet-feed-modal" class="pet-feed-modal hidden">
     <div class="pet-feed-content">
       <button class="modal-close-btn" onclick="closePetFeed()">✕</button>
-      <h3>🍖 喂食</h3>
+      <h3>🍖 <span data-i18n="pet.feed">喂食</span></h3>
       <div id="food-list" class="food-list">
         <!-- 食物列表 -->
       </div>
@@ -1385,7 +1385,7 @@
   <div id="pet-accessories-modal" class="pet-accessories-modal hidden">
     <div class="pet-accessories-content">
       <button class="modal-close-btn" onclick="closePetAccessories()">✕</button>
-      <h3>🎀 装扮</h3>
+      <h3>🎀 <span data-i18n="pet.dress">装扮</span></h3>
       <div id="accessories-list" class="accessories-list">
         <!-- 配饰列表 -->
       </div>
@@ -1396,14 +1396,14 @@
   <div id="pet-evolution-modal" class="pet-evolution-modal hidden">
     <div class="pet-evolution-content">
       <div class="evolution-celebration">✨</div>
-      <div class="evolution-title">宠物进化了!</div>
+      <div class="evolution-title" data-i18n="pet.evolved">宠物进化了!</div>
       <div class="evolution-stages">
         <span class="old-stage" id="old-pet-stage">🥚</span>
         <span class="evolution-arrow">→</span>
         <span class="new-stage" id="new-pet-stage">🐱</span>
       </div>
       <div class="evolution-name" id="evolution-stage-name">幼年期</div>
-      <button class="btn-evolution-close" onclick="closePetEvolution()">太棒了!</button>
+      <button class="btn-evolution-close" onclick="closePetEvolution()" data-i18n="feedback.awesome">太棒了!</button>
     </div>
   </div>
 
@@ -1414,9 +1414,9 @@
 
       <!-- 报告周期选择 -->
       <div class="report-period-selector">
-        <button class="report-period-btn active" data-period="week" onclick="changeReportPeriod('week')">本周</button>
-        <button class="report-period-btn" data-period="month" onclick="changeReportPeriod('month')">本月</button>
-        <button class="report-period-btn" data-period="all" onclick="changeReportPeriod('all')">全部</button>
+        <button class="report-period-btn active" data-period="week" onclick="changeReportPeriod('week')" data-i18n="report.week">本周</button>
+        <button class="report-period-btn" data-period="month" onclick="changeReportPeriod('month')" data-i18n="report.month">本月</button>
+        <button class="report-period-btn" data-period="all" onclick="changeReportPeriod('all')" data-i18n="report.all">全部</button>
       </div>
 
       <!-- 报告内容 -->
@@ -1425,7 +1425,7 @@
       </div>
 
       <!-- 分享按钮 -->
-      <button class="btn-share-report" onclick="shareReport()">📤 分享报告</button>
+      <button class="btn-share-report" onclick="shareReport()">📤 <span data-i18n="report.share">分享报告</span></button>
     </div>
   </div>
 
@@ -1437,7 +1437,7 @@
       <!-- 书架选择区域 -->
       <div id="book-select-area" class="book-select-area">
         <div class="bookshelf-header">
-          <h2>📚 绘本故事</h2>
+          <h2>📚 <span data-i18n="pictureBook.title">绘本故事</span></h2>
           <div class="bookshelf-tabs" id="bookshelf-tabs">
             <!-- 动态生成分类标签 -->
           </div>
@@ -1450,9 +1450,9 @@
       <!-- 阅读区域 -->
       <div id="book-read-area" class="book-read-area hidden">
         <div class="book-reader-header">
-          <button class="btn-back-shelf" onclick="backToBookshelf()">← 返回书架</button>
+          <button class="btn-back-shelf" onclick="backToBookshelf()" data-i18n="pictureBook.backToShelf">← 返回书架</button>
           <h3 id="current-book-title">故事标题</h3>
-          <button class="btn-toggle-auto" id="btn-auto-read" onclick="toggleAutoRead()">🔊 自动朗读</button>
+          <button class="btn-toggle-auto" id="btn-auto-read" onclick="toggleAutoRead()">🔊 <span data-i18n="pictureBook.autoRead">自动朗读</span></button>
         </div>
 
         <div class="book-page-container">
@@ -1463,9 +1463,9 @@
         </div>
 
         <div class="book-controls">
-          <button class="btn-page-nav" id="btn-prev-page" onclick="prevBookPage()">◀ 上一页</button>
+          <button class="btn-page-nav" id="btn-prev-page" onclick="prevBookPage()">◀ <span data-i18n="pictureBook.prevPage">上一页</span></button>
           <span class="page-indicator" id="page-indicator">1 / 5</span>
-          <button class="btn-page-nav" id="btn-next-page" onclick="nextBookPage()">下一页 ▶</button>
+          <button class="btn-page-nav" id="btn-next-page" onclick="nextBookPage()"><span data-i18n="pictureBook.nextPage">下一页</span> ▶</button>
         </div>
       </div>
     </div>
@@ -1475,16 +1475,16 @@
   <div id="book-complete-modal" class="book-complete-modal hidden">
     <div class="book-complete-content">
       <div class="complete-celebration">🎉</div>
-      <div class="complete-title">读完啦！</div>
+      <div class="complete-title" data-i18n="pictureBook.finished">读完啦！</div>
       <div class="complete-book-name" id="completed-book-name">三只小猪</div>
-      <div class="complete-message">你真棒！又读完一本故事书！</div>
+      <div class="complete-message" data-i18n="pictureBook.completeMessage">你真棒！又读完一本故事书！</div>
       <div class="complete-reward">
         <span class="reward-icon">⭐</span>
         <span class="reward-text">+10 积分</span>
       </div>
       <div class="complete-actions">
-        <button class="btn-read-again" onclick="readBookAgain()">再读一遍</button>
-        <button class="btn-back-books" onclick="closeBookComplete()">返回书架</button>
+        <button class="btn-read-again" onclick="readBookAgain()" data-i18n="pictureBook.readAgain">再读一遍</button>
+        <button class="btn-back-books" onclick="closeBookComplete()" data-i18n="pictureBook.backToShelf">返回书架</button>
       </div>
     </div>
   </div>
@@ -1496,7 +1496,7 @@
 
       <!-- 练习类型选择 -->
       <div id="pronunciation-select-area" class="pronunciation-select-area">
-        <h2>🎤 跟读练习</h2>
+        <h2>🎤 <span data-i18n="pronunciation.title">跟读练习</span></h2>
         <div class="pronunciation-types" id="pronunciation-types">
           <!-- 动态生成练习类型 -->
         </div>
@@ -1508,7 +1508,7 @@
       <!-- 练习区域 -->
       <div id="pronunciation-practice-area" class="pronunciation-practice-area hidden">
         <div class="practice-header">
-          <button class="btn-back-select" onclick="backToPronunciationSelect()">← 返回</button>
+          <button class="btn-back-select" onclick="backToPronunciationSelect()" data-i18n="btn.back">← 返回</button>
           <h3 id="practice-type-title">拼音练习</h3>
           <span class="practice-progress" id="practice-progress">1 / 10</span>
         </div>
@@ -1521,16 +1521,16 @@
 
           <div class="practice-demo">
             <button class="btn-demo-play" id="btn-demo-play" onclick="playDemonstration()">
-              🔊 听示范
+              🔊 <span data-i18n="pronunciation.listen">听示范</span>
             </button>
           </div>
 
           <div class="practice-record">
             <button class="btn-record" id="btn-record" onclick="toggleRecording()">
               <span class="record-icon">🎙️</span>
-              <span class="record-text">点击录音</span>
+              <span class="record-text" data-i18n="pronunciation.record">点击录音</span>
             </button>
-            <div class="record-status" id="record-status">准备好了</div>
+            <div class="record-status" id="record-status" data-i18n="pronunciation.ready">准备好了</div>
           </div>
 
           <div class="practice-result hidden" id="practice-result">
@@ -1542,8 +1542,8 @@
         </div>
 
         <div class="practice-actions">
-          <button class="btn-try-again" id="btn-try-again" onclick="tryAgain()">再试一次</button>
-          <button class="btn-next-item" id="btn-next-item" onclick="nextPracticeItem()">下一个 ▶</button>
+          <button class="btn-try-again" id="btn-try-again" onclick="tryAgain()" data-i18n="btn.retry">再试一次</button>
+          <button class="btn-next-item" id="btn-next-item" onclick="nextPracticeItem()"><span data-i18n="btn.next">下一个</span> ▶</button>
         </div>
       </div>
     </div>
@@ -1553,18 +1553,18 @@
   <div id="pronunciation-complete-modal" class="pronunciation-complete-modal hidden">
     <div class="pronunciation-complete-content">
       <div class="complete-celebration">🎉</div>
-      <div class="complete-title">练习完成!</div>
+      <div class="complete-title" data-i18n="pronunciation.complete">练习完成!</div>
       <div class="complete-summary">
         <div class="summary-item">
-          <span class="summary-label">练习数量</span>
+          <span class="summary-label" data-i18n="pronunciation.practiceCount">练习数量</span>
           <span class="summary-value" id="summary-count">10</span>
         </div>
         <div class="summary-item">
-          <span class="summary-label">平均得分</span>
+          <span class="summary-label" data-i18n="pronunciation.avgScore">平均得分</span>
           <span class="summary-value" id="summary-avg-score">85</span>
         </div>
         <div class="summary-item">
-          <span class="summary-label">最高得分</span>
+          <span class="summary-label" data-i18n="pronunciation.maxScore">最高得分</span>
           <span class="summary-value" id="summary-max-score">95</span>
         </div>
       </div>
@@ -1572,7 +1572,7 @@
         <span class="reward-icon">⭐</span>
         <span class="reward-text" id="pronunciation-reward">+15 积分</span>
       </div>
-      <button class="btn-pronunciation-done" onclick="closePronunciationComplete()">太棒了!</button>
+      <button class="btn-pronunciation-done" onclick="closePronunciationComplete()" data-i18n="feedback.awesome">太棒了!</button>
     </div>
   </div>
 
@@ -1581,23 +1581,23 @@
     <nav class="bottom-nav">
       <div class="nav-item active" onclick="navigateTo('home')">
         <span class="nav-icon">🏠</span>
-        <span class="nav-label">首页</span>
+        <span class="nav-label" data-i18n="nav.home">首页</span>
       </div>
       <div class="nav-item" onclick="navigateTo('home'); filterHomeCards('learn')">
         <span class="nav-icon">📚</span>
-        <span class="nav-label">学习</span>
+        <span class="nav-label" data-i18n="nav.learn">学习</span>
       </div>
       <div class="nav-item" onclick="navigateTo('home'); filterHomeCards('play')">
         <span class="nav-icon">🎮</span>
-        <span class="nav-label">游戏</span>
+        <span class="nav-label" data-i18n="nav.play">游戏</span>
       </div>
       <div class="nav-item" onclick="navigateTo('home'); filterHomeCards('tools')">
         <span class="nav-icon">🔧</span>
-        <span class="nav-label">工具</span>
+        <span class="nav-label" data-i18n="nav.tools">工具</span>
       </div>
       <div class="nav-item" onclick="navigateTo('profile')">
         <span class="nav-icon">👤</span>
-        <span class="nav-label">我的</span>
+        <span class="nav-label" data-i18n="nav.profile">我的</span>
       </div>
     </nav>
   </div>
@@ -1605,7 +1605,7 @@
   <!-- AI聊天入口按钮（悬浮） -->
   <button id="ai-chat-fab" class="ai-chat-fab" onclick="openAIChat()">
     <span class="fab-icon">🤖</span>
-    <span class="fab-text">小助手</span>
+    <span class="fab-text" data-i18n="ai.assistant">小助手</span>
   </button>
 
   <!-- AI聊天弹窗 -->
@@ -1615,10 +1615,10 @@
       <div class="ai-chat-header">
         <div class="ai-chat-title">
           <span>🤖</span>
-          <span>学习小助手</span>
+          <span data-i18n="ai.title">学习小助手</span>
         </div>
         <div class="ai-chat-actions">
-          <button onclick="clearAIChat()" title="清空聊天">🗑️</button>
+          <button onclick="clearAIChat()" data-i18n-title="ai.clearChat" title="清空聊天">🗑️</button>
           <button onclick="closeAIChat()">✕</button>
         </div>
       </div>
@@ -1627,14 +1627,14 @@
       <div id="ai-chat-download-prompt" class="ai-chat-state hidden">
         <div class="download-prompt-content">
           <span class="prompt-icon">🤖</span>
-          <h3>启用AI小助手</h3>
-          <p>需要下载约 <strong>300MB</strong> 的数据</p>
-          <p class="prompt-note">下载后可以离线使用哦~</p>
+          <h3 data-i18n="ai.enableAssistant">启用AI小助手</h3>
+          <p data-i18n="ai.downloadSize">需要下载约 <strong>300MB</strong> 的数据</p>
+          <p class="prompt-note" data-i18n="ai.offlineNote">下载后可以离线使用哦~</p>
           <div class="download-buttons">
-            <button class="btn-download-start" onclick="startAIModelDownload()">
+            <button class="btn-download-start" onclick="startAIModelDownload()" data-i18n="ai.startDownload">
               开始下载
             </button>
-            <button class="btn-download-cancel" onclick="closeAIChat()">
+            <button class="btn-download-cancel" onclick="closeAIChat()" data-i18n="ai.later">
               以后再说
             </button>
           </div>
@@ -1645,7 +1645,7 @@
       <div id="ai-chat-loading" class="ai-chat-state hidden">
         <div class="loading-content">
           <span class="loading-icon">🤖</span>
-          <h3>小助手正在准备中...</h3>
+          <h3 data-i18n="ai.preparing">小助手正在准备中...</h3>
           <div class="loading-bar">
             <div class="loading-bar-fill" id="ai-loading-bar-fill"></div>
           </div>
@@ -1662,17 +1662,17 @@
         <div class="ai-chat-messages" id="ai-chat-messages">
           <div class="chat-welcome">
             <span class="welcome-emoji">🤖</span>
-            <p>你好呀！我是学习小助手~</p>
-            <p>有什么想问我的吗？</p>
+            <p data-i18n="ai.welcome1">你好呀！我是学习小助手~</p>
+            <p data-i18n="ai.welcome2">有什么想问我的吗？</p>
           </div>
         </div>
 
         <!-- 预设问题 -->
         <div class="ai-preset-questions">
-          <button onclick="usePresetQuestion('给我讲个小故事')">📖 讲故事</button>
-          <button onclick="usePresetQuestion('为什么天是蓝色的')">🌤️ 为什么</button>
-          <button onclick="usePresetQuestion('1+1等于多少')">🔢 数学题</button>
-          <button onclick="usePresetQuestion('苹果用英语怎么说')">🍎 学英语</button>
+          <button onclick="usePresetQuestion('给我讲个小故事')">📖 <span data-i18n="ai.preset.story">讲故事</span></button>
+          <button onclick="usePresetQuestion('为什么天是蓝色的')">🌤️ <span data-i18n="ai.preset.why">为什么</span></button>
+          <button onclick="usePresetQuestion('1+1等于多少')">🔢 <span data-i18n="ai.preset.math">数学题</span></button>
+          <button onclick="usePresetQuestion('苹果用英语怎么说')">🍎 <span data-i18n="ai.preset.english">学英语</span></button>
         </div>
 
         <!-- 语音模式开关 -->
@@ -1681,7 +1681,7 @@
             <input type="checkbox" id="ai-auto-speak" checked>
             <span class="voice-slider"></span>
           </label>
-          <span>自动朗读回复</span>
+          <span data-i18n="ai.autoRead">自动朗读回复</span>
         </div>
 
         <!-- 输入区域 -->
@@ -1692,18 +1692,19 @@
           <input
             type="text"
             id="ai-chat-input"
+            data-i18n-placeholder="ai.inputPlaceholder"
             placeholder="输入或点击麦克风说话..."
             onkeypress="if(event.key==='Enter')sendAIMessage()"
           >
           <button class="btn-send" onclick="sendAIMessage()">
-            发送 ✨
+            <span data-i18n="ai.send">发送</span> ✨
           </button>
         </div>
 
         <!-- 语音状态提示 -->
         <div id="ai-voice-status" class="ai-voice-status hidden">
           <span class="voice-wave">🎙️</span>
-          <span id="ai-voice-text">正在听你说话...</span>
+          <span id="ai-voice-text" data-i18n="ai.listening">正在听你说话...</span>
         </div>
       </div>
 
@@ -1711,8 +1712,8 @@
       <div id="ai-chat-error" class="ai-chat-state hidden">
         <div class="error-content">
           <span class="error-icon">😢</span>
-          <p id="ai-error-message">暂不支持</p>
-          <button onclick="closeAIChat()">知道了</button>
+          <p id="ai-error-message" data-i18n="ai.notSupported">暂不支持</p>
+          <button onclick="closeAIChat()" data-i18n="ai.gotIt">知道了</button>
         </div>
       </div>
     </div>
@@ -1729,14 +1730,14 @@
   <div id="parent-settings-modal" class="modal-overlay hidden">
     <div class="parent-settings-content">
       <div class="modal-header">
-        <h2>👨‍👩‍👧 家长设置</h2>
+        <h2>👨‍👩‍👧 <span data-i18n="parent.settings">家长设置</span></h2>
         <button class="btn-close" onclick="closeParentSettings()">✕</button>
       </div>
 
       <div class="settings-body">
         <!-- Bark URL 设置 -->
         <div class="setting-section">
-          <h3>📱 Bark 推送设置</h3>
+          <h3>📱 <span data-i18n="parent.barkSettings">Bark 推送设置</span></h3>
           <p class="setting-desc">
             1. 在 iPhone 上安装 <strong>Bark</strong> App<br>
             2. 打开 Bark，复制推送 URL<br>
@@ -1774,28 +1775,28 @@
 
         <!-- 通知选项 -->
         <div class="setting-section">
-          <h3>🔔 通知选项</h3>
+          <h3>🔔 <span data-i18n="parent.notifyOptions">通知选项</span></h3>
 
           <label class="setting-item">
-            <span>成就通知</span>
+            <span data-i18n="parent.notifyAchievement">成就通知</span>
             <input type="checkbox" id="notify-achievement" checked
                    onchange="updateNotifySetting('notifyAchievement', this.checked)">
           </label>
 
           <label class="setting-item">
-            <span>学习进度通知</span>
+            <span data-i18n="parent.notifyProgress">学习进度通知</span>
             <input type="checkbox" id="notify-progress" checked
                    onchange="updateNotifySetting('notifyProgress', this.checked)">
           </label>
 
           <label class="setting-item">
-            <span>消息通知</span>
+            <span data-i18n="parent.notifyMessage">消息通知</span>
             <input type="checkbox" id="notify-message" checked
                    onchange="updateNotifySetting('notifyMessage', this.checked)">
           </label>
 
           <label class="setting-item">
-            <span>每答几题通知</span>
+            <span data-i18n="parent.notifyThreshold">每答几题通知</span>
             <select id="progress-threshold"
                     onchange="updateNotifySetting('progressThreshold', parseInt(this.value))">
               <option value="5">5题</option>
@@ -1808,7 +1809,7 @@
       </div>
 
       <div class="modal-footer">
-        <button class="btn-primary" onclick="closeParentSettings()">完成</button>
+        <button class="btn-primary" onclick="closeParentSettings()" data-i18n="btn.finish">完成</button>
       </div>
     </div>
   </div>
@@ -1817,17 +1818,17 @@
   <div id="message-parent-modal" class="modal-overlay hidden">
     <div class="message-parent-content">
       <div class="modal-header">
-        <h2>💬 给爸爸妈妈发消息</h2>
+        <h2>💬 <span data-i18n="parent.message">给爸爸妈妈发消息</span></h2>
         <button class="btn-close" onclick="closeMessageToParent()">✕</button>
       </div>
 
       <div class="message-body">
         <!-- 预设消息 -->
         <div class="preset-messages">
-          <button onclick="usePresetMessage('我想你们了~')">🥰 想你们了</button>
-          <button onclick="usePresetMessage('我饿了，想吃东西')">🍔 我饿了</button>
-          <button onclick="usePresetMessage('我完成学习任务啦！')">✅ 完成任务</button>
-          <button onclick="usePresetMessage('我有问题想问你们')">❓ 有问题</button>
+          <button onclick="usePresetMessage('我想你们了~')">🥰 <span data-i18n="parent.preset.miss">想你们了</span></button>
+          <button onclick="usePresetMessage('我饿了，想吃东西')">🍔 <span data-i18n="parent.preset.hungry">我饿了</span></button>
+          <button onclick="usePresetMessage('我完成学习任务啦！')">✅ <span data-i18n="parent.preset.done">完成任务</span></button>
+          <button onclick="usePresetMessage('我有问题想问你们')">❓ <span data-i18n="parent.preset.question">有问题</span></button>
         </div>
 
         <!-- 输入区域 -->
@@ -1838,12 +1839,13 @@
           <input
             type="text"
             id="parent-message-input"
+            data-i18n-placeholder="parent.inputPlaceholder"
             placeholder="输入或说出你想说的话..."
           >
         </div>
 
         <button id="send-parent-msg-btn" class="btn-send-message" onclick="sendMessageToParent()">
-          发送给爸爸妈妈 💌
+          <span data-i18n="parent.message.send">发送给爸爸妈妈</span> 💌
         </button>
       </div>
     </div>
@@ -1854,8 +1856,8 @@
     <div class="drawing-container">
       <!-- 顶部工具栏 -->
       <div class="drawing-header">
-        <button class="btn-back" onclick="closeDrawing()">← 返回</button>
-        <h2>🎨 画画创作</h2>
+        <button class="btn-back" onclick="closeDrawing()" data-i18n="btn.back">← 返回</button>
+        <h2>🎨 <span data-i18n="drawing.title">画画创作</span></h2>
         <div class="header-buttons">
           <button class="btn-template" onclick="showTemplatePanel()" title="涂色模板">📋</button>
           <button class="btn-sticker" onclick="showStickerPanel()" title="贴纸印章">🏷️</button>
@@ -1868,7 +1870,7 @@
       <!-- 涂色模板面板 -->
       <div id="template-panel" class="template-panel hidden">
         <div class="template-header">
-          <span>🎨 选择涂色模板</span>
+          <span>🎨 <span data-i18n="drawing.template">选择涂色模板</span></span>
           <button onclick="showTemplatePanel()">✕</button>
         </div>
         <div class="template-grid"></div>
@@ -1877,7 +1879,7 @@
       <!-- 贴纸印章面板 -->
       <div id="sticker-panel" class="sticker-panel hidden">
         <div class="sticker-header">
-          <span>🏷️ 选择贴纸印章</span>
+          <span>🏷️ <span data-i18n="drawing.stickers">选择贴纸印章</span></span>
           <button onclick="hideStickerPanel()">✕</button>
         </div>
         <div class="sticker-content"></div>
@@ -1892,7 +1894,7 @@
       <div class="drawing-toolbar">
         <!-- 基础画笔 -->
         <div class="toolbar-section">
-          <div class="toolbar-label">基础</div>
+          <div class="toolbar-label" data-i18n="drawing.tools.basic">基础</div>
           <div class="tool-buttons">
             <button class="drawing-tool-btn active" data-tool="pencil" onclick="setDrawingTool('pencil')" title="铅笔">✏️</button>
             <button class="drawing-tool-btn" data-tool="marker" onclick="setDrawingTool('marker')" title="马克笔">🖊️</button>
@@ -1905,7 +1907,7 @@
 
         <!-- 魔法画笔 -->
         <div class="toolbar-section magic-section">
-          <div class="toolbar-label">✨魔法</div>
+          <div class="toolbar-label">✨<span data-i18n="drawing.tools.magic">魔法</span></div>
           <div class="tool-buttons">
             <button class="drawing-tool-btn magic-btn" data-tool="neon" onclick="setDrawingTool('neon')" title="霓虹发光">💡</button>
             <button class="drawing-tool-btn magic-btn" data-tool="rainbow" onclick="setDrawingTool('rainbow')" title="彩虹">🌈</button>
@@ -1915,7 +1917,7 @@
 
         <!-- 对称模式 -->
         <div class="toolbar-section symmetry-section">
-          <div class="toolbar-label">🪞对称</div>
+          <div class="toolbar-label">🪞<span data-i18n="drawing.tools.symmetry">对称</span></div>
           <div class="tool-buttons">
             <button class="symmetry-mode-btn" data-mode="off" onclick="setSymmetry('off')" title="关闭">⬜</button>
             <button class="symmetry-mode-btn" data-mode="horizontal" onclick="setSymmetry('horizontal')" title="左右对称">↔️</button>
@@ -1926,7 +1928,7 @@
 
         <!-- 颜色选择 -->
         <div class="toolbar-section">
-          <div class="toolbar-label">颜色</div>
+          <div class="toolbar-label" data-i18n="drawing.tools.color">颜色</div>
           <div class="color-buttons">
             <button class="drawing-color-btn" data-color="#FF6B6B" style="background:#FF6B6B" onclick="setDrawingColor('#FF6B6B')"></button>
             <button class="drawing-color-btn" data-color="#FF8E53" style="background:#FF8E53" onclick="setDrawingColor('#FF8E53')"></button>
@@ -1943,7 +1945,7 @@
 
         <!-- 大小调节 -->
         <div class="toolbar-section">
-          <div class="toolbar-label">大小</div>
+          <div class="toolbar-label" data-i18n="drawing.tools.size">大小</div>
           <div class="size-control">
             <input type="range" id="brush-size-slider" min="2" max="50" value="8" onchange="setDrawingSize(this.value)" oninput="setDrawingSize(this.value)">
             <div id="brush-size-preview" class="size-preview"></div>
@@ -1952,7 +1954,7 @@
 
         <!-- 操作按钮 -->
         <div class="toolbar-section">
-          <div class="toolbar-label">操作</div>
+          <div class="toolbar-label" data-i18n="drawing.tools.actions">操作</div>
           <div class="action-buttons">
             <button class="drawing-action-btn" onclick="undoDrawing()" title="撤销">↩️</button>
             <button class="drawing-action-btn" onclick="redoDrawing()" title="重做">↪️</button>
@@ -1968,8 +1970,8 @@
     <div class="music-container">
       <!-- 顶部标题 -->
       <div class="music-header">
-        <button class="btn-back" onclick="closeMusic()">← 返回</button>
-        <h2>🎵 音乐创作</h2>
+        <button class="btn-back" onclick="closeMusic()" data-i18n="btn.back">← 返回</button>
+        <h2>🎵 <span data-i18n="music.title">音乐创作</span></h2>
         <button class="btn-save" onclick="saveMusicComposition()">💾</button>
       </div>
 
@@ -1977,15 +1979,15 @@
       <div class="music-tabs">
         <button class="music-tab active" data-mode="piano" onclick="switchMusicMode('piano')">
           <span class="tab-icon">🎹</span>
-          <span class="tab-name">魔法钢琴</span>
+          <span class="tab-name" data-i18n="music.piano">魔法钢琴</span>
         </button>
         <button class="music-tab" data-mode="drums" onclick="switchMusicMode('drums')">
           <span class="tab-icon">🥁</span>
-          <span class="tab-name">节奏鼓点</span>
+          <span class="tab-name" data-i18n="music.drums">节奏鼓点</span>
         </button>
         <button class="music-tab" data-mode="sequencer" onclick="switchMusicMode('sequencer')">
           <span class="tab-icon">🎨</span>
-          <span class="tab-name">音乐画板</span>
+          <span class="tab-name" data-i18n="music.sequencer">音乐画板</span>
         </button>
       </div>
 
@@ -2167,8 +2169,8 @@
     <div class="writing-container">
       <!-- 顶部标题 -->
       <div class="writing-header">
-        <button class="btn-back" onclick="closeWriting()">← 返回</button>
-        <h2>✍️ 书写练习</h2>
+        <button class="btn-back" onclick="closeWriting()" data-i18n="btn.back">← 返回</button>
+        <h2>✍️ <span data-i18n="writing.title">书写练习</span></h2>
         <div class="header-spacer"></div>
       </div>
 
@@ -2176,11 +2178,11 @@
       <div class="writing-tabs">
         <button class="writing-tab active" data-mode="chinese" onclick="switchWritingMode('chinese')">
           <span class="tab-icon">📝</span>
-          <span class="tab-name">汉字笔顺</span>
+          <span class="tab-name" data-i18n="writing.strokeOrder">汉字笔顺</span>
         </button>
         <button class="writing-tab" data-mode="free" onclick="switchWritingMode('free')">
           <span class="tab-icon">🎯</span>
-          <span class="tab-name">自由练习</span>
+          <span class="tab-name" data-i18n="writing.freePractice">自由练习</span>
         </button>
       </div>
 
@@ -2206,25 +2208,25 @@
         <!-- 控制按钮 -->
         <div class="char-controls">
           <button id="animate-btn" class="char-btn animate-btn" onclick="animateCharacter()">
-            ▶️ 播放笔顺
+            ▶️ <span data-i18n="writing.playStroke">播放笔顺</span>
           </button>
           <button id="start-quiz-btn" class="char-btn quiz-btn" onclick="startCharacterQuiz()">
-            ✏️ 开始练习
+            ✏️ <span data-i18n="writing.startPractice">开始练习</span>
           </button>
           <button class="char-btn reset-btn" onclick="resetCharacter()">
-            🔄 重置
+            🔄 <span data-i18n="writing.reset">重置</span>
           </button>
         </div>
 
         <!-- 导航按钮 -->
         <div class="char-navigation">
-          <button id="prev-char-btn" class="nav-btn" onclick="prevCharacter()">◀️ 上一个</button>
-          <button id="next-char-btn" class="nav-btn" onclick="nextCharacter()">下一个 ▶️</button>
+          <button id="prev-char-btn" class="nav-btn" onclick="prevCharacter()">◀️ <span data-i18n="writing.prev">上一个</span></button>
+          <button id="next-char-btn" class="nav-btn" onclick="nextCharacter()"><span data-i18n="writing.next">下一个</span> ▶️</button>
         </div>
 
         <!-- 汉字列表 -->
         <div class="char-list-section">
-          <h3>选择汉字</h3>
+          <h3 data-i18n="writing.selectChar">选择汉字</h3>
           <div id="character-list" class="character-list"></div>
         </div>
       </div>
@@ -2285,14 +2287,14 @@
   <div id="life-skills-modal" class="life-skills-modal hidden">
     <div class="life-skills-modal-content">
       <button class="modal-close-btn" onclick="closeLifeSkills()">✕</button>
-      <h2 class="life-skills-title">🏠 生活技能</h2>
+      <h2 class="life-skills-title">🏠 <span data-i18n="lifeSkills.title">生活技能</span></h2>
       <div id="life-skills-select" class="life-skills-select">
         <!-- 模块选择 -->
       </div>
       <div id="life-skills-game" class="life-skills-game hidden">
         <!-- 游戏区域 -->
       </div>
-      <button class="btn-back-select" id="btn-back-life-select" onclick="backToLifeSkillsSelect()">← 返回选择</button>
+      <button class="btn-back-select" id="btn-back-life-select" onclick="backToLifeSkillsSelect()" data-i18n="lifeSkills.backToSelect">← 返回选择</button>
     </div>
   </div>
 
@@ -2300,13 +2302,13 @@
   <div id="life-skills-complete-modal" class="life-skills-complete-modal hidden">
     <div class="life-skills-complete-content">
       <div class="complete-celebration">🎉</div>
-      <h3 class="complete-title" id="life-skills-complete-title">练习完成!</h3>
+      <h3 class="complete-title" id="life-skills-complete-title" data-i18n="lifeSkills.complete">练习完成!</h3>
       <div class="complete-stats" id="life-skills-complete-stats">
         <!-- 统计信息 -->
       </div>
       <div class="complete-actions">
-        <button class="btn-play-again" onclick="playLifeSkillsAgain()">再玩一次</button>
-        <button class="btn-back-menu" onclick="closeLifeSkillsComplete()">返回</button>
+        <button class="btn-play-again" onclick="playLifeSkillsAgain()" data-i18n="lifeSkills.playAgain">再玩一次</button>
+        <button class="btn-back-menu" onclick="closeLifeSkillsComplete()" data-i18n="btn.back">返回</button>
       </div>
     </div>
   </div>
@@ -2349,9 +2351,9 @@
       <div class="song-controls">
         <!-- 速度控制 -->
         <div class="speed-control">
-          <button class="speed-btn" data-speed="0.7" onclick="setSongSpeed(0.7)">🐢 慢</button>
-          <button class="speed-btn active" data-speed="1" onclick="setSongSpeed(1)">正常</button>
-          <button class="speed-btn" data-speed="1.3" onclick="setSongSpeed(1.3)">🐇 快</button>
+          <button class="speed-btn" data-speed="0.7" onclick="setSongSpeed(0.7)">🐢 <span data-i18n="song.speed.slow">慢</span></button>
+          <button class="speed-btn active" data-speed="1" onclick="setSongSpeed(1)" data-i18n="song.speed.normal">正常</button>
+          <button class="speed-btn" data-speed="1.3" onclick="setSongSpeed(1.3)">🐇 <span data-i18n="song.speed.fast">快</span></button>
         </div>
 
         <!-- 播放控制 -->

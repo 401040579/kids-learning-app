@@ -302,5 +302,130 @@ I18n.translations['ja'] = {
   'photo.options': '写真オプション',
   'photo.take': '写真を撮る',
   'photo.choose': '写真を選ぶ',
-  'photo.remove': '写真を削除'
+  'photo.remove': '写真を削除',
+
+  // Bottom Navigation
+  'nav.home': 'ホーム',
+  'nav.learn': '学習',
+  'nav.play': '遊ぶ',
+  'nav.tools': 'ツール',
+  'nav.profile': 'マイ',
+
+  // Sleep Music
+  'sleep.title': '睡眠音楽',
+  'sleep.selectMusic': '曲を選択',
+  'sleep.autoStop': '自動停止',
+  'sleep.noLimit': '制限なし',
+  'sleep.minutes': '分',
+  'sleep.chooseMusic': '音楽を選ぶ',
+
+  // Puzzle Extended
+  'puzzle.selectDifficulty': '難易度を選択',
+  'puzzle.selectTheme': 'テーマを選択',
+  'puzzle.selectImage': '画像を選択',
+  'puzzle.restart': 'やり直し',
+  'puzzle.reference': '参考画像',
+  'puzzle.dragHint': 'ピースを上のボードにドラッグ',
+  'puzzle.backToSelect': '← 選択に戻る',
+
+  // Achievements Extended
+  'achievements.unlocked': '実績解除!',
+  'achievements.awesome': 'すごい!',
+
+  // Check-in Extended
+  'checkin.today': '今日のチェックイン',
+  'checkin.startJourney': 'チェックインを始めよう!',
+  'checkin.checkInNow': '今すぐチェックイン',
+  'checkin.later': '後で',
+  'checkin.success': 'チェックイン成功!',
+  'checkin.keepGoing': '頑張って!',
+
+  // Memory Extended
+  'memory.playAgain': 'もう一度',
+  'memory.backToSelect': '選択に戻る',
+
+  // Pet
+  'pet.title': '学習ペット',
+  'pet.selectHint': '仲間を選ぼう:',
+  'pet.namePlaceholder': 'ペットに名前をつけて...',
+  'pet.adopt': 'ペットを飼う',
+  'pet.happiness': '幸福度',
+  'pet.fullness': '満腹度',
+  'pet.experience': '経験値',
+  'pet.feed': 'えさ',
+  'pet.pet': 'なでる',
+  'pet.dress': '着せ替え',
+  'pet.evolved': 'ペットが進化した!',
+
+  // Report Extended
+  'report.all': '全期間',
+  'report.share': 'レポートを共有',
+
+  // Picture Book
+  'pictureBook.title': '絵本',
+  'pictureBook.backToShelf': '← 本棚に戻る',
+  'pictureBook.autoRead': '自動朗読',
+  'pictureBook.prevPage': '前のページ',
+  'pictureBook.nextPage': '次のページ',
+  'pictureBook.finished': '読み終わった!',
+  'pictureBook.completeMessage': 'よくできました！また一冊読み終えたね！',
+  'pictureBook.readAgain': 'もう一度読む',
+
+  // Pronunciation
+  'pronunciation.title': '音読練習',
+  'pronunciation.listen': 'お手本を聞く',
+  'pronunciation.record': 'タップして録音',
+  'pronunciation.ready': '準備完了',
+  'pronunciation.complete': '練習完了!',
+  'pronunciation.practiceCount': '練習回数',
+  'pronunciation.avgScore': '平均スコア',
+  'pronunciation.maxScore': '最高スコア',
+
+  // AI Chat
+  'ai.assistant': 'アシスタント',
+  'ai.title': '学習アシスタント',
+  'ai.clearChat': 'チャットを消去',
+  'ai.enableAssistant': 'AIアシスタントを有効にする',
+  'ai.downloadSize': '約300MBのデータをダウンロード',
+  'ai.offlineNote': 'ダウンロード後はオフラインで使えます~',
+  'ai.startDownload': 'ダウンロード開始',
+  'ai.later': '後で',
+  'ai.preparing': 'アシスタントを準備中...',
+  'ai.welcome1': 'こんにちは！学習アシスタントです~',
+  'ai.welcome2': '何を聞きたい？',
+  'ai.preset.story': 'お話',
+  'ai.preset.why': 'なぜ',
+  'ai.preset.math': '算数',
+  'ai.preset.english': '英語',
+  'ai.autoRead': '自動で読み上げ',
+  'ai.inputPlaceholder': '入力またはマイクをタップ...',
+  'ai.send': '送信',
+  'ai.listening': '聞いています...',
+  'ai.notSupported': '非対応',
+  'ai.gotIt': 'わかった',
+
+  // Parent Settings
+  'parent.barkSettings': 'Bark通知設定',
+  'parent.notifyOptions': '通知オプション',
+  'parent.notifyAchievement': '実績通知',
+  'parent.notifyProgress': '学習進捗通知',
+  'parent.notifyMessage': 'メッセージ通知',
+  'parent.notifyThreshold': '何問ごとに通知',
+  'parent.inputPlaceholder': '入力または話して...',
+
+  // Writing
+  'writing.title': '書き練習',
+  'writing.strokeOrder': '筆順',
+  'writing.freePractice': '自由練習',
+  'writing.playStroke': '筆順を再生',
+  'writing.startPractice': '練習開始',
+  'writing.reset': 'リセット',
+  'writing.prev': '前へ',
+  'writing.next': '次へ',
+  'writing.selectChar': '文字を選ぶ',
+
+  // Life Skills Extended
+  'lifeSkills.backToSelect': '← 選択に戻る',
+  'lifeSkills.complete': '練習完了!',
+  'lifeSkills.playAgain': 'もう一度'
 };
