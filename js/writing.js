@@ -58,6 +58,8 @@ const WritingApp = {
     currentIndex: 0,
     writer: null,
     isQuizzing: false,
+    isAnimating: false,
+    animationLoopId: null,
     totalMistakes: 0,
     strokesCompleted: 0,
     totalStrokes: 0
@@ -144,12 +146,16 @@ const WritingApp = {
     document.getElementById('char-pinyin').textContent = item.pinyin;
     document.getElementById('char-meaning').textContent = item.meaning;
 
+    // 停止之前的动画
+    this.stopLoopingAnimation();
+
     // 清除旧的 writer
     const container = document.getElementById('hanzi-writer-container');
     container.innerHTML = '';
 
     // 重置状态
     this.chinese.isQuizzing = false;
+    this.chinese.isAnimating = false;
     this.chinese.totalMistakes = 0;
     this.chinese.strokesCompleted = 0;
     this.updateQuizUI();
@@ -183,13 +189,18 @@ const WritingApp = {
         }
       });
 
-      // 获取笔画数
+      // 获取笔画数并开始循环动画
       setTimeout(() => {
         if (this.chinese.writer && this.chinese.writer._character) {
           this.chinese.totalStrokes = this.chinese.writer._character.strokes.length;
           this.updateStrokeInfo();
+          // 自动开始循环动画
+          this.startLoopingAnimation();
         }
       }, 500);
+
+      // 添加触摸事件监听，触摸时自动切换到书写模式
+      this.bindWriterTouchEvents(container);
     } else {
       container.innerHTML = '<p style="color: red;">Hanzi Writer 加载失败</p>';
     }
@@ -199,7 +210,7 @@ const WritingApp = {
     document.getElementById('next-char-btn').disabled = index === this.chinese.characters.length - 1;
   },
 
-  // 播放笔顺动画
+  // 播放笔顺动画（单次）
   animateCharacter() {
     if (this.chinese.writer) {
       this.chinese.isQuizzing = false;
@@ -212,9 +223,65 @@ const WritingApp = {
     }
   },
 
+  // 开始循环播放动画
+  startLoopingAnimation() {
+    if (!this.chinese.writer) return;
+
+    this.chinese.isAnimating = true;
+    this.chinese.isQuizzing = false;
+    this.updateQuizUI();
+
+    const loopAnimation = () => {
+      if (!this.chinese.isAnimating || this.chinese.isQuizzing) return;
+
+      this.chinese.writer.animateCharacter({
+        onComplete: () => {
+          // 动画完成后延迟一下再重新播放
+          if (this.chinese.isAnimating && !this.chinese.isQuizzing) {
+            this.chinese.animationLoopId = setTimeout(loopAnimation, 800);
+          }
+        }
+      });
+    };
+
+    loopAnimation();
+  },
+
+  // 停止循环动画
+  stopLoopingAnimation() {
+    this.chinese.isAnimating = false;
+    if (this.chinese.animationLoopId) {
+      clearTimeout(this.chinese.animationLoopId);
+      this.chinese.animationLoopId = null;
+    }
+    if (this.chinese.writer) {
+      this.chinese.writer.cancelQuiz();
+    }
+  },
+
+  // 绑定触摸事件 - 触摸时自动切换到书写模式
+  bindWriterTouchEvents(container) {
+    const startWritingOnTouch = (e) => {
+      // 如果已经在练习模式，不需要处理
+      if (this.chinese.isQuizzing) return;
+
+      // 停止循环动画
+      this.stopLoopingAnimation();
+
+      // 自动开始练习
+      this.startQuiz();
+    };
+
+    // 监听 pointer 事件（支持触摸和 Apple Pencil）
+    container.addEventListener('pointerdown', startWritingOnTouch, { once: false });
+  },
+
   // 开始 Quiz 模式
   startQuiz() {
     if (!this.chinese.writer) return;
+
+    // 停止循环动画
+    this.stopLoopingAnimation();
 
     this.chinese.isQuizzing = true;
     this.chinese.totalMistakes = 0;
@@ -258,6 +325,13 @@ const WritingApp = {
 
         this.renderCharacterList();
         this.updateQuizUI();
+
+        // 完成后延迟重新开始循环动画
+        setTimeout(() => {
+          if (!this.chinese.isQuizzing) {
+            this.startLoopingAnimation();
+          }
+        }, 2000);
       }
     });
   },
@@ -265,6 +339,7 @@ const WritingApp = {
   // 重置当前汉字
   resetCharacter() {
     if (this.chinese.writer) {
+      this.stopLoopingAnimation();
       this.chinese.writer.cancelQuiz();
       this.chinese.isQuizzing = false;
       this.chinese.totalMistakes = 0;
