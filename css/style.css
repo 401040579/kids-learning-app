@@ -11016,6 +11016,7 @@ body {
 }
 
 .song-practice-content {
+  position: relative;
   background: white;
   border-radius: 24px;
   width: 100%;
