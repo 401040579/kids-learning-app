@@ -83,6 +83,12 @@ const I18n = {
 
   // 应用翻译到所有带 data-i18n 属性的元素
   applyTranslations() {
+    // 更新浏览器标题
+    const appTitle = this.t('app.fullTitle');
+    if (appTitle && appTitle !== 'app.fullTitle') {
+      document.title = appTitle;
+    }
+
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       const translation = this.t(key);

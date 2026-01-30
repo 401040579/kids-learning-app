@@ -310,13 +310,24 @@ const PictureBook = {
     }
   ],
 
-  // 分类
+  // 分类（动态获取本地化名称）
+  getCategories() {
+    return [
+      { id: 'all', name: I18n.t('pictureBook.cat.all') || '全部', icon: '📚' },
+      { id: 'classic', name: I18n.t('pictureBook.cat.classic') || '经典童话', icon: '👑' },
+      { id: 'fable', name: I18n.t('pictureBook.cat.fable') || '寓言故事', icon: '🦊' },
+      { id: 'science', name: I18n.t('pictureBook.cat.science') || '科普知识', icon: '🔬' },
+      { id: 'habit', name: I18n.t('pictureBook.cat.habit') || '好习惯', icon: '⭐' }
+    ];
+  },
+
+  // 分类ID列表（用于过滤）
   categories: [
-    { id: 'all', name: '全部', icon: '📚' },
-    { id: 'classic', name: '经典童话', icon: '👑' },
-    { id: 'fable', name: '寓言故事', icon: '🦊' },
-    { id: 'science', name: '科普知识', icon: '🔬' },
-    { id: 'habit', name: '好习惯', icon: '⭐' }
+    { id: 'all' },
+    { id: 'classic' },
+    { id: 'fable' },
+    { id: 'science' },
+    { id: 'habit' }
   ],
 
   // 当前状态
@@ -368,8 +379,9 @@ const PictureBook = {
     const container = document.getElementById('bookshelf-tabs');
     if (!container) return;
 
+    const categories = this.getCategories();
     let html = '';
-    this.categories.forEach((cat, index) => {
+    categories.forEach((cat, index) => {
       html += `
         <button class="book-category-tab ${index === 0 ? 'active' : ''}"
                 data-category="${cat.id}"
@@ -392,7 +404,7 @@ const PictureBook = {
       : this.books.filter(b => b.category === category);
 
     if (filteredBooks.length === 0) {
-      container.innerHTML = '<div class="no-books">暂无此类绘本</div>';
+      container.innerHTML = `<div class="no-books">${I18n.t('pictureBook.noBooks') || '暂无此类绘本'}</div>`;
       return;
     }
 
@@ -412,7 +424,7 @@ const PictureBook = {
               <span>${book.duration}</span>
             </div>
           </div>
-          ${isRead ? '<div class="book-read-badge">已读</div>' : ''}
+          ${isRead ? `<div class="book-read-badge">${I18n.t('pictureBook.readBadge') || '已读'}</div>` : ''}
           <button class="book-favorite-btn ${isFavorite ? 'active' : ''}"
                   onclick="event.stopPropagation(); toggleFavorite('${book.id}')">
             ${isFavorite ? '❤️' : '🤍'}
@@ -465,7 +477,7 @@ const PictureBook = {
 
     container.innerHTML = `
       <div class="reading-header">
-        <button class="btn-back-books" onclick="backToBookshelf()">← 返回</button>
+        <button class="btn-back-books" onclick="backToBookshelf()">${I18n.t('pictureBook.back') || '← 返回'}</button>
         <div class="reading-title">${this.currentBook.title}</div>
         <div class="reading-progress">${this.currentPage + 1}/${totalPages}</div>
       </div>
@@ -481,13 +493,13 @@ const PictureBook = {
 
       <div class="reading-controls">
         <button class="reading-nav-btn" onclick="prevPage()" ${this.currentPage === 0 ? 'disabled' : ''}>
-          ◀ 上一页
+          ◀ ${I18n.t('pictureBook.prevPage') || '上一页'}
         </button>
         <button class="reading-speak-btn" onclick="speakPageText()">
-          🔊 朗读
+          ${I18n.t('pictureBook.speak') || '🔊 朗读'}
         </button>
         <button class="reading-nav-btn" onclick="nextPage()" ${this.currentPage >= totalPages - 1 ? 'disabled' : ''}>
-          下一页 ▶
+          ${I18n.t('pictureBook.nextPage') || '下一页'} ▶
         </button>
       </div>
     `;
@@ -526,7 +538,7 @@ const PictureBook = {
       this.currentAudio.pause();
       this.currentAudio = null;
       if (speakBtn) {
-        speakBtn.innerHTML = '🔊 朗读';
+        speakBtn.innerHTML = I18n.t('pictureBook.speak') || '🔊 朗读';
         speakBtn.disabled = false;
       }
       return;
@@ -534,7 +546,7 @@ const PictureBook = {
 
     // 显示加载状态
     if (speakBtn) {
-      speakBtn.innerHTML = '⏳ 加载中...';
+      speakBtn.innerHTML = I18n.t('pictureBook.loading') || '⏳ 加载中...';
       speakBtn.disabled = true;
     }
 
@@ -551,7 +563,7 @@ const PictureBook = {
 
         // 更新按钮状态
         if (speakBtn) {
-          speakBtn.innerHTML = '⏹️ 停止';
+          speakBtn.innerHTML = I18n.t('pictureBook.stop') || '⏹️ 停止';
           speakBtn.disabled = false;
         }
 
@@ -559,7 +571,7 @@ const PictureBook = {
         audio.onended = () => {
           this.currentAudio = null;
           if (speakBtn) {
-            speakBtn.innerHTML = '🔊 朗读';
+            speakBtn.innerHTML = I18n.t('pictureBook.speak') || '🔊 朗读';
           }
         };
 
@@ -586,30 +598,31 @@ const PictureBook = {
       utterance.pitch = 1.1;
 
       if (speakBtn) {
-        speakBtn.innerHTML = '🔊 朗读中...';
+        speakBtn.innerHTML = I18n.t('pictureBook.speaking') || '🔊 朗读中...';
         speakBtn.disabled = false;
       }
 
       utterance.onend = () => {
         if (speakBtn) {
-          speakBtn.innerHTML = '🔊 朗读';
+          speakBtn.innerHTML = I18n.t('pictureBook.speak') || '🔊 朗读';
         }
       };
 
       speechSynthesis.speak(utterance);
     } else {
       if (speakBtn) {
-        speakBtn.innerHTML = '🔊 朗读';
+        speakBtn.innerHTML = I18n.t('pictureBook.speak') || '🔊 朗读';
         speakBtn.disabled = false;
       }
-      alert('您的浏览器不支持语音功能');
+      alert(I18n.t('pictureBook.notSupported') || '您的浏览器不支持语音功能');
     }
   },
 
   // 完成阅读
   finishReading() {
     const points = 15;
-    RewardSystem.addPoints(points, `读完了《${this.currentBook.title}》`);
+    const finishedMsg = (I18n.t('pictureBook.finishedReading') || '读完了《{title}》').replace('{title}', this.currentBook.title);
+    RewardSystem.addPoints(points, finishedMsg);
 
     // 检查成就
     if (typeof AchievementSystem !== 'undefined') {

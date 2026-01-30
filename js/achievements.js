@@ -192,15 +192,15 @@ const AchievementSystem = {
   // 获取所有分类
   getCategories() {
     return [
-      { id: 'beginner', name: '入门', icon: '🌟' },
-      { id: 'math', name: '数学', icon: '🔢' },
-      { id: 'english', name: '英语', icon: '🔤' },
-      { id: 'chinese', name: '中文', icon: '📝' },
-      { id: 'science', name: '科学', icon: '🔬' },
-      { id: 'checkin', name: '签到', icon: '📅' },
-      { id: 'score', name: '积分', icon: '💰' },
-      { id: 'review', name: '复习', icon: '📖' },
-      { id: 'special', name: '特殊', icon: '🌈' }
+      { id: 'beginner', name: I18n.t('achievements.cat.beginner') || '入门', icon: '🌟' },
+      { id: 'math', name: I18n.t('achievements.cat.math') || '数学', icon: '🔢' },
+      { id: 'english', name: I18n.t('achievements.cat.english') || '英语', icon: '🔤' },
+      { id: 'chinese', name: I18n.t('achievements.cat.chinese') || '中文', icon: '📝' },
+      { id: 'science', name: I18n.t('achievements.cat.science') || '科学', icon: '🔬' },
+      { id: 'checkin', name: I18n.t('achievements.cat.checkin') || '签到', icon: '📅' },
+      { id: 'score', name: I18n.t('achievements.cat.score') || '积分', icon: '💰' },
+      { id: 'review', name: I18n.t('achievements.cat.review') || '复习', icon: '📖' },
+      { id: 'special', name: I18n.t('achievements.cat.special') || '特殊', icon: '🌈' }
     ];
   },
 
@@ -272,22 +272,22 @@ function renderAchievementsList(filterCategory = 'all') {
     <div class="achievements-stats">
       <div class="achievements-stat">
         <span class="stat-number">${unlockedCount}</span>
-        <span class="stat-label">已解锁</span>
+        <span class="stat-label">${I18n.t('achievements.stats.unlocked') || '已解锁'}</span>
       </div>
       <div class="achievements-stat">
         <span class="stat-number">${totalAchievements}</span>
-        <span class="stat-label">总成就</span>
+        <span class="stat-label">${I18n.t('achievements.stats.total') || '总成就'}</span>
       </div>
       <div class="achievements-stat">
         <span class="stat-number">${Math.round(unlockedCount / totalAchievements * 100)}%</span>
-        <span class="stat-label">完成度</span>
+        <span class="stat-label">${I18n.t('achievements.stats.completion') || '完成度'}</span>
       </div>
     </div>
   `;
 
   // 分类筛选
   html += `<div class="achievement-categories">`;
-  html += `<button class="achievement-category-btn ${filterCategory === 'all' ? 'active' : ''}" onclick="renderAchievementsList('all')">全部</button>`;
+  html += `<button class="achievement-category-btn ${filterCategory === 'all' ? 'active' : ''}" onclick="renderAchievementsList('all')">${I18n.t('achievements.filter.all') || '全部'}</button>`;
   categories.forEach(cat => {
     html += `<button class="achievement-category-btn ${filterCategory === cat.id ? 'active' : ''}" onclick="renderAchievementsList('${cat.id}')">${cat.icon} ${cat.name}</button>`;
   });
@@ -305,19 +305,23 @@ function renderAchievementsList(filterCategory = 'all') {
     const progress = AchievementSystem.getProgress(achievement.id);
     const currentValue = AchievementSystem.getCurrentValue(achievement.id);
 
+    // 获取本地化的成就名称和描述
+    const achievementName = I18n.t(`achievements.${achievement.id}`) || achievement.name;
+    const achievementDesc = I18n.t(`achievements.${achievement.id}.desc`) || achievement.description;
+
     html += `
       <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'}">
         <div class="achievement-icon ${isUnlocked ? '' : 'grayscale'}">${achievement.icon}</div>
         <div class="achievement-info">
-          <div class="achievement-name">${achievement.name}</div>
-          <div class="achievement-desc">${achievement.description}</div>
+          <div class="achievement-name">${achievementName}</div>
+          <div class="achievement-desc">${achievementDesc}</div>
           ${!isUnlocked ? `
             <div class="achievement-progress-bar">
               <div class="achievement-progress-fill" style="width: ${progress}%"></div>
             </div>
             <div class="achievement-progress-text">${currentValue} / ${achievement.target}</div>
           ` : `
-            <div class="achievement-unlocked-badge">已解锁 ✓</div>
+            <div class="achievement-unlocked-badge">${I18n.t('achievements.unlockedBadge') || '已解锁 ✓'}</div>
           `}
         </div>
       </div>
