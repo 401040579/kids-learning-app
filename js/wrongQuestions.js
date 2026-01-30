@@ -220,25 +220,26 @@ function renderWrongQuestionsList(filterType = 'all') {
     <div class="wrong-questions-stats">
       <div class="wq-stat">
         <span class="wq-stat-number">${stats.unmastered}</span>
-        <span class="wq-stat-label">待复习</span>
+        <span class="wq-stat-label">${I18n.t('wrongQuestions.stats.toReview') || '待复习'}</span>
       </div>
       <div class="wq-stat">
         <span class="wq-stat-number">${stats.mastered}</span>
-        <span class="wq-stat-label">已掌握</span>
+        <span class="wq-stat-label">${I18n.t('wrongQuestions.stats.mastered') || '已掌握'}</span>
       </div>
       <div class="wq-stat">
         <span class="wq-stat-number">${stats.needReview}</span>
-        <span class="wq-stat-label">今日复习</span>
+        <span class="wq-stat-label">${I18n.t('wrongQuestions.stats.todayReview') || '今日复习'}</span>
       </div>
     </div>
   `;
 
   // 快速复习按钮
   if (stats.unmastered > 0) {
+    const reviewBtnText = (I18n.t('wrongQuestions.startReview') || '📖 开始复习 ({count}题)').replace('{count}', stats.unmastered);
     html += `
       <div class="wq-actions">
         <button class="btn-review-all" onclick="startReviewSession()">
-          📖 开始复习 (${stats.unmastered}题)
+          ${reviewBtnText}
         </button>
       </div>
     `;
@@ -248,19 +249,19 @@ function renderWrongQuestionsList(filterType = 'all') {
   html += `
     <div class="wq-filter-tabs">
       <button class="wq-filter-btn ${filterType === 'all' ? 'active' : ''}" onclick="renderWrongQuestionsList('all')">
-        全部 (${stats.unmastered})
+        ${I18n.t('wrongQuestions.filter.all') || '全部'} (${stats.unmastered})
       </button>
       <button class="wq-filter-btn ${filterType === 'math' ? 'active' : ''}" onclick="renderWrongQuestionsList('math')">
-        🔢 数学 (${stats.byType.math})
+        ${I18n.t('wrongQuestions.filter.math') || '🔢 数学'} (${stats.byType.math})
       </button>
       <button class="wq-filter-btn ${filterType === 'english' ? 'active' : ''}" onclick="renderWrongQuestionsList('english')">
-        🔤 英语 (${stats.byType.english})
+        ${I18n.t('wrongQuestions.filter.english') || '🔤 英语'} (${stats.byType.english})
       </button>
       <button class="wq-filter-btn ${filterType === 'chinese' ? 'active' : ''}" onclick="renderWrongQuestionsList('chinese')">
-        📝 中文 (${stats.byType.chinese})
+        ${I18n.t('wrongQuestions.filter.chinese') || '📝 中文'} (${stats.byType.chinese})
       </button>
       <button class="wq-filter-btn ${filterType === 'science' ? 'active' : ''}" onclick="renderWrongQuestionsList('science')">
-        🔬 科学 (${stats.byType.science})
+        ${I18n.t('wrongQuestions.filter.science') || '🔬 科学'} (${stats.byType.science})
       </button>
     </div>
   `;
@@ -274,8 +275,8 @@ function renderWrongQuestionsList(filterType = 'all') {
     html += `
       <div class="wq-empty">
         <div class="wq-empty-icon">🎉</div>
-        <div class="wq-empty-text">太棒了！没有错题</div>
-        <div class="wq-empty-subtext">继续加油学习吧！</div>
+        <div class="wq-empty-text">${I18n.t('wrongQuestions.emptyTitle') || '太棒了！没有错题'}</div>
+        <div class="wq-empty-subtext">${I18n.t('wrongQuestions.emptySubtext') || '继续加油学习吧！'}</div>
       </div>
     `;
   } else {
@@ -290,11 +291,14 @@ function renderWrongQuestionsList(filterType = 'all') {
       }[q.type] || '📚';
 
       const typeName = {
-        math: '数学',
-        english: '英语',
-        chinese: '中文',
-        science: '科学'
-      }[q.type] || '其他';
+        math: I18n.t('wrongQuestions.type.math') || '数学',
+        english: I18n.t('wrongQuestions.type.english') || '英语',
+        chinese: I18n.t('wrongQuestions.type.chinese') || '中文',
+        science: I18n.t('wrongQuestions.type.science') || '科学'
+      }[q.type] || (I18n.t('wrongQuestions.type.other') || '其他');
+
+      const wrongTimesText = (I18n.t('wrongQuestions.wrongTimes') || '错{count}次').replace('{count}', q.wrongTimes);
+      const reviewTimesText = (I18n.t('wrongQuestions.reviewTimes') || '复习{count}次').replace('{count}', q.reviewTimes);
 
       html += `
         <div class="wq-item" onclick="showWrongQuestionDetail('${q.id}')">
@@ -303,8 +307,8 @@ function renderWrongQuestionsList(filterType = 'all') {
             <div class="wq-item-question">${q.question}</div>
             <div class="wq-item-meta">
               <span class="wq-item-type">${typeName}</span>
-              <span class="wq-item-times">错${q.wrongTimes}次</span>
-              ${q.reviewTimes > 0 ? `<span class="wq-item-reviewed">复习${q.reviewTimes}次</span>` : ''}
+              <span class="wq-item-times">${wrongTimesText}</span>
+              ${q.reviewTimes > 0 ? `<span class="wq-item-reviewed">${reviewTimesText}</span>` : ''}
             </div>
           </div>
           <div class="wq-item-arrow">›</div>
@@ -333,10 +337,11 @@ function showWrongQuestionDetail(questionId) {
     science: '🔬'
   }[question.type] || '📚';
 
+  const wrongTimesDetailText = (I18n.t('wrongQuestions.detail.wrongTimes') || '错误 {count} 次').replace('{count}', question.wrongTimes);
   let html = `
     <div class="wqd-header">
       <span class="wqd-type">${typeIcon}</span>
-      <span class="wqd-times">错误 ${question.wrongTimes} 次</span>
+      <span class="wqd-times">${wrongTimesDetailText}</span>
     </div>
     <div class="wqd-question">${question.question}</div>
   `;
@@ -365,7 +370,7 @@ function showWrongQuestionDetail(questionId) {
   // 正确答案
   html += `
     <div class="wqd-answer">
-      <div class="wqd-answer-label">正确答案</div>
+      <div class="wqd-answer-label">${I18n.t('wrongQuestions.detail.correctAnswer') || '正确答案'}</div>
       <div class="wqd-answer-value">${question.correctAnswer}</div>
     </div>
   `;
@@ -374,10 +379,10 @@ function showWrongQuestionDetail(questionId) {
   html += `
     <div class="wqd-actions">
       <button class="btn-review-single" onclick="reviewSingleQuestion('${question.id}')">
-        📝 做一遍
+        ${I18n.t('wrongQuestions.detail.practice') || '📝 做一遍'}
       </button>
       <button class="btn-mark-mastered" onclick="markQuestionMastered('${question.id}')">
-        ✅ 我会了
+        ${I18n.t('wrongQuestions.detail.gotIt') || '✅ 我会了'}
       </button>
     </div>
   `;
@@ -401,7 +406,7 @@ function markQuestionMastered(questionId) {
     renderWrongQuestionsList();
 
     // 显示提示
-    RewardSystem.showReward(5, '太棒了！又掌握一道题！');
+    RewardSystem.showReward(5, I18n.t('wrongQuestions.masteredMsg') || '太棒了！又掌握一道题！');
   }
 }
 
@@ -436,9 +441,12 @@ function showReviewQuestion() {
     science: '🔬'
   }[question.type] || '📚';
 
+  const progressText = (I18n.t('wrongQuestions.reviewProgress') || '第 {current} / {total} 题')
+    .replace('{current}', currentReviewIndex + 1)
+    .replace('{total}', reviewQuestions.length);
   let html = `
     <div class="review-progress">
-      <span>第 ${currentReviewIndex + 1} / ${reviewQuestions.length} 题</span>
+      <span>${progressText}</span>
     </div>
     <div class="review-type">${typeIcon}</div>
     <div class="review-question">${question.question}</div>
@@ -510,12 +518,13 @@ function showReviewComplete() {
   const modal = document.getElementById('review-question-modal');
   if (!modal) return;
 
+  const reviewedCountText = (I18n.t('wrongQuestions.reviewedCount') || '你复习了 {count} 道题').replace('{count}', reviewQuestions.length);
   const html = `
     <div class="review-complete">
       <div class="review-complete-icon">🎉</div>
-      <div class="review-complete-title">复习完成！</div>
-      <div class="review-complete-text">你复习了 ${reviewQuestions.length} 道题</div>
-      <button class="btn-review-done" onclick="closeReviewQuestion()">太棒了！</button>
+      <div class="review-complete-title">${I18n.t('wrongQuestions.reviewComplete') || '复习完成！'}</div>
+      <div class="review-complete-text">${reviewedCountText}</div>
+      <button class="btn-review-done" onclick="closeReviewQuestion()">${I18n.t('wrongQuestions.reviewDone') || '太棒了！'}</button>
     </div>
   `;
 

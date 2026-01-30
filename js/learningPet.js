@@ -119,7 +119,12 @@ const LearningPet = {
     if (avatar) avatar.textContent = petType.stages[this.data.stage];
     if (name) name.textContent = this.data.petName;
     if (stageBadge) {
-      const stageNames = ['蛋', '幼年', '成年', '进化'];
+      const stageNames = [
+        I18n.t('pet.stage.egg') || '蛋',
+        I18n.t('pet.stage.baby') || '幼年',
+        I18n.t('pet.stage.adult') || '成年',
+        I18n.t('pet.stage.evolved') || '进化'
+      ];
       stageBadge.textContent = stageNames[this.data.stage];
     }
     if (message) {
@@ -159,13 +164,13 @@ const LearningPet = {
   // 获取宠物消息
   getPetMessage() {
     if (this.data.hunger < 30) {
-      return '我好饿啊...快给我吃点东西吧！';
+      return I18n.t('pet.msg.hungry') || '我好饿啊...快给我吃点东西吧！';
     } else if (this.data.happiness < 30) {
-      return '我不太开心...来陪我玩吧！';
+      return I18n.t('pet.msg.sad') || '我不太开心...来陪我玩吧！';
     } else if (this.data.happiness >= 80 && this.data.hunger >= 80) {
-      return '今天也要好好学习哦！我会一直陪着你！';
+      return I18n.t('pet.msg.happy') || '今天也要好好学习哦！我会一直陪着你！';
     } else {
-      return '和你在一起真开心！';
+      return I18n.t('pet.msg.content') || '和你在一起真开心！';
     }
   },
 
@@ -520,15 +525,16 @@ function renderPetSelection() {
 
   let html = `
     <div class="pet-selection">
-      <h3 class="pet-selection-title">选择你的宠物伙伴</h3>
+      <h3 class="pet-selection-title">${I18n.t('pet.selectHint') || '选择你的宠物伙伴'}</h3>
       <div class="pet-selection-grid">
   `;
 
   LearningPet.petTypes.forEach(pet => {
+    const petName = I18n.t(`pet.type.${pet.id}`) || pet.name;
     html += `
       <div class="pet-selection-card" onclick="selectPetType('${pet.id}')">
         <div class="pet-selection-emoji">${pet.stages[1]}</div>
-        <div class="pet-selection-name">${pet.name}</div>
+        <div class="pet-selection-name">${petName}</div>
       </div>
     `;
   });
@@ -546,16 +552,19 @@ function selectPetType(petTypeId) {
   const petType = LearningPet.petTypes.find(p => p.id === petTypeId);
   if (!petType) return;
 
+  const petName = I18n.t(`pet.type.${petType.id}`) || petType.name;
+  const nameYourPetText = (I18n.t('pet.nameYourPet') || '给你的{petType}起个名字吧').replace('{petType}', petName);
+
   const container = document.getElementById('pet-page-content');
   container.innerHTML = `
     <div class="pet-naming">
       <div class="pet-naming-preview">${petType.stages[0]}</div>
-      <h3>给你的${petType.name}起个名字吧</h3>
+      <h3>${nameYourPetText}</h3>
       <input type="text" id="pet-name-input" class="pet-name-input"
-             placeholder="输入名字" maxlength="10" value="${petType.name}">
+             placeholder="${I18n.t('pet.enterName') || '输入名字'}" maxlength="10" value="${petName}">
       <div class="pet-naming-buttons">
-        <button class="btn-pet-back" onclick="renderPetSelection()">返回</button>
-        <button class="btn-pet-confirm" onclick="confirmPetCreation('${petTypeId}')">确定</button>
+        <button class="btn-pet-back" onclick="renderPetSelection()">${I18n.t('pet.back') || '返回'}</button>
+        <button class="btn-pet-confirm" onclick="confirmPetCreation('${petTypeId}')">${I18n.t('pet.confirm') || '确定'}</button>
       </div>
     </div>
   `;
@@ -596,21 +605,21 @@ function renderPetMain() {
 
       <div class="pet-stats">
         <div class="pet-stat-bar">
-          <span class="pet-stat-label">❤️ 快乐</span>
+          <span class="pet-stat-label">❤️ ${I18n.t('pet.happiness') || '快乐'}</span>
           <div class="pet-stat-track">
             <div class="pet-stat-fill happiness" style="width: ${pet.happiness}%"></div>
           </div>
           <span class="pet-stat-value">${pet.happiness}%</span>
         </div>
         <div class="pet-stat-bar">
-          <span class="pet-stat-label">🍖 饱食</span>
+          <span class="pet-stat-label">🍖 ${I18n.t('pet.fullness') || '饱食'}</span>
           <div class="pet-stat-track">
             <div class="pet-stat-fill hunger" style="width: ${pet.hunger}%"></div>
           </div>
           <span class="pet-stat-value">${pet.hunger}%</span>
         </div>
         <div class="pet-stat-bar">
-          <span class="pet-stat-label">⭐ 经验</span>
+          <span class="pet-stat-label">⭐ ${I18n.t('pet.experience') || '经验'}</span>
           <div class="pet-stat-track">
             <div class="pet-stat-fill exp" style="width: ${pet.expProgress}%"></div>
           </div>
@@ -618,24 +627,24 @@ function renderPetMain() {
         </div>
       </div>
 
-      ${pet.nextStageLevel ? `<div class="pet-evolution-hint">Lv.${pet.nextStageLevel} 可以进化哦！</div>` : ''}
+      ${pet.nextStageLevel ? `<div class="pet-evolution-hint">${(I18n.t('pet.evolutionHint') || 'Lv.{level} 可以进化哦！').replace('{level}', pet.nextStageLevel)}</div>` : ''}
 
       <div class="pet-actions">
         <button class="pet-action-btn" onclick="showPetFoodMenu()">
           <span class="action-icon">🍎</span>
-          <span class="action-name">喂食</span>
+          <span class="action-name">${I18n.t('pet.feed') || '喂食'}</span>
         </button>
         <button class="pet-action-btn" onclick="petInteract()">
           <span class="action-icon">🎾</span>
-          <span class="action-name">互动</span>
+          <span class="action-name">${I18n.t('pet.interact') || '互动'}</span>
         </button>
         <button class="pet-action-btn" onclick="showPetShop()">
           <span class="action-icon">🛍️</span>
-          <span class="action-name">商店</span>
+          <span class="action-name">${I18n.t('pet.shop') || '商店'}</span>
         </button>
         <button class="pet-action-btn" onclick="showPetAccessories()">
           <span class="action-icon">👔</span>
-          <span class="action-name">装扮</span>
+          <span class="action-name">${I18n.t('pet.dress') || '装扮'}</span>
         </button>
       </div>
     </div>
@@ -653,10 +662,11 @@ function showPetFoodMenu() {
 
   LearningPet.foods.forEach(food => {
     const canAfford = RewardSystem.data.totalScore >= food.cost;
+    const foodName = I18n.t(`pet.food.${food.id}`) || food.name;
     html += `
       <div class="pet-food-item ${canAfford ? '' : 'disabled'}" onclick="${canAfford ? `feedPet('${food.id}')` : ''}">
         <div class="food-emoji">${food.emoji}</div>
-        <div class="food-name">${food.name}</div>
+        <div class="food-name">${foodName}</div>
         <div class="food-info">
           <span class="food-exp">+${food.exp} EXP</span>
           <span class="food-cost">💰 ${food.cost}</span>
@@ -724,14 +734,15 @@ function showPetShop() {
   LearningPet.accessories.forEach(acc => {
     const owned = LearningPet.data.ownedAccessories.includes(acc.id);
     const canAfford = RewardSystem.data.totalScore >= acc.cost;
+    const accName = I18n.t(`pet.acc.${acc.id}`) || acc.name;
 
     html += `
       <div class="pet-shop-item ${owned ? 'owned' : ''} ${!owned && !canAfford ? 'disabled' : ''}"
            onclick="${owned ? '' : (canAfford ? `buyAccessory('${acc.id}')` : '')}">
         <div class="shop-item-emoji">${acc.emoji}</div>
-        <div class="shop-item-name">${acc.name}</div>
+        <div class="shop-item-name">${accName}</div>
         ${owned
-          ? '<div class="shop-item-owned">已拥有</div>'
+          ? `<div class="shop-item-owned">${I18n.t('pet.acc.owned') || '已拥有'}</div>`
           : `<div class="shop-item-cost">💰 ${acc.cost}</div>`
         }
       </div>
@@ -772,7 +783,7 @@ function showPetAccessories() {
   let html = '';
 
   if (owned.length === 0) {
-    html = '<div class="no-accessories">还没有装饰品，去商店看看吧！</div>';
+    html = `<div class="no-accessories">${I18n.t('pet.noAccessories') || '还没有装饰品，去商店看看吧！'}</div>`;
   } else {
     html = '<div class="accessories-grid">';
     owned.forEach(accId => {
@@ -780,12 +791,13 @@ function showPetAccessories() {
       if (!acc) return;
 
       const isEquipped = equipped === accId;
+      const accName = I18n.t(`pet.acc.${acc.id}`) || acc.name;
       html += `
         <div class="accessory-item ${isEquipped ? 'equipped' : ''}"
              onclick="${isEquipped ? 'unequipPetAccessory()' : `equipPetAccessory('${accId}')`}">
           <div class="accessory-emoji">${acc.emoji}</div>
-          <div class="accessory-name">${acc.name}</div>
-          ${isEquipped ? '<div class="accessory-status">已装备</div>' : ''}
+          <div class="accessory-name">${accName}</div>
+          ${isEquipped ? `<div class="accessory-status">${I18n.t('pet.acc.equipped') || '已装备'}</div>` : ''}
         </div>
       `;
     });
