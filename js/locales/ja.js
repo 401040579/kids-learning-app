@@ -2,6 +2,7 @@
 I18n.translations['ja'] = {
   // App title
   'app.title': '学習パラダイス',
+  'app.fullTitle': 'キッズ学習パラダイス',
   'app.welcome': 'ようこそ!',
   'app.welcome.subtitle': '今日は何を学びたい?',
 
@@ -178,6 +179,16 @@ I18n.translations['ja'] = {
   'videos.music': '音楽',
   'videos.ended': '動画が終わりました!',
   'videos.return': '戻る',
+  'videos.desc.all': '6歳児向けの厳選30本の動画',
+  'videos.desc.math': '算数入門：足し算、引き算、パターン認識',
+  'videos.desc.english': '英語入門：アルファベット、単語、歌',
+  'videos.desc.science': '科学入門：動物、植物、自然',
+  'videos.desc.emotion': '感情教育：自己管理、共感',
+  'videos.desc.brain': '脳トレ：論理、観察力',
+  'videos.desc.music': '音楽入門：リズム、楽器',
+  'videos.loading': '読み込み中...',
+  'videos.channel': 'チャンネル',
+  'videos.age': '5-7歳',
 
   // Puzzle
   'puzzle.title': 'パズルゲーム',

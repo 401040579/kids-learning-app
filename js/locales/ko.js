@@ -2,6 +2,7 @@
 I18n.translations['ko'] = {
   // App title
   'app.title': '학습 파라다이스',
+  'app.fullTitle': '키즈 학습 파라다이스',
   'app.welcome': '안녕, 꼬마 친구!',
   'app.welcome.subtitle': '오늘은 무엇을 배울까?',
 
@@ -178,6 +179,16 @@ I18n.translations['ko'] = {
   'videos.music': '음악',
   'videos.ended': '동영상이 끝났어요!',
   'videos.return': '돌아가기',
+  'videos.desc.all': '6세 아동을 위한 엄선된 30개의 동영상',
+  'videos.desc.math': '수학 입문: 덧셈, 뺄셈, 패턴 인식',
+  'videos.desc.english': '영어 입문: 알파벳, 단어, 노래',
+  'videos.desc.science': '과학 입문: 동물, 식물, 자연',
+  'videos.desc.emotion': '감정 교육: 자기 관리, 공감',
+  'videos.desc.brain': '두뇌 훈련: 논리, 관찰력',
+  'videos.desc.music': '음악 입문: 리듬, 악기',
+  'videos.loading': '로딩 중...',
+  'videos.channel': '채널',
+  'videos.age': '5-7세',
 
   // Puzzle
   'puzzle.title': '퍼즐 게임',
