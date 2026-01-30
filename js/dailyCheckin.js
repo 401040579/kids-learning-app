@@ -85,12 +85,13 @@ const DailyCheckin = {
     const streakEl = document.getElementById('checkin-streak-info');
 
     if (iconEl) iconEl.textContent = reward.icon;
-    if (pointsEl) pointsEl.textContent = `+${reward.points}分`;
+    if (pointsEl) pointsEl.textContent = `+${reward.points}${I18n.t('checkin.points') || '分'}`;
     if (streakEl) {
       if (this.data.currentStreak > 0) {
-        streakEl.textContent = `已连续签到 ${this.data.currentStreak} 天`;
+        const streakText = (I18n.t('checkin.consecutiveDays') || '已连续签到 {days} 天').replace('{days}', this.data.currentStreak);
+        streakEl.textContent = streakText;
       } else {
-        streakEl.textContent = '开始你的签到之旅吧！';
+        streakEl.textContent = I18n.t('checkin.startJourney') || '开始你的签到之旅吧！';
       }
     }
   },
@@ -98,7 +99,7 @@ const DailyCheckin = {
   // 执行签到
   doCheckin() {
     if (this.isCheckedToday()) {
-      return { success: false, message: '今天已经签到过了' };
+      return { success: false, message: I18n.t('checkin.alreadyChecked') || '今天已经签到过了' };
     }
 
     const todayStr = this.getTodayStr();
@@ -280,13 +281,15 @@ function showCheckinSuccess(result) {
   if (!modal) return;
 
   document.getElementById('checkin-success-icon').textContent = result.icon;
-  document.getElementById('checkin-success-points').textContent = `+${result.points}分`;
-  document.getElementById('checkin-success-streak').textContent = `连续签到 ${result.streak} 天`;
+  document.getElementById('checkin-success-points').textContent = `+${result.points}${I18n.t('checkin.points') || '分'}`;
+  const streakText = (I18n.t('checkin.streakDays') || '连续 {days} 天').replace('{days}', result.streak);
+  document.getElementById('checkin-success-streak').textContent = streakText;
 
   // 显示徽章（如果有）
   const badgeEl = document.getElementById('checkin-success-badge');
   if (result.badge) {
-    badgeEl.textContent = `🎖️ 获得徽章: ${result.badge}`;
+    const badgeText = (I18n.t('checkin.gotBadge') || '🎖️ 获得徽章: {badge}').replace('{badge}', result.badge);
+    badgeEl.textContent = badgeText;
     badgeEl.classList.remove('hidden');
   } else {
     badgeEl.classList.add('hidden');
@@ -456,9 +459,10 @@ function renderCheckinPreview() {
 
   html += `</div>`;
 
+  const streakDaysText = (I18n.t('checkin.streakDays') || '连续 {days} 天').replace('{days}', stats.currentStreak);
   html += `
     <div class="checkin-preview-info">
-      <span>连续 ${stats.currentStreak} 天</span>
+      <span>${streakDaysText}</span>
       ${!stats.isCheckedToday ? '<span class="checkin-reminder-dot">●</span>' : ''}
     </div>
   `;

@@ -430,5 +430,23 @@ I18n.translations['zh'] = {
   // Life Skills Extended
   'lifeSkills.backToSelect': '← 返回选择',
   'lifeSkills.complete': '练习完成!',
-  'lifeSkills.playAgain': '再玩一次'
+  'lifeSkills.playAgain': '再玩一次',
+
+  // Calendar Extended
+  'calendar.months': ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+  'calendar.weekdays': ['日', '一', '二', '三', '四', '五', '六'],
+  'calendar.yearMonth': '{year}年{month}',
+  'calendar.monthDay': '{month}{day}日',
+  'calendar.noEvents': '暂无事件',
+  'calendar.eventDetail': '事件详情',
+
+  // Check-in Extended
+  'checkin.streakDays': '连续 {days} 天',
+  'checkin.consecutiveDays': '已连续签到 {days} 天',
+  'checkin.keepItUp': '继续保持!',
+  'checkin.congratsStreak': '已经连续签到 {days} 天了，继续保持！',
+  'checkin.points': '分',
+  'checkin.alreadyChecked': '今天已经签到过了',
+  'checkin.gotBadge': '🎖️ 获得徽章: {badge}',
+  'calendar.allDay': '全天'
 };

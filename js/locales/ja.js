@@ -430,5 +430,23 @@ I18n.translations['ja'] = {
   // Life Skills Extended
   'lifeSkills.backToSelect': '← 選択に戻る',
   'lifeSkills.complete': '練習完了!',
-  'lifeSkills.playAgain': 'もう一度'
+  'lifeSkills.playAgain': 'もう一度',
+
+  // Calendar Extended
+  'calendar.months': ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+  'calendar.weekdays': ['日', '月', '火', '水', '木', '金', '土'],
+  'calendar.yearMonth': '{year}年{month}',
+  'calendar.monthDay': '{month}{day}日',
+  'calendar.noEvents': 'イベントなし',
+  'calendar.eventDetail': 'イベント詳細',
+
+  // Check-in Extended
+  'checkin.streakDays': '{days}日連続',
+  'checkin.consecutiveDays': '{days}日連続チェックイン中',
+  'checkin.keepItUp': '頑張って!',
+  'checkin.congratsStreak': '{days}日連続チェックイン達成！続けてね！',
+  'checkin.points': 'ポイント',
+  'checkin.alreadyChecked': '今日はすでにチェックインしました',
+  'checkin.gotBadge': '🎖️ バッジ獲得: {badge}',
+  'calendar.allDay': '終日'
 };

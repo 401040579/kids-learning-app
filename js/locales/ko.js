@@ -430,5 +430,23 @@ I18n.translations['ko'] = {
   // Life Skills Extended
   'lifeSkills.backToSelect': '← 선택으로',
   'lifeSkills.complete': '연습 완료!',
-  'lifeSkills.playAgain': '다시 하기'
+  'lifeSkills.playAgain': '다시 하기',
+
+  // Calendar Extended
+  'calendar.months': ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+  'calendar.weekdays': ['일', '월', '화', '수', '목', '금', '토'],
+  'calendar.yearMonth': '{year}년 {month}',
+  'calendar.monthDay': '{month} {day}일',
+  'calendar.noEvents': '이벤트 없음',
+  'calendar.eventDetail': '이벤트 상세',
+
+  // Check-in Extended
+  'checkin.streakDays': '{days}일 연속',
+  'checkin.consecutiveDays': '{days}일 연속 출석 중',
+  'checkin.keepItUp': '화이팅!',
+  'checkin.congratsStreak': '벌써 {days}일 연속 출석! 계속 힘내세요!',
+  'checkin.points': '점',
+  'checkin.alreadyChecked': '오늘은 이미 출석했어요',
+  'checkin.gotBadge': '🎖️ 배지 획득: {badge}',
+  'calendar.allDay': '하루 종일'
 };

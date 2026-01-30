@@ -1658,9 +1658,11 @@ function renderCalendar() {
   const year = currentCalendarDate.getFullYear();
   const month = currentCalendarDate.getMonth();
 
-  // 更新月份标题
-  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-  document.getElementById('calendar-month-title').textContent = `${year}年${monthNames[month]}`;
+  // 更新月份标题（使用 i18n）
+  const monthNames = I18n.t('calendar.months') || ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const yearMonthFormat = I18n.t('calendar.yearMonth') || '{year}年{month}';
+  const monthTitle = yearMonthFormat.replace('{year}', year).replace('{month}', monthNames[month]);
+  document.getElementById('calendar-month-title').textContent = monthTitle;
 
   // 获取本月第一天和最后一天
   const firstDay = new Date(year, month, 1);
@@ -1794,9 +1796,13 @@ function renderDayEvents() {
   const titleEl = document.getElementById('selected-date-title');
 
   if (isToday) {
-    titleEl.textContent = '今天';
+    titleEl.textContent = I18n.t('calendar.today') || '今天';
   } else {
-    titleEl.textContent = `${selectedDate.getMonth() + 1}月${selectedDate.getDate()}日`;
+    const monthNames = I18n.t('calendar.months') || ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    const monthDayFormat = I18n.t('calendar.monthDay') || '{month}{day}日';
+    titleEl.textContent = monthDayFormat
+      .replace('{month}', monthNames[selectedDate.getMonth()])
+      .replace('{day}', selectedDate.getDate());
   }
 
   // 获取事件
@@ -1804,7 +1810,7 @@ function renderDayEvents() {
   const listEl = document.getElementById('events-list');
 
   if (events.length === 0) {
-    listEl.innerHTML = '<p class="no-events">这一天还没有安排哦~</p>';
+    listEl.innerHTML = `<p class="no-events">${I18n.t('calendar.noEvents') || '这一天还没有安排哦~'}</p>`;
     return;
   }
 
@@ -1987,12 +1993,18 @@ function showEventDetail(dateStr, eventIndex) {
   document.getElementById('event-detail-icon').textContent = icon;
   document.getElementById('event-detail-name').textContent = event.name;
 
-  const timeStr = event.startTime ? `${event.startTime} - ${event.endTime}` : '全天';
+  const timeStr = event.startTime ? `${event.startTime} - ${event.endTime}` : (I18n.t('calendar.allDay') || '全天');
   document.getElementById('event-detail-time').textContent = timeStr;
 
-  // 格式化日期
+  // 格式化日期（使用 i18n）
   const [year, month, day] = dateStr.split('-');
-  document.getElementById('event-detail-date').textContent = `${year}年${parseInt(month)}月${parseInt(day)}日`;
+  const monthNames = I18n.t('calendar.months') || ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const yearMonthFormat = I18n.t('calendar.yearMonth') || '{year}年{month}';
+  const monthDayFormat = I18n.t('calendar.monthDay') || '{month}{day}日';
+  const dateText = yearMonthFormat
+    .replace('{year}', year)
+    .replace('{month}', monthNames[parseInt(month) - 1]) + ' ' + parseInt(day);
+  document.getElementById('event-detail-date').textContent = dateText;
 
   // 备注
   const noteSection = document.getElementById('event-detail-note-section');

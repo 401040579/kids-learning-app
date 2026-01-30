@@ -430,5 +430,23 @@ I18n.translations['en'] = {
   // Life Skills Extended
   'lifeSkills.backToSelect': '← Back to Selection',
   'lifeSkills.complete': 'Practice Complete!',
-  'lifeSkills.playAgain': 'Play Again'
+  'lifeSkills.playAgain': 'Play Again',
+
+  // Calendar Extended
+  'calendar.months': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  'calendar.weekdays': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  'calendar.yearMonth': '{year} {month}',
+  'calendar.monthDay': '{month} {day}',
+  'calendar.noEvents': 'No events',
+  'calendar.eventDetail': 'Event Details',
+
+  // Check-in Extended
+  'checkin.streakDays': '{days} day streak',
+  'checkin.consecutiveDays': 'Checked in {days} days in a row',
+  'checkin.keepItUp': 'Keep it up!',
+  'checkin.congratsStreak': 'Already checked in {days} days, keep going!',
+  'checkin.points': ' pts',
+  'checkin.alreadyChecked': 'Already checked in today',
+  'checkin.gotBadge': '🎖️ Got badge: {badge}',
+  'calendar.allDay': 'All Day'
 };

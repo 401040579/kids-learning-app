@@ -129,6 +129,13 @@ const RewardSystem = {
     // 更新进度条
     const progress = Math.min((this.data.tasksDone / 10) * 100, 100);
     document.getElementById('progress-fill').style.width = progress + '%';
+
+    // 更新进度文本（i18n）
+    const progressTextEl = document.getElementById('progress-text');
+    if (progressTextEl && typeof I18n !== 'undefined') {
+      const template = I18n.t('progress.tasks') || '完成 {done}/{total} 个任务解锁奖励视频!';
+      progressTextEl.textContent = template.replace('{done}', this.data.tasksDone).replace('{total}', 10);
+    }
   },
 
   // 添加积分
