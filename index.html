@@ -1363,13 +1363,17 @@
             <span class="action-icon">🍖</span>
             <span data-i18n="pet.feed">喂食</span>
           </button>
-          <button class="pet-action-btn" onclick="petPet()">
-            <span class="action-icon">🤗</span>
-            <span data-i18n="pet.pet">抚摸</span>
+          <button class="pet-action-btn" onclick="showPetGames()">
+            <span class="action-icon">🎮</span>
+            <span data-i18n="petGame.title">游戏</span>
           </button>
-          <button class="pet-action-btn" onclick="showPetAccessories()">
-            <span class="action-icon">🎀</span>
-            <span data-i18n="pet.dress">装扮</span>
+          <button class="pet-action-btn" onclick="showPetRoom()">
+            <span class="action-icon">🏡</span>
+            <span data-i18n="pet.room.title">房间</span>
+          </button>
+          <button class="pet-action-btn" onclick="showPetOutfit()">
+            <span class="action-icon">👗</span>
+            <span data-i18n="pet.outfit.title">换装</span>
           </button>
         </div>
 
@@ -1415,6 +1419,99 @@
       </div>
       <div class="evolution-name" id="evolution-stage-name">幼年期</div>
       <button class="btn-evolution-close" onclick="closePetEvolution()" data-i18n="feedback.awesome">太棒了!</button>
+    </div>
+  </div>
+
+  <!-- 宠物迷你游戏选择弹窗 -->
+  <div id="pet-games-modal" class="pet-games-modal hidden">
+    <div class="pet-games-content">
+      <button class="modal-close-btn" onclick="closePetGames()">✕</button>
+      <h3>🎮 <span data-i18n="petGame.title">宠物游戏</span></h3>
+      <div id="pet-games-list" class="pet-games-list">
+        <!-- 游戏列表动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 宠物游戏进行弹窗 -->
+  <div id="pet-game-play-modal" class="pet-game-play-modal hidden">
+    <div class="pet-game-play-content">
+      <button class="modal-close-btn" onclick="closePetGamePlay()">✕</button>
+      <div class="pet-game-header">
+        <span class="pet-game-title" id="pet-game-title">🎮 游戏</span>
+        <div class="pet-game-stats">
+          <span id="pet-game-lives">❤️❤️❤️</span>
+          <span id="pet-game-time">60s</span>
+          <span>⭐ <span id="pet-game-score">0</span></span>
+        </div>
+      </div>
+      <div class="pet-game-canvas-container">
+        <canvas id="pet-game-canvas"></canvas>
+      </div>
+      <p class="pet-game-hint" data-i18n="petGame.hint">滑动或移动鼠标控制宠物</p>
+    </div>
+  </div>
+
+  <!-- 宠物游戏结果弹窗 -->
+  <div id="pet-game-result-modal" class="pet-game-result-modal hidden">
+    <div class="pet-game-result-content">
+      <div class="game-result-title" data-i18n="petGame.complete">游戏结束!</div>
+      <div class="game-result-score">
+        <span data-i18n="petGame.score">得分</span>: <span id="pet-game-final-score">0</span>
+      </div>
+      <div class="game-result-high" id="pet-game-high-score">最高分: 0</div>
+      <div class="game-result-rewards">
+        <div class="reward-item">
+          <span>🐾</span>
+          <span id="pet-game-exp-reward">+0 EXP</span>
+        </div>
+        <div class="reward-item">
+          <span>⭐</span>
+          <span id="pet-game-points-reward">+0</span>
+        </div>
+      </div>
+      <div class="game-result-actions">
+        <button class="btn-game-again" onclick="restartPetGame()" data-i18n="petGame.playAgain">再玩一次</button>
+        <button class="btn-game-back" onclick="backToPetGameSelect()" data-i18n="petGame.backToSelect">返回选择</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 宠物换装弹窗 -->
+  <div id="pet-outfit-modal" class="pet-outfit-modal hidden">
+    <div class="pet-outfit-content">
+      <button class="modal-close-btn" onclick="closePetOutfit()">✕</button>
+      <h3>👗 <span data-i18n="pet.outfit.title">宠物换装</span></h3>
+      <div class="outfit-preview-container">
+        <div id="outfit-preview" class="outfit-preview">
+          <!-- 预览动态生成 -->
+        </div>
+      </div>
+      <div id="outfit-tabs" class="outfit-tabs">
+        <!-- 标签动态生成 -->
+      </div>
+      <div id="outfit-items" class="outfit-items">
+        <!-- 物品动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 宠物房间装饰弹窗 -->
+  <div id="pet-room-modal" class="pet-room-modal hidden">
+    <div class="pet-room-content">
+      <button class="modal-close-btn" onclick="closePetRoom()">✕</button>
+      <h3>🏡 <span data-i18n="pet.room.title">宠物房间</span></h3>
+      <div class="room-preview-container">
+        <div id="room-preview" class="room-preview">
+          <!-- 房间预览动态生成 -->
+        </div>
+      </div>
+      <div id="room-tabs" class="room-tabs">
+        <!-- 标签动态生成 -->
+      </div>
+      <div id="room-items" class="room-items">
+        <!-- 物品动态生成 -->
+      </div>
     </div>
   </div>
 
@@ -2434,6 +2531,7 @@
   <script src="js/dailyCheckin.js"></script>
   <script src="js/memoryGame.js"></script>
   <script src="js/learningPet.js"></script>
+  <script src="js/petGames.js"></script>
   <script src="js/learningReport.js"></script>
   <script src="js/pictureBook.js"></script>
   <script src="js/pronunciation.js"></script>

@@ -6303,6 +6303,481 @@ body {
   cursor: pointer;
 }
 
+/* ========== 宠物迷你游戏样式 ========== */
+
+.pet-games-modal,
+.pet-game-play-modal,
+.pet-game-result-modal,
+.pet-outfit-modal,
+.pet-room-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.pet-games-modal.hidden,
+.pet-game-play-modal.hidden,
+.pet-game-result-modal.hidden,
+.pet-outfit-modal.hidden,
+.pet-room-modal.hidden {
+  display: none;
+}
+
+.pet-games-content,
+.pet-game-play-content,
+.pet-outfit-content,
+.pet-room-content {
+  background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD9 50%, #F3E5F5 100%);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  position: relative;
+  animation: popIn 0.3s ease;
+}
+
+.pet-games-content h3,
+.pet-outfit-content h3,
+.pet-room-content h3 {
+  text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+/* 游戏列表 */
+.pet-games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pet-game-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid var(--game-color, #FF69B4);
+}
+
+.pet-game-card:active {
+  transform: scale(0.98);
+}
+
+.pet-game-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+}
+
+.pet-game-info {
+  flex: 1;
+}
+
+.pet-game-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.pet-game-desc {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.pet-game-stats {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+/* 游戏进行界面 */
+.pet-game-play-content {
+  padding: 16px;
+  max-width: 360px;
+}
+
+.pet-game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 12px;
+}
+
+.pet-game-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.pet-game-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+
+.pet-game-canvas-container {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+#pet-game-canvas {
+  display: block;
+  width: 100%;
+  touch-action: none;
+}
+
+.pet-game-hint {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+
+/* 游戏结果弹窗 */
+.pet-game-result-content {
+  text-align: center;
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.game-result-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFD700;
+  margin-bottom: 16px;
+}
+
+.game-result-score {
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.game-result-high {
+  font-size: 1rem;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.game-result-rewards {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.reward-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.game-result-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-game-again,
+.btn-game-back {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-game-again {
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  color: white;
+}
+
+.btn-game-back {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* ========== 宠物换装样式 ========== */
+
+.outfit-preview-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.outfit-preview {
+  width: 120px;
+  height: 150px;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.outfit-preview-pet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.outfit-layer {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.outfit-layer.pet {
+  font-size: 3rem;
+}
+
+.outfit-layer.hat {
+  position: absolute;
+  top: -30px;
+}
+
+.outfit-layer.accessory {
+  position: absolute;
+  top: 5px;
+  right: -20px;
+}
+
+.outfit-tabs,
+.room-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.outfit-tab,
+.room-tab {
+  flex: 1;
+  min-width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+  background: white;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.outfit-tab.active,
+.room-tab.active {
+  border-color: var(--primary);
+  background: #FFF0F5;
+}
+
+.outfit-tab-icon,
+.room-tab-icon {
+  font-size: 1.3rem;
+}
+
+.outfit-tab-name,
+.room-tab-name {
+  font-size: 0.7rem;
+  color: var(--text-dark);
+}
+
+.outfit-grid,
+.room-items-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.outfit-item,
+.room-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: white;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.outfit-item:active,
+.room-item:active {
+  transform: scale(0.95);
+}
+
+.outfit-item.equipped,
+.outfit-item.owned,
+.room-item.active {
+  border-color: var(--primary);
+  background: #FFF0F5;
+}
+
+.outfit-item.disabled,
+.room-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.outfit-emoji,
+.room-item-emoji {
+  font-size: 1.8rem;
+}
+
+.outfit-name,
+.room-item-name {
+  font-size: 0.7rem;
+  color: var(--text-dark);
+  text-align: center;
+}
+
+.outfit-cost,
+.room-item-cost {
+  font-size: 0.65rem;
+  color: #FF9800;
+  font-weight: 600;
+}
+
+.outfit-status,
+.room-item-status {
+  font-size: 0.6rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ========== 宠物房间样式 ========== */
+
+.room-preview-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.room-preview {
+  width: 200px;
+  height: 150px;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.room-scene {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.room-scene.dark {
+  color: white;
+}
+
+.room-pet {
+  font-size: 3rem;
+  z-index: 10;
+}
+
+.room-carpet {
+  position: absolute;
+  bottom: 20px;
+  font-size: 2rem;
+}
+
+.room-furniture {
+  position: absolute;
+  font-size: 1.8rem;
+}
+
+.room-furniture.left {
+  left: 10px;
+  bottom: 20px;
+}
+
+.room-furniture.right {
+  right: 10px;
+  bottom: 20px;
+}
+
+.room-furniture.left-top {
+  left: 10px;
+  top: 10px;
+}
+
+.room-furniture.right-top {
+  right: 10px;
+  top: 10px;
+}
+
+.room-furniture.top {
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.room-furniture.top-center {
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.room-furniture.center-bottom {
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 扩展宠物操作按钮为4个 */
+.pet-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.pet-action-btn {
+  padding: 12px 4px;
+}
+
+.pet-action-btn .action-icon {
+  font-size: 1.5rem;
+}
+
+.pet-action-btn span:last-child {
+  font-size: 0.8rem;
+}
+
 /* ========== P1功能样式 - 学习报告 ========== */
 
 .learning-report-modal {

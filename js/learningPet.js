@@ -21,7 +21,7 @@ const LearningPet = {
     { id: 'icecream', emoji: '🍦', name: '冰淇淋', exp: 12, cost: 25 }
   ],
 
-  // 装饰品
+  // 旧版装饰品（保留兼容）
   accessories: [
     { id: 'bow', emoji: '🎀', name: '蝴蝶结', cost: 50 },
     { id: 'hat', emoji: '🎩', name: '小帽子', cost: 80 },
@@ -30,6 +30,69 @@ const LearningPet = {
     { id: 'scarf', emoji: '🧣', name: '围巾', cost: 70 },
     { id: 'flower', emoji: '🌸', name: '小花', cost: 40 }
   ],
+
+  // 新版换装系统 - 多槽位衣服
+  clothes: {
+    hat: [
+      { id: 'hat-cap', emoji: '🧢', name: '棒球帽', cost: 60 },
+      { id: 'hat-wizard', emoji: '🎩', name: '魔法帽', cost: 120 },
+      { id: 'hat-party', emoji: '🥳', name: '派对帽', cost: 80 },
+      { id: 'hat-crown', emoji: '👑', name: '皇冠', cost: 200 },
+      { id: 'hat-bow', emoji: '🎀', name: '蝴蝶结', cost: 50 }
+    ],
+    top: [
+      { id: 'top-tshirt', emoji: '👕', name: 'T恤', cost: 70 },
+      { id: 'top-shirt', emoji: '👔', name: '衬衫', cost: 90 },
+      { id: 'top-sweater', emoji: '🧥', name: '毛衣', cost: 100 },
+      { id: 'top-hoodie', emoji: '🧥', name: '卫衣', cost: 110 }
+    ],
+    bottom: [
+      { id: 'bottom-jeans', emoji: '👖', name: '牛仔裤', cost: 80 },
+      { id: 'bottom-shorts', emoji: '🩳', name: '短裤', cost: 50 },
+      { id: 'bottom-skirt', emoji: '👗', name: '短裙', cost: 70 }
+    ],
+    shoes: [
+      { id: 'shoes-sneaker', emoji: '👟', name: '运动鞋', cost: 90 },
+      { id: 'shoes-boots', emoji: '👢', name: '靴子', cost: 110 },
+      { id: 'shoes-sandals', emoji: '🩴', name: '凉鞋', cost: 60 }
+    ],
+    accessory: [
+      { id: 'acc-glasses', emoji: '👓', name: '眼镜', cost: 60 },
+      { id: 'acc-sunglasses', emoji: '🕶️', name: '墨镜', cost: 80 },
+      { id: 'acc-scarf', emoji: '🧣', name: '围巾', cost: 70 },
+      { id: 'acc-flower', emoji: '🌸', name: '小花', cost: 40 },
+      { id: 'acc-necklace', emoji: '📿', name: '项链', cost: 100 }
+    ]
+  },
+
+  // 房间装饰系统
+  roomDecorations: {
+    wallpapers: [
+      { id: 'wall-default', emoji: '🏠', name: '默认', cost: 0, color: '#FCE4EC' },
+      { id: 'wall-pink', emoji: '🎀', name: '粉色壁纸', cost: 80, color: '#FFB6C1' },
+      { id: 'wall-blue', emoji: '💙', name: '蓝色壁纸', cost: 80, color: '#87CEEB' },
+      { id: 'wall-green', emoji: '🌲', name: '森林壁纸', cost: 120, color: '#90EE90' },
+      { id: 'wall-space', emoji: '🌌', name: '星空壁纸', cost: 200, color: '#191970' },
+      { id: 'wall-ocean', emoji: '🌊', name: '海洋壁纸', cost: 150, color: '#00CED1' },
+      { id: 'wall-sunset', emoji: '🌅', name: '夕阳壁纸', cost: 150, color: '#FF7F50' }
+    ],
+    furniture: [
+      { id: 'furn-bed', emoji: '🛏️', name: '舒适小床', cost: 150, position: 'left' },
+      { id: 'furn-lamp', emoji: '💡', name: '台灯', cost: 60, position: 'right-top' },
+      { id: 'furn-plant', emoji: '🪴', name: '绿植', cost: 50, position: 'right' },
+      { id: 'furn-bookshelf', emoji: '📚', name: '书架', cost: 120, position: 'left-top' },
+      { id: 'furn-toy', emoji: '🧸', name: '玩具箱', cost: 100, position: 'center-bottom' },
+      { id: 'furn-clock', emoji: '🕰️', name: '挂钟', cost: 80, position: 'top' },
+      { id: 'furn-tv', emoji: '📺', name: '电视', cost: 180, position: 'top-center' }
+    ],
+    carpets: [
+      { id: 'carpet-none', emoji: '⬜', name: '无', cost: 0, pattern: 'none' },
+      { id: 'carpet-heart', emoji: '❤️', name: '爱心地毯', cost: 70, pattern: 'heart' },
+      { id: 'carpet-star', emoji: '⭐', name: '星星地毯', cost: 70, pattern: 'star' },
+      { id: 'carpet-rainbow', emoji: '🌈', name: '彩虹地毯', cost: 100, pattern: 'rainbow' },
+      { id: 'carpet-flower', emoji: '🌸', name: '花朵地毯', cost: 80, pattern: 'flower' }
+    ]
+  },
 
   // 宠物数据
   data: {
@@ -46,7 +109,23 @@ const LearningPet = {
     lastFeedTime: null,
     lastPlayTime: null,
     totalFeeds: 0,
-    createdAt: null
+    createdAt: null,
+    // 新增：换装系统数据
+    ownedClothes: [],
+    equippedOutfit: {
+      hat: null,
+      top: null,
+      bottom: null,
+      shoes: null,
+      accessory: null
+    },
+    // 新增：房间装饰数据
+    room: {
+      currentWallpaper: 'wall-default',
+      placedFurniture: [],
+      currentCarpet: 'carpet-none',
+      ownedDecorations: ['wall-default', 'carpet-none']
+    }
   },
 
   // 升级所需经验
@@ -887,4 +966,434 @@ function showPetEvolution(oldStage, newStage) {
   document.getElementById('evolution-stage-name').textContent = stageNames[newStage];
 
   modal.classList.remove('hidden');
+}
+
+// 关闭进化弹窗
+function closePetEvolution() {
+  document.getElementById('pet-evolution-modal').classList.add('hidden');
+}
+
+// ========== 换装系统扩展 ==========
+
+// 显示换装页面
+function showPetOutfit() {
+  const modal = document.getElementById('pet-outfit-modal');
+  if (!modal) return;
+
+  renderOutfitTabs();
+  renderOutfitContent('hat'); // 默认显示帽子
+
+  modal.classList.remove('hidden');
+}
+
+// 关闭换装页面
+function closePetOutfit() {
+  document.getElementById('pet-outfit-modal').classList.add('hidden');
+}
+
+// 渲染换装标签
+function renderOutfitTabs() {
+  const tabs = document.getElementById('outfit-tabs');
+  if (!tabs) return;
+
+  const categories = [
+    { id: 'hat', icon: '🎩', name: I18n.t('pet.outfit.hat') || '帽子' },
+    { id: 'top', icon: '👕', name: I18n.t('pet.outfit.top') || '上衣' },
+    { id: 'bottom', icon: '👖', name: I18n.t('pet.outfit.bottom') || '裤子' },
+    { id: 'shoes', icon: '👟', name: I18n.t('pet.outfit.shoes') || '鞋子' },
+    { id: 'accessory', icon: '👓', name: I18n.t('pet.outfit.accessory') || '配饰' }
+  ];
+
+  let html = '';
+  categories.forEach((cat, index) => {
+    html += `
+      <button class="outfit-tab ${index === 0 ? 'active' : ''}" data-category="${cat.id}" onclick="switchOutfitTab('${cat.id}')">
+        <span class="outfit-tab-icon">${cat.icon}</span>
+        <span class="outfit-tab-name">${cat.name}</span>
+      </button>
+    `;
+  });
+
+  tabs.innerHTML = html;
+}
+
+// 切换换装标签
+function switchOutfitTab(category) {
+  // 更新标签状态
+  document.querySelectorAll('.outfit-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.category === category);
+  });
+
+  renderOutfitContent(category);
+}
+
+// 渲染换装内容
+function renderOutfitContent(category) {
+  const container = document.getElementById('outfit-items');
+  if (!container) return;
+
+  const items = LearningPet.clothes[category] || [];
+  const owned = LearningPet.data.ownedClothes || [];
+  const equipped = LearningPet.data.equippedOutfit[category];
+  const totalScore = RewardSystem.data.totalScore || 0;
+
+  let html = '<div class="outfit-grid">';
+
+  // 添加"无"选项
+  const noneEquipped = !equipped;
+  html += `
+    <div class="outfit-item ${noneEquipped ? 'equipped' : ''}" onclick="unequipOutfitSlot('${category}')">
+      <div class="outfit-emoji">❌</div>
+      <div class="outfit-name">${I18n.t('pet.outfit.none') || '不穿'}</div>
+    </div>
+  `;
+
+  items.forEach(item => {
+    const isOwned = owned.includes(item.id);
+    const isEquipped = equipped === item.id;
+    const canAfford = totalScore >= item.cost;
+    const itemName = I18n.t(`pet.clothes.${item.id}`) || item.name;
+
+    let clickAction = '';
+    if (isOwned) {
+      clickAction = isEquipped ? `unequipOutfitSlot('${category}')` : `equipOutfitItem('${category}', '${item.id}')`;
+    } else if (canAfford) {
+      clickAction = `buyOutfitItem('${category}', '${item.id}')`;
+    }
+
+    html += `
+      <div class="outfit-item ${isEquipped ? 'equipped' : ''} ${!isOwned && !canAfford ? 'disabled' : ''} ${isOwned ? 'owned' : ''}"
+           onclick="${clickAction}">
+        <div class="outfit-emoji">${item.emoji}</div>
+        <div class="outfit-name">${itemName}</div>
+        ${isOwned
+          ? (isEquipped ? `<div class="outfit-status">${I18n.t('pet.acc.equipped') || '已装备'}</div>` : '')
+          : `<div class="outfit-cost">💰${item.cost}</div>`
+        }
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+
+  // 更新预览
+  updateOutfitPreview();
+}
+
+// 购买衣服
+function buyOutfitItem(category, itemId) {
+  const items = LearningPet.clothes[category];
+  const item = items.find(i => i.id === itemId);
+  if (!item) return;
+
+  if (RewardSystem.data.totalScore < item.cost) {
+    alert(I18n.t('pet.error.noPoints') || '积分不够');
+    return;
+  }
+
+  // 扣除积分
+  RewardSystem.data.totalScore -= item.cost;
+  RewardSystem.saveData();
+  RewardSystem.updateDisplay();
+
+  // 添加到拥有列表
+  if (!LearningPet.data.ownedClothes) {
+    LearningPet.data.ownedClothes = [];
+  }
+  LearningPet.data.ownedClothes.push(itemId);
+  LearningPet.saveData();
+
+  RewardSystem.playSound('complete');
+  renderOutfitContent(category);
+}
+
+// 装备衣服
+function equipOutfitItem(category, itemId) {
+  if (!LearningPet.data.equippedOutfit) {
+    LearningPet.data.equippedOutfit = { hat: null, top: null, bottom: null, shoes: null, accessory: null };
+  }
+  LearningPet.data.equippedOutfit[category] = itemId;
+  LearningPet.saveData();
+
+  RewardSystem.playSound('click');
+  renderOutfitContent(category);
+}
+
+// 卸下某个槽位
+function unequipOutfitSlot(category) {
+  if (LearningPet.data.equippedOutfit) {
+    LearningPet.data.equippedOutfit[category] = null;
+    LearningPet.saveData();
+  }
+
+  RewardSystem.playSound('click');
+  renderOutfitContent(category);
+}
+
+// 更新换装预览
+function updateOutfitPreview() {
+  const preview = document.getElementById('outfit-preview');
+  if (!preview) return;
+
+  const petType = LearningPet.petTypes.find(p => p.id === LearningPet.data.petType);
+  const petEmoji = petType ? petType.stages[LearningPet.data.stage] : '🐱';
+  const outfit = LearningPet.data.equippedOutfit || {};
+
+  // 获取装备的emoji
+  const getEquippedEmoji = (category, itemId) => {
+    if (!itemId) return '';
+    const items = LearningPet.clothes[category];
+    const item = items.find(i => i.id === itemId);
+    return item ? item.emoji : '';
+  };
+
+  preview.innerHTML = `
+    <div class="outfit-preview-pet">
+      <div class="outfit-layer hat">${getEquippedEmoji('hat', outfit.hat)}</div>
+      <div class="outfit-layer pet">${petEmoji}</div>
+      <div class="outfit-layer top">${getEquippedEmoji('top', outfit.top)}</div>
+      <div class="outfit-layer bottom">${getEquippedEmoji('bottom', outfit.bottom)}</div>
+      <div class="outfit-layer shoes">${getEquippedEmoji('shoes', outfit.shoes)}</div>
+      <div class="outfit-layer accessory">${getEquippedEmoji('accessory', outfit.accessory)}</div>
+    </div>
+  `;
+}
+
+// ========== 房间装饰系统 ==========
+
+// 显示房间装饰页面
+function showPetRoom() {
+  const modal = document.getElementById('pet-room-modal');
+  if (!modal) return;
+
+  renderRoomPreview();
+  renderRoomTabs();
+  renderRoomContent('wallpapers');
+
+  modal.classList.remove('hidden');
+}
+
+// 关闭房间装饰页面
+function closePetRoom() {
+  document.getElementById('pet-room-modal').classList.add('hidden');
+}
+
+// 渲染房间预览
+function renderRoomPreview() {
+  const preview = document.getElementById('room-preview');
+  if (!preview) return;
+
+  const room = LearningPet.data.room || { currentWallpaper: 'wall-default', placedFurniture: [], currentCarpet: 'carpet-none' };
+  const wallpaper = LearningPet.roomDecorations.wallpapers.find(w => w.id === room.currentWallpaper);
+  const carpet = LearningPet.roomDecorations.carpets.find(c => c.id === room.currentCarpet);
+
+  // 获取宠物emoji
+  const petType = LearningPet.petTypes.find(p => p.id === LearningPet.data.petType);
+  const petEmoji = petType ? petType.stages[LearningPet.data.stage] : '🐱';
+
+  // 生成家具HTML
+  let furnitureHtml = '';
+  (room.placedFurniture || []).forEach(furnId => {
+    const furn = LearningPet.roomDecorations.furniture.find(f => f.id === furnId);
+    if (furn) {
+      furnitureHtml += `<div class="room-furniture ${furn.position}">${furn.emoji}</div>`;
+    }
+  });
+
+  // 判断壁纸是否深色
+  const isDarkWallpaper = room.currentWallpaper === 'wall-space';
+
+  preview.innerHTML = `
+    <div class="room-scene ${isDarkWallpaper ? 'dark' : ''}" style="background-color: ${wallpaper ? wallpaper.color : '#FCE4EC'}">
+      ${furnitureHtml}
+      <div class="room-carpet">${carpet && carpet.id !== 'carpet-none' ? carpet.emoji : ''}</div>
+      <div class="room-pet">${petEmoji}</div>
+    </div>
+  `;
+}
+
+// 渲染房间装饰标签
+function renderRoomTabs() {
+  const tabs = document.getElementById('room-tabs');
+  if (!tabs) return;
+
+  const categories = [
+    { id: 'wallpapers', icon: '🖼️', name: I18n.t('pet.room.wallpaper') || '壁纸' },
+    { id: 'furniture', icon: '🪑', name: I18n.t('pet.room.furniture') || '家具' },
+    { id: 'carpets', icon: '🟫', name: I18n.t('pet.room.carpet') || '地毯' }
+  ];
+
+  let html = '';
+  categories.forEach((cat, index) => {
+    html += `
+      <button class="room-tab ${index === 0 ? 'active' : ''}" data-category="${cat.id}" onclick="switchRoomTab('${cat.id}')">
+        <span class="room-tab-icon">${cat.icon}</span>
+        <span class="room-tab-name">${cat.name}</span>
+      </button>
+    `;
+  });
+
+  tabs.innerHTML = html;
+}
+
+// 切换房间标签
+function switchRoomTab(category) {
+  document.querySelectorAll('.room-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.category === category);
+  });
+
+  renderRoomContent(category);
+}
+
+// 渲染房间装饰内容
+function renderRoomContent(category) {
+  const container = document.getElementById('room-items');
+  if (!container) return;
+
+  const items = LearningPet.roomDecorations[category] || [];
+  const room = LearningPet.data.room || { ownedDecorations: ['wall-default', 'carpet-none'], placedFurniture: [] };
+  const owned = room.ownedDecorations || [];
+  const totalScore = RewardSystem.data.totalScore || 0;
+
+  let html = '<div class="room-items-grid">';
+
+  items.forEach(item => {
+    const isOwned = owned.includes(item.id) || item.cost === 0;
+    const canAfford = totalScore >= item.cost;
+
+    // 判断是否已装备/放置
+    let isActive = false;
+    if (category === 'wallpapers') {
+      isActive = room.currentWallpaper === item.id;
+    } else if (category === 'carpets') {
+      isActive = room.currentCarpet === item.id;
+    } else if (category === 'furniture') {
+      isActive = (room.placedFurniture || []).includes(item.id);
+    }
+
+    let clickAction = '';
+    if (isOwned) {
+      if (category === 'wallpapers') {
+        clickAction = `setRoomWallpaper('${item.id}')`;
+      } else if (category === 'carpets') {
+        clickAction = `setRoomCarpet('${item.id}')`;
+      } else if (category === 'furniture') {
+        clickAction = isActive ? `removeFurniture('${item.id}')` : `placeFurniture('${item.id}')`;
+      }
+    } else if (canAfford) {
+      clickAction = `buyRoomDecoration('${category}', '${item.id}')`;
+    }
+
+    const itemName = I18n.t(`pet.room.${item.id}`) || item.name;
+
+    html += `
+      <div class="room-item ${isActive ? 'active' : ''} ${!isOwned && !canAfford ? 'disabled' : ''}"
+           onclick="${clickAction}">
+        <div class="room-item-emoji">${item.emoji}</div>
+        <div class="room-item-name">${itemName}</div>
+        ${isOwned
+          ? (isActive ? `<div class="room-item-status">✓</div>` : '')
+          : `<div class="room-item-cost">💰${item.cost}</div>`
+        }
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// 购买房间装饰
+function buyRoomDecoration(category, itemId) {
+  const items = LearningPet.roomDecorations[category];
+  const item = items.find(i => i.id === itemId);
+  if (!item) return;
+
+  if (RewardSystem.data.totalScore < item.cost) {
+    alert(I18n.t('pet.error.noPoints') || '积分不够');
+    return;
+  }
+
+  // 扣除积分
+  RewardSystem.data.totalScore -= item.cost;
+  RewardSystem.saveData();
+  RewardSystem.updateDisplay();
+
+  // 添加到拥有列表
+  if (!LearningPet.data.room) {
+    LearningPet.data.room = { currentWallpaper: 'wall-default', placedFurniture: [], currentCarpet: 'carpet-none', ownedDecorations: ['wall-default', 'carpet-none'] };
+  }
+  if (!LearningPet.data.room.ownedDecorations) {
+    LearningPet.data.room.ownedDecorations = ['wall-default', 'carpet-none'];
+  }
+  LearningPet.data.room.ownedDecorations.push(itemId);
+  LearningPet.saveData();
+
+  RewardSystem.playSound('complete');
+  renderRoomContent(category);
+}
+
+// 设置壁纸
+function setRoomWallpaper(wallpaperId) {
+  if (!LearningPet.data.room) {
+    LearningPet.data.room = { currentWallpaper: 'wall-default', placedFurniture: [], currentCarpet: 'carpet-none', ownedDecorations: ['wall-default', 'carpet-none'] };
+  }
+  LearningPet.data.room.currentWallpaper = wallpaperId;
+  LearningPet.saveData();
+
+  RewardSystem.playSound('click');
+  renderRoomPreview();
+  renderRoomContent('wallpapers');
+}
+
+// 设置地毯
+function setRoomCarpet(carpetId) {
+  if (!LearningPet.data.room) {
+    LearningPet.data.room = { currentWallpaper: 'wall-default', placedFurniture: [], currentCarpet: 'carpet-none', ownedDecorations: ['wall-default', 'carpet-none'] };
+  }
+  LearningPet.data.room.currentCarpet = carpetId;
+  LearningPet.saveData();
+
+  RewardSystem.playSound('click');
+  renderRoomPreview();
+  renderRoomContent('carpets');
+}
+
+// 放置家具
+function placeFurniture(furnitureId) {
+  if (!LearningPet.data.room) {
+    LearningPet.data.room = { currentWallpaper: 'wall-default', placedFurniture: [], currentCarpet: 'carpet-none', ownedDecorations: ['wall-default', 'carpet-none'] };
+  }
+  if (!LearningPet.data.room.placedFurniture) {
+    LearningPet.data.room.placedFurniture = [];
+  }
+
+  // 最多放5个家具
+  if (LearningPet.data.room.placedFurniture.length >= 5) {
+    alert(I18n.t('pet.room.maxFurniture') || '最多只能放置5件家具');
+    return;
+  }
+
+  LearningPet.data.room.placedFurniture.push(furnitureId);
+  LearningPet.saveData();
+
+  RewardSystem.playSound('click');
+  renderRoomPreview();
+  renderRoomContent('furniture');
+}
+
+// 移除家具
+function removeFurniture(furnitureId) {
+  if (!LearningPet.data.room || !LearningPet.data.room.placedFurniture) return;
+
+  const index = LearningPet.data.room.placedFurniture.indexOf(furnitureId);
+  if (index > -1) {
+    LearningPet.data.room.placedFurniture.splice(index, 1);
+    LearningPet.saveData();
+  }
+
+  RewardSystem.playSound('click');
+  renderRoomPreview();
+  renderRoomContent('furniture');
 }
