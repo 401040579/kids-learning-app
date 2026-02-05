@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v46)
+├── sw.js               # Service Worker (当前 v47)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用
@@ -63,7 +63,9 @@ kids-learning-app/
 │   ├── songData.js     # 歌曲数据
 │   ├── familyPK.js     # 亲子PK模式
 │   ├── logicGames.js   # 逻辑训练游戏
-│   └── logicGamesData.js # 逻辑游戏数据
+│   ├── logicGamesData.js # 逻辑游戏数据
+│   ├── reactionGames.js # 反应训练游戏
+│   └── reactionGamesData.js # 反应游戏数据
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -116,6 +118,7 @@ kids-learning-app/
 | 数据分析 | analytics.js | ✅ 完成（Google Analytics） |
 | 亲子PK | familyPK.js | ✅ 完成（时限/让分/历史记录） |
 | 逻辑训练 | logicGames.js | ✅ 完成（找规律/找不同/配对/迷宫） |
+| 反应训练 | reactionGames.js | ✅ 完成（打地鼠/颜色闪电/抓星星/红绿灯） |
 
 ## 常用命令
 
@@ -150,6 +153,7 @@ const CACHE_NAME = 'kids-learning-vXX';
 | writingProgress | 书写练习进度 |
 | familyPKHistory | 亲子PK历史记录 |
 | kidsLogicGames | 逻辑游戏统计和解锁 |
+| kidsReactionGames | 反应游戏统计 |
 
 ## 注意事项
 

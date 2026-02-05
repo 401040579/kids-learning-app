@@ -13668,3 +13668,712 @@ body {
     font-size: 1.5rem;
   }
 }
+
+/* ========== 反应训练游戏 ========== */
+.reaction-games-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #FFF3E0 0%, #FFECB3 50%, #FFE0B2 100%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.reaction-games-modal.hidden {
+  display: none;
+}
+
+.reaction-games-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 游戏选择界面 */
+.reaction-select {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.reaction-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.reaction-close-btn:hover {
+  background: rgba(0, 0, 0, 0.2);
+  transform: rotate(90deg);
+}
+
+.reaction-select h2,
+.reaction-difficulty h2 {
+  text-align: center;
+  font-size: 2rem;
+  background: linear-gradient(45deg, #FF9800, #FF5722);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 30px 0 25px;
+}
+
+/* 游戏卡片网格 */
+.reaction-game-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 10px;
+}
+
+.reaction-game-card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px 15px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reaction-game-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.reaction-game-card:active {
+  transform: scale(0.95);
+}
+
+.reaction-game-card-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.reaction-game-card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.reaction-game-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+/* 统计信息 */
+.reaction-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 25px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+}
+
+.reaction-stats span {
+  font-size: 1rem;
+  color: var(--text-dark);
+}
+
+/* 难度选择界面 */
+.reaction-difficulty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  align-items: center;
+}
+
+.reaction-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.reaction-back-btn:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.reaction-difficulty-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 20px;
+}
+
+.reaction-difficulty-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 30px;
+  border: 3px solid #FF9800;
+  background: white;
+  border-radius: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reaction-difficulty-btn:hover {
+  background: linear-gradient(135deg, #FF9800, #FFC107);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* 游戏区域 */
+.reaction-game-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.reaction-game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+.reaction-game-header span {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.reaction-header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+#reaction-game-timer {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #FF9800;
+}
+
+#reaction-game-timer.warning {
+  color: #F44336;
+  animation: timerPulse 0.5s infinite;
+}
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.reaction-combo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #FF5722;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.reaction-combo.active {
+  opacity: 1;
+  animation: comboShake 0.3s ease;
+}
+
+@keyframes comboShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.reaction-game-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.reaction-game-footer {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  margin-top: 15px;
+}
+
+.reaction-game-footer span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+/* 倒计时 */
+.reaction-countdown {
+  font-size: 6rem;
+  font-weight: bold;
+  color: #FF9800;
+  animation: countdownPop 0.8s ease;
+}
+
+@keyframes countdownPop {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 连击奖励 */
+.reaction-combo-bonus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  font-weight: bold;
+  color: #FF5722;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  animation: comboBonusPop 1s ease-out forwards;
+  z-index: 100;
+}
+
+@keyframes comboBonusPop {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.3); }
+  100% { transform: translate(-50%, -100%) scale(1); opacity: 0; }
+}
+
+/* ========== 打地鼠游戏 ========== */
+.whack-mole-game {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mole-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+  border-radius: 20px;
+}
+
+.mole-hole {
+  width: 90px;
+  height: 90px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #3d2914 0%, #1a0f07 100%);
+  box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.mole-dirt {
+  position: absolute;
+  bottom: 0;
+  left: -10%;
+  width: 120%;
+  height: 40%;
+  background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+  border-radius: 50% 50% 0 0;
+  z-index: 2;
+}
+
+.mole {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3.5rem;
+  transition: bottom 0.15s ease-out;
+  cursor: pointer;
+  z-index: 1;
+  user-select: none;
+}
+
+.mole.active {
+  bottom: 15px;
+}
+
+.mole.hit {
+  bottom: 15px;
+  animation: moleHit 0.3s ease;
+}
+
+@keyframes moleHit {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(0.8) rotate(15deg); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* ========== 颜色闪电游戏 ========== */
+.color-flash-game {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.color-display {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.color-emoji {
+  font-size: 5rem;
+}
+
+.color-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.color-btn {
+  width: 80px;
+  height: 80px;
+  border: none;
+  border-radius: 50%;
+  font-size: 2.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.color-btn:hover {
+  transform: scale(1.1);
+}
+
+.color-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== 抓星星游戏 ========== */
+.catch-stars-game {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.stars-area {
+  width: 100%;
+  height: 350px;
+  position: relative;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.star-item {
+  position: absolute;
+  font-size: 3rem;
+  cursor: pointer;
+  animation: starAppear 0.3s ease-out;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.star-item:hover {
+  transform: scale(1.2);
+}
+
+@keyframes starAppear {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.star-item.caught {
+  animation: starCaught 0.2s ease-out forwards;
+}
+
+@keyframes starCaught {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.star-item.missed {
+  animation: starMissed 0.3s ease-out forwards;
+}
+
+@keyframes starMissed {
+  0% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+
+/* ========== 红绿灯游戏 ========== */
+.traffic-light-game {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.traffic-display {
+  padding: 30px;
+}
+
+.traffic-light-box {
+  width: 120px;
+  height: 120px;
+  background: #333;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.light-circle {
+  font-size: 5rem;
+  transition: all 0.3s ease;
+}
+
+.light-circle.go {
+  animation: lightGlow 0.5s ease infinite alternate;
+}
+
+.light-circle.bonus {
+  animation: bonusGlow 0.3s ease infinite alternate;
+}
+
+@keyframes lightGlow {
+  0% { filter: drop-shadow(0 0 10px #4CAF50); }
+  100% { filter: drop-shadow(0 0 20px #4CAF50); }
+}
+
+@keyframes bonusGlow {
+  0% { filter: drop-shadow(0 0 10px #FFD700); transform: scale(1); }
+  100% { filter: drop-shadow(0 0 25px #FFD700); transform: scale(1.1); }
+}
+
+.traffic-instruction {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--text-dark);
+  text-align: center;
+}
+
+.traffic-tap-btn {
+  width: 150px;
+  height: 150px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF9800, #FF5722);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(255, 152, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.traffic-tap-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 40px rgba(255, 152, 0, 0.5);
+}
+
+.traffic-tap-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
+}
+
+/* ========== 结果界面 ========== */
+.reaction-result {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.reaction-result-content {
+  background: white;
+  border-radius: 25px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  max-width: 350px;
+  width: 100%;
+}
+
+.reaction-result-icon {
+  font-size: 5rem;
+  margin-bottom: 15px;
+}
+
+.reaction-result-content h2 {
+  font-size: 1.8rem;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+}
+
+.reaction-result-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.reaction-result-stats .result-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.reaction-result-stats .result-stat.highlight {
+  background: linear-gradient(135deg, #FFF9C4, #FFECB3);
+}
+
+.reaction-result-stats .result-stat.combo {
+  background: linear-gradient(135deg, #FFCCBC, #FFAB91);
+}
+
+.reaction-result-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reaction-btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reaction-btn.primary {
+  background: linear-gradient(135deg, #FF9800, #FF5722);
+  color: white;
+}
+
+.reaction-btn.primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+}
+
+.reaction-btn:not(.primary) {
+  background: #f5f5f5;
+  color: var(--text-dark);
+}
+
+.reaction-btn:not(.primary):hover {
+  background: #e0e0e0;
+}
+
+/* 响应式设计 */
+@media (max-width: 400px) {
+  .reaction-game-cards {
+    gap: 10px;
+  }
+
+  .reaction-game-card {
+    padding: 20px 10px;
+  }
+
+  .reaction-game-card-icon {
+    font-size: 2.5rem;
+  }
+
+  .reaction-game-card-title {
+    font-size: 1rem;
+  }
+
+  .mole-hole {
+    width: 70px;
+    height: 70px;
+  }
+
+  .mole {
+    font-size: 2.8rem;
+  }
+
+  .color-display {
+    width: 120px;
+    height: 120px;
+  }
+
+  .color-emoji {
+    font-size: 4rem;
+  }
+
+  .color-btn {
+    width: 65px;
+    height: 65px;
+    font-size: 2rem;
+  }
+
+  .stars-area {
+    height: 280px;
+  }
+
+  .star-item {
+    font-size: 2.5rem;
+  }
+
+  .traffic-tap-btn {
+    width: 120px;
+    height: 120px;
+    font-size: 1.2rem;
+  }
+
+  .light-circle {
+    font-size: 4rem;
+  }
+}

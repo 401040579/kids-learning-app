@@ -482,6 +482,12 @@
             <div class="card-desc" data-i18n="menu.logicGames.desc">锻炼思维能力</div>
           </div>
 
+          <div class="menu-card card-reaction-games" data-category="play" onclick="showReactionGames()">
+            <div class="card-icon">⚡</div>
+            <div class="card-title" data-i18n="menu.reactionGames">反应训练</div>
+            <div class="card-desc" data-i18n="menu.reactionGames.desc">锻炼反应速度</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -2383,6 +2389,52 @@
     </div>
   </div>
 
+  <!-- ========== 反应训练游戏 ========== -->
+  <div id="reaction-games-modal" class="reaction-games-modal hidden">
+    <div class="reaction-games-container">
+      <!-- 游戏选择界面 -->
+      <div id="reaction-select" class="reaction-select">
+        <button class="reaction-close-btn" onclick="closeReactionGames()">✕</button>
+        <h2>⚡ <span data-i18n="reaction.title">反应训练</span></h2>
+        <div id="reaction-game-cards" class="reaction-game-cards">
+          <!-- 游戏卡片由 JS 生成 -->
+        </div>
+        <div class="reaction-stats">
+          <span>⭐ <span data-i18n="reaction.bestScore">最高分</span>: <span id="reaction-total-score">0</span></span>
+          <span>🎮 <span data-i18n="reaction.totalGames">已玩</span>: <span id="reaction-total-games">0</span></span>
+        </div>
+      </div>
+
+      <!-- 难度选择界面 -->
+      <div id="reaction-difficulty" class="reaction-difficulty hidden">
+        <!-- 由 JS 动态生成 -->
+      </div>
+
+      <!-- 游戏区域 -->
+      <div id="reaction-game-area" class="reaction-game-area hidden">
+        <div class="reaction-game-header">
+          <button class="reaction-back-btn" onclick="ReactionGames.backToSelect()">←</button>
+          <span id="reaction-game-title"></span>
+          <div class="reaction-header-right">
+            <span id="reaction-combo" class="reaction-combo"></span>
+            <span id="reaction-game-timer">30s</span>
+          </div>
+        </div>
+        <div id="reaction-game-content" class="reaction-game-content">
+          <!-- 游戏内容动态生成 -->
+        </div>
+        <div class="reaction-game-footer">
+          <span><span data-i18n="reaction.score">得分</span>: <span id="reaction-current-score">0</span></span>
+        </div>
+      </div>
+
+      <!-- 结果界面 -->
+      <div id="reaction-result" class="reaction-result hidden">
+        <!-- 结果内容由 JS 动态生成 -->
+      </div>
+    </div>
+  </div>
+
   <!-- ========== 音乐创作 ========== -->
   <div id="music-modal" class="music-modal hidden">
     <div class="music-container">
@@ -2859,6 +2911,8 @@
   <script src="js/familyPK.js"></script>
   <script src="js/logicGamesData.js"></script>
   <script src="js/logicGames.js"></script>
+  <script src="js/reactionGamesData.js"></script>
+  <script src="js/reactionGames.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

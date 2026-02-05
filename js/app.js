@@ -158,7 +158,8 @@ const RecentlyUsed = {
     'parentMessage': { icon: '💬', nameKey: 'menu.parentMessage', action: () => openMessageToParent() },
     'parentSettings': { icon: '👨‍👩‍👧', nameKey: 'menu.parentSettings', action: () => openParentSettings() },
     'familyPK': { icon: '👨‍👩‍👧', nameKey: 'menu.familyPK', action: () => showFamilyPK() },
-    'logicGames': { icon: '🧩', nameKey: 'menu.logicGames', action: () => showLogicGames() }
+    'logicGames': { icon: '🧩', nameKey: 'menu.logicGames', action: () => showLogicGames() },
+    'reactionGames': { icon: '⚡', nameKey: 'menu.reactionGames', action: () => showReactionGames() }
   },
 
   init() {
