@@ -700,5 +700,28 @@ I18n.translations['ja'] = {
   'pet.room.carpet-heart': 'ハート',
   'pet.room.carpet-star': '星',
   'pet.room.carpet-rainbow': '虹',
-  'pet.room.carpet-flower': '花'
+  'pet.room.carpet-flower': '花',
+
+  // Family PK (親子PK)
+  'menu.familyPK': '親子PK',
+  'menu.familyPK.desc': 'ファミリーチャレンジ',
+  'familyPK.title': '親子PK',
+  'familyPK.desc': '親と子が対面でクイズ対決!',
+  'familyPK.questionType': '問題タイプ',
+  'familyPK.mixed': 'ミックス',
+  'familyPK.difficulty': '難易度',
+  'familyPK.easy': '簡単',
+  'familyPK.medium': '普通',
+  'familyPK.hard': '難しい',
+  'familyPK.rounds': 'ラウンド数',
+  'familyPK.start': 'PK開始!',
+  'familyPK.parent': '親',
+  'familyPK.child': '子供',
+  'familyPK.go': 'スタート!',
+  'familyPK.complete': 'ゲーム終了!',
+  'familyPK.parentWins': '親の勝ち!',
+  'familyPK.childWins': '子供の勝ち!',
+  'familyPK.tie': '引き分け!',
+  'familyPK.time': '時間',
+  'familyPK.playAgain': 'もう一度'
 };

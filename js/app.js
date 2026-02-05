@@ -104,6 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof Pronunciation !== 'undefined') {
     Pronunciation.init();
   }
+  if (typeof FamilyPK !== 'undefined') {
+    FamilyPK.init();
+  }
   // 初始化各模块
   initVideos();
   initMath();
@@ -153,7 +156,8 @@ const RecentlyUsed = {
     'lifeSkills': { icon: '🏠', nameKey: 'menu.lifeSkills', action: () => openLifeSkills() },
     'songPractice': { icon: '🎤', nameKey: 'menu.songPractice', action: () => openSongPractice() },
     'parentMessage': { icon: '💬', nameKey: 'menu.parentMessage', action: () => openMessageToParent() },
-    'parentSettings': { icon: '👨‍👩‍👧', nameKey: 'menu.parentSettings', action: () => openParentSettings() }
+    'parentSettings': { icon: '👨‍👩‍👧', nameKey: 'menu.parentSettings', action: () => openParentSettings() },
+    'familyPK': { icon: '👨‍👩‍👧', nameKey: 'menu.familyPK', action: () => showFamilyPK() }
   },
 
   init() {

@@ -470,6 +470,12 @@
             <div class="card-desc" data-i18n="menu.songPractice.desc">跟唱新年歌</div>
           </div>
 
+          <div class="menu-card card-family-pk" data-category="play" onclick="showFamilyPK()">
+            <div class="card-icon">👨‍👩‍👧</div>
+            <div class="card-title" data-i18n="menu.familyPK">亲子PK</div>
+            <div class="card-desc" data-i18n="menu.familyPK.desc">家庭互动挑战</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -2073,6 +2079,164 @@
     </div>
   </div>
 
+  <!-- ========== 亲子PK模式 ========== -->
+  <div id="family-pk-modal" class="family-pk-modal hidden">
+    <div class="family-pk-container">
+      <!-- 设置界面 -->
+      <div id="pk-setup" class="pk-setup">
+        <button class="pk-close-btn" onclick="closeFamilyPK()">✕</button>
+        <div class="pk-setup-header">
+          <span class="pk-header-icon">👨‍👩‍👧</span>
+          <h2 data-i18n="familyPK.title">亲子PK</h2>
+          <p class="pk-setup-desc" data-i18n="familyPK.desc">家长和孩子面对面PK答题!</p>
+        </div>
+
+        <!-- 题型选择 -->
+        <div class="pk-setting-section">
+          <h3 data-i18n="familyPK.questionType">选择题型</h3>
+          <div class="pk-type-buttons">
+            <button class="pk-type-btn" data-type="math" onclick="FamilyPK.setQuestionType('math')">
+              <span class="type-icon">🔢</span>
+              <span class="type-name" data-i18n="menu.math">数学</span>
+            </button>
+            <button class="pk-type-btn" data-type="english" onclick="FamilyPK.setQuestionType('english')">
+              <span class="type-icon">🔤</span>
+              <span class="type-name" data-i18n="menu.english">英语</span>
+            </button>
+            <button class="pk-type-btn" data-type="chinese" onclick="FamilyPK.setQuestionType('chinese')">
+              <span class="type-icon">📝</span>
+              <span class="type-name" data-i18n="menu.chinese">中文</span>
+            </button>
+            <button class="pk-type-btn active" data-type="mixed" onclick="FamilyPK.setQuestionType('mixed')">
+              <span class="type-icon">🎯</span>
+              <span class="type-name" data-i18n="familyPK.mixed">混合</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 难度选择 -->
+        <div class="pk-setting-section">
+          <h3 data-i18n="familyPK.difficulty">选择难度</h3>
+          <div class="pk-diff-buttons">
+            <button class="pk-diff-btn active" data-diff="easy" onclick="FamilyPK.setDifficulty('easy')">
+              <span class="diff-icon">😊</span>
+              <span class="diff-name" data-i18n="familyPK.easy">简单</span>
+            </button>
+            <button class="pk-diff-btn" data-diff="medium" onclick="FamilyPK.setDifficulty('medium')">
+              <span class="diff-icon">🤔</span>
+              <span class="diff-name" data-i18n="familyPK.medium">中等</span>
+            </button>
+            <button class="pk-diff-btn" data-diff="hard" onclick="FamilyPK.setDifficulty('hard')">
+              <span class="diff-icon">😤</span>
+              <span class="diff-name" data-i18n="familyPK.hard">困难</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 回合数选择 -->
+        <div class="pk-setting-section">
+          <h3 data-i18n="familyPK.rounds">选择回合数</h3>
+          <div class="pk-rounds-buttons">
+            <button class="pk-rounds-btn" data-rounds="5" onclick="FamilyPK.setRounds(5)">5</button>
+            <button class="pk-rounds-btn active" data-rounds="10" onclick="FamilyPK.setRounds(10)">10</button>
+            <button class="pk-rounds-btn" data-rounds="15" onclick="FamilyPK.setRounds(15)">15</button>
+            <button class="pk-rounds-btn" data-rounds="20" onclick="FamilyPK.setRounds(20)">20</button>
+          </div>
+        </div>
+
+        <!-- 开始按钮 -->
+        <button class="pk-start-btn" onclick="startFamilyPK()">
+          <span class="start-icon">🎮</span>
+          <span data-i18n="familyPK.start">开始PK!</span>
+        </button>
+      </div>
+
+      <!-- 游戏界面 -->
+      <div id="pk-game" class="pk-game hidden">
+        <!-- 回合信息 -->
+        <div class="pk-round-info">
+          <span class="pk-round-label">🎮 Round</span>
+          <span class="pk-round-number"><span id="pk-round-num">1</span>/<span id="pk-total-rounds">10</span></span>
+        </div>
+
+        <!-- 家长区域 (旋转180°) -->
+        <div class="pk-player-area parent">
+          <div class="pk-player-header">
+            <span class="pk-player-icon">👨</span>
+            <span class="pk-player-name" data-i18n="familyPK.parent">家长</span>
+            <span class="pk-player-score"><span id="pk-parent-score">0</span> ⭐</span>
+          </div>
+          <div id="pk-parent-options" class="pk-options">
+            <!-- 选项按钮由JS生成 -->
+          </div>
+          <div id="pk-parent-feedback" class="pk-feedback hidden"></div>
+        </div>
+
+        <!-- 题目区域 (共享) -->
+        <div id="pk-question-area" class="pk-question-area">
+          <span id="pk-question-type" class="pk-question-type">🔢</span>
+          <div id="pk-question-text" class="pk-question-text">3 + 5 = ?</div>
+        </div>
+
+        <!-- 倒计时 -->
+        <div id="pk-countdown" class="pk-countdown hidden">3</div>
+
+        <!-- 孩子区域 -->
+        <div class="pk-player-area child">
+          <div class="pk-player-header">
+            <span class="pk-player-icon">👧</span>
+            <span class="pk-player-name" data-i18n="familyPK.child">宝贝</span>
+            <span class="pk-player-score"><span id="pk-child-score">0</span> ⭐</span>
+          </div>
+          <div id="pk-child-options" class="pk-options">
+            <!-- 选项按钮由JS生成 -->
+          </div>
+          <div id="pk-child-feedback" class="pk-feedback hidden"></div>
+        </div>
+      </div>
+
+      <!-- 结果界面 -->
+      <div id="pk-result" class="pk-result hidden">
+        <div class="pk-result-content">
+          <div class="pk-result-celebration">🎉</div>
+          <div id="pk-result-icon" class="pk-result-icon">🏆</div>
+          <h2 id="pk-result-title" class="pk-result-title" data-i18n="familyPK.complete">游戏结束!</h2>
+
+          <div class="pk-result-scores">
+            <div class="pk-result-player">
+              <span class="result-player-icon">👨</span>
+              <span class="result-player-name" data-i18n="familyPK.parent">家长</span>
+              <span class="result-player-score" id="pk-result-parent-score">0</span>
+            </div>
+            <div class="pk-result-vs">VS</div>
+            <div class="pk-result-player">
+              <span class="result-player-icon">👧</span>
+              <span class="result-player-name" data-i18n="familyPK.child">宝贝</span>
+              <span class="result-player-score" id="pk-result-child-score">0</span>
+            </div>
+          </div>
+
+          <div class="pk-result-stats">
+            <div class="pk-result-stat">
+              <span class="stat-icon">⏱️</span>
+              <span class="stat-value" id="pk-result-time">0:00</span>
+              <span class="stat-label" data-i18n="familyPK.time">用时</span>
+            </div>
+          </div>
+
+          <div class="pk-result-buttons">
+            <button class="pk-result-btn primary" onclick="playFamilyPKAgain()">
+              <span data-i18n="familyPK.playAgain">再玩一次</span>
+            </button>
+            <button class="pk-result-btn secondary" onclick="closeFamilyPK()">
+              <span data-i18n="btn.back">返回</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ========== 音乐创作 ========== -->
   <div id="music-modal" class="music-modal hidden">
     <div class="music-container">
@@ -2546,6 +2710,7 @@
   <script src="js/lifeSkills.js"></script>
   <script src="js/songData.js"></script>
   <script src="js/songPractice.js"></script>
+  <script src="js/familyPK.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -700,5 +700,28 @@ I18n.translations['ko'] = {
   'pet.room.carpet-heart': '하트',
   'pet.room.carpet-star': '별',
   'pet.room.carpet-rainbow': '무지개',
-  'pet.room.carpet-flower': '꽃'
+  'pet.room.carpet-flower': '꽃',
+
+  // Family PK (가족 PK)
+  'menu.familyPK': '가족 PK',
+  'menu.familyPK.desc': '가족 도전',
+  'familyPK.title': '가족 PK',
+  'familyPK.desc': '부모와 아이가 마주보며 퀴즈 대결!',
+  'familyPK.questionType': '문제 유형',
+  'familyPK.mixed': '혼합',
+  'familyPK.difficulty': '난이도',
+  'familyPK.easy': '쉬움',
+  'familyPK.medium': '보통',
+  'familyPK.hard': '어려움',
+  'familyPK.rounds': '라운드 수',
+  'familyPK.start': 'PK 시작!',
+  'familyPK.parent': '부모',
+  'familyPK.child': '아이',
+  'familyPK.go': '시작!',
+  'familyPK.complete': '게임 종료!',
+  'familyPK.parentWins': '부모 승리!',
+  'familyPK.childWins': '아이 승리!',
+  'familyPK.tie': '무승부!',
+  'familyPK.time': '시간',
+  'familyPK.playAgain': '다시 하기'
 };

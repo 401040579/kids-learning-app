@@ -719,5 +719,28 @@ I18n.translations['fr'] = {
   'pet.room.carpet-heart': 'Cœur',
   'pet.room.carpet-star': 'Étoile',
   'pet.room.carpet-rainbow': 'Arc-en-ciel',
-  'pet.room.carpet-flower': 'Fleur'
+  'pet.room.carpet-flower': 'Fleur',
+
+  // Family PK
+  'menu.familyPK': 'PK Famille',
+  'menu.familyPK.desc': 'Défi en Famille',
+  'familyPK.title': 'PK Famille',
+  'familyPK.desc': 'Parents et enfants s\'affrontent face à face!',
+  'familyPK.questionType': 'Type de Question',
+  'familyPK.mixed': 'Mixte',
+  'familyPK.difficulty': 'Difficulté',
+  'familyPK.easy': 'Facile',
+  'familyPK.medium': 'Moyen',
+  'familyPK.hard': 'Difficile',
+  'familyPK.rounds': 'Nombre de Manches',
+  'familyPK.start': 'Commencer PK!',
+  'familyPK.parent': 'Parent',
+  'familyPK.child': 'Enfant',
+  'familyPK.go': 'GO!',
+  'familyPK.complete': 'Fin du Jeu!',
+  'familyPK.parentWins': 'Parent Gagne!',
+  'familyPK.childWins': 'Enfant Gagne!',
+  'familyPK.tie': 'Égalité!',
+  'familyPK.time': 'Temps',
+  'familyPK.playAgain': 'Rejouer'
 };

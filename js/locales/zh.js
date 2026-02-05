@@ -721,5 +721,28 @@ I18n.translations['zh'] = {
   'pet.room.carpet-heart': '爱心地毯',
   'pet.room.carpet-star': '星星地毯',
   'pet.room.carpet-rainbow': '彩虹地毯',
-  'pet.room.carpet-flower': '花朵地毯'
+  'pet.room.carpet-flower': '花朵地毯',
+
+  // Family PK (亲子PK)
+  'menu.familyPK': '亲子PK',
+  'menu.familyPK.desc': '家庭互动挑战',
+  'familyPK.title': '亲子PK',
+  'familyPK.desc': '家长和孩子面对面PK答题!',
+  'familyPK.questionType': '选择题型',
+  'familyPK.mixed': '混合',
+  'familyPK.difficulty': '选择难度',
+  'familyPK.easy': '简单',
+  'familyPK.medium': '中等',
+  'familyPK.hard': '困难',
+  'familyPK.rounds': '选择回合数',
+  'familyPK.start': '开始PK!',
+  'familyPK.parent': '家长',
+  'familyPK.child': '宝贝',
+  'familyPK.go': '开始!',
+  'familyPK.complete': '游戏结束!',
+  'familyPK.parentWins': '家长获胜!',
+  'familyPK.childWins': '宝贝获胜!',
+  'familyPK.tie': '平局!',
+  'familyPK.time': '用时',
+  'familyPK.playAgain': '再玩一次'
 };

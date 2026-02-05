@@ -721,5 +721,28 @@ I18n.translations['en'] = {
   'pet.room.carpet-heart': 'Heart Carpet',
   'pet.room.carpet-star': 'Star Carpet',
   'pet.room.carpet-rainbow': 'Rainbow Carpet',
-  'pet.room.carpet-flower': 'Flower Carpet'
+  'pet.room.carpet-flower': 'Flower Carpet',
+
+  // Family PK
+  'menu.familyPK': 'Family PK',
+  'menu.familyPK.desc': 'Family Challenge',
+  'familyPK.title': 'Family PK',
+  'familyPK.desc': 'Parents and kids compete face to face!',
+  'familyPK.questionType': 'Question Type',
+  'familyPK.mixed': 'Mixed',
+  'familyPK.difficulty': 'Difficulty',
+  'familyPK.easy': 'Easy',
+  'familyPK.medium': 'Medium',
+  'familyPK.hard': 'Hard',
+  'familyPK.rounds': 'Number of Rounds',
+  'familyPK.start': 'Start PK!',
+  'familyPK.parent': 'Parent',
+  'familyPK.child': 'Kid',
+  'familyPK.go': 'GO!',
+  'familyPK.complete': 'Game Over!',
+  'familyPK.parentWins': 'Parent Wins!',
+  'familyPK.childWins': 'Kid Wins!',
+  'familyPK.tie': 'Tie!',
+  'familyPK.time': 'Time',
+  'familyPK.playAgain': 'Play Again'
 };
