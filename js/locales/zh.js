@@ -744,5 +744,18 @@ I18n.translations['zh'] = {
   'familyPK.childWins': '宝贝获胜!',
   'familyPK.tie': '平局!',
   'familyPK.time': '用时',
-  'familyPK.playAgain': '再玩一次'
+  'familyPK.playAgain': '再玩一次',
+  'familyPK.timeLimit': '答题时限',
+  'familyPK.noLimit': '无限',
+  'familyPK.seconds': '秒',
+  'familyPK.handicapMode': '让分模式',
+  'familyPK.handicapDesc': '家长选项延迟1秒显示',
+  'familyPK.history': '历史记录',
+  'familyPK.totalGames': '总场次',
+  'familyPK.ties': '平局',
+  'familyPK.parentRate': '家长正确率',
+  'familyPK.childRate': '宝贝正确率',
+  'familyPK.fastest': '最快答题',
+  'familyPK.noHistory': '暂无历史记录',
+  'familyPK.timeUp': '时间到!'
 };

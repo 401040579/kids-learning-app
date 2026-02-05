@@ -723,5 +723,18 @@ I18n.translations['ja'] = {
   'familyPK.childWins': '子供の勝ち!',
   'familyPK.tie': '引き分け!',
   'familyPK.time': '時間',
-  'familyPK.playAgain': 'もう一度'
+  'familyPK.playAgain': 'もう一度',
+  'familyPK.timeLimit': '制限時間',
+  'familyPK.noLimit': '無制限',
+  'familyPK.seconds': '秒',
+  'familyPK.handicapMode': 'ハンデモード',
+  'familyPK.handicapDesc': '親の選択肢が1秒遅れて表示',
+  'familyPK.history': '履歴',
+  'familyPK.totalGames': '合計ゲーム数',
+  'familyPK.ties': '引き分け',
+  'familyPK.parentRate': '親の正解率',
+  'familyPK.childRate': '子供の正解率',
+  'familyPK.fastest': '最速回答',
+  'familyPK.noHistory': '履歴がありません',
+  'familyPK.timeUp': '時間切れ!'
 };

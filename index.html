@@ -2144,11 +2144,84 @@
           </div>
         </div>
 
-        <!-- 开始按钮 -->
-        <button class="pk-start-btn" onclick="startFamilyPK()">
-          <span class="start-icon">🎮</span>
-          <span data-i18n="familyPK.start">开始PK!</span>
-        </button>
+        <!-- 时间限制 -->
+        <div class="pk-setting-section">
+          <h3 data-i18n="familyPK.timeLimit">答题时限</h3>
+          <div class="pk-time-buttons">
+            <button class="pk-time-btn" data-time="0" onclick="FamilyPK.setTimeLimit(0)">
+              <span class="time-value">∞</span>
+              <span class="time-label" data-i18n="familyPK.noLimit">无限</span>
+            </button>
+            <button class="pk-time-btn" data-time="5" onclick="FamilyPK.setTimeLimit(5)">
+              <span class="time-value">5</span>
+              <span class="time-label" data-i18n="familyPK.seconds">秒</span>
+            </button>
+            <button class="pk-time-btn active" data-time="10" onclick="FamilyPK.setTimeLimit(10)">
+              <span class="time-value">10</span>
+              <span class="time-label" data-i18n="familyPK.seconds">秒</span>
+            </button>
+            <button class="pk-time-btn" data-time="15" onclick="FamilyPK.setTimeLimit(15)">
+              <span class="time-value">15</span>
+              <span class="time-label" data-i18n="familyPK.seconds">秒</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 让分模式 -->
+        <div class="pk-setting-section pk-handicap-section">
+          <label class="pk-handicap-label">
+            <input type="checkbox" id="pk-handicap-toggle" onchange="FamilyPK.toggleHandicap(this.checked)">
+            <span class="pk-handicap-checkbox"></span>
+            <span class="pk-handicap-text">
+              <span data-i18n="familyPK.handicapMode">让分模式</span>
+              <span class="pk-handicap-desc" data-i18n="familyPK.handicapDesc">家长选项延迟1秒显示</span>
+            </span>
+          </label>
+        </div>
+
+        <!-- 按钮区域 -->
+        <div class="pk-setup-buttons">
+          <!-- 历史记录按钮 -->
+          <button class="pk-history-btn" onclick="FamilyPK.showHistory()">
+            <span>📊</span>
+            <span data-i18n="familyPK.history">历史记录</span>
+          </button>
+
+          <!-- 开始按钮 -->
+          <button class="pk-start-btn" onclick="startFamilyPK()">
+            <span class="start-icon">🎮</span>
+            <span data-i18n="familyPK.start">开始PK!</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 历史记录界面 -->
+      <div id="pk-history" class="pk-history hidden">
+        <div class="pk-history-header">
+          <button class="pk-back-btn" onclick="FamilyPK.backToSetup()">← <span data-i18n="btn.back">返回</span></button>
+          <h2>📊 <span data-i18n="familyPK.history">历史记录</span></h2>
+        </div>
+        <div class="pk-history-stats">
+          <div class="pk-stat-card">
+            <span class="stat-number" id="pk-stat-total">0</span>
+            <span class="stat-label" data-i18n="familyPK.totalGames">总场次</span>
+          </div>
+          <div class="pk-stat-card parent-wins">
+            <span class="stat-number" id="pk-stat-parent-wins">0</span>
+            <span class="stat-label" data-i18n="familyPK.parentWins">家长胜</span>
+          </div>
+          <div class="pk-stat-card child-wins">
+            <span class="stat-number" id="pk-stat-child-wins">0</span>
+            <span class="stat-label" data-i18n="familyPK.childWins">宝贝胜</span>
+          </div>
+          <div class="pk-stat-card ties">
+            <span class="stat-number" id="pk-stat-ties">0</span>
+            <span class="stat-label" data-i18n="familyPK.ties">平局</span>
+          </div>
+        </div>
+        <div class="pk-history-list" id="pk-history-list">
+          <!-- 历史记录由JS生成 -->
+        </div>
       </div>
 
       <!-- 游戏界面 -->
@@ -2157,6 +2230,14 @@
         <div class="pk-round-info">
           <span class="pk-round-label">🎮 Round</span>
           <span class="pk-round-number"><span id="pk-round-num">1</span>/<span id="pk-total-rounds">10</span></span>
+        </div>
+
+        <!-- 答题计时器 -->
+        <div id="pk-timer-display" class="pk-timer-display hidden">
+          <span id="pk-timer-value" class="pk-timer-value">10</span>
+          <div class="pk-timer-bar-container">
+            <div id="pk-timer-bar" class="pk-timer-bar"></div>
+          </div>
         </div>
 
         <!-- 家长区域 (旋转180°) -->
@@ -2221,6 +2302,21 @@
               <span class="stat-icon">⏱️</span>
               <span class="stat-value" id="pk-result-time">0:00</span>
               <span class="stat-label" data-i18n="familyPK.time">用时</span>
+            </div>
+            <div class="pk-result-stat">
+              <span class="stat-icon">🎯</span>
+              <span class="stat-value"><span id="pk-result-parent-rate">0</span>%</span>
+              <span class="stat-label" data-i18n="familyPK.parentRate">家长正确率</span>
+            </div>
+            <div class="pk-result-stat">
+              <span class="stat-icon">⭐</span>
+              <span class="stat-value"><span id="pk-result-child-rate">0</span>%</span>
+              <span class="stat-label" data-i18n="familyPK.childRate">宝贝正确率</span>
+            </div>
+            <div class="pk-result-stat">
+              <span class="stat-icon">⚡</span>
+              <span class="stat-value" id="pk-result-fastest">-</span>
+              <span class="stat-label" data-i18n="familyPK.fastest">最快答题</span>
             </div>
           </div>
 

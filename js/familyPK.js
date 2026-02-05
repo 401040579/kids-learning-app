@@ -6,7 +6,9 @@ const FamilyPK = {
     questionType: 'mixed',  // 'math', 'english', 'chinese', 'mixed'
     difficulty: 'easy',     // 'easy', 'medium', 'hard'
     totalRounds: 10,        // 5, 10, 15, 20
-    range: 10               // 数学范围: 10, 20, 30
+    range: 10,              // 数学范围: 10, 20, 30
+    timeLimit: 10,          // 每题时间限制(秒), 0表示不限时
+    handicapMode: false     // 让着孩子模式
   },
 
   // 当前游戏状态
@@ -15,10 +17,17 @@ const FamilyPK = {
     currentRound: 0,
     parentScore: 0,
     childScore: 0,
+    parentCorrect: 0,
+    childCorrect: 0,
     currentQuestion: null,
     answered: false,
+    firstAnswerWrong: false,  // 第一个回答是否错误
+    wrongPlayer: null,        // 答错的玩家
     startTime: null,
-    roundStartTime: null
+    roundStartTime: null,
+    timer: null,
+    timeLeft: 0,
+    fastestAnswer: null       // 最快答题时间
   },
 
   // 数据题库（复用现有数据）
@@ -84,13 +93,16 @@ const FamilyPK = {
       questionType: 'mixed',
       difficulty: 'easy',
       totalRounds: 10,
-      range: 10
+      range: 10,
+      timeLimit: 10,
+      handicapMode: false
     };
 
-    // 显示设置页面，隐藏游戏和结果页面
+    // 显示设置页面，隐藏其他页面
     document.getElementById('pk-setup').classList.remove('hidden');
     document.getElementById('pk-game').classList.add('hidden');
     document.getElementById('pk-result').classList.add('hidden');
+    document.getElementById('pk-history').classList.add('hidden');
 
     // 更新设置 UI
     this.updateSetupUI();
@@ -120,6 +132,17 @@ const FamilyPK = {
     document.querySelectorAll('.pk-rounds-btn').forEach(btn => {
       btn.classList.toggle('active', parseInt(btn.dataset.rounds) === this.config.totalRounds);
     });
+
+    // 时间限制选择
+    document.querySelectorAll('.pk-time-btn').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.time) === this.config.timeLimit);
+    });
+
+    // 让着孩子模式
+    const handicapToggle = document.getElementById('pk-handicap-toggle');
+    if (handicapToggle) {
+      handicapToggle.checked = this.config.handicapMode;
+    }
   },
 
   // 选择题型
@@ -147,6 +170,85 @@ const FamilyPK = {
     RewardSystem.playSound('click');
   },
 
+  // 设置时间限制
+  setTimeLimit(seconds) {
+    this.config.timeLimit = seconds;
+    this.updateSetupUI();
+    RewardSystem.playSound('click');
+  },
+
+  // 切换让分模式
+  toggleHandicap(checked) {
+    this.config.handicapMode = checked !== undefined ? checked : !this.config.handicapMode;
+    this.updateSetupUI();
+    RewardSystem.playSound('click');
+  },
+
+  // 显示历史记录
+  showHistory() {
+    document.getElementById('pk-setup').classList.add('hidden');
+    document.getElementById('pk-history').classList.remove('hidden');
+    this.renderHistory();
+  },
+
+  // 返回设置
+  backToSetup() {
+    document.getElementById('pk-history').classList.add('hidden');
+    document.getElementById('pk-setup').classList.remove('hidden');
+  },
+
+  // 渲染历史记录
+  renderHistory() {
+    const data = this.loadHistoryData();
+    const listEl = document.getElementById('pk-history-list');
+
+    // 更新统计数字
+    const totalEl = document.getElementById('pk-stat-total');
+    const parentWinsEl = document.getElementById('pk-stat-parent-wins');
+    const childWinsEl = document.getElementById('pk-stat-child-wins');
+    const tiesEl = document.getElementById('pk-stat-ties');
+
+    if (totalEl) totalEl.textContent = data.stats.totalGames || 0;
+    if (parentWinsEl) parentWinsEl.textContent = data.stats.parentWins || 0;
+    if (childWinsEl) childWinsEl.textContent = data.stats.childWins || 0;
+    if (tiesEl) tiesEl.textContent = data.stats.ties || 0;
+
+    // 渲染历史列表
+    if (listEl) {
+      if (data.history.length === 0) {
+        listEl.innerHTML = `
+          <div class="pk-history-empty">
+            <div class="pk-history-empty-icon">🎮</div>
+            <p data-i18n="familyPK.noHistory">${I18n.t('familyPK.noHistory', '暂无历史记录')}</p>
+          </div>
+        `;
+      } else {
+        listEl.innerHTML = data.history.slice(0, 20).map(record => {
+          const date = new Date(record.date);
+          const dateStr = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+          const winnerIcon = record.winner === 'child' ? '👧🏆' : (record.winner === 'parent' ? '👨🏆' : '🤝');
+          const typeIcon = record.questionType === 'math' ? '🔢' : (record.questionType === 'english' ? '🔤' : (record.questionType === 'chinese' ? '📝' : '🎯'));
+          const diffText = record.difficulty === 'easy' ? I18n.t('familyPK.easy', '简单') : (record.difficulty === 'medium' ? I18n.t('familyPK.medium', '中等') : I18n.t('familyPK.hard', '困难'));
+
+          return `
+            <div class="pk-history-item">
+              <div class="pk-history-item-left">
+                <span class="pk-history-date">${dateStr}</span>
+                <span class="pk-history-type">${typeIcon} ${diffText} · ${record.totalRounds}回合</span>
+              </div>
+              <div class="pk-history-item-right">
+                <span class="pk-history-score parent">${record.parentScore}</span>
+                <span>:</span>
+                <span class="pk-history-score child">${record.childScore}</span>
+                <span class="pk-history-winner">${winnerIcon}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+  },
+
   // 开始游戏
   startGame() {
     // 初始化游戏状态
@@ -155,15 +257,28 @@ const FamilyPK = {
       currentRound: 0,
       parentScore: 0,
       childScore: 0,
+      parentCorrect: 0,
+      childCorrect: 0,
       currentQuestion: null,
       answered: false,
+      firstAnswerWrong: false,
+      wrongPlayer: null,
       startTime: Date.now(),
-      roundStartTime: null
+      roundStartTime: null,
+      timer: null,
+      timeLeft: this.config.timeLimit,
+      fastestAnswer: null
     };
 
     // 切换到游戏界面
     document.getElementById('pk-setup').classList.add('hidden');
     document.getElementById('pk-game').classList.remove('hidden');
+
+    // 显示/隐藏计时器
+    const timerEl = document.getElementById('pk-timer-display');
+    if (timerEl) {
+      timerEl.classList.toggle('hidden', this.config.timeLimit === 0);
+    }
 
     // 开始倒计时
     this.showCountdown();
@@ -204,7 +319,10 @@ const FamilyPK = {
   nextRound() {
     this.state.currentRound++;
     this.state.answered = false;
+    this.state.firstAnswerWrong = false;
+    this.state.wrongPlayer = null;
     this.state.roundStartTime = Date.now();
+    this.state.timeLeft = this.config.timeLimit;
 
     // 更新回合显示
     document.getElementById('pk-round-num').textContent = this.state.currentRound;
@@ -216,6 +334,95 @@ const FamilyPK = {
 
     // 生成题目
     this.generateQuestion();
+
+    // 开始计时
+    if (this.config.timeLimit > 0) {
+      this.startRoundTimer();
+    }
+  },
+
+  // 开始回合计时
+  startRoundTimer() {
+    this.stopRoundTimer();
+
+    const timerEl = document.getElementById('pk-timer-value');
+    const timerBar = document.getElementById('pk-timer-bar');
+
+    if (timerEl) timerEl.textContent = this.state.timeLeft;
+    if (timerBar) timerBar.style.width = '100%';
+
+    this.state.timer = setInterval(() => {
+      this.state.timeLeft--;
+
+      if (timerEl) timerEl.textContent = this.state.timeLeft;
+      if (timerBar) {
+        const percent = (this.state.timeLeft / this.config.timeLimit) * 100;
+        timerBar.style.width = `${percent}%`;
+        // 时间少于3秒变红
+        timerBar.classList.toggle('danger', this.state.timeLeft <= 3);
+      }
+
+      // 时间到
+      if (this.state.timeLeft <= 0) {
+        this.stopRoundTimer();
+        this.timeUp();
+      }
+    }, 1000);
+  },
+
+  // 停止回合计时
+  stopRoundTimer() {
+    if (this.state.timer) {
+      clearInterval(this.state.timer);
+      this.state.timer = null;
+    }
+  },
+
+  // 时间到
+  timeUp() {
+    if (this.state.answered) return;
+
+    this.state.answered = true;
+
+    // 显示正确答案
+    const question = this.state.currentQuestion;
+    document.querySelectorAll('.pk-option-btn').forEach(btn => {
+      btn.disabled = true;
+      btn.classList.add('disabled');
+      if (btn.dataset.answer === question.answer) {
+        btn.classList.add('correct');
+      }
+    });
+
+    // 播放时间到音效
+    RewardSystem.playSound('wrong');
+
+    // 显示时间到提示
+    this.showTimeUpFeedback();
+
+    // 延迟后进入下一回合
+    setTimeout(() => {
+      if (this.state.currentRound >= this.config.totalRounds) {
+        this.endGame();
+      } else {
+        this.nextRound();
+      }
+    }, 1500);
+  },
+
+  // 显示时间到反馈
+  showTimeUpFeedback() {
+    const parentFeedback = document.getElementById('pk-parent-feedback');
+    const childFeedback = document.getElementById('pk-child-feedback');
+
+    [parentFeedback, childFeedback].forEach(el => {
+      if (el) {
+        el.textContent = '⏰';
+        el.className = 'pk-feedback timeout';
+        el.classList.remove('hidden');
+        setTimeout(() => el.classList.add('hidden'), 1200);
+      }
+    });
   },
 
   // 生成题目
@@ -246,6 +453,9 @@ const FamilyPK = {
     if (this.config.difficulty !== 'easy') {
       operators.push('×');
     }
+    if (this.config.difficulty === 'hard') {
+      operators.push('÷');
+    }
     const operator = operators[Math.floor(Math.random() * operators.length)];
 
     let num1, num2, answer;
@@ -259,11 +469,17 @@ const FamilyPK = {
       num2 = Math.floor(Math.random() * num1) + 1;
       if (num2 > num1) [num1, num2] = [num2, num1];
       answer = num1 - num2;
-    } else {
+    } else if (operator === '×') {
       const maxFactor = range <= 10 ? 5 : 9;
       num1 = Math.floor(Math.random() * maxFactor) + 1;
       num2 = Math.floor(Math.random() * maxFactor) + 1;
       answer = num1 * num2;
+    } else { // 除法
+      const maxFactor = range <= 10 ? 5 : 9;
+      num2 = Math.floor(Math.random() * maxFactor) + 1;
+      const quotient = Math.floor(Math.random() * maxFactor) + 1;
+      num1 = num2 * quotient;
+      answer = quotient;
     }
 
     // 生成选项
@@ -324,6 +540,8 @@ const FamilyPK = {
     // 显示题目
     const questionEl = document.getElementById('pk-question-text');
     questionEl.textContent = question.display;
+    questionEl.classList.add('question-appear');
+    setTimeout(() => questionEl.classList.remove('question-appear'), 300);
 
     // 题目类型图标
     const typeIcons = {
@@ -336,6 +554,17 @@ const FamilyPK = {
     // 渲染双方选项
     this.renderOptions('parent', question.options);
     this.renderOptions('child', question.options);
+
+    // 让着孩子模式：延迟显示家长选项
+    if (this.config.handicapMode) {
+      const parentOptions = document.getElementById('pk-parent-options');
+      if (parentOptions) {
+        parentOptions.classList.add('handicap-hidden');
+        setTimeout(() => {
+          parentOptions.classList.remove('handicap-hidden');
+        }, 1000);
+      }
+    }
 
     // 重置选项状态
     document.querySelectorAll('.pk-option-btn').forEach(btn => {
@@ -358,57 +587,112 @@ const FamilyPK = {
 
   // 检查答案
   checkAnswer(player, answer, btn) {
-    if (this.state.answered || !this.state.isPlaying) return;
+    // 如果已经完全结束本轮，忽略
+    if (this.state.answered && !this.state.firstAnswerWrong) return;
 
-    this.state.answered = true;
+    // 如果是第一个答错的玩家再次点击，忽略
+    if (this.state.firstAnswerWrong && player === this.state.wrongPlayer) return;
+
+    if (!this.state.isPlaying) return;
+
     const question = this.state.currentQuestion;
     const isCorrect = answer === question.answer;
 
-    // 计算响应时间奖励分
+    // 计算响应时间
     const responseTime = Date.now() - this.state.roundStartTime;
-    const baseScore = 10;
-    const speedBonus = responseTime < 3000 ? 5 : (responseTime < 5000 ? 3 : 0);
-
-    // 禁用所有选项
-    document.querySelectorAll('.pk-option-btn').forEach(b => {
-      b.disabled = true;
-      b.classList.add('disabled');
-      // 高亮正确答案
-      if (b.dataset.answer === question.answer) {
-        b.classList.add('correct');
-      }
-    });
 
     if (isCorrect) {
-      btn.classList.add('correct');
+      // 答对了
+      this.state.answered = true;
+      this.stopRoundTimer();
+
+      // 计算得分
+      const baseScore = 10;
+      const speedBonus = responseTime < 2000 ? 5 : (responseTime < 4000 ? 3 : (responseTime < 6000 ? 1 : 0));
       const score = baseScore + speedBonus;
+
+      // 记录最快答题
+      if (!this.state.fastestAnswer || responseTime < this.state.fastestAnswer) {
+        this.state.fastestAnswer = responseTime;
+      }
+
+      // 禁用所有选项并高亮正确答案
+      document.querySelectorAll('.pk-option-btn').forEach(b => {
+        b.disabled = true;
+        b.classList.add('disabled');
+        if (b.dataset.answer === question.answer) {
+          b.classList.add('correct');
+        }
+      });
+
+      btn.classList.add('correct');
 
       if (player === 'parent') {
         this.state.parentScore += score;
+        this.state.parentCorrect++;
         this.showPlayerFeedback('parent', true, score);
       } else {
         this.state.childScore += score;
+        this.state.childCorrect++;
         this.showPlayerFeedback('child', true, score);
       }
+
       RewardSystem.playSound('correct');
+
+      // 更新分数显示
+      document.getElementById('pk-parent-score').textContent = this.state.parentScore;
+      document.getElementById('pk-child-score').textContent = this.state.childScore;
+
+      // 延迟后进入下一回合或结束
+      setTimeout(() => {
+        if (this.state.currentRound >= this.config.totalRounds) {
+          this.endGame();
+        } else {
+          this.nextRound();
+        }
+      }, 1500);
+
     } else {
+      // 答错了
       btn.classList.add('wrong');
+      btn.disabled = true;
       this.showPlayerFeedback(player, false, 0);
       RewardSystem.playSound('wrong');
-    }
 
-    // 更新分数
-    document.getElementById('pk-parent-score').textContent = this.state.parentScore;
-    document.getElementById('pk-child-score').textContent = this.state.childScore;
+      if (!this.state.firstAnswerWrong) {
+        // 第一个人答错，给另一个人机会
+        this.state.firstAnswerWrong = true;
+        this.state.wrongPlayer = player;
 
-    // 延迟后进入下一回合或结束
-    setTimeout(() => {
-      if (this.state.currentRound >= this.config.totalRounds) {
-        this.endGame();
+        // 禁用答错玩家的所有选项
+        document.querySelectorAll(`.pk-option-btn[data-player="${player}"]`).forEach(b => {
+          b.disabled = true;
+          b.classList.add('disabled');
+        });
       } else {
-        this.nextRound();
+        // 两个人都答错了
+        this.state.answered = true;
+        this.stopRoundTimer();
+
+        // 显示正确答案
+        document.querySelectorAll('.pk-option-btn').forEach(b => {
+          b.disabled = true;
+          b.classList.add('disabled');
+          if (b.dataset.answer === question.answer) {
+            b.classList.add('correct');
+          }
+        });
+
+        // 延迟后进入下一回合
+        setTimeout(() => {
+          if (this.state.currentRound >= this.config.totalRounds) {
+            this.endGame();
+          } else {
+            this.nextRound();
+          }
+        }, 1500);
       }
-    }, 1500);
+    }
   },
 
   // 显示玩家反馈
@@ -431,6 +715,7 @@ const FamilyPK = {
   // 结束游戏
   endGame() {
     this.state.isPlaying = false;
+    this.stopRoundTimer();
     const totalTime = Math.floor((Date.now() - this.state.startTime) / 1000);
 
     // 判断胜负
@@ -451,8 +736,11 @@ const FamilyPK = {
       totalRounds: this.config.totalRounds,
       parentScore: this.state.parentScore,
       childScore: this.state.childScore,
+      parentCorrect: this.state.parentCorrect,
+      childCorrect: this.state.childCorrect,
       winner: winner,
-      duration: totalTime
+      duration: totalTime,
+      fastestAnswer: this.state.fastestAnswer
     });
 
     // 显示结果界面
@@ -504,6 +792,25 @@ const FamilyPK = {
     const seconds = totalTime % 60;
     document.getElementById('pk-result-time').textContent =
       `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+    // 显示正确率
+    const parentRate = this.config.totalRounds > 0
+      ? Math.round((this.state.parentCorrect / this.config.totalRounds) * 100)
+      : 0;
+    const childRate = this.config.totalRounds > 0
+      ? Math.round((this.state.childCorrect / this.config.totalRounds) * 100)
+      : 0;
+
+    const parentRateEl = document.getElementById('pk-result-parent-rate');
+    const childRateEl = document.getElementById('pk-result-child-rate');
+    if (parentRateEl) parentRateEl.textContent = parentRate;
+    if (childRateEl) childRateEl.textContent = childRate;
+
+    // 显示最快答题
+    const fastestEl = document.getElementById('pk-result-fastest');
+    if (fastestEl && this.state.fastestAnswer) {
+      fastestEl.textContent = `${(this.state.fastestAnswer / 1000).toFixed(1)}s`;
+    }
   },
 
   // 再玩一次
@@ -518,6 +825,7 @@ const FamilyPK = {
       modal.classList.add('hidden');
     }
     this.state.isPlaying = false;
+    this.stopRoundTimer();
   },
 
   // 保存历史记录
@@ -592,4 +900,12 @@ function startFamilyPK() {
 
 function playFamilyPKAgain() {
   FamilyPK.playAgain();
+}
+
+function showFamilyPKHistory() {
+  FamilyPK.showHistory();
+}
+
+function backToFamilyPKSetup() {
+  FamilyPK.backToSetup();
 }

@@ -742,5 +742,18 @@ I18n.translations['de'] = {
   'familyPK.childWins': 'Kind gewinnt!',
   'familyPK.tie': 'Unentschieden!',
   'familyPK.time': 'Zeit',
-  'familyPK.playAgain': 'Nochmal Spielen'
+  'familyPK.playAgain': 'Nochmal Spielen',
+  'familyPK.timeLimit': 'Zeitlimit',
+  'familyPK.noLimit': 'Unbegrenzt',
+  'familyPK.seconds': 'Sek',
+  'familyPK.handicapMode': 'Handicap-Modus',
+  'familyPK.handicapDesc': 'Elternoptionen mit 1 Sekunde Verzögerung',
+  'familyPK.history': 'Verlauf',
+  'familyPK.totalGames': 'Gesamtspiele',
+  'familyPK.ties': 'Unentschieden',
+  'familyPK.parentRate': 'Eltern-Genauigkeit',
+  'familyPK.childRate': 'Kind-Genauigkeit',
+  'familyPK.fastest': 'Schnellste Antwort',
+  'familyPK.noHistory': 'Kein Verlauf',
+  'familyPK.timeUp': 'Zeit abgelaufen!'
 };

@@ -723,5 +723,18 @@ I18n.translations['ko'] = {
   'familyPK.childWins': '아이 승리!',
   'familyPK.tie': '무승부!',
   'familyPK.time': '시간',
-  'familyPK.playAgain': '다시 하기'
+  'familyPK.playAgain': '다시 하기',
+  'familyPK.timeLimit': '시간 제한',
+  'familyPK.noLimit': '무제한',
+  'familyPK.seconds': '초',
+  'familyPK.handicapMode': '핸디캡 모드',
+  'familyPK.handicapDesc': '부모 선택지 1초 지연',
+  'familyPK.history': '기록',
+  'familyPK.totalGames': '총 게임 수',
+  'familyPK.ties': '무승부',
+  'familyPK.parentRate': '부모 정답률',
+  'familyPK.childRate': '아이 정답률',
+  'familyPK.fastest': '최고 빠른 정답',
+  'familyPK.noHistory': '기록이 없습니다',
+  'familyPK.timeUp': '시간 초과!'
 };
