@@ -476,6 +476,12 @@
             <div class="card-desc" data-i18n="menu.familyPK.desc">家庭互动挑战</div>
           </div>
 
+          <div class="menu-card card-logic-games" data-category="play" onclick="showLogicGames()">
+            <div class="card-icon">🧩</div>
+            <div class="card-title" data-i18n="menu.logicGames">逻辑训练</div>
+            <div class="card-desc" data-i18n="menu.logicGames.desc">锻炼思维能力</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -2333,6 +2339,50 @@
     </div>
   </div>
 
+  <!-- ========== 逻辑训练游戏 ========== -->
+  <div id="logic-games-modal" class="logic-games-modal hidden">
+    <div class="logic-games-container">
+      <!-- 游戏选择界面 -->
+      <div id="logic-select" class="logic-select">
+        <button class="logic-close-btn" onclick="closeLogicGames()">✕</button>
+        <h2>🧩 <span data-i18n="logic.title">逻辑训练</span></h2>
+        <div id="logic-game-cards" class="logic-game-cards">
+          <!-- 游戏卡片由 JS 生成 -->
+        </div>
+        <div class="logic-stats">
+          <span>⭐ <span data-i18n="logic.bestScore">最高分</span>: <span id="logic-total-score">0</span></span>
+          <span>🎮 <span data-i18n="logic.totalGames">已玩</span>: <span id="logic-total-games">0</span></span>
+        </div>
+      </div>
+
+      <!-- 难度选择界面 -->
+      <div id="logic-difficulty" class="logic-difficulty hidden">
+        <!-- 由 JS 动态生成 -->
+      </div>
+
+      <!-- 游戏区域 -->
+      <div id="logic-game-area" class="logic-game-area hidden">
+        <div class="logic-game-header">
+          <button class="logic-back-btn" onclick="LogicGames.backToSelect()">←</button>
+          <span id="logic-game-title"></span>
+          <span id="logic-game-timer">0:00</span>
+        </div>
+        <div id="logic-game-content" class="logic-game-content">
+          <!-- 游戏内容动态生成 -->
+        </div>
+        <div class="logic-game-footer">
+          <span><span data-i18n="logic.score">得分</span>: <span id="logic-current-score">0</span></span>
+          <span><span data-i18n="logic.level">关卡</span>: <span id="logic-current-level">1</span></span>
+        </div>
+      </div>
+
+      <!-- 结果界面 -->
+      <div id="logic-result" class="logic-result hidden">
+        <!-- 结果内容由 JS 动态生成 -->
+      </div>
+    </div>
+  </div>
+
   <!-- ========== 音乐创作 ========== -->
   <div id="music-modal" class="music-modal hidden">
     <div class="music-container">
@@ -2807,6 +2857,8 @@
   <script src="js/songData.js"></script>
   <script src="js/songPractice.js"></script>
   <script src="js/familyPK.js"></script>
+  <script src="js/logicGamesData.js"></script>
+  <script src="js/logicGames.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -157,7 +157,8 @@ const RecentlyUsed = {
     'songPractice': { icon: '🎤', nameKey: 'menu.songPractice', action: () => openSongPractice() },
     'parentMessage': { icon: '💬', nameKey: 'menu.parentMessage', action: () => openMessageToParent() },
     'parentSettings': { icon: '👨‍👩‍👧', nameKey: 'menu.parentSettings', action: () => openParentSettings() },
-    'familyPK': { icon: '👨‍👩‍👧', nameKey: 'menu.familyPK', action: () => showFamilyPK() }
+    'familyPK': { icon: '👨‍👩‍👧', nameKey: 'menu.familyPK', action: () => showFamilyPK() },
+    'logicGames': { icon: '🧩', nameKey: 'menu.logicGames', action: () => showLogicGames() }
   },
 
   init() {

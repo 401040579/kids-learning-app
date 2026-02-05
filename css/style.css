@@ -12969,3 +12969,702 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ========== 逻辑训练游戏 ========== */
+.logic-games-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 50%, #FFF3E0 100%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.logic-games-modal.hidden {
+  display: none;
+}
+
+.logic-games-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 游戏选择界面 */
+.logic-select {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.logic-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.logic-close-btn:hover {
+  background: rgba(0, 0, 0, 0.2);
+  transform: rotate(90deg);
+}
+
+.logic-select h2,
+.logic-difficulty h2 {
+  text-align: center;
+  font-size: 2rem;
+  background: linear-gradient(45deg, #4CAF50, #2196F3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 30px 0 25px;
+}
+
+/* 游戏卡片网格 */
+.logic-game-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 10px;
+}
+
+.logic-game-card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px 15px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logic-game-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.logic-game-card:active {
+  transform: scale(0.95);
+}
+
+.logic-game-card-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.logic-game-card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.logic-game-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+/* 统计信息 */
+.logic-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 25px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+}
+
+.logic-stats span {
+  font-size: 1rem;
+  color: var(--text-dark);
+}
+
+/* 难度选择界面 */
+.logic-difficulty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  align-items: center;
+}
+
+.logic-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.logic-back-btn:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.logic-difficulty-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 20px;
+}
+
+.logic-difficulty-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 30px;
+  border: 3px solid #4CAF50;
+  background: white;
+  border-radius: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logic-difficulty-btn:hover:not(.locked) {
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  color: white;
+  transform: scale(1.05);
+}
+
+.logic-difficulty-btn.locked {
+  border-color: #ccc;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.difficulty-stars {
+  font-size: 1rem;
+}
+
+.difficulty-lock {
+  font-size: 1.5rem;
+}
+
+/* 游戏区域 */
+.logic-game-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.logic-game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+.logic-game-header span {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+#logic-game-timer {
+  background: linear-gradient(135deg, #FF9800, #FFC107);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logic-game-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.logic-game-footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  margin-top: 15px;
+}
+
+.logic-game-footer span {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+/* 游戏说明文字 */
+.logic-instruction {
+  font-size: 1.2rem;
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: bold;
+}
+
+/* 找规律游戏 */
+.pattern-game {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pattern-sequence {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pattern-item {
+  font-size: 2.5rem;
+  padding: 10px 15px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pattern-question {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.pattern-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.pattern-option-btn {
+  font-size: 2.5rem;
+  padding: 20px;
+  background: white;
+  border: 3px solid #e0e0e0;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pattern-option-btn:hover {
+  border-color: #4CAF50;
+  transform: scale(1.05);
+}
+
+.pattern-option-btn:active {
+  transform: scale(0.95);
+}
+
+/* 找不同游戏 */
+.spot-diff-game {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spot-diff-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.spot-diff-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 15px 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.spot-diff-item {
+  font-size: 2.2rem;
+  padding: 10px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.spot-diff-item.clickable {
+  cursor: pointer;
+}
+
+.spot-diff-item.clickable:hover {
+  background: rgba(76, 175, 80, 0.2);
+  transform: scale(1.1);
+}
+
+.spot-diff-divider {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FF69B4;
+}
+
+/* 配对游戏 */
+.matching-game {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.matching-grid {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 350px;
+}
+
+.matching-card {
+  aspect-ratio: 1;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+
+.matching-card.flipped .card-inner,
+.matching-card.matched .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-front {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.card-back {
+  background: white;
+  transform: rotateY(180deg);
+}
+
+.matching-card.matched .card-back {
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+}
+
+/* 迷宫游戏 */
+.maze-game {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.maze-grid {
+  display: grid;
+  gap: 2px;
+  background: #333;
+  padding: 5px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.maze-cell {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border-radius: 4px;
+}
+
+.maze-cell.wall {
+  background: #555;
+}
+
+.maze-cell.path {
+  background: #E8F5E9;
+}
+
+.maze-cell.player {
+  background: #FFF9C4;
+  animation: playerPulse 0.5s infinite;
+}
+
+@keyframes playerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.maze-cell.end {
+  background: #FFECB3;
+}
+
+.maze-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.maze-control-row {
+  display: flex;
+  gap: 50px;
+}
+
+.maze-control-btn {
+  width: 55px;
+  height: 55px;
+  font-size: 1.8rem;
+  border: none;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.maze-control-btn:hover {
+  transform: scale(1.1);
+}
+
+.maze-control-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* 反馈动画 */
+.logic-feedback {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  animation: feedbackPop 0.6s ease-out forwards;
+  z-index: 100;
+}
+
+.logic-feedback.correct {
+  color: #4CAF50;
+}
+
+.logic-feedback.wrong {
+  color: #F44336;
+}
+
+@keyframes feedbackPop {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+/* 结果界面 */
+.logic-result {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.logic-result-content {
+  background: white;
+  border-radius: 25px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  max-width: 350px;
+  width: 100%;
+}
+
+.logic-result-icon {
+  font-size: 5rem;
+  margin-bottom: 15px;
+}
+
+.logic-result-content h2 {
+  font-size: 1.8rem;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+}
+
+.logic-result-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.result-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.result-stat.bonus {
+  background: linear-gradient(135deg, #FFF9C4, #FFECB3);
+}
+
+.stat-label {
+  color: var(--text-light);
+}
+
+.stat-value {
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.result-stat.bonus .stat-value {
+  color: #FF9800;
+}
+
+.logic-result-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.logic-btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logic-btn.primary {
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  color: white;
+}
+
+.logic-btn.primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+.logic-btn:not(.primary) {
+  background: #f5f5f5;
+  color: var(--text-dark);
+}
+
+.logic-btn:not(.primary):hover {
+  background: #e0e0e0;
+}
+
+/* 响应式设计 */
+@media (max-width: 400px) {
+  .logic-game-cards {
+    gap: 10px;
+  }
+
+  .logic-game-card {
+    padding: 20px 10px;
+  }
+
+  .logic-game-card-icon {
+    font-size: 2.5rem;
+  }
+
+  .logic-game-card-title {
+    font-size: 1rem;
+  }
+
+  .pattern-item {
+    font-size: 2rem;
+    padding: 8px 12px;
+  }
+
+  .pattern-option-btn {
+    font-size: 2rem;
+    padding: 15px;
+  }
+
+  .spot-diff-item {
+    font-size: 1.8rem;
+    padding: 8px;
+  }
+
+  .maze-cell {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+
+  .maze-control-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+}
