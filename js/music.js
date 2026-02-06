@@ -20,8 +20,18 @@ const MusicApp = {
       { note: 'D5', freq: 587.33, label: '7', color: '#FF69B4' },
       { note: 'E5', freq: 659.25, label: '8', color: '#00D2D3' }
     ],
-    currentSound: 'piano', // piano, xylophone, bell
-    activeKeys: new Set()
+    currentSound: 'piano', // piano, xylophone, bell, guitar, flute
+    activeKeys: new Set(),
+    octaveShift: 0 // -1(低音), 0(中音), +1(高音)
+  },
+
+  // 录制功能
+  recorder: {
+    isRecording: false,
+    events: [],       // [{type:'piano'|'drum', data, time}]
+    startTime: 0,
+    playbackTimer: null,
+    playbackTimeouts: []
   },
 
   // 打击乐设置
@@ -85,18 +95,30 @@ const MusicApp = {
     const note = this.piano.notes[noteIndex];
     if (!note) return;
 
+    // 应用八度偏移
+    const freq = note.freq * Math.pow(2, this.piano.octaveShift);
+
     // 根据当前音色创建不同的声音
     switch (this.piano.currentSound) {
       case 'piano':
-        this.playPianoSound(note.freq);
+        this.playPianoSound(freq);
         break;
       case 'xylophone':
-        this.playXylophoneSound(note.freq);
+        this.playXylophoneSound(freq);
         break;
       case 'bell':
-        this.playBellSound(note.freq);
+        this.playBellSound(freq);
+        break;
+      case 'guitar':
+        this.playGuitarSound(freq);
+        break;
+      case 'flute':
+        this.playFluteSound(freq);
         break;
     }
+
+    // 录制事件
+    this.recordEvent('piano', { noteIndex, sound: this.piano.currentSound, octaveShift: this.piano.octaveShift });
 
     // 触发动物跳舞
     this.triggerAnimalDance(noteIndex);
@@ -188,6 +210,85 @@ const MusicApp = {
     osc2.stop(now + 2);
   },
 
+  // 吉他音色（sawtooth + 低通滤波器，温暖弹拨音色）
+  playGuitarSound(freq) {
+    const ctx = this.audioContext;
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = 'sawtooth';
+    osc.frequency.value = freq;
+
+    // 低通滤波器让声音温暖
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(2000, now);
+    filter.frequency.exponentialRampToValueAtTime(500, now + 0.5);
+    filter.Q.value = 1;
+
+    // 弹拨感的包络
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.4, now + 0.005);
+    gainNode.gain.exponentialRampToValueAtTime(0.2, now + 0.1);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+
+    osc.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.8);
+  },
+
+  // 长笛音色（sine + 颤音 vibrato LFO，柔和吹奏音色）
+  playFluteSound(freq) {
+    const ctx = this.audioContext;
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    // 轻微颤音 LFO
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 5; // 5Hz 颤音
+    lfoGain.gain.value = 3;  // 3Hz 频率偏移
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc.frequency);
+
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+
+    // 柔和的吹奏感
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.35, now + 0.08); // 慢起音
+    gainNode.gain.setValueAtTime(0.35, now + 0.5);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
+
+    osc.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    lfo.start(now);
+    osc.start(now);
+    lfo.stop(now + 1.2);
+    osc.stop(now + 1.2);
+  },
+
+  // 八度切换
+  shiftOctave(direction) {
+    // direction: -1(低音), 0(中音), +1(高音)
+    this.piano.octaveShift = Math.max(-1, Math.min(1, direction));
+
+    // 更新UI
+    document.querySelectorAll('.octave-btn').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.octave) === this.piano.octaveShift);
+    });
+  },
+
   // 设置钢琴音色
   setPianoSound(sound) {
     this.piano.currentSound = sound;
@@ -241,6 +342,9 @@ const MusicApp = {
         this.playTriangleSound();
         break;
     }
+
+    // 录制事件
+    this.recordEvent('drum', { drumId });
 
     // 打击乐动画
     this.animateDrum(drumId);
@@ -454,7 +558,8 @@ const MusicApp = {
     let beatIndex = 0;
     const patterns = this.getRhythmPattern(type);
 
-    const interval = type === 'lullaby' ? 600 : (type === 'march' ? 350 : 400);
+    const tempoMap = { lullaby: 600, march: 350, rock: 300, waltz: 450, reggae: 380 };
+    const interval = tempoMap[type] || 400;
 
     this.drums.rhythmInterval = setInterval(() => {
       const beat = patterns[beatIndex % patterns.length];
@@ -521,6 +626,40 @@ const MusicApp = {
         ['snare'],
         ['kick', 'hihat'],
         ['snare', 'clap']
+      ],
+      // 摇滚节奏（强劲的 kick+snare 交替）
+      rock: [
+        ['kick', 'hihat'],
+        ['hihat'],
+        ['snare', 'hihat'],
+        ['hihat'],
+        ['kick', 'hihat'],
+        ['kick', 'hihat'],
+        ['snare', 'hihat'],
+        ['hihat', 'clap']
+      ],
+      // 华尔兹节奏（3/4 拍，优雅三拍子）
+      waltz: [
+        ['kick'],
+        ['hihat'],
+        ['hihat'],
+        ['kick'],
+        ['hihat'],
+        ['hihat'],
+        ['snare'],
+        ['hihat'],
+        ['hihat']
+      ],
+      // 雷鬼节奏（重拍在第二、四拍）
+      reggae: [
+        ['hihat'],
+        ['kick', 'snare'],
+        ['hihat'],
+        ['kick', 'snare'],
+        ['hihat', 'shaker'],
+        ['kick', 'snare'],
+        ['hihat'],
+        ['kick', 'snare', 'clap']
       ]
     };
     return patterns[type] || patterns.happy;
@@ -657,6 +796,7 @@ const MusicApp = {
     // 停止所有播放
     this.stopRhythm();
     this.stopSequencer();
+    this.stopPlayback();
 
     // 更新UI - 切换标签
     document.querySelectorAll('.music-tab').forEach(tab => {
@@ -667,6 +807,163 @@ const MusicApp = {
     document.querySelectorAll('.music-panel').forEach(panel => {
       panel.classList.toggle('active', panel.id === `music-${mode}`);
     });
+  },
+
+  // ========== 录制与回放 ==========
+
+  // 记录一个事件
+  recordEvent(type, data) {
+    if (!this.recorder.isRecording) return;
+    this.recorder.events.push({
+      type,
+      data,
+      time: Date.now() - this.recorder.startTime
+    });
+    this.updateRecorderUI();
+  },
+
+  // 开始录制
+  startRecording() {
+    this.recorder.isRecording = true;
+    this.recorder.events = [];
+    this.recorder.startTime = Date.now();
+    this.updateRecorderUI();
+
+    // 更新按钮状态
+    const recordBtn = document.getElementById('music-record-btn');
+    if (recordBtn) recordBtn.classList.add('recording');
+    const timerEl = document.getElementById('music-record-timer');
+    if (timerEl) {
+      this._recorderTimerInterval = setInterval(() => {
+        const elapsed = Date.now() - this.recorder.startTime;
+        const secs = Math.floor(elapsed / 1000);
+        const mins = Math.floor(secs / 60);
+        timerEl.textContent = `${String(mins).padStart(2,'0')}:${String(secs % 60).padStart(2,'0')}`;
+      }, 500);
+    }
+  },
+
+  // 停止录制
+  stopRecording() {
+    this.recorder.isRecording = false;
+    if (this._recorderTimerInterval) {
+      clearInterval(this._recorderTimerInterval);
+      this._recorderTimerInterval = null;
+    }
+    const recordBtn = document.getElementById('music-record-btn');
+    if (recordBtn) recordBtn.classList.remove('recording');
+    this.updateRecorderUI();
+  },
+
+  // 回放录制内容
+  playRecording() {
+    if (this.recorder.events.length === 0) {
+      this.showToast(typeof I18n !== 'undefined' ? I18n.t('music.noRecording') : '还没有录制内容');
+      return;
+    }
+
+    this.stopPlayback();
+    const playBtn = document.getElementById('music-playback-btn');
+    if (playBtn) playBtn.classList.add('playing');
+
+    const totalDuration = this.recorder.events[this.recorder.events.length - 1].time;
+    const progressBar = document.getElementById('music-playback-progress');
+
+    // 进度条动画
+    const playbackStart = Date.now();
+    this._playbackProgressInterval = setInterval(() => {
+      const elapsed = Date.now() - playbackStart;
+      const pct = Math.min(100, (elapsed / totalDuration) * 100);
+      if (progressBar) progressBar.style.width = pct + '%';
+      if (elapsed >= totalDuration) {
+        clearInterval(this._playbackProgressInterval);
+        this._playbackProgressInterval = null;
+      }
+    }, 50);
+
+    // 回放时暂停录制，避免重复记录
+    const wasRecording = this.recorder.isRecording;
+    this.recorder.isRecording = false;
+
+    // 按时间戳回放事件
+    this.recorder.playbackTimeouts = this.recorder.events.map(event => {
+      return setTimeout(() => {
+        if (event.type === 'piano') {
+          const savedSound = this.piano.currentSound;
+          const savedOctave = this.piano.octaveShift;
+          this.piano.currentSound = event.data.sound;
+          this.piano.octaveShift = event.data.octaveShift || 0;
+          // 直接调用底层方法以避免重新录制
+          const note = this.piano.notes[event.data.noteIndex];
+          if (note) {
+            const freq = note.freq * Math.pow(2, this.piano.octaveShift);
+            switch (this.piano.currentSound) {
+              case 'piano': this.playPianoSound(freq); break;
+              case 'xylophone': this.playXylophoneSound(freq); break;
+              case 'bell': this.playBellSound(freq); break;
+              case 'guitar': this.playGuitarSound(freq); break;
+              case 'flute': this.playFluteSound(freq); break;
+            }
+            this.triggerAnimalDance(event.data.noteIndex);
+            this.animateKey(event.data.noteIndex);
+          }
+          this.piano.currentSound = savedSound;
+          this.piano.octaveShift = savedOctave;
+        } else if (event.type === 'drum') {
+          this.playDrum(event.data.drumId);
+        }
+      }, event.time);
+    });
+
+    // 回放完成后清理
+    const endTimeout = setTimeout(() => {
+      if (playBtn) playBtn.classList.remove('playing');
+      if (progressBar) progressBar.style.width = '0%';
+    }, totalDuration + 100);
+    this.recorder.playbackTimeouts.push(endTimeout);
+  },
+
+  // 停止回放
+  stopPlayback() {
+    if (this.recorder.playbackTimeouts) {
+      this.recorder.playbackTimeouts.forEach(t => clearTimeout(t));
+      this.recorder.playbackTimeouts = [];
+    }
+    if (this._playbackProgressInterval) {
+      clearInterval(this._playbackProgressInterval);
+      this._playbackProgressInterval = null;
+    }
+    const playBtn = document.getElementById('music-playback-btn');
+    if (playBtn) playBtn.classList.remove('playing');
+    const progressBar = document.getElementById('music-playback-progress');
+    if (progressBar) progressBar.style.width = '0%';
+  },
+
+  // 清除录制
+  clearRecording() {
+    this.stopPlayback();
+    this.stopRecording();
+    this.recorder.events = [];
+    const timerEl = document.getElementById('music-record-timer');
+    if (timerEl) timerEl.textContent = '00:00';
+    this.updateRecorderUI();
+  },
+
+  // 更新录制器 UI（事件指示器）
+  updateRecorderUI() {
+    const indicator = document.getElementById('music-event-indicator');
+    if (!indicator) return;
+
+    const count = this.recorder.events.length;
+    const maxDots = 8;
+    let dots = '';
+    for (let i = 0; i < maxDots; i++) {
+      dots += i < count ? '<span class="dot filled"></span>' : '<span class="dot"></span>';
+    }
+    if (count > maxDots) {
+      dots += `<span class="dot-count">+${count - maxDots}</span>`;
+    }
+    indicator.innerHTML = dots;
   },
 
   // ========== 保存作品 ==========
@@ -744,6 +1041,8 @@ function closeMusic() {
     modal.classList.add('hidden');
     MusicApp.stopRhythm();
     MusicApp.stopSequencer();
+    MusicApp.stopPlayback();
+    MusicApp.stopRecording();
   }
 }
 
@@ -797,4 +1096,26 @@ function switchMusicMode(mode) {
 // 保存作品
 function saveMusicComposition() {
   MusicApp.saveComposition();
+}
+
+// 八度切换
+function shiftOctave(direction) {
+  MusicApp.shiftOctave(direction);
+}
+
+// 录制控制
+function startMusicRecording() {
+  MusicApp.startRecording();
+}
+
+function stopMusicRecording() {
+  MusicApp.stopRecording();
+}
+
+function playMusicRecording() {
+  MusicApp.playRecording();
+}
+
+function clearMusicRecording() {
+  MusicApp.clearRecording();
 }

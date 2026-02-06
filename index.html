@@ -2475,6 +2475,13 @@
           <span class="dancing-animal" data-index="7">🐵</span>
         </div>
 
+        <!-- 八度切换 -->
+        <div class="octave-controls">
+          <button class="octave-btn" data-octave="-1" onclick="shiftOctave(-1)">⬇️ <span data-i18n="music.octaveLow">低音</span></button>
+          <button class="octave-btn active" data-octave="0" onclick="shiftOctave(0)">🎵 <span data-i18n="music.octaveMid">中音</span></button>
+          <button class="octave-btn" data-octave="1" onclick="shiftOctave(1)">⬆️ <span data-i18n="music.octaveHigh">高音</span></button>
+        </div>
+
         <!-- 钢琴键盘 -->
         <div class="piano-keyboard">
           <button class="piano-key" data-index="0" style="--key-color: #FF6B6B" onclick="playPianoKey(0)">
@@ -2506,9 +2513,11 @@
         <!-- 音色选择 -->
         <div class="sound-selector">
           <span class="selector-label">音色:</span>
-          <button class="sound-btn active" data-sound="piano" onclick="setPianoSound('piano')">🎹 钢琴</button>
-          <button class="sound-btn" data-sound="xylophone" onclick="setPianoSound('xylophone')">🎵 木琴</button>
-          <button class="sound-btn" data-sound="bell" onclick="setPianoSound('bell')">🔔 铃铛</button>
+          <button class="sound-btn active" data-sound="piano" onclick="setPianoSound('piano')">🎹 <span data-i18n="music.pianoSound">钢琴</span></button>
+          <button class="sound-btn" data-sound="xylophone" onclick="setPianoSound('xylophone')">🎵 <span data-i18n="music.xylophone">木琴</span></button>
+          <button class="sound-btn" data-sound="bell" onclick="setPianoSound('bell')">🔔 <span data-i18n="music.bell">铃铛</span></button>
+          <button class="sound-btn" data-sound="guitar" onclick="setPianoSound('guitar')">🎸 <span data-i18n="music.guitar">吉他</span></button>
+          <button class="sound-btn" data-sound="flute" onclick="setPianoSound('flute')">🎶 <span data-i18n="music.flute">长笛</span></button>
         </div>
       </div>
 
@@ -2546,9 +2555,12 @@
         <div class="rhythm-section">
           <span class="selector-label">节奏伴奏:</span>
           <div class="rhythm-buttons">
-            <button class="rhythm-btn" data-rhythm="happy" onclick="toggleRhythm('happy')">🎉 欢快</button>
-            <button class="rhythm-btn" data-rhythm="lullaby" onclick="toggleRhythm('lullaby')">🌙 摇篮</button>
-            <button class="rhythm-btn" data-rhythm="march" onclick="toggleRhythm('march')">🎺 进行曲</button>
+            <button class="rhythm-btn" data-rhythm="happy" onclick="toggleRhythm('happy')">🎉 <span data-i18n="music.happy">欢快</span></button>
+            <button class="rhythm-btn" data-rhythm="lullaby" onclick="toggleRhythm('lullaby')">🌙 <span data-i18n="music.lullaby">摇篮</span></button>
+            <button class="rhythm-btn" data-rhythm="march" onclick="toggleRhythm('march')">🎺 <span data-i18n="music.march">进行曲</span></button>
+            <button class="rhythm-btn" data-rhythm="rock" onclick="toggleRhythm('rock')">🎸 <span data-i18n="music.rock">摇滚</span></button>
+            <button class="rhythm-btn" data-rhythm="waltz" onclick="toggleRhythm('waltz')">💃 <span data-i18n="music.waltz">华尔兹</span></button>
+            <button class="rhythm-btn" data-rhythm="reggae" onclick="toggleRhythm('reggae')">🌴 <span data-i18n="music.reggae">雷鬼</span></button>
           </div>
           <button id="rhythm-play-btn" class="rhythm-stop-btn" onclick="stopRhythm()">⏹️ 停止</button>
         </div>
@@ -2629,6 +2641,31 @@
             <button class="tempo-btn active" data-tempo="120" onclick="setTempo(120)">🐰 中</button>
             <button class="tempo-btn" data-tempo="160" onclick="setTempo(160)">🐆 快</button>
           </div>
+        </div>
+      </div>
+
+      <!-- 录制控制条 -->
+      <div class="music-recorder">
+        <div class="recorder-buttons">
+          <button id="music-record-btn" class="recorder-btn record-btn" onclick="startMusicRecording()">
+            <span class="record-dot"></span> <span data-i18n="music.record">录制</span>
+          </button>
+          <button class="recorder-btn stop-btn" onclick="stopMusicRecording()">
+            ⏹ <span data-i18n="music.stopRecord">停止</span>
+          </button>
+          <button id="music-playback-btn" class="recorder-btn playback-btn" onclick="playMusicRecording()">
+            ▶️ <span data-i18n="music.playback">回放</span>
+          </button>
+          <button class="recorder-btn clear-btn" onclick="clearMusicRecording()">
+            🗑️ <span data-i18n="music.clearRecord">清除</span>
+          </button>
+        </div>
+        <div class="recorder-status">
+          <span id="music-record-timer" class="record-timer">00:00</span>
+          <div class="playback-progress-bar">
+            <div id="music-playback-progress" class="playback-progress"></div>
+          </div>
+          <div id="music-event-indicator" class="event-indicator"></div>
         </div>
       </div>
     </div>
