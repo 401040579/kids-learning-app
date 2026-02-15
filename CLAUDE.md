@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v47)
+├── sw.js               # Service Worker (当前 v50)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用
@@ -67,7 +67,9 @@ kids-learning-app/
 │   ├── reactionGames.js # 反应训练游戏
 │   ├── reactionGamesData.js # 反应游戏数据
 │   ├── drawSmash.js     # 画线砸怪兽游戏
-│   └── drawSmashData.js # 画线砸怪兽关卡数据
+│   ├── drawSmashData.js # 画线砸怪兽关卡数据
+│   ├── ragdollRobot.js  # 弹弹机器人游戏
+│   └── ragdollRobotData.js # 弹弹机器人关卡数据
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -122,6 +124,7 @@ kids-learning-app/
 | 逻辑训练 | logicGames.js | ✅ 完成（找规律/找不同/配对/迷宫） |
 | 反应训练 | reactionGames.js | ✅ 完成（打地鼠/颜色闪电/抓星星/红绿灯） |
 | 画线砸怪兽 | drawSmash.js | ✅ 完成（6章30关/物理引擎/弹跳垫） |
+| 弹弹机器人 | ragdollRobot.js | ✅ 完成（5章30关/布娃娃物理/弹射收星） |
 
 ## 常用命令
 
@@ -158,6 +161,7 @@ const CACHE_NAME = 'kids-learning-vXX';
 | kidsLogicGames | 逻辑游戏统计和解锁 |
 | kidsReactionGames | 反应游戏统计 |
 | kidsDrawSmash | 画线砸怪兽进度和星星 |
+| kidsRagdollRobot | 弹弹机器人进度和星星 |
 
 ## 注意事项
 
