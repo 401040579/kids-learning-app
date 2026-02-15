@@ -232,6 +232,8 @@ const RagdollRobot = {
         this.activeParticles = [];
         this.floatingTexts = [];
         this.dragTarget = null;
+        this.dragRagdollParticle = null;
+        this.dragRagdollPt = null;
         this.launchedThrowables = [];
 
         // 复制关卡数据
@@ -422,11 +424,37 @@ const RagdollRobot = {
                 return;
             }
         }
+
+        // 检查是否触碰了布娃娃机器人的粒子
+        if (this.ragdoll) {
+            let closest = null;
+            let closestDist = 30; // 触碰判定半径
+            for (let i = 0; i < this.ragdoll.particles.length; i++) {
+                const p = this.ragdoll.particles[i];
+                const dist = Math.hypot(pt.x - p.x, pt.y - p.y);
+                if (dist < closestDist) {
+                    closest = i;
+                    closestDist = dist;
+                }
+            }
+            if (closest !== null) {
+                this.dragRagdollParticle = closest;
+                this.dragRagdollPt = pt;
+                return;
+            }
+        }
     },
 
     _onPointerMove(e) {
-        if (!this.dragTarget) return;
         const pt = this._toLogical(e);
+
+        // 拖拽布娃娃粒子
+        if (this.dragRagdollParticle !== null && this.dragRagdollParticle !== undefined) {
+            this.dragRagdollPt = pt;
+            return;
+        }
+
+        if (!this.dragTarget) return;
 
         // 物体跟随手指
         this.dragTarget.x = pt.x + this.dragOffsetX;
@@ -438,6 +466,13 @@ const RagdollRobot = {
     },
 
     _onPointerUp(e) {
+        // 松开布娃娃粒子 — 给一个甩出速度
+        if (this.dragRagdollParticle !== null && this.dragRagdollParticle !== undefined) {
+            this.dragRagdollParticle = null;
+            this.dragRagdollPt = null;
+            return;
+        }
+
         if (!this.dragTarget) return;
 
         const obj = this.dragTarget;
@@ -535,9 +570,21 @@ const RagdollRobot = {
 
     _updateRagdoll(grav) {
         const rd = this.ragdoll;
+        const dragIdx = this.dragRagdollParticle;
 
         // Verlet积分
-        for (const p of rd.particles) {
+        for (let i = 0; i < rd.particles.length; i++) {
+            const p = rd.particles[i];
+
+            // 被拖拽的粒子直接跟随手指
+            if (dragIdx !== null && dragIdx !== undefined && i === dragIdx && this.dragRagdollPt) {
+                p.ox = p.x;
+                p.oy = p.y;
+                p.x = this.dragRagdollPt.x;
+                p.y = this.dragRagdollPt.y;
+                continue;
+            }
+
             const vx = (p.x - p.ox) * this.DAMPING;
             const vy = (p.y - p.oy) * this.DAMPING;
 
@@ -967,8 +1014,12 @@ const RagdollRobot = {
         if (deltaAngle > Math.PI) deltaAngle -= 2 * Math.PI;
         if (deltaAngle < -Math.PI) deltaAngle += 2 * Math.PI;
 
-        this.cumulativeRotation += deltaAngle;
         this.prevAngle = currentAngle;
+
+        // 只在有投掷后才累计旋转和计分
+        if (this.launchedThrowables.length === 0) return;
+
+        this.cumulativeRotation += deltaAngle;
 
         // 每翻转360度得分
         while (Math.abs(this.cumulativeRotation) >= Math.PI * 2) {
