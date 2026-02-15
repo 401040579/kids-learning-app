@@ -65,7 +65,9 @@ kids-learning-app/
 │   ├── logicGames.js   # 逻辑训练游戏
 │   ├── logicGamesData.js # 逻辑游戏数据
 │   ├── reactionGames.js # 反应训练游戏
-│   └── reactionGamesData.js # 反应游戏数据
+│   ├── reactionGamesData.js # 反应游戏数据
+│   ├── drawSmash.js     # 画线砸怪兽游戏
+│   └── drawSmashData.js # 画线砸怪兽关卡数据
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -119,6 +121,7 @@ kids-learning-app/
 | 亲子PK | familyPK.js | ✅ 完成（时限/让分/历史记录） |
 | 逻辑训练 | logicGames.js | ✅ 完成（找规律/找不同/配对/迷宫） |
 | 反应训练 | reactionGames.js | ✅ 完成（打地鼠/颜色闪电/抓星星/红绿灯） |
+| 画线砸怪兽 | drawSmash.js | ✅ 完成（6章30关/物理引擎/弹跳垫） |
 
 ## 常用命令
 
@@ -154,6 +157,7 @@ const CACHE_NAME = 'kids-learning-vXX';
 | familyPKHistory | 亲子PK历史记录 |
 | kidsLogicGames | 逻辑游戏统计和解锁 |
 | kidsReactionGames | 反应游戏统计 |
+| kidsDrawSmash | 画线砸怪兽进度和星星 |
 
 ## 注意事项
 

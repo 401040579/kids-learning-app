@@ -488,6 +488,12 @@
             <div class="card-desc" data-i18n="menu.reactionGames.desc">锻炼反应速度</div>
           </div>
 
+          <div class="menu-card card-draw-smash" data-category="play" onclick="showDrawSmash()">
+            <div class="card-icon">✏️</div>
+            <div class="card-title" data-i18n="menu.drawSmash">画线砸怪兽</div>
+            <div class="card-desc" data-i18n="menu.drawSmash.desc">画线解谜闯关</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -2435,6 +2441,57 @@
     </div>
   </div>
 
+  <!-- ========== 画线砸怪兽 ========== -->
+  <div id="draw-smash-modal" class="draw-smash-modal hidden">
+    <div class="draw-smash-container">
+      <!-- 章节选择界面 -->
+      <div id="draw-smash-chapters" class="ds-screen">
+        <button class="ds-close-btn" onclick="closeDrawSmash()">✕</button>
+        <h2>✏️ <span data-i18n="drawSmash.title">画线砸怪兽</span></h2>
+        <div id="draw-smash-chapter-cards" class="ds-chapter-cards">
+          <!-- 章节卡片由 JS 生成 -->
+        </div>
+        <div class="ds-total-stats">
+          <span>⭐ <span data-i18n="drawSmash.totalStars">星星</span>: <span id="draw-smash-total-stars">0</span></span>
+          <span>🎮 <span data-i18n="drawSmash.completedLevels">已完成</span>: <span id="draw-smash-total-levels">0/30</span></span>
+        </div>
+      </div>
+
+      <!-- 关卡选择界面 -->
+      <div id="draw-smash-levels" class="ds-screen hidden">
+        <div class="ds-level-header">
+          <button class="ds-back-btn" onclick="DrawSmash.showChapterSelect()">←</button>
+          <h2 id="draw-smash-level-title"></h2>
+        </div>
+        <div id="draw-smash-level-grid" class="ds-level-grid">
+          <!-- 关卡按钮由 JS 生成 -->
+        </div>
+      </div>
+
+      <!-- 游戏界面 -->
+      <div id="draw-smash-game" class="ds-screen hidden">
+        <div class="ds-game-header">
+          <button class="ds-back-btn" onclick="DrawSmash.backToLevels()">←</button>
+          <span class="ds-level-badge"><span data-i18n="drawSmash.level">关卡</span> <span id="ds-level-num">1</span></span>
+          <div class="ds-ink-bar">
+            <div id="ds-ink-fill" class="ds-ink-fill" style="width:100%"></div>
+            <span id="ds-ink-text" class="ds-ink-text">100%</span>
+          </div>
+          <button class="ds-reset-btn" onclick="DrawSmash.resetLevel()">🔄</button>
+        </div>
+        <div id="ds-hint" class="ds-hint hidden"></div>
+        <div class="ds-canvas-wrapper">
+          <canvas id="ds-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- 结果界面 -->
+      <div id="draw-smash-result" class="ds-screen hidden">
+        <!-- 由 JS 动态生成 -->
+      </div>
+    </div>
+  </div>
+
   <!-- ========== 音乐创作 ========== -->
   <div id="music-modal" class="music-modal hidden">
     <div class="music-container">
@@ -2950,6 +3007,8 @@
   <script src="js/logicGames.js"></script>
   <script src="js/reactionGamesData.js"></script>
   <script src="js/reactionGames.js"></script>
+  <script src="js/drawSmashData.js"></script>
+  <script src="js/drawSmash.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

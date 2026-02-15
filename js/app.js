@@ -159,7 +159,8 @@ const RecentlyUsed = {
     'parentSettings': { icon: '👨‍👩‍👧', nameKey: 'menu.parentSettings', action: () => openParentSettings() },
     'familyPK': { icon: '👨‍👩‍👧', nameKey: 'menu.familyPK', action: () => showFamilyPK() },
     'logicGames': { icon: '🧩', nameKey: 'menu.logicGames', action: () => showLogicGames() },
-    'reactionGames': { icon: '⚡', nameKey: 'menu.reactionGames', action: () => showReactionGames() }
+    'reactionGames': { icon: '⚡', nameKey: 'menu.reactionGames', action: () => showReactionGames() },
+    'drawSmash': { icon: '✏️', nameKey: 'menu.drawSmash', action: () => showDrawSmash() }
   },
 
   init() {
