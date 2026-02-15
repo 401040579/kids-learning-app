@@ -30,6 +30,18 @@ const RagdollRobot = {
     activeParticles: [],
     floatingTexts: [],
 
+    // FX状态
+    impactFlashes: [],
+    shockwaves: [],
+    _audioCtx: null,
+    _shakeEndTime: 0,
+    _shakeIntensity: 0,
+    _freezeEndTime: 0,
+    _slowmoEndTime: 0,
+    _slowmoScale: 1,
+    _stunStars: null,
+    _hurtExpressionEnd: 0,
+
     // 布娃娃
     ragdoll: null,
 
@@ -231,6 +243,15 @@ const RagdollRobot = {
         this.starsCollected = [];
         this.activeParticles = [];
         this.floatingTexts = [];
+        this.impactFlashes = [];
+        this.shockwaves = [];
+        this._shakeEndTime = 0;
+        this._shakeIntensity = 0;
+        this._freezeEndTime = 0;
+        this._slowmoEndTime = 0;
+        this._slowmoScale = 1;
+        this._stunStars = null;
+        this._hurtExpressionEnd = 0;
         this.dragTarget = null;
         this.dragRagdollParticle = null;
         this.dragRagdollPt = null;
@@ -522,6 +543,8 @@ const RagdollRobot = {
         this._checkStarCollection();
         this._checkBounceCombo();
         this._checkFlips();
+        this._updateImpactFlashes();
+        this._updateShockwaves();
         this._renderLevel();
         this._checkWinLose();
 
@@ -531,11 +554,20 @@ const RagdollRobot = {
     // ==================== 物理引擎 ====================
 
     _physicsTick() {
-        const grav = this.GRAVITY * (this._gravityMod || 1.0);
+        // 冻结帧：跳过物理但继续渲染
+        if (Date.now() < this._freezeEndTime) return;
+
+        // 慢动作缩放
+        let slowFactor = 1;
+        if (Date.now() < this._slowmoEndTime) {
+            slowFactor = this._slowmoScale;
+        }
+
+        const grav = this.GRAVITY * (this._gravityMod || 1.0) * slowFactor;
 
         // 更新布娃娃
         if (this.ragdoll) {
-            this._updateRagdoll(grav);
+            this._updateRagdoll(grav, slowFactor);
         }
 
         // 更新已发射的投掷物
@@ -543,8 +575,8 @@ const RagdollRobot = {
             if (!obj.active && obj.active !== undefined) continue;
             obj.active = true;
 
-            const vx = (obj.x - obj.ox) * this.DAMPING;
-            const vy = (obj.y - obj.oy) * this.DAMPING;
+            const vx = (obj.x - obj.ox) * this.DAMPING * slowFactor;
+            const vy = (obj.y - obj.oy) * this.DAMPING * slowFactor;
 
             obj.ox = obj.x;
             obj.oy = obj.y;
@@ -568,9 +600,10 @@ const RagdollRobot = {
         this._updateFloatingTexts();
     },
 
-    _updateRagdoll(grav) {
+    _updateRagdoll(grav, slowFactor) {
         const rd = this.ragdoll;
         const dragIdx = this.dragRagdollParticle;
+        const sf = slowFactor || 1;
 
         // Verlet积分
         for (let i = 0; i < rd.particles.length; i++) {
@@ -585,8 +618,8 @@ const RagdollRobot = {
                 continue;
             }
 
-            const vx = (p.x - p.ox) * this.DAMPING;
-            const vy = (p.y - p.oy) * this.DAMPING;
+            const vx = (p.x - p.ox) * this.DAMPING * sf;
+            const vy = (p.y - p.oy) * this.DAMPING * sf;
 
             p.ox = p.x;
             p.oy = p.y;
@@ -613,8 +646,10 @@ const RagdollRobot = {
         const avgMotion = totalMotion / rd.particles.length;
         rd.glowIntensity = Math.min(avgMotion * 3, 1);
 
-        // 更新表情
-        if (avgMotion > 3) rd.expression = 'spinning';
+        // 更新表情（受击表情保持期间不被覆盖）
+        if (Date.now() < this._hurtExpressionEnd) {
+            rd.expression = 'hurt';
+        } else if (avgMotion > 3) rd.expression = 'spinning';
         else if (avgMotion > 1.5) rd.expression = 'flying';
         else if (avgMotion > 0.5) rd.expression = 'bouncing';
         else rd.expression = 'idle';
@@ -933,20 +968,57 @@ const RagdollRobot = {
 
                 // 撞击效果
                 if (impactForce > 1) {
-                    this._spawnParticles(
-                        (p.x + obj.x) / 2,
-                        (p.y + obj.y) / 2,
-                        '#FF6B6B', 10
-                    );
+                    const normalizedForce = Math.min(impactForce / 12, 1.0);
+                    const hitX = (p.x + obj.x) / 2;
+                    const hitY = (p.y + obj.y) / 2;
+                    const particleCount = Math.round(10 + normalizedForce * 15);
+
+                    // 增强粒子 — 混合形状
+                    this._spawnParticles(hitX, hitY, '#FF6B6B', particleCount, {
+                        shapes: ['circle', 'star', 'spark'],
+                        minSpeed: 2 + normalizedForce * 2,
+                        maxSpeed: 6 + normalizedForce * 4,
+                        minSize: 2,
+                        maxSize: 5 + normalizedForce * 4
+                    });
+
+                    // 撞击闪光
+                    this._addImpactFlash(hitX, hitY, 20 + normalizedForce * 30);
+
+                    // 冲击波（中等以上碰撞）
+                    if (normalizedForce > 0.3) {
+                        this._addShockwave(hitX, hitY, 40 + normalizedForce * 40);
+                    }
+
+                    // 屏幕震动
+                    this._startShake(2 + normalizedForce * 5, 150 + normalizedForce * 100);
+
+                    // 冻结帧（重击）
+                    if (normalizedForce > 0.5) {
+                        this._startFreeze(50 + normalizedForce * 30);
+                    }
+
+                    // 慢动作（超重击）
+                    if (normalizedForce > 0.7) {
+                        this._startSlowmo(0.3, 300);
+                    }
+
+                    // 眩晕星星（重击）
+                    if (normalizedForce > 0.5) {
+                        this._startStunStars(p.x, p.y);
+                    }
+
+                    // 受击表情保持
                     this.ragdoll.expression = 'hurt';
+                    this._hurtExpressionEnd = Date.now() + 500;
+
                     // 撞击得分
                     const hitScore = Math.round(impactForce * 5);
                     this.score += hitScore;
                     this._addFloatingText(p.x, p.y - 20, `+${hitScore}`, '#FF6B6B');
 
-                    if (typeof RewardSystem !== 'undefined') {
-                        RewardSystem.playSound('click');
-                    }
+                    // 撞击音效
+                    this._playImpactSound(normalizedForce);
                 }
             }
         }
@@ -958,11 +1030,32 @@ const RagdollRobot = {
         // 只在有投掷后计算弹跳得分
         if (this.launchedThrowables.length === 0) return;
         const now = Date.now();
+
+        // 弹跳音效
+        this._playBounceSound();
+
         if (now - this.lastBounceTime < this.COMBO_WINDOW) {
             this.combo++;
             const comboScore = 10 * this.combo;
             this.score += comboScore;
             this._addFloatingText(x, y - 30, `${this.combo}x Combo! +${comboScore}`, '#FFD93D');
+
+            // 连击升调音效
+            this._playComboSound(this.combo);
+
+            // 连击彩色粒子
+            const comboColors = ['#FFD93D', '#FF69B4', '#00D2D3', '#9B59B6', '#FF6B6B'];
+            const comboColor = comboColors[Math.min(this.combo - 1, comboColors.length - 1)];
+            this._spawnParticles(x, y, comboColor, 6 + this.combo * 2, {
+                shapes: ['star', 'spark'],
+                minSpeed: 2,
+                maxSpeed: 5 + this.combo,
+                minSize: 2,
+                maxSize: 5
+            });
+
+            // 小幅屏幕震动
+            this._startShake(1.5, 100);
         } else {
             this.combo = 1;
             this.score += 10;
@@ -983,11 +1076,21 @@ const RagdollRobot = {
                     this.starsCollected.push(star);
                     this.score += 100;
                     this._addFloatingText(star.x, star.y - 20, '+100 ⭐', '#FFD93D');
-                    this._spawnParticles(star.x, star.y, '#FFD93D', 12);
 
-                    if (typeof RewardSystem !== 'undefined') {
-                        RewardSystem.playSound('correct');
-                    }
+                    // 增强粒子 — star/spark形状爆发
+                    this._spawnParticles(star.x, star.y, '#FFD93D', 16, {
+                        shapes: ['star', 'spark'],
+                        minSpeed: 3,
+                        maxSpeed: 7,
+                        minSize: 3,
+                        maxSize: 8
+                    });
+
+                    // 冲击波环
+                    this._addShockwave(star.x, star.y, 50);
+
+                    // 星星叮声
+                    this._playStarSound();
                     break;
                 }
             }
@@ -1179,10 +1282,16 @@ const RagdollRobot = {
 
     // ==================== 粒子/文字效果 ====================
 
-    _spawnParticles(x, y, color, count) {
+    _spawnParticles(x, y, color, count, options) {
+        const shapes = (options && options.shapes) || ['circle'];
+        const minSpeed = (options && options.minSpeed) || 2;
+        const maxSpeed = (options && options.maxSpeed) || 6;
+        const minSize = (options && options.minSize) || 3;
+        const maxSize = (options && options.maxSize) || 7;
+
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
-            const speed = 2 + Math.random() * 4;
+            const speed = minSpeed + Math.random() * (maxSpeed - minSpeed);
             this.activeParticles.push({
                 x, y,
                 vx: Math.cos(angle) * speed,
@@ -1190,7 +1299,8 @@ const RagdollRobot = {
                 life: 1,
                 decay: 0.02 + Math.random() * 0.02,
                 color: color,
-                size: 3 + Math.random() * 4
+                size: minSize + Math.random() * (maxSize - minSize),
+                shape: shapes[Math.floor(Math.random() * shapes.length)]
             });
         }
     },
@@ -1228,6 +1338,236 @@ const RagdollRobot = {
         }
     },
 
+    // ==================== 音效引擎 (Web Audio API) ====================
+
+    _getAudioCtx() {
+        if (!this._audioCtx) {
+            try {
+                this._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                return null;
+            }
+        }
+        if (this._audioCtx.state === 'suspended') {
+            this._audioCtx.resume();
+        }
+        return this._audioCtx;
+    },
+
+    _playImpactSound(force) {
+        const ctx = this._getAudioCtx();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const vol = 0.15 + force * 0.25;
+        const dur = 0.08 + force * 0.12;
+
+        // 低频 thud
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(80 + force * 40, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + dur);
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + dur);
+
+        // 噪声 crack
+        if (force > 0.3) {
+            const bufSize = ctx.sampleRate * 0.04;
+            const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < bufSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+            }
+            const noise = ctx.createBufferSource();
+            noise.buffer = buf;
+            const nGain = ctx.createGain();
+            nGain.gain.setValueAtTime(vol * 0.5, now);
+            nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+            noise.connect(nGain).connect(ctx.destination);
+            noise.start(now);
+            noise.stop(now + 0.05);
+        }
+    },
+
+    _playBounceSound() {
+        const ctx = this._getAudioCtx();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        // 150→600→300Hz 卡通弹跳扫频
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(600, now + 0.05);
+        osc.frequency.linearRampToValueAtTime(300, now + 0.12);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
+    },
+
+    _playStarSound() {
+        const ctx = this._getAudioCtx();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        // 双振荡器闪亮叮
+        [1200, 2400].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.linearRampToValueAtTime(freq * 1.2, now + 0.15);
+            gain.gain.setValueAtTime(0.1, now + i * 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.connect(gain).connect(ctx.destination);
+            osc.start(now + i * 0.03);
+            osc.stop(now + 0.25);
+        });
+    },
+
+    _playComboSound(combo) {
+        const ctx = this._getAudioCtx();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        const baseFreq = 300 + combo * 80;
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.linearRampToValueAtTime(baseFreq * 1.5, now + 0.08);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
+    },
+
+    // ==================== 视觉特效引擎 ====================
+
+    _startShake(intensity, durationMs) {
+        this._shakeIntensity = intensity;
+        this._shakeEndTime = Date.now() + durationMs;
+    },
+
+    _startFreeze(durationMs) {
+        this._freezeEndTime = Date.now() + durationMs;
+    },
+
+    _startSlowmo(scale, durationMs) {
+        this._slowmoScale = scale;
+        this._slowmoEndTime = Date.now() + durationMs;
+    },
+
+    _addImpactFlash(x, y, radius) {
+        this.impactFlashes.push({
+            x, y,
+            radius: radius || 30,
+            life: 1,
+            decay: 0.06
+        });
+    },
+
+    _addShockwave(x, y, maxRadius) {
+        this.shockwaves.push({
+            x, y,
+            radius: 5,
+            maxRadius: maxRadius || 60,
+            life: 1,
+            decay: 0.04
+        });
+    },
+
+    _startStunStars(x, y) {
+        this._stunStars = {
+            x, y,
+            startTime: Date.now(),
+            duration: 1500
+        };
+    },
+
+    _updateImpactFlashes() {
+        for (let i = this.impactFlashes.length - 1; i >= 0; i--) {
+            const f = this.impactFlashes[i];
+            f.life -= f.decay;
+            f.radius += 2;
+            if (f.life <= 0) this.impactFlashes.splice(i, 1);
+        }
+    },
+
+    _updateShockwaves() {
+        for (let i = this.shockwaves.length - 1; i >= 0; i--) {
+            const sw = this.shockwaves[i];
+            sw.life -= sw.decay;
+            sw.radius += (sw.maxRadius - sw.radius) * 0.15;
+            if (sw.life <= 0) this.shockwaves.splice(i, 1);
+        }
+    },
+
+    _drawImpactFlashes(ctx) {
+        for (const f of this.impactFlashes) {
+            ctx.save();
+            ctx.globalAlpha = f.life * 0.7;
+            const grad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.radius);
+            grad.addColorStop(0, 'rgba(255,255,255,0.9)');
+            grad.addColorStop(0.5, 'rgba(255,255,200,0.4)');
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    },
+
+    _drawShockwaves(ctx) {
+        for (const sw of this.shockwaves) {
+            ctx.save();
+            ctx.globalAlpha = sw.life * 0.6;
+            ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+            ctx.lineWidth = Math.max(1, 3 * sw.life);
+            ctx.beginPath();
+            ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+    },
+
+    _drawStunStars(ctx) {
+        if (!this._stunStars || !this.ragdoll) return;
+        const ss = this._stunStars;
+        const elapsed = Date.now() - ss.startTime;
+        if (elapsed > ss.duration) {
+            this._stunStars = null;
+            return;
+        }
+
+        const head = this.ragdoll.particles[1];
+        const alpha = 1 - elapsed / ss.duration;
+        const baseAngle = elapsed * 0.008;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let i = 0; i < 3; i++) {
+            const a = baseAngle + (Math.PI * 2 / 3) * i;
+            const orbitR = 18;
+            const sx = head.x + Math.cos(a) * orbitR;
+            const sy = head.y - 15 + Math.sin(a) * orbitR * 0.5;
+            ctx.fillText('⭐', sx, sy);
+        }
+        ctx.restore();
+    },
+
     // ==================== 渲染 ====================
 
     _renderLevel() {
@@ -1239,6 +1579,16 @@ const RagdollRobot = {
         ctx.save();
         ctx.scale(s, s);
 
+        // 屏幕震动（衰减到0）
+        const now = Date.now();
+        if (now < this._shakeEndTime) {
+            const remaining = (this._shakeEndTime - now) / 250; // 归一化衰减
+            const intensity = this._shakeIntensity * Math.min(remaining, 1);
+            const sx = (Math.random() - 0.5) * intensity * 2;
+            const sy = (Math.random() - 0.5) * intensity * 2;
+            ctx.translate(sx, sy);
+        }
+
         this._drawBackground(ctx);
         this._drawZones(ctx);
         this._drawPlatforms(ctx);
@@ -1249,6 +1599,9 @@ const RagdollRobot = {
         this._drawRagdoll(ctx);
         this._drawDragArrow(ctx);
         this._drawParticles(ctx);
+        this._drawShockwaves(ctx);
+        this._drawImpactFlashes(ctx);
+        this._drawStunStars(ctx);
         this._drawFloatingTexts(ctx);
 
         // 分数显示
@@ -1645,9 +1998,35 @@ const RagdollRobot = {
             ctx.save();
             ctx.globalAlpha = p.life;
             ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-            ctx.fill();
+            const sz = p.size * p.life;
+
+            if (p.shape === 'star') {
+                // 五角星
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    const a = (Math.PI * 2 / 5) * i - Math.PI / 2;
+                    const ia = a + Math.PI / 5;
+                    ctx.lineTo(p.x + Math.cos(a) * sz, p.y + Math.sin(a) * sz);
+                    ctx.lineTo(p.x + Math.cos(ia) * sz * 0.4, p.y + Math.sin(ia) * sz * 0.4);
+                }
+                ctx.closePath();
+                ctx.fill();
+            } else if (p.shape === 'spark') {
+                // 十字闪光
+                ctx.lineWidth = Math.max(1, sz * 0.3);
+                ctx.strokeStyle = p.color;
+                ctx.beginPath();
+                ctx.moveTo(p.x - sz, p.y);
+                ctx.lineTo(p.x + sz, p.y);
+                ctx.moveTo(p.x, p.y - sz);
+                ctx.lineTo(p.x, p.y + sz);
+                ctx.stroke();
+            } else {
+                // 默认圆形
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, sz, 0, Math.PI * 2);
+                ctx.fill();
+            }
             ctx.restore();
         }
     },
