@@ -1052,7 +1052,18 @@ const RagdollRobot = {
             }
         }
 
-        const allThrowsUsed = this.throwsLeft <= 0 && this.throwables.every(t => t.launched);
+        // 所有星星收集完毕 → 直接通关（不需要等机器人静止）
+        const allStarsCollected = this.stars.length > 0 && this.starsCollected.length >= this.stars.length;
+        if (allStarsCollected && this.dragRagdollParticle === null) {
+            this.levelComplete = true;
+            setTimeout(() => {
+                this.isPlaying = false;
+                this._showResult(true);
+            }, 800);
+            return;
+        }
+
+        const allThrowsUsed = this.throwsLeft <= 0 || this.throwables.every(t => t.launched);
         const allSettled = this.ragdoll && this.ragdoll.settled;
         const allThrowablesSettled = this.launchedThrowables.every(t =>
             !t.active || Math.hypot(t.x - t.ox, t.y - t.oy) < 0.3
