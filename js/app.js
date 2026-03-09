@@ -1286,6 +1286,12 @@ function backToThemesFromComplete() {
   showScienceThemes();
 }
 
+// 从科学主题完成弹窗返回首页
+function closeScienceComplete() {
+  document.getElementById('science-complete-modal').classList.add('hidden');
+  navigateTo('home');
+}
+
 // ========== 工具函数 ==========
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {

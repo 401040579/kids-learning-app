@@ -246,14 +246,22 @@ function closeCheckinReminder() {
 
 // 执行签到（从提醒弹窗）
 function doCheckinFromReminder() {
-  const result = DailyCheckin.doCheckin();
+  try {
+    const result = DailyCheckin.doCheckin();
 
-  if (result.success) {
-    // 关闭提醒弹窗
+    if (result.success) {
+      // 关闭提醒弹窗
+      closeCheckinReminder();
+
+      // 显示签到成功弹窗
+      showCheckinSuccess(result);
+    } else {
+      // 已签到或失败，关闭提醒弹窗
+      closeCheckinReminder();
+    }
+  } catch (e) {
+    console.error('签到失败:', e);
     closeCheckinReminder();
-
-    // 显示签到成功弹窗
-    showCheckinSuccess(result);
   }
 }
 
@@ -263,15 +271,19 @@ function doCheckinFromPage() {
     return;
   }
 
-  const result = DailyCheckin.doCheckin();
+  try {
+    const result = DailyCheckin.doCheckin();
 
-  if (result.success) {
-    // 更新页面显示
-    renderCheckinCalendar();
-    updateCheckinStats();
+    if (result.success) {
+      // 更新页面显示
+      renderCheckinCalendar();
+      updateCheckinStats();
 
-    // 显示签到成功弹窗
-    showCheckinSuccess(result);
+      // 显示签到成功弹窗
+      showCheckinSuccess(result);
+    }
+  } catch (e) {
+    console.error('签到失败:', e);
   }
 }
 

@@ -3249,6 +3249,22 @@ body {
   transform: scale(0.98);
 }
 
+.btn-back-home-complete {
+  width: 100%;
+  background: transparent;
+  border: 2px solid #ccc;
+  color: var(--text-light);
+  padding: 14px;
+  border-radius: 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-back-home-complete:active {
+  transform: scale(0.98);
+}
+
 /* ========== 睡眠音乐模块 ========== */
 
 /* 睡眠音乐卡片渐变色 */
