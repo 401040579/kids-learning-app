@@ -121,19 +121,24 @@ const RewardSystem = {
 
   // 更新页面显示
   updateDisplay() {
-    document.getElementById('total-score').textContent = this.data.totalScore;
-    document.getElementById('tasks-done').textContent = this.data.tasksDone;
-    document.getElementById('math-correct').textContent = this.data.mathCorrect;
-    document.getElementById('math-streak').textContent = this.data.mathStreak;
+    const totalScoreEl = document.getElementById('total-score');
+    if (totalScoreEl) totalScoreEl.textContent = this.data.totalScore;
+
+    const mathCorrectEl = document.getElementById('math-correct');
+    if (mathCorrectEl) mathCorrectEl.textContent = this.data.mathCorrect;
+
+    const mathStreakEl = document.getElementById('math-streak');
+    if (mathStreakEl) mathStreakEl.textContent = this.data.mathStreak;
 
     // 更新进度条
     const progress = Math.min((this.data.tasksDone / 10) * 100, 100);
-    document.getElementById('progress-fill').style.width = progress + '%';
+    const progressFillEl = document.getElementById('progress-fill');
+    if (progressFillEl) progressFillEl.style.width = progress + '%';
 
     // 更新进度文本（i18n）
     const progressTextEl = document.getElementById('progress-text');
-    if (progressTextEl && typeof I18n !== 'undefined') {
-      const template = I18n.t('progress.tasks') || '完成 {done}/{total} 个任务解锁奖励视频!';
+    if (progressTextEl) {
+      const template = (typeof I18n !== 'undefined' && I18n.t('progress.tasks')) || '完成 {done}/{total} 个任务解锁奖励视频!';
       progressTextEl.textContent = template.replace('{done}', this.data.tasksDone).replace('{total}', 10);
     }
   },
