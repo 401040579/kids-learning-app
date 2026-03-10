@@ -42,6 +42,12 @@ const RagdollRobot = {
     _stunStars: null,
     _hurtExpressionEnd: 0,
 
+    // 点击戳机器人状态
+    _speechBubble: null,
+    _lastPokeTime: 0,
+    _pokeCombo: 0,
+    _ragdollTapStart: null,
+
     // 布娃娃
     ragdoll: null,
 
@@ -252,6 +258,10 @@ const RagdollRobot = {
         this._slowmoScale = 1;
         this._stunStars = null;
         this._hurtExpressionEnd = 0;
+        this._speechBubble = null;
+        this._lastPokeTime = 0;
+        this._pokeCombo = 0;
+        this._ragdollTapStart = null;
         this.dragTarget = null;
         this.dragRagdollParticle = null;
         this.dragRagdollPt = null;
@@ -461,6 +471,7 @@ const RagdollRobot = {
             if (closest !== null) {
                 this.dragRagdollParticle = closest;
                 this.dragRagdollPt = pt;
+                this._ragdollTapStart = { time: Date.now(), x: pt.x, y: pt.y };
                 return;
             }
         }
@@ -487,10 +498,21 @@ const RagdollRobot = {
     },
 
     _onPointerUp(e) {
-        // 松开布娃娃粒子 — 给一个甩出速度
+        // 松开布娃娃粒子 — 检测是否为点击（戳）
         if (this.dragRagdollParticle !== null && this.dragRagdollParticle !== undefined) {
+            const tapInfo = this._ragdollTapStart;
+            const pt = this._toLogical(e);
+            const wasTap = tapInfo &&
+                (Date.now() - tapInfo.time < 300) &&
+                Math.hypot(pt.x - tapInfo.x, pt.y - tapInfo.y) < 15;
+
+            if (wasTap) {
+                this._onPokeRagdoll(this.dragRagdollParticle, pt);
+            }
+
             this.dragRagdollParticle = null;
             this.dragRagdollPt = null;
+            this._ragdollTapStart = null;
             return;
         }
 
@@ -646,9 +668,9 @@ const RagdollRobot = {
         const avgMotion = totalMotion / rd.particles.length;
         rd.glowIntensity = Math.min(avgMotion * 3, 1);
 
-        // 更新表情（受击表情保持期间不被覆盖）
+        // 更新表情（受击/戳表情保持期间不被覆盖）
         if (Date.now() < this._hurtExpressionEnd) {
-            rd.expression = 'hurt';
+            // 保持当前 hurt/poked 表情不变
         } else if (avgMotion > 3) rd.expression = 'spinning';
         else if (avgMotion > 1.5) rd.expression = 'flying';
         else if (avgMotion > 0.5) rd.expression = 'bouncing';
@@ -1449,6 +1471,123 @@ const RagdollRobot = {
         osc.stop(now + 0.1);
     },
 
+    // ==================== 戳机器人互动 ====================
+
+    _onPokeRagdoll(particleIdx, pt) {
+        if (!this.ragdoll) return;
+        const p = this.ragdoll.particles[particleIdx];
+
+        // 连击检测
+        const now = Date.now();
+        if (now - this._lastPokeTime < 1500) {
+            this._pokeCombo++;
+        } else {
+            this._pokeCombo = 1;
+        }
+        this._lastPokeTime = now;
+
+        // 给一个击打力（从点击方向向外推）
+        const head = this.ragdoll.particles[1];
+        const hip = this.ragdoll.particles[9];
+        const cx = (head.x + hip.x) / 2;
+        const cy = (head.y + hip.y) / 2;
+
+        const pushAngle = Math.atan2(cy - pt.y, cx - pt.x);
+        const pushForce = 3 + Math.min(this._pokeCombo, 5) * 1.5;
+
+        // 对所有粒子施加力
+        for (const rp of this.ragdoll.particles) {
+            const dist = Math.hypot(rp.x - pt.x, rp.y - pt.y);
+            const falloff = Math.max(0, 1 - dist / 80);
+            rp.ox = rp.x - Math.cos(pushAngle) * pushForce * falloff;
+            rp.oy = rp.y - Math.sin(pushAngle) * pushForce * falloff;
+        }
+
+        // 受击表情
+        this.ragdoll.expression = 'poked';
+        this._hurtExpressionEnd = now + 800;
+
+        // 撞击粒子
+        this._spawnParticles(pt.x, pt.y, '#FF6B6B', 8 + this._pokeCombo * 2, {
+            shapes: ['star', 'spark'],
+            minSpeed: 2,
+            maxSpeed: 4 + this._pokeCombo,
+            minSize: 2,
+            maxSize: 5
+        });
+
+        // 小冲击波
+        this._addShockwave(pt.x, pt.y, 25 + this._pokeCombo * 5);
+        this._addImpactFlash(pt.x, pt.y, 15);
+        this._startShake(1.5 + this._pokeCombo * 0.5, 120);
+
+        // 音效
+        this._playPokeSound();
+
+        // 显示搞笑台词气泡
+        this._showSpeechBubble();
+
+        // 连击特殊台词覆盖
+        if (this._pokeCombo >= 5) {
+            const comboSayings = [
+                '你是不是上瘾了！！😫',
+                '救命啊！有人虐待机器人！🆘',
+                '我要罢工了！罢工！😭',
+                '你打了我' + this._pokeCombo + '下了！够了没！',
+                '再打就真的散架了啦！🔧',
+            ];
+            this._speechBubble.text = comboSayings[Math.floor(Math.random() * comboSayings.length)];
+        }
+
+        // 连击飘字
+        if (this._pokeCombo > 1) {
+            this._addFloatingText(pt.x, pt.y - 30,
+                `${this._pokeCombo}连击！`, '#FF69B4');
+        }
+    },
+
+    _showSpeechBubble() {
+        const sayings = RagdollRobotData.pokeSayings;
+        const text = sayings[Math.floor(Math.random() * sayings.length)];
+
+        this._speechBubble = {
+            text: text,
+            startTime: Date.now(),
+            duration: 2500
+        };
+    },
+
+    _playPokeSound() {
+        const ctx = this._getAudioCtx();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        // 卡通挨打声 — 高频 "啪" + 弹簧声
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'square';
+        osc1.frequency.setValueAtTime(800, now);
+        osc1.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+        gain1.gain.setValueAtTime(0.12, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+        osc1.connect(gain1).connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.1);
+
+        // 弹簧 "boing"
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(300, now + 0.05);
+        osc2.frequency.linearRampToValueAtTime(600, now + 0.1);
+        osc2.frequency.linearRampToValueAtTime(200, now + 0.2);
+        gain2.gain.setValueAtTime(0.08, now + 0.05);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc2.connect(gain2).connect(ctx.destination);
+        osc2.start(now + 0.05);
+        osc2.stop(now + 0.25);
+    },
+
     // ==================== 视觉特效引擎 ====================
 
     _startShake(intensity, durationMs) {
@@ -1568,6 +1707,83 @@ const RagdollRobot = {
         ctx.restore();
     },
 
+    _drawSpeechBubble(ctx) {
+        if (!this._speechBubble || !this.ragdoll) return;
+        const sb = this._speechBubble;
+        const elapsed = Date.now() - sb.startTime;
+        if (elapsed > sb.duration) {
+            this._speechBubble = null;
+            return;
+        }
+
+        const head = this.ragdoll.particles[1];
+        const alpha = elapsed < 200 ? elapsed / 200 :
+            elapsed > sb.duration - 400 ? (sb.duration - elapsed) / 400 : 1;
+
+        // 气泡弹出缩放动画
+        const scale = elapsed < 150 ? 0.5 + (elapsed / 150) * 0.6 :
+            elapsed < 250 ? 1.1 - (elapsed - 150) / 100 * 0.1 : 1;
+
+        const bubbleX = head.x;
+        const bubbleY = head.y - 45;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(bubbleX, bubbleY);
+        ctx.scale(scale, scale);
+
+        // 测量文字宽度
+        ctx.font = 'bold 11px sans-serif';
+        const textWidth = ctx.measureText(sb.text).width;
+        const padX = 10;
+        const padY = 7;
+        const bw = textWidth + padX * 2;
+        const bh = 22 + padY * 2;
+        const bx = -bw / 2;
+        const by = -bh;
+
+        // 气泡阴影
+        ctx.shadowColor = 'rgba(0,0,0,0.25)';
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetY = 2;
+
+        // 气泡背景
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        const r = 8;
+        ctx.moveTo(bx + r, by);
+        ctx.lineTo(bx + bw - r, by);
+        ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + r);
+        ctx.lineTo(bx + bw, by + bh - r);
+        ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - r, by + bh);
+        // 气泡尖角
+        ctx.lineTo(6, by + bh);
+        ctx.lineTo(0, by + bh + 10);
+        ctx.lineTo(-4, by + bh);
+        ctx.lineTo(bx + r, by + bh);
+        ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - r);
+        ctx.lineTo(bx, by + r);
+        ctx.quadraticCurveTo(bx, by, bx + r, by);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+
+        // 气泡边框
+        ctx.strokeStyle = '#FF69B4';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // 文字
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(sb.text, 0, by + bh / 2);
+
+        ctx.restore();
+    },
+
     // ==================== 渲染 ====================
 
     _renderLevel() {
@@ -1602,6 +1818,7 @@ const RagdollRobot = {
         this._drawShockwaves(ctx);
         this._drawImpactFlashes(ctx);
         this._drawStunStars(ctx);
+        this._drawSpeechBubble(ctx);
         this._drawFloatingTexts(ctx);
 
         // 分数显示
