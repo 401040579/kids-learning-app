@@ -500,6 +500,12 @@
             <div class="card-desc" data-i18n="menu.ragdollRobot.desc">弹射翻滚收星星</div>
           </div>
 
+          <div class="menu-card card-chore-tracker" data-category="tools" onclick="showChoreTracker()">
+            <div class="card-icon">📋</div>
+            <div class="card-title" data-i18n="menu.choreTracker">家庭积分榜</div>
+            <div class="card-desc" data-i18n="menu.choreTracker.desc">任务打卡积分</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -3009,6 +3015,20 @@
     </div>
   </div>
 
+  <!-- 家庭积分榜弹窗 -->
+  <div id="chore-tracker-modal" class="chore-tracker-modal hidden">
+    <div class="chore-tracker-container">
+      <div class="ct-header">
+        <button class="modal-close-btn" onclick="closeChoreTracker()">✕</button>
+        <h2>📋 <span data-i18n="chore.title">家庭积分榜</span></h2>
+        <button class="ct-settings-btn" onclick="ChoreTracker.switchView('settings')">⚙️</button>
+      </div>
+      <div id="chore-tracker-content" class="ct-content">
+        <!-- 动态生成 -->
+      </div>
+    </div>
+  </div>
+
   <!-- PWA 更新提示 -->
   <div id="update-notification" class="update-notification hidden">
     <div class="update-content">
@@ -3068,6 +3088,7 @@
   <script src="js/drawSmash.js"></script>
   <script src="js/ragdollRobotData.js"></script>
   <script src="js/ragdollRobot.js"></script>
+  <script src="js/choreTracker.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

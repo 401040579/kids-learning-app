@@ -69,7 +69,8 @@ kids-learning-app/
 │   ├── drawSmash.js     # 画线砸怪兽游戏
 │   ├── drawSmashData.js # 画线砸怪兽关卡数据
 │   ├── ragdollRobot.js  # 弹弹机器人游戏
-│   └── ragdollRobotData.js # 弹弹机器人关卡数据
+│   ├── ragdollRobotData.js # 弹弹机器人关卡数据
+│   └── choreTracker.js    # 家庭积分榜
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -125,6 +126,7 @@ kids-learning-app/
 | 反应训练 | reactionGames.js | ✅ 完成（打地鼠/颜色闪电/抓星星/红绿灯） |
 | 画线砸怪兽 | drawSmash.js | ✅ 完成（6章30关/物理引擎/弹跳垫） |
 | 弹弹机器人 | ragdollRobot.js | ✅ 完成（5章30关/布娃娃物理/弹射收星） |
+| 家庭积分榜 | choreTracker.js | ✅ 完成（任务打卡/加减分/奖励兑换/语音输入） |
 
 ## 常用命令
 
@@ -162,6 +164,7 @@ const CACHE_NAME = 'kids-learning-vXX';
 | kidsReactionGames | 反应游戏统计 |
 | kidsDrawSmash | 画线砸怪兽进度和星星 |
 | kidsRagdollRobot | 弹弹机器人进度和星星 |
+| kidsChoreTracker | 家庭积分榜数据 |
 
 ## 注意事项
 

@@ -107,6 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof FamilyPK !== 'undefined') {
     FamilyPK.init();
   }
+  if (typeof ChoreTracker !== 'undefined') {
+    ChoreTracker.init();
+  }
   // 初始化各模块
   initVideos();
   initMath();
@@ -161,7 +164,8 @@ const RecentlyUsed = {
     'logicGames': { icon: '🧩', nameKey: 'menu.logicGames', action: () => showLogicGames() },
     'reactionGames': { icon: '⚡', nameKey: 'menu.reactionGames', action: () => showReactionGames() },
     'drawSmash': { icon: '✏️', nameKey: 'menu.drawSmash', action: () => showDrawSmash() },
-    'ragdollRobot': { icon: '🤖', nameKey: 'menu.ragdollRobot', action: () => showRagdollRobot() }
+    'ragdollRobot': { icon: '🤖', nameKey: 'menu.ragdollRobot', action: () => showRagdollRobot() },
+    'choreTracker': { icon: '📋', nameKey: 'menu.choreTracker', action: () => showChoreTracker() }
   },
 
   init() {

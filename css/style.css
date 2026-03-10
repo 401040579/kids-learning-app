@@ -15440,3 +15440,889 @@ body {
     gap: 12px;
   }
 }
+
+/* ========== 家庭积分榜样式 ========== */
+
+.chore-tracker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f0f4ff;
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chore-tracker-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 16px 80px;
+}
+
+.ct-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  background: #f0f4ff;
+  z-index: 10;
+}
+
+.ct-header h2 {
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+}
+
+.ct-header .modal-close-btn {
+  background: rgba(0,0,0,0.08);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ct-settings-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* 成员卡片 */
+.ct-member-card {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #FF69B4, #FF8DC7);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+}
+
+.ct-avatar {
+  font-size: 48px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ct-member-info {
+  margin-left: 16px;
+  color: white;
+}
+
+.ct-member-name {
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.ct-total-points {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+}
+
+.ct-points-icon {
+  font-size: 20px;
+}
+
+.ct-points-num {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.ct-points-label {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* 今日概览 */
+.ct-today-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ct-summary-item {
+  background: white;
+  border-radius: 14px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.ct-summary-num {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.ct-summary-num.positive {
+  color: #22c55e;
+}
+
+.ct-summary-num.negative {
+  color: #ef4444;
+}
+
+.ct-summary-label {
+  font-size: 11px;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* 快捷操作 */
+.ct-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ct-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border: none;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.ct-action-btn:active {
+  transform: scale(0.95);
+}
+
+.ct-action-icon {
+  font-size: 24px;
+}
+
+.ct-add-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  box-shadow: 0 3px 10px rgba(34, 197, 94, 0.3);
+}
+
+.ct-deduct-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+}
+
+.ct-custom-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+}
+
+.ct-reward-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
+}
+
+/* 今日记录 */
+.ct-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ct-section-header h3 {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+
+.ct-view-all {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.ct-empty {
+  text-align: center;
+  color: #aaa;
+  padding: 30px;
+  font-size: 14px;
+  background: white;
+  border-radius: 14px;
+}
+
+.ct-record-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ct-record-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.ct-record-add {
+  border-left: 3px solid #22c55e;
+}
+
+.ct-record-deduct {
+  border-left: 3px solid #ef4444;
+}
+
+.ct-record-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.ct-record-name {
+  flex: 1;
+  color: #333;
+}
+
+.ct-record-points {
+  font-weight: bold;
+  font-size: 15px;
+  min-width: 40px;
+  text-align: right;
+}
+
+.ct-record-add .ct-record-points {
+  color: #22c55e;
+}
+
+.ct-record-deduct .ct-record-points {
+  color: #ef4444;
+}
+
+.ct-record-time {
+  color: #aaa;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.ct-record-delete {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.ct-record-delete:hover {
+  color: #ef4444;
+}
+
+/* 子页面头部 */
+.ct-sub-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ct-sub-header h3 {
+  font-size: 17px;
+  color: #333;
+  margin: 0;
+}
+
+.ct-back-btn {
+  background: rgba(0,0,0,0.06);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #555;
+  flex-shrink: 0;
+}
+
+/* 分类标签 */
+.ct-category-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ct-category-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.ct-cat-tab {
+  background: white;
+  border: 2px solid #e5e7eb;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.ct-cat-tab.active {
+  background: #FF69B4;
+  color: white;
+  border-color: #FF69B4;
+}
+
+/* 任务网格 */
+.ct-chore-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.ct-chore-card {
+  background: white;
+  border-radius: 16px;
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  position: relative;
+}
+
+.ct-chore-card:active {
+  transform: scale(0.95);
+}
+
+.ct-chore-card.ct-completed {
+  opacity: 0.6;
+  background: #f0fdf4;
+}
+
+.ct-chore-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  background: #22c55e;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.ct-deduction-card {
+  background: #fff5f5;
+}
+
+.ct-chore-icon {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.ct-chore-name {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.ct-chore-points {
+  font-size: 14px;
+  font-weight: bold;
+  color: #22c55e;
+}
+
+.ct-chore-points.ct-negative {
+  color: #ef4444;
+}
+
+/* 历史记录 */
+.ct-date-group {
+  margin-bottom: 16px;
+}
+
+.ct-date-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.ct-date-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.ct-date-total {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.ct-date-total.positive {
+  color: #22c55e;
+}
+
+.ct-date-total.negative {
+  color: #ef4444;
+}
+
+/* 奖励商店 */
+.ct-current-points {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-radius: 14px;
+  padding: 14px 20px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.ct-reward-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.ct-reward-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.ct-reward-card:active {
+  transform: scale(0.97);
+}
+
+.ct-reward-card.ct-cant-afford {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ct-reward-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.ct-reward-name {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.ct-reward-cost {
+  font-size: 13px;
+  color: #f59e0b;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.ct-redeem-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border: none;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ct-need-more {
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* 自定义输入弹窗 */
+.ct-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.ct-custom-dialog {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.ct-custom-dialog h3 {
+  text-align: center;
+  margin: 0 0 20px;
+  font-size: 18px;
+}
+
+.ct-form-group {
+  margin-bottom: 16px;
+}
+
+.ct-form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.ct-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ct-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.ct-input:focus {
+  border-color: #FF69B4;
+}
+
+.ct-input-error {
+  border-color: #ef4444 !important;
+  animation: ct-shake 0.3s;
+}
+
+@keyframes ct-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.ct-custom-name-input {
+  flex: 1;
+}
+
+.ct-voice-btn {
+  width: 44px;
+  height: 44px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.ct-voice-btn.ct-voice-active {
+  background: #ef4444;
+  border-color: #ef4444;
+  animation: ct-pulse 1s infinite;
+}
+
+@keyframes ct-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.ct-points-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ct-type-btn {
+  flex: 1;
+  padding: 8px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: white;
+  transition: all 0.2s;
+}
+
+.ct-type-btn.active {
+  background: #22c55e;
+  color: white;
+  border-color: #22c55e;
+}
+
+.ct-type-btn:last-child.active {
+  background: #ef4444;
+  border-color: #ef4444;
+}
+
+.ct-points-presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ct-points-btn {
+  width: 44px;
+  height: 40px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background: white;
+  transition: all 0.2s;
+}
+
+.ct-points-btn.active {
+  background: #FF69B4;
+  color: white;
+  border-color: #FF69B4;
+}
+
+.ct-icon-picker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ct-icon-option {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ct-icon-option.active {
+  border-color: #FF69B4;
+  background: #fff0f6;
+}
+
+.ct-dialog-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.ct-cancel-btn {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 14px;
+  font-size: 15px;
+  cursor: pointer;
+  background: white;
+  color: #666;
+}
+
+.ct-confirm-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #FF69B4, #FF8DC7);
+  color: white;
+}
+
+/* 积分动画 */
+.ct-points-anim {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  font-weight: bold;
+  z-index: 3000;
+  pointer-events: none;
+  animation: ct-float-up 1.5s forwards;
+}
+
+.ct-anim-add {
+  color: #22c55e;
+  text-shadow: 0 2px 10px rgba(34, 197, 94, 0.5);
+}
+
+.ct-anim-deduct {
+  color: #ef4444;
+  text-shadow: 0 2px 10px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes ct-float-up {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+  30% { opacity: 1; transform: translate(-50%, -70%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -150%) scale(0.8); }
+}
+
+/* 兑换成功弹窗 */
+.ct-success-overlay {
+  background: rgba(0,0,0,0.6);
+}
+
+.ct-success-dialog {
+  background: white;
+  border-radius: 24px;
+  padding: 30px;
+  text-align: center;
+  max-width: 300px;
+  width: 100%;
+}
+
+.ct-success-icon {
+  font-size: 56px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.ct-success-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.ct-success-name {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* 设置页 */
+.ct-settings-group {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.ct-settings-group h4 {
+  font-size: 15px;
+  color: #333;
+  margin: 0 0 12px;
+}
+
+.ct-setting-item {
+  margin-bottom: 14px;
+}
+
+.ct-setting-item label {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.ct-avatar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ct-avatar-option {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ct-avatar-option.active {
+  border-color: #FF69B4;
+  background: #fff0f6;
+}
+
+.ct-danger-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #fecaca;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  background: #fef2f2;
+  color: #ef4444;
+  margin-bottom: 8px;
+}
+
+/* 菜单卡片颜色 */
+.card-chore-tracker {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe) !important;
+}
+
+/* 响应式 */
+@media (max-width: 360px) {
+  .ct-today-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ct-quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ct-chore-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
