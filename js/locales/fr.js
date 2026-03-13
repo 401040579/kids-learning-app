@@ -1083,5 +1083,12 @@ I18n.translations['fr'] = {
   'chore.reward.outing': 'Une Sortie',
   'chore.reward.chooseDinner': 'Choisir le Dîner',
   'chore.reward.newToy': 'Nouveau Jouet',
-  'chore.reward.special': 'Récompense Spéciale'
+  'chore.reward.special': 'Récompense Spéciale',
+
+  // English Boost
+  'menu.englishBoost': 'Boost Anglais',
+  'menu.englishBoost.desc': 'Écouter, Lire, Écrire',
+  'eb.title': 'Boost Anglais',
+  'eb.selectTitle': 'Boost Anglais',
+  'eb.selectSubtitle': 'Choisis une activité amusante!'
 };

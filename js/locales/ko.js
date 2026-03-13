@@ -1080,5 +1080,12 @@ I18n.translations['ko'] = {
   'chore.reward.outing': '나들이',
   'chore.reward.chooseDinner': '저녁 메뉴 선택',
   'chore.reward.newToy': '새 장난감',
-  'chore.reward.special': '특별 보상'
+  'chore.reward.special': '특별 보상',
+
+  // English Boost
+  'menu.englishBoost': '영어 부스트',
+  'menu.englishBoost.desc': '듣기, 말하기, 읽기, 쓰기',
+  'eb.title': '영어 부스트',
+  'eb.selectTitle': '영어 부스트',
+  'eb.selectSubtitle': '재미있는 활동을 골라보세요!'
 };
