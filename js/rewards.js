@@ -167,7 +167,8 @@ const RewardSystem = {
     if (this.data.mathStreak >= 5) points = 20;
     if (this.data.mathStreak >= 10) points = 30;
 
-    this.addPoints(points, '数学题答对了!');
+    const msg = (typeof I18n !== 'undefined' && I18n.t('reward.mathCorrect')) || '数学题答对了!';
+    this.addPoints(points, msg);
   },
 
   // 数学答错
@@ -180,19 +181,22 @@ const RewardSystem = {
   // 英语答对
   englishCorrect() {
     this.data.englishCorrect++;
-    this.addPoints(15, '单词学会了!');
+    const msg = (typeof I18n !== 'undefined' && I18n.t('reward.englishCorrect')) || '单词学会了!';
+    this.addPoints(15, msg);
   },
 
   // 中文答对
   chineseCorrect() {
     this.data.chineseCorrect++;
-    this.addPoints(15, '汉字认对了!');
+    const msg = (typeof I18n !== 'undefined' && I18n.t('reward.chineseCorrect')) || '汉字认对了!';
+    this.addPoints(15, msg);
   },
 
   // 科学答对
   scienceCorrect() {
     this.data.scienceCorrect++;
-    this.addPoints(15, '科学题答对了!');
+    const msg = (typeof I18n !== 'undefined' && I18n.t('reward.scienceCorrect')) || '科学题答对了!';
+    this.addPoints(15, msg);
   },
 
   // 拼图完成
@@ -226,7 +230,9 @@ const RewardSystem = {
     const messageEl = document.querySelector('.reward-message');
 
     pointsEl.textContent = points;
-    messageEl.innerHTML = message + ' 你获得了 <span id="reward-points">' + points + '</span> 分!';
+    const gotPointsTemplate = (typeof I18n !== 'undefined' && I18n.t('reward.gotPoints')) || '你获得了 {points} 分!';
+    const gotPointsText = gotPointsTemplate.replace('{points}', points);
+    messageEl.innerHTML = message + ' ' + gotPointsText;
 
     popup.classList.remove('hidden');
 

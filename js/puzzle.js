@@ -633,9 +633,9 @@ function showPuzzleComplete() {
   if (typeof Analytics !== 'undefined') {
     Analytics.sendEvent('puzzle_complete', {
       difficulty: currentPuzzleDifficulty,
-      time_seconds: puzzleElapsed,
+      time_seconds: Math.floor((Date.now() - puzzleStartTime) / 1000),
       points: points,
-      puzzle_name: currentPuzzleData?.name || ''
+      puzzle_name: currentPuzzleTheme || ''
     });
   }
 

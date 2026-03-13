@@ -88,76 +88,76 @@
   <div id="add-event-modal" class="event-modal hidden">
     <div class="event-modal-content">
       <button class="event-modal-close" onclick="closeAddEventModal()">✕</button>
-      <h3 class="event-modal-title">添加新事件</h3>
+      <h3 class="event-modal-title" data-i18n="calendar.addEvent">添加新事件</h3>
 
       <!-- 事件类型选择 -->
       <div class="event-type-selector">
         <button class="event-type-btn active" data-type="class" onclick="selectEventType('class')">
           <span class="type-icon">📚</span>
-          <span class="type-name">课外班</span>
+          <span class="type-name" data-i18n="calendar.eventTypes.class">课外班</span>
         </button>
         <button class="event-type-btn" data-type="outing" onclick="selectEventType('outing')">
           <span class="type-icon">🎡</span>
-          <span class="type-name">出去玩</span>
+          <span class="type-name" data-i18n="calendar.eventTypes.outing">出去玩</span>
         </button>
         <button class="event-type-btn" data-type="holiday" onclick="selectEventType('holiday')">
           <span class="type-icon">🏖️</span>
-          <span class="type-name">放假</span>
+          <span class="type-name" data-i18n="calendar.eventTypes.holiday">放假</span>
         </button>
         <button class="event-type-btn" data-type="study" onclick="selectEventType('study')">
           <span class="type-icon">📖</span>
-          <span class="type-name">学习</span>
+          <span class="type-name" data-i18n="calendar.eventTypes.study">学习</span>
         </button>
       </div>
 
       <!-- 事件表单 -->
       <form id="event-form" class="event-form">
         <div class="form-group">
-          <label>事件名称</label>
-          <input type="text" id="event-name" placeholder="例如：钢琴课、去动物园" required>
+          <label data-i18n="calendar.eventName">事件名称</label>
+          <input type="text" id="event-name" data-i18n-placeholder="calendar.eventName.placeholder" placeholder="例如：钢琴课、去动物园" required>
         </div>
 
         <!-- 课外班专属：课程类型 -->
         <div class="form-group class-only">
-          <label>课程类型</label>
+          <label data-i18n="calendar.classType">课程类型</label>
           <div class="class-type-selector" id="class-type-selector">
-            <button type="button" class="class-type-btn active" data-class="piano" onclick="selectClassType('piano')">🎹 钢琴</button>
-            <button type="button" class="class-type-btn" data-class="art" onclick="selectClassType('art')">🎨 画画</button>
-            <button type="button" class="class-type-btn" data-class="swim" onclick="selectClassType('swim')">🏊 游泳</button>
-            <button type="button" class="class-type-btn" data-class="dance" onclick="selectClassType('dance')">💃 舞蹈</button>
-            <button type="button" class="class-type-btn" data-class="english" onclick="selectClassType('english')">🔤 英语</button>
-            <button type="button" class="class-type-btn" data-class="math" onclick="selectClassType('math')">🔢 数学</button>
-            <button type="button" class="class-type-btn" data-class="sports" onclick="selectClassType('sports')">⚽ 运动</button>
-            <button type="button" class="class-type-btn" data-class="other" onclick="selectClassType('other')">📝 其他</button>
+            <button type="button" class="class-type-btn active" data-class="piano" onclick="selectClassType('piano')">🎹 <span data-i18n="calendar.classType.piano">钢琴</span></button>
+            <button type="button" class="class-type-btn" data-class="art" onclick="selectClassType('art')">🎨 <span data-i18n="calendar.classType.art">画画</span></button>
+            <button type="button" class="class-type-btn" data-class="swim" onclick="selectClassType('swim')">🏊 <span data-i18n="calendar.classType.swim">游泳</span></button>
+            <button type="button" class="class-type-btn" data-class="dance" onclick="selectClassType('dance')">💃 <span data-i18n="calendar.classType.dance">舞蹈</span></button>
+            <button type="button" class="class-type-btn" data-class="english" onclick="selectClassType('english')">🔤 <span data-i18n="calendar.classType.english">英语</span></button>
+            <button type="button" class="class-type-btn" data-class="math" onclick="selectClassType('math')">🔢 <span data-i18n="calendar.classType.math">数学</span></button>
+            <button type="button" class="class-type-btn" data-class="sports" onclick="selectClassType('sports')">⚽ <span data-i18n="calendar.classType.sports">运动</span></button>
+            <button type="button" class="class-type-btn" data-class="other" onclick="selectClassType('other')">📝 <span data-i18n="calendar.classType.other">其他</span></button>
           </div>
         </div>
 
         <!-- 时间设置（课外班和学习专属） -->
         <div class="form-group time-group class-only">
-          <label>上课时间</label>
+          <label data-i18n="calendar.startTime">上课时间</label>
           <div class="time-inputs">
             <input type="time" id="event-start-time" value="09:00">
-            <span>到</span>
+            <span data-i18n="calendar.timeTo">到</span>
             <input type="time" id="event-end-time" value="10:00">
           </div>
         </div>
 
         <!-- 重复设置 -->
         <div class="form-group class-only">
-          <label>重复</label>
+          <label data-i18n="calendar.repeat">重复</label>
           <div class="repeat-selector">
-            <button type="button" class="repeat-btn active" data-repeat="none" onclick="selectRepeat('none')">不重复</button>
-            <button type="button" class="repeat-btn" data-repeat="weekly" onclick="selectRepeat('weekly')">每周重复</button>
+            <button type="button" class="repeat-btn active" data-repeat="none" onclick="selectRepeat('none')" data-i18n="calendar.repeat.none">不重复</button>
+            <button type="button" class="repeat-btn" data-repeat="weekly" onclick="selectRepeat('weekly')" data-i18n="calendar.repeat.weekly">每周重复</button>
           </div>
         </div>
 
         <!-- 备注 -->
         <div class="form-group">
-          <label>备注 (选填)</label>
-          <textarea id="event-note" placeholder="可以写一些备注..."></textarea>
+          <label data-i18n="calendar.note">备注 (选填)</label>
+          <textarea id="event-note" data-i18n-placeholder="calendar.note.placeholder" placeholder="可以写一些备注..."></textarea>
         </div>
 
-        <button type="submit" class="btn-submit-event">保存事件</button>
+        <button type="submit" class="btn-submit-event" data-i18n="calendar.saveEvent">保存事件</button>
       </form>
     </div>
   </div>
@@ -179,48 +179,48 @@
 
       <!-- 备注显示 -->
       <div class="event-detail-note" id="event-detail-note-section">
-        <h4>📝 备注</h4>
-        <p id="event-detail-note">无</p>
+        <h4>📝 <span data-i18n="calendar.noteLabel">备注</span></h4>
+        <p id="event-detail-note" data-i18n="calendar.noNote">无</p>
       </div>
 
       <!-- 心情评价（仅已完成的课外班显示） -->
       <div class="event-mood-section" id="event-mood-section">
-        <h4>这次课感觉怎么样?</h4>
+        <h4 data-i18n="mood.question">这次课感觉怎么样?</h4>
         <div class="mood-selector">
           <button class="mood-btn" data-mood="happy" onclick="selectMood('happy')">
             <span class="mood-emoji">😊</span>
-            <span class="mood-text">开心</span>
+            <span class="mood-text" data-i18n="mood.happy">开心</span>
           </button>
           <button class="mood-btn" data-mood="neutral" onclick="selectMood('neutral')">
             <span class="mood-emoji">😐</span>
-            <span class="mood-text">一般</span>
+            <span class="mood-text" data-i18n="mood.neutral">一般</span>
           </button>
           <button class="mood-btn" data-mood="sad" onclick="selectMood('sad')">
             <span class="mood-emoji">😢</span>
-            <span class="mood-text">不开心</span>
+            <span class="mood-text" data-i18n="mood.sad">不开心</span>
           </button>
           <button class="mood-btn" data-mood="tired" onclick="selectMood('tired')">
             <span class="mood-emoji">😫</span>
-            <span class="mood-text">好累</span>
+            <span class="mood-text" data-i18n="mood.tired">好累</span>
           </button>
           <button class="mood-btn" data-mood="excited" onclick="selectMood('excited')">
             <span class="mood-emoji">🤩</span>
-            <span class="mood-text">超棒</span>
+            <span class="mood-text" data-i18n="mood.excited">超棒</span>
           </button>
         </div>
 
         <!-- 感受记录 -->
         <div class="feeling-input">
-          <label>写写你的感受吧:</label>
-          <textarea id="event-feeling" placeholder="今天学了什么? 有趣吗?"></textarea>
+          <label data-i18n="mood.feeling">写写你的感受吧:</label>
+          <textarea id="event-feeling" data-i18n-placeholder="calendar.feeling.placeholder" placeholder="今天学了什么? 有趣吗?"></textarea>
         </div>
 
-        <button class="btn-save-mood" onclick="saveMoodAndFeeling()">保存心情</button>
+        <button class="btn-save-mood" onclick="saveMoodAndFeeling()" data-i18n="mood.save">保存心情</button>
       </div>
 
       <!-- 已保存的心情显示 -->
       <div class="saved-mood-display hidden" id="saved-mood-display">
-        <h4>我的心情记录</h4>
+        <h4 data-i18n="calendar.moodRecord">我的心情记录</h4>
         <div class="saved-mood-content">
           <span class="saved-mood-emoji" id="saved-mood-emoji">😊</span>
           <p class="saved-mood-feeling" id="saved-mood-feeling">很开心!</p>
@@ -229,7 +229,7 @@
 
       <!-- 操作按钮 -->
       <div class="event-actions">
-        <button class="btn-delete-event" onclick="deleteEvent()">🗑️ 删除</button>
+        <button class="btn-delete-event" onclick="deleteEvent()">🗑️ <span data-i18n="calendar.deleteEvent">删除</span></button>
       </div>
     </div>
   </div>
@@ -528,37 +528,37 @@
         <div class="category-tabs" id="category-tabs">
           <button class="category-tab active" data-category="all" onclick="filterVideos('all')">
             <span class="tab-icon">📚</span>
-            <span class="tab-name">全部</span>
+            <span class="tab-name" data-i18n="videos.all">全部</span>
           </button>
           <button class="category-tab" data-category="math" onclick="filterVideos('math')">
             <span class="tab-icon">🔢</span>
-            <span class="tab-name">数学</span>
+            <span class="tab-name" data-i18n="videos.math">数学</span>
           </button>
           <button class="category-tab" data-category="english" onclick="filterVideos('english')">
             <span class="tab-icon">🔤</span>
-            <span class="tab-name">英语</span>
+            <span class="tab-name" data-i18n="videos.english">英语</span>
           </button>
           <button class="category-tab" data-category="science" onclick="filterVideos('science')">
             <span class="tab-icon">🔬</span>
-            <span class="tab-name">科普</span>
+            <span class="tab-name" data-i18n="videos.science">科普</span>
           </button>
           <button class="category-tab" data-category="emotion" onclick="filterVideos('emotion')">
             <span class="tab-icon">💝</span>
-            <span class="tab-name">情绪</span>
+            <span class="tab-name" data-i18n="videos.emotion">情绪</span>
           </button>
           <button class="category-tab" data-category="brain" onclick="filterVideos('brain')">
             <span class="tab-icon">🧠</span>
-            <span class="tab-name">脑力</span>
+            <span class="tab-name" data-i18n="videos.brain">脑力</span>
           </button>
           <button class="category-tab" data-category="music" onclick="filterVideos('music')">
             <span class="tab-icon">🎵</span>
-            <span class="tab-name">音乐</span>
+            <span class="tab-name" data-i18n="videos.music">音乐</span>
           </button>
         </div>
 
         <!-- 当前分类描述 -->
         <div class="category-info" id="category-info">
-          <p class="category-desc">精选30个适合6岁儿童的优质视频</p>
+          <p class="category-desc" data-i18n="videos.desc.all">精选30个适合6岁儿童的优质视频</p>
         </div>
 
         <!-- 视频网格 -->
@@ -566,7 +566,7 @@
           <!-- 默认加载状态 -->
           <div class="video-loading">
             <span class="loading-icon">🎬</span>
-            <p>加载中...</p>
+            <p data-i18n="videos.loading">加载中...</p>
           </div>
         </div>
       </section>
@@ -588,24 +588,24 @@
             <span class="meta-tag" id="detail-age">👶 5-7岁</span>
           </div>
           <div class="video-detail-section">
-            <h4>📖 简介</h4>
+            <h4>📖 <span data-i18n="videos.intro">简介</span></h4>
             <p id="detail-desc">视频描述</p>
           </div>
           <div class="video-detail-section">
-            <h4>✅ 为什么推荐</h4>
+            <h4>✅ <span data-i18n="videos.whyRecommend">为什么推荐</span></h4>
             <p id="detail-why">推荐理由</p>
           </div>
           <div class="video-detail-section">
-            <h4>🎯 技能培养</h4>
+            <h4>🎯 <span data-i18n="videos.skills">技能培养</span></h4>
             <div class="skill-tags" id="detail-skills">
               <!-- 技能标签由 JS 生成 -->
             </div>
           </div>
           <div class="video-detail-section parent-tip">
-            <h4>💡 家长贴士</h4>
+            <h4>💡 <span data-i18n="videos.parentTips">家长贴士</span></h4>
             <p id="detail-parent-tip">给家长的建议</p>
           </div>
-          <button class="btn-play-video" id="btn-play-detail" onclick="playVideoFromDetail()">
+          <button class="btn-play-video" id="btn-play-detail" onclick="playVideoFromDetail()" data-i18n="videos.play">
             ▶️ 播放视频
           </button>
         </div>
@@ -734,7 +734,7 @@
           </div>
 
           <!-- 返回主题按钮 -->
-          <button class="btn-back-themes" onclick="backToThemes()">← 返回主题选择</button>
+          <button class="btn-back-themes" onclick="backToThemes()" data-i18n="calendar.backToThemes">← 返回主题选择</button>
         </div>
       </section>
 
@@ -757,20 +757,20 @@
       <div id="science-complete-modal" class="science-complete-modal hidden">
         <div class="science-complete-content">
           <div class="complete-stars">🌟⭐🌟</div>
-          <h2 class="complete-title">主题完成！</h2>
+          <h2 class="complete-title" data-i18n="science.themeComplete">主题完成！</h2>
           <div class="complete-stats">
             <div class="complete-stat">
               <span class="stat-num" id="science-correct-count">8</span>
-              <span class="stat-label">答对</span>
+              <span class="stat-label" data-i18n="science.correctCount">答对</span>
             </div>
             <div class="complete-stat">
               <span class="stat-num" id="science-total-count">10</span>
-              <span class="stat-label">总题数</span>
+              <span class="stat-label" data-i18n="science.totalQuestions">总题数</span>
             </div>
           </div>
           <div class="complete-bonus" id="science-bonus">+50 积分奖励！🎊</div>
-          <button class="btn-back-themes-complete" onclick="backToThemesFromComplete()">选择其他主题</button>
-          <button class="btn-back-home-complete" onclick="closeScienceComplete()">🏠 返回首页</button>
+          <button class="btn-back-themes-complete" onclick="backToThemesFromComplete()" data-i18n="science.backToThemes">选择其他主题</button>
+          <button class="btn-back-home-complete" onclick="closeScienceComplete()">🏠 <span data-i18n="btn.backHome">返回首页</span></button>
         </div>
       </div>
 

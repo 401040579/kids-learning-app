@@ -211,6 +211,13 @@ const AchievementSystem = {
     this.checkProgress('videosWatched', this.data.videosWatched);
   },
 
+  // 记录音乐创作
+  checkMusicAchievement() {
+    this.data.musicCompositions = (this.data.musicCompositions || 0) + 1;
+    this.saveData();
+    this.checkProgress('musicCompositions', this.data.musicCompositions);
+  },
+
   // 记录错题掌握
   recordMastered() {
     this.data.masteredCount++;

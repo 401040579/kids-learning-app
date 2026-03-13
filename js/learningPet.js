@@ -922,9 +922,9 @@ function feedPetFood(foodId) {
 
   if (result.success) {
     RewardSystem.playSound('correct');
-    closePetFeed();
+    closePetFoodMenu();
     LearningPet.updatePetDisplay();
-    showPetMessage('吃饱了，好满足！');
+    showPetMessage((typeof I18n !== 'undefined' && I18n.t('pet.fedMessage')) || '吃饱了，好满足！');
 
     // 检查是否进化
     if (result.evolved) {
@@ -949,6 +949,16 @@ function unequipAccessory() {
   RewardSystem.playSound('click');
   closePetAccessories();
   LearningPet.updatePetDisplay();
+}
+
+// 显示宠物临时消息
+function showPetMessage(message) {
+  const msgEl = document.querySelector('.pet-speech-bubble');
+  if (msgEl) {
+    msgEl.textContent = message;
+    msgEl.classList.add('show');
+    setTimeout(() => msgEl.classList.remove('show'), 2000);
+  }
 }
 
 // 显示进化动画
