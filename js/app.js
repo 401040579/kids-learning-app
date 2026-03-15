@@ -110,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof ChoreTracker !== 'undefined') {
     ChoreTracker.init();
   }
+  if (typeof EnglishBoost !== 'undefined') {
+    EnglishBoost.init();
+  }
   // 初始化各模块
   initVideos();
   initMath();
@@ -165,7 +168,8 @@ const RecentlyUsed = {
     'reactionGames': { icon: '⚡', nameKey: 'menu.reactionGames', action: () => showReactionGames() },
     'drawSmash': { icon: '✏️', nameKey: 'menu.drawSmash', action: () => showDrawSmash() },
     'ragdollRobot': { icon: '🤖', nameKey: 'menu.ragdollRobot', action: () => showRagdollRobot() },
-    'choreTracker': { icon: '📋', nameKey: 'menu.choreTracker', action: () => showChoreTracker() }
+    'choreTracker': { icon: '📋', nameKey: 'menu.choreTracker', action: () => showChoreTracker() },
+    'englishBoost': { icon: '🌟', nameKey: 'menu.englishBoost', action: () => showEnglishBoost() }
   },
 
   init() {

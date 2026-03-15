@@ -16326,3 +16326,1098 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ========== 英语提升乐园 (English Boost) ========== */
+.english-boost-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 50%, #fce4ec 100%);
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.english-boost-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 16px 80px;
+}
+
+.eb-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  position: relative;
+}
+
+.eb-header .modal-close-btn {
+  position: absolute;
+  left: 0;
+  top: 16px;
+}
+
+.eb-header h2 {
+  font-size: 1.4rem;
+  color: #2e7d32;
+  margin: 0;
+}
+
+/* 选择菜单 */
+.eb-select {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.eb-select-title {
+  font-size: 1.5rem;
+  color: #1b5e20;
+  margin: 0 0 4px;
+}
+
+.eb-select-subtitle {
+  color: #666;
+  margin: 0 0 20px;
+  font-size: 0.95rem;
+}
+
+.eb-mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.eb-mode-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.eb-mode-card:active {
+  transform: scale(0.96);
+}
+
+.eb-mode-ispy { border-top: 3px solid #FF6B6B; }
+.eb-mode-sight { border-top: 3px solid #4ECDC4; }
+.eb-mode-phonics { border-top: 3px solid #FFD93D; }
+.eb-mode-sentence { border-top: 3px solid #A78BFA; }
+
+.eb-mode-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+
+.eb-mode-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.eb-mode-desc {
+  font-size: 0.75rem;
+  color: #888;
+  line-height: 1.3;
+}
+
+.eb-mode-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: white;
+}
+
+.eb-mode-ispy .eb-mode-badge { background: #FF6B6B; }
+.eb-mode-sight .eb-mode-badge { background: #4ECDC4; }
+.eb-mode-phonics .eb-mode-badge { background: #FFD93D; color: #333; }
+.eb-mode-sentence .eb-mode-badge { background: #A78BFA; }
+
+.eb-stats-bar {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 0.9rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* 游戏头部 */
+.eb-game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  margin-bottom: 8px;
+}
+
+.eb-back-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #2e7d32;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.eb-game-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.eb-round-info {
+  font-size: 0.85rem;
+  color: #888;
+  background: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+/* 通用按钮 */
+.eb-btn-primary {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.eb-btn-primary:active {
+  transform: scale(0.95);
+}
+
+.eb-btn-secondary {
+  background: white;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.eb-btn-listen {
+  background: #e3f2fd;
+  color: #1976D2;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin: 8px 0;
+}
+
+.eb-btn-big-listen {
+  font-size: 1.2rem;
+  padding: 16px 32px;
+  margin: 16px 0;
+}
+
+/* ========== I Spy 猜猜看 ========== */
+.eb-ispy-area {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.eb-ispy-bubble {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.eb-ispy-detective {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+.eb-ispy-clue {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  min-height: 40px;
+  line-height: 1.4;
+}
+
+.eb-ispy-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.eb-clue-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  transition: background 0.3s;
+}
+
+.eb-clue-dot.active {
+  background: #FF6B6B;
+}
+
+.eb-ispy-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.eb-ispy-option {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 16px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.eb-ispy-option:active {
+  transform: scale(0.95);
+}
+
+.eb-ispy-option:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.eb-ispy-opt-img {
+  font-size: 2.5rem;
+}
+
+.eb-ispy-opt-word {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.eb-ispy-option.correct {
+  border-color: #4CAF50;
+  background: #e8f5e9;
+  animation: eb-pulse 0.4s ease;
+}
+
+.eb-ispy-option.wrong {
+  border-color: #f44336;
+  background: #ffebee;
+  animation: eb-shake 0.4s ease;
+}
+
+/* ========== Sight Words 高频词 ========== */
+.eb-sw-menu {
+  padding: 10px 0;
+}
+
+.eb-sw-level-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: transform 0.2s;
+}
+
+.eb-sw-level-card:active {
+  transform: scale(0.98);
+}
+
+.eb-sw-level-icon {
+  font-size: 2rem;
+  margin-bottom: 4px;
+}
+
+.eb-sw-level-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.eb-sw-level-count {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 4px 0 8px;
+}
+
+.eb-sw-level-bar {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.eb-sw-level-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #66BB6A);
+  border-radius: 4px;
+  transition: width 0.5s;
+}
+
+.eb-sw-mode-btns {
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* Sight Word 卡片 */
+.eb-sw-card-area {
+  text-align: center;
+}
+
+.eb-sw-flashcard {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 20px 24px;
+  margin: 10px 0 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+}
+
+.eb-sw-flashcard.eb-sw-learned {
+  border: 2px solid #4CAF50;
+}
+
+.eb-sw-big-word {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #1976D2;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.eb-sw-sentence {
+  font-size: 1rem;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+.eb-sw-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.eb-btn-star {
+  flex: 1;
+}
+
+.eb-btn-star.active {
+  background: linear-gradient(135deg, #FFD700, #FFA000);
+}
+
+/* Sight Words 测验 */
+.eb-sw-quiz {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.eb-quiz-prompt {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.eb-quiz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.eb-quiz-option {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 14px;
+  padding: 18px 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.eb-quiz-option:active {
+  transform: scale(0.95);
+}
+
+.eb-quiz-option.correct {
+  border-color: #4CAF50;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.eb-quiz-option.wrong {
+  border-color: #f44336;
+  background: #ffebee;
+  color: #c62828;
+}
+
+.eb-quiz-option:disabled {
+  pointer-events: none;
+}
+
+/* ========== Phonics 自然拼读 ========== */
+.eb-phonics-menu {
+  padding: 10px 0;
+}
+
+.eb-phonics-tab-btns {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.eb-tab-btn {
+  flex: 1;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.eb-tab-btn.active {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.eb-letter-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.eb-letter-btn {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 12px 4px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #333;
+}
+
+.eb-letter-btn:active {
+  transform: scale(0.92);
+}
+
+.eb-letter-btn.viewed {
+  border-color: #4CAF50;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* 字母详情 */
+.eb-letter-detail {
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  padding: 24px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.eb-letter-big {
+  font-size: 5rem;
+  font-weight: 800;
+  color: #1976D2;
+  line-height: 1;
+}
+
+.eb-letter-sound {
+  font-size: 1.2rem;
+  color: #888;
+  margin: 4px 0 12px;
+}
+
+.eb-letter-words {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.eb-letter-word-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #f5f5f5;
+  transition: background 0.2s;
+}
+
+.eb-letter-word-item:active {
+  background: #e3f2fd;
+}
+
+.eb-letter-word-img {
+  font-size: 2rem;
+}
+
+.eb-letter-word-text {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.eb-letter-word-highlight {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #f44336;
+}
+
+.eb-letter-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  gap: 8px;
+}
+
+/* 押韵词 */
+.eb-rhyming-area {
+  padding: 10px 0;
+}
+
+.eb-family-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.eb-family-btn {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.eb-family-btn.active {
+  background: #FFD93D;
+  border-color: #FFD93D;
+  color: #333;
+}
+
+.eb-family-detail {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.eb-family-title {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 0 0 12px;
+}
+
+.eb-family-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.eb-family-word {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #fff9c4;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.eb-family-word:active {
+  transform: scale(0.95);
+}
+
+.eb-family-word-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.eb-family-onset {
+  color: #333;
+}
+
+.eb-family-rime {
+  color: #f44336;
+  font-weight: 800;
+}
+
+.eb-rhyming-hint {
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+  padding: 30px 0;
+}
+
+.eb-btn-rhyme-quiz {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* 押韵测验 */
+.eb-rhyming-quiz {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.eb-quiz-target {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1976D2;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 12px 0 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ========== Sentence Builder 造句 ========== */
+.eb-sentence-menu {
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eb-sentence-mode-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: transform 0.2s;
+}
+
+.eb-sentence-mode-card:active {
+  transform: scale(0.98);
+}
+
+.eb-sentence-mode-icon {
+  font-size: 2rem;
+}
+
+.eb-sentence-mode-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.eb-sentence-mode-desc {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 2px;
+}
+
+/* 拼词造句 */
+.eb-build-area {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.eb-build-image {
+  font-size: 3rem;
+  margin-bottom: 4px;
+}
+
+.eb-build-hint {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 16px;
+}
+
+.eb-build-sentence-box {
+  background: white;
+  border: 2px dashed #bbb;
+  border-radius: 16px;
+  padding: 16px;
+  min-height: 60px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.eb-build-placeholder {
+  color: #bbb;
+  font-size: 0.9rem;
+}
+
+.eb-placed-word {
+  background: #e3f2fd;
+  color: #1976D2;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.eb-placed-word:active {
+  transform: scale(0.9);
+  opacity: 0.7;
+}
+
+.eb-correct-sentence {
+  border-color: #4CAF50;
+  background: #e8f5e9;
+  animation: eb-pulse 0.5s ease;
+}
+
+.eb-wrong-sentence {
+  border-color: #f44336;
+  background: #ffebee;
+  animation: eb-shake 0.4s ease;
+}
+
+.eb-build-word-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.eb-build-word {
+  background: #fff3e0;
+  border: 2px solid #FFB74D;
+  color: #E65100;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.eb-build-word:active {
+  transform: scale(0.92);
+}
+
+.eb-build-word.used {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.eb-build-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 句子扩展 */
+.eb-expand-area {
+  padding: 10px 0;
+}
+
+.eb-expand-base {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.eb-expand-label {
+  font-size: 0.8rem;
+  color: #888;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.eb-expand-sentence {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1976D2;
+  cursor: pointer;
+}
+
+.eb-expand-prompt {
+  background: #fff3e0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: #E65100;
+}
+
+.eb-expand-starters {
+  margin-bottom: 12px;
+}
+
+.eb-starter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.eb-starter-chip {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.eb-starter-chip:active {
+  background: #c8e6c9;
+}
+
+.eb-expand-input-area {
+  margin-bottom: 12px;
+}
+
+.eb-expand-input-row {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 8px 12px;
+  gap: 4px;
+}
+
+.eb-expand-input-prefix {
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.eb-expand-input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 0.95rem;
+  min-width: 0;
+}
+
+.eb-expand-example {
+  background: #f3e5f5;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.eb-expand-example-text {
+  font-size: 0.95rem;
+  color: #7b1fa2;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.eb-expand-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.eb-expand-feedback {
+  background: #e8f5e9;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  font-size: 1rem;
+  color: #2e7d32;
+  font-weight: 600;
+  text-align: center;
+  animation: eb-fadeIn 0.3s ease;
+}
+
+/* 句子开头提示 */
+.eb-starters-area {
+  padding: 10px 0;
+}
+
+.eb-starters-intro {
+  text-align: center;
+  color: #666;
+  margin: 0 0 16px;
+  font-size: 0.95rem;
+}
+
+.eb-starters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.eb-starter-card {
+  background: white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.eb-starter-card:active {
+  transform: scale(0.98);
+}
+
+.eb-starter-card.active {
+  border: 2px solid #4CAF50;
+  background: #e8f5e9;
+}
+
+.eb-starter-img {
+  font-size: 1.5rem;
+}
+
+.eb-starter-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.eb-starter-input-area {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.eb-starter-input-row {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  gap: 4px;
+}
+
+.eb-starter-prefix {
+  font-weight: 600;
+  color: #1976D2;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.eb-starter-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  font-size: 0.95rem;
+  min-width: 0;
+}
+
+/* ========== 完成页 ========== */
+.eb-complete {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.eb-complete-icon {
+  font-size: 4rem;
+  margin-bottom: 12px;
+}
+
+.eb-complete h3 {
+  font-size: 1.4rem;
+  color: #333;
+  margin: 0 0 8px;
+}
+
+.eb-complete p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 16px;
+}
+
+.eb-complete-stars {
+  font-size: 2rem;
+  margin-bottom: 24px;
+}
+
+.eb-complete-btns {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ========== 动画 ========== */
+@keyframes eb-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+@keyframes eb-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+@keyframes eb-fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 菜单卡片颜色 */
+.card-english-boost {
+  background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+}

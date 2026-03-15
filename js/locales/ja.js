@@ -1080,5 +1080,12 @@ I18n.translations['ja'] = {
   'chore.reward.outing': 'おでかけ',
   'chore.reward.chooseDinner': '夕食を選ぶ',
   'chore.reward.newToy': '新しいおもちゃ',
-  'chore.reward.special': '特別なごほうび'
+  'chore.reward.special': '特別なごほうび',
+
+  // English Boost
+  'menu.englishBoost': '英語ブースト',
+  'menu.englishBoost.desc': 'リスニング・リーディング・ライティング',
+  'eb.title': '英語ブースト',
+  'eb.selectTitle': '英語ブースト',
+  'eb.selectSubtitle': '楽しいアクティビティを選ぼう！'
 };
