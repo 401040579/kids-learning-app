@@ -512,6 +512,12 @@
             <div class="card-desc" data-i18n="menu.choreTracker.desc">任务打卡积分</div>
           </div>
 
+          <div class="menu-card card-birthday-party" data-category="play" onclick="showBirthdayParty()">
+            <div class="card-icon">🦄</div>
+            <div class="card-title" data-i18n="menu.birthdayParty">生日派对</div>
+            <div class="card-desc" data-i18n="menu.birthdayParty.desc">全屏生日庆祝</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -3048,6 +3054,15 @@
     </div>
   </div>
 
+  <!-- 生日派对全屏 -->
+  <div id="birthday-party-modal" class="birthday-party-modal hidden">
+    <canvas id="birthday-canvas" class="birthday-canvas"></canvas>
+    <div class="birthday-overlay">
+      <div class="birthday-name-display" id="birthday-name"></div>
+    </div>
+    <button class="birthday-close-btn" onclick="closeBirthdayParty()">✕</button>
+  </div>
+
   <!-- PWA 更新提示 -->
   <div id="update-notification" class="update-notification hidden">
     <div class="update-content">
@@ -3110,6 +3125,7 @@
   <script src="js/choreTracker.js"></script>
   <script src="js/englishBoostData.js"></script>
   <script src="js/englishBoost.js"></script>
+  <script src="js/birthdayParty.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
