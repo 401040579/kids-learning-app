@@ -1131,5 +1131,9 @@ I18n.translations['ko'] = {
   'birthday.cardTextPlaceholder': '메시지 입력...',
   'birthday.clearCard': '지우기',
   'birthday.saveCard': '카드 저장',
-  'birthday.savedCards': '내 카드'
+  'birthday.savedCards': '내 카드',
+  'birthday.tvMode': '전체화면 축하 모드',
+  'birthday.tvHint': 'TV에서 생일 축하 메시지 재생',
+  'birthday.happyBirthdayShort': '생일 축하해요',
+  'birthday.fsWish': '매일이 웃음과 놀라움으로 가득하길'
 };

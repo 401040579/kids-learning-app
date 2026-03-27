@@ -1202,5 +1202,9 @@ I18n.translations['en'] = {
   'birthday.cardTextPlaceholder': 'Type a message...',
   'birthday.clearCard': 'Clear',
   'birthday.saveCard': 'Save Card',
-  'birthday.savedCards': 'My Cards'
+  'birthday.savedCards': 'My Cards',
+  'birthday.tvMode': 'Fullscreen Celebration',
+  'birthday.tvHint': 'Cast to TV for looping birthday display',
+  'birthday.happyBirthdayShort': 'Happy Birthday',
+  'birthday.fsWish': 'May every day be filled with laughter and wonder'
 };

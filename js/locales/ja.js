@@ -1131,5 +1131,9 @@ I18n.translations['ja'] = {
   'birthday.cardTextPlaceholder': 'メッセージを入力...',
   'birthday.clearCard': 'クリア',
   'birthday.saveCard': 'カードを保存',
-  'birthday.savedCards': 'マイカード'
+  'birthday.savedCards': 'マイカード',
+  'birthday.tvMode': '全画面お祝いモード',
+  'birthday.tvHint': 'テレビで誕生日メッセージを表示',
+  'birthday.happyBirthdayShort': 'お誕生日おめでとう',
+  'birthday.fsWish': '毎日が笑顔と驚きでいっぱいでありますように'
 };

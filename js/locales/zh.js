@@ -1205,5 +1205,9 @@ I18n.translations['zh'] = {
   'birthday.cardTextPlaceholder': '输入祝福语...',
   'birthday.clearCard': '清空',
   'birthday.saveCard': '保存贺卡',
-  'birthday.savedCards': '我的贺卡'
+  'birthday.savedCards': '我的贺卡',
+  'birthday.tvMode': '全屏庆祝模式',
+  'birthday.tvHint': '投到电视上循环播放生日祝福',
+  'birthday.happyBirthdayShort': '生日快乐',
+  'birthday.fsWish': '愿你的每一天都充满欢笑和惊喜'
 };

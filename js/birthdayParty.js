@@ -11,10 +11,23 @@ const BirthdayParty = {
   },
 
   // 当前状态
-  currentView: 'main',       // main | countdown | wishes | cake | cards
+  currentView: 'main',       // main | countdown | wishes | cake | cards | fullscreen
   cakeCandles: [],
   candleFlickering: null,
   floatingParticles: null,
+
+  // 全屏庆祝 Canvas 状态
+  fsCanvas: null,
+  fsCtx: null,
+  fsAnimationId: null,
+  fsWakeLock: null,
+  fsParticles: [],
+  fsUnicorns: [],
+  fsStars: [],
+  fsFloatingEmojis: [],
+  fsTextScale: 1,
+  fsTextScaleDir: 1,
+  fsTime: 0,
 
   // ========== 初始化 ==========
   init() {
@@ -219,6 +232,16 @@ const BirthdayParty = {
             <div class="bp-card-label">${t('birthday.makeCard', '做贺卡')}</div>
             <div class="bp-card-hint">${this.data.cards.length} ${t('birthday.cardCount', '张贺卡')}</div>
           </div>
+        </div>
+
+        <!-- 全屏庆祝入口 -->
+        <div class="bp-fullscreen-entry" onclick="BirthdayParty.startFullscreen()">
+          <div class="bp-fs-icon">📺</div>
+          <div class="bp-fs-text">
+            <div class="bp-fs-label">${t('birthday.tvMode', '全屏庆祝模式')}</div>
+            <div class="bp-fs-hint">${t('birthday.tvHint', '投到电视上循环播放生日祝福')}</div>
+          </div>
+          <div class="bp-fs-arrow">→</div>
         </div>
 
         <!-- 统计信息 -->
@@ -854,6 +877,465 @@ const BirthdayParty = {
         stickersEl.appendChild(el);
       });
     }
+  },
+
+  // ========== 全屏庆祝模式（三星电视投屏） ==========
+  startFullscreen() {
+    const modal = document.getElementById('bp-fullscreen-modal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+
+    this.fsCanvas = document.getElementById('bp-fs-canvas');
+    this.fsCtx = this.fsCanvas.getContext('2d');
+    this.fsResizeCanvas();
+    this.fsInitParticles();
+    this.fsAnimate();
+    this.fsRequestFullscreen(modal);
+    this.fsRequestWakeLock();
+    this.fsStartSilentAudio();
+
+    this._fsResizeHandler = () => this.fsResizeCanvas();
+    window.addEventListener('resize', this._fsResizeHandler);
+  },
+
+  stopFullscreen() {
+    const modal = document.getElementById('bp-fullscreen-modal');
+    if (modal) modal.classList.add('hidden');
+
+    if (this.fsAnimationId) {
+      cancelAnimationFrame(this.fsAnimationId);
+      this.fsAnimationId = null;
+    }
+    this.fsReleaseWakeLock();
+    this.fsStopSilentAudio();
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+    if (this._fsResizeHandler) {
+      window.removeEventListener('resize', this._fsResizeHandler);
+    }
+    this.fsParticles = [];
+    this.fsUnicorns = [];
+    this.fsStars = [];
+    this.fsFloatingEmojis = [];
+  },
+
+  fsResizeCanvas() {
+    if (!this.fsCanvas) return;
+    this.fsCanvas.width = window.innerWidth;
+    this.fsCanvas.height = window.innerHeight;
+  },
+
+  fsRequestFullscreen(el) {
+    const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (rfs) rfs.call(el).catch(() => {});
+  },
+
+  async fsRequestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        this.fsWakeLock = await navigator.wakeLock.request('screen');
+        this._fsVisibilityHandler = async () => {
+          if (document.visibilityState === 'visible' && this.fsAnimationId) {
+            try { this.fsWakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+          }
+        };
+        document.addEventListener('visibilitychange', this._fsVisibilityHandler);
+      }
+    } catch (e) {}
+  },
+
+  async fsReleaseWakeLock() {
+    if (this.fsWakeLock) {
+      try { await this.fsWakeLock.release(); } catch (e) {}
+      this.fsWakeLock = null;
+    }
+    if (this._fsVisibilityHandler) {
+      document.removeEventListener('visibilitychange', this._fsVisibilityHandler);
+      this._fsVisibilityHandler = null;
+    }
+  },
+
+  fsStartSilentAudio() {
+    try {
+      this._fsAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = this._fsAudioCtx.createOscillator();
+      const gain = this._fsAudioCtx.createGain();
+      gain.gain.value = 0.001;
+      osc.connect(gain);
+      gain.connect(this._fsAudioCtx.destination);
+      osc.start();
+      this._fsOsc = osc;
+    } catch (e) {}
+  },
+
+  fsStopSilentAudio() {
+    if (this._fsOsc) { try { this._fsOsc.stop(); } catch (e) {} this._fsOsc = null; }
+    if (this._fsAudioCtx) { try { this._fsAudioCtx.close(); } catch (e) {} this._fsAudioCtx = null; }
+  },
+
+  // 初始化粒子
+  fsInitParticles() {
+    const w = this.fsCanvas.width;
+    const h = this.fsCanvas.height;
+
+    // 柔和色纸屑
+    this.fsParticles = [];
+    for (let i = 0; i < 80; i++) {
+      this.fsParticles.push({
+        x: Math.random() * w,
+        y: Math.random() * h - h,
+        size: Math.random() * 8 + 4,
+        speedX: (Math.random() - 0.5) * 2,
+        speedY: Math.random() * 2 + 1,
+        rotation: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 6,
+        color: this.fsSoftColor(),
+        shape: Math.random() > 0.5 ? 'rect' : 'circle'
+      });
+    }
+
+    // 飘浮独角兽
+    this.fsUnicorns = [];
+    for (let i = 0; i < 5; i++) {
+      this.fsUnicorns.push({
+        x: Math.random() * w, y: Math.random() * h,
+        size: Math.random() * 30 + 40,
+        speedX: (Math.random() - 0.5) * 1.5,
+        speedY: (Math.random() - 0.5) * 1,
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: Math.random() * 0.02 + 0.01
+      });
+    }
+
+    // 星星
+    this.fsStars = [];
+    for (let i = 0; i < 40; i++) {
+      this.fsStars.push({
+        x: Math.random() * w, y: Math.random() * h,
+        size: Math.random() * 3 + 1,
+        twinkle: Math.random() * Math.PI * 2,
+        twinkleSpeed: Math.random() * 0.05 + 0.02
+      });
+    }
+
+    // 飘浮 emoji
+    const emojis = ['🎂', '🎁', '🎈', '🎉', '🎊', '💖', '✨', '🌟', '🦄', '🌈', '🍰', '🧁'];
+    this.fsFloatingEmojis = [];
+    for (let i = 0; i < 15; i++) {
+      this.fsFloatingEmojis.push({
+        emoji: emojis[Math.floor(Math.random() * emojis.length)],
+        x: Math.random() * w, y: Math.random() * h,
+        size: Math.random() * 20 + 20,
+        speedX: (Math.random() - 0.5) * 0.8,
+        speedY: -Math.random() * 0.5 - 0.3,
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: Math.random() * 0.03 + 0.01,
+        opacity: Math.random() * 0.5 + 0.5
+      });
+    }
+  },
+
+  // 柔和的独角兽色盘（替换旧的艳丽色）
+  fsSoftColor() {
+    const colors = [
+      '#E8B4CB', '#D4A0B9', '#C4A8D8', '#B09AD8',
+      '#A8C4E0', '#B8D8E8', '#A8D8C4', '#D8C4A8',
+      '#E0C4D8', '#C8B8E0', '#B8C8E0', '#D0B8C8',
+      '#E8D0D8', '#D0D8E8', '#C0D0E0', '#D8E0D0'
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  },
+
+  // 主动画循环
+  fsAnimate() {
+    if (!this.fsCtx || !this.fsCanvas) return;
+    const ctx = this.fsCtx;
+    const w = this.fsCanvas.width;
+    const h = this.fsCanvas.height;
+    this.fsTime += 0.016;
+
+    this.fsDrawBackground(ctx, w, h);
+    this.fsDrawRainbows(ctx, w, h);
+    this.fsDrawStars(ctx);
+    this.fsDrawConfetti(ctx, w, h);
+    this.fsDrawUnicorns(ctx, w, h);
+    this.fsDrawFloatingEmojis(ctx, w, h);
+    this.fsDrawMainText(ctx, w, h);
+    this.fsDrawBottomDecoration(ctx, w, h);
+
+    this.fsAnimationId = requestAnimationFrame(() => this.fsAnimate());
+  },
+
+  // 柔和渐变背景（浅色梦幻，不再是深紫色）
+  fsDrawBackground(ctx, w, h) {
+    const t = this.fsTime;
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    // 在浅粉、浅紫、浅蓝之间缓慢过渡
+    const phase = Math.sin(t * 0.15) * 0.5 + 0.5;
+    const r1 = Math.round(250 + phase * 5);
+    const g1 = Math.round(240 + Math.sin(t * 0.12) * 8);
+    const b1 = Math.round(248 + Math.cos(t * 0.1) * 5);
+    const r2 = Math.round(240 + Math.cos(t * 0.13) * 8);
+    const g2 = Math.round(244 + phase * 6);
+    const b2 = Math.round(255);
+    grad.addColorStop(0, `rgb(${r1},${g1},${b1})`);
+    grad.addColorStop(0.5, `rgb(${Math.round((r1+r2)/2)},${Math.round((g1+g2)/2)},${Math.round((b1+b2)/2)})`);
+    grad.addColorStop(1, `rgb(${r2},${g2},${b2})`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  },
+
+  // 柔和彩虹弧线
+  fsDrawRainbows(ctx, w, h) {
+    const softRainbow = ['#E8B4CB', '#D4A0B9', '#C4A8D8', '#B09AD8', '#A8C4E0', '#B8D8E8', '#A8D8C4'];
+    const cx = w / 2;
+    const cy = h * 0.65;
+    const baseR = Math.min(w, h) * 0.55;
+    const t = this.fsTime;
+
+    ctx.save();
+    ctx.globalAlpha = 0.35 + Math.sin(t * 0.5) * 0.1;
+    for (let i = 0; i < softRainbow.length; i++) {
+      const r = baseR - i * (Math.min(w, h) * 0.03);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, Math.PI, 0);
+      ctx.strokeStyle = softRainbow[i];
+      ctx.lineWidth = Math.min(w, h) * 0.025;
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // 右上小彩虹
+    ctx.save();
+    ctx.globalAlpha = 0.2 + Math.sin(t * 0.7) * 0.05;
+    const cx2 = w * 0.8, cy2 = h * 0.3, r2 = Math.min(w, h) * 0.25;
+    for (let i = 0; i < softRainbow.length; i++) {
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, r2 - i * (Math.min(w, h) * 0.015), Math.PI * 0.8, Math.PI * 0.2, true);
+      ctx.strokeStyle = softRainbow[i];
+      ctx.lineWidth = Math.min(w, h) * 0.012;
+      ctx.stroke();
+    }
+    ctx.restore();
+  },
+
+  // 闪烁星星
+  fsDrawStars(ctx) {
+    for (const star of this.fsStars) {
+      star.twinkle += star.twinkleSpeed;
+      const alpha = 0.3 + Math.sin(star.twinkle) * 0.5;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, alpha);
+      ctx.fillStyle = '#D4A0B9';
+      ctx.shadowColor = '#E8B4CB';
+      ctx.shadowBlur = 8;
+      this.fsDrawStarShape(ctx, star.x, star.y, 5, star.size * 2, star.size);
+      ctx.fill();
+      ctx.restore();
+    }
+  },
+
+  fsDrawStarShape(ctx, cx, cy, spikes, outerR, innerR) {
+    let rot = Math.PI / 2 * 3;
+    const step = Math.PI / spikes;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - outerR);
+    for (let i = 0; i < spikes; i++) {
+      ctx.lineTo(cx + Math.cos(rot) * outerR, cy + Math.sin(rot) * outerR);
+      rot += step;
+      ctx.lineTo(cx + Math.cos(rot) * innerR, cy + Math.sin(rot) * innerR);
+      rot += step;
+    }
+    ctx.lineTo(cx, cy - outerR);
+    ctx.closePath();
+  },
+
+  // 纸屑飘落
+  fsDrawConfetti(ctx, w, h) {
+    for (const p of this.fsParticles) {
+      p.x += p.speedX;
+      p.y += p.speedY;
+      p.rotation += p.rotSpeed;
+      if (p.y > h + 20) { p.y = -20; p.x = Math.random() * w; }
+      if (p.x < -20) p.x = w + 20;
+      if (p.x > w + 20) p.x = -20;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.7;
+      if (p.shape === 'rect') {
+        ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  },
+
+  // 独角兽飘浮
+  fsDrawUnicorns(ctx, w, h) {
+    for (const u of this.fsUnicorns) {
+      u.wobble += u.wobbleSpeed;
+      u.x += u.speedX + Math.sin(u.wobble) * 0.5;
+      u.y += u.speedY + Math.cos(u.wobble) * 0.3;
+      if (u.x < -50 || u.x > w + 50) u.speedX *= -1;
+      if (u.y < -50 || u.y > h + 50) u.speedY *= -1;
+
+      ctx.save();
+      ctx.font = `${u.size}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.translate(u.x, u.y);
+      ctx.rotate(Math.sin(u.wobble) * 0.15);
+      ctx.fillText('🦄', 0, 0);
+      ctx.restore();
+
+      // 尾迹星星
+      ctx.save();
+      ctx.font = `${u.size * 0.3}px serif`;
+      ctx.textAlign = 'center';
+      for (let i = 1; i <= 3; i++) {
+        const tx = u.x - u.speedX * i * 8 + Math.sin(u.wobble + i) * 5;
+        const ty = u.y - u.speedY * i * 8 + Math.cos(u.wobble + i) * 5;
+        ctx.globalAlpha = 0.3 / i;
+        ctx.fillText('✨', tx, ty);
+      }
+      ctx.restore();
+    }
+  },
+
+  // 飘浮 emoji
+  fsDrawFloatingEmojis(ctx, w, h) {
+    for (const e of this.fsFloatingEmojis) {
+      e.wobble += e.wobbleSpeed;
+      e.x += e.speedX + Math.sin(e.wobble) * 0.3;
+      e.y += e.speedY;
+      if (e.y < -50) { e.y = h + 50; e.x = Math.random() * w; }
+      if (e.x < -50) e.x = w + 50;
+      if (e.x > w + 50) e.x = -50;
+
+      ctx.save();
+      ctx.globalAlpha = e.opacity;
+      ctx.font = `${e.size}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(e.emoji, e.x, e.y);
+      ctx.restore();
+    }
+  },
+
+  // 主文字 - 用柔和渐变色
+  fsDrawMainText(ctx, w, h) {
+    const name = this.getProfileName();
+    const t = this.fsTime;
+
+    this.fsTextScale += this.fsTextScaleDir * 0.003;
+    if (this.fsTextScale > 1.08) this.fsTextScaleDir = -1;
+    if (this.fsTextScale < 0.92) this.fsTextScaleDir = 1;
+
+    const baseFontSize = Math.min(w * 0.09, h * 0.12, 120);
+    const fontSize = baseFontSize * this.fsTextScale;
+    const text = `${name} ${this.t('birthday.happyBirthdayShort', '生日快乐')}`;
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = '#C4A8D8';
+    ctx.shadowBlur = 25 + Math.sin(t * 2) * 10;
+
+    // 柔和彩虹渐变文字
+    const grad = ctx.createLinearGradient(
+      w / 2 - fontSize * text.length * 0.3, h * 0.4,
+      w / 2 + fontSize * text.length * 0.3, h * 0.4
+    );
+    const offset = (t * 0.08) % 1;
+    grad.addColorStop((0 + offset) % 1, '#D4A0B9');
+    grad.addColorStop((0.2 + offset) % 1, '#C4A8D8');
+    grad.addColorStop((0.4 + offset) % 1, '#A8C4E0');
+    grad.addColorStop((0.6 + offset) % 1, '#B8D8E8');
+    grad.addColorStop((0.8 + offset) % 1, '#D4A0B9');
+
+    ctx.font = `bold ${fontSize}px "Quicksand", "Comic Sans MS", "Microsoft YaHei", cursive`;
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth = fontSize * 0.06;
+    ctx.strokeText(text, w / 2, h * 0.4);
+    ctx.fillStyle = grad;
+    ctx.fillText(text, w / 2, h * 0.4);
+    ctx.restore();
+
+    // 副标题
+    ctx.save();
+    const subSize = baseFontSize * 0.4;
+    ctx.font = `${subSize}px "Quicksand", "Comic Sans MS", "Microsoft YaHei", cursive`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const subAlpha = 0.6 + Math.sin(t * 1.2) * 0.2;
+    ctx.fillStyle = `rgba(176, 154, 216, ${subAlpha})`;
+    ctx.shadowColor = '#E8B4CB';
+    ctx.shadowBlur = 10;
+    ctx.fillText('🦄 ✨ 🌈 Happy Birthday 🌈 ✨ 🦄', w / 2, h * 0.52);
+    ctx.restore();
+
+    // 祝福语
+    ctx.save();
+    const wishSize = baseFontSize * 0.28;
+    ctx.font = `${wishSize}px "Quicksand", "Microsoft YaHei", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = `rgba(155, 139, 168, ${0.5 + Math.sin(t * 1.5) * 0.25})`;
+    ctx.fillText('🎂 ' + this.t('birthday.fsWish', '愿你的每一天都充满欢笑和惊喜') + ' 🎂', w / 2, h * 0.62);
+    ctx.restore();
+  },
+
+  // 底部气球装饰 - 柔和色
+  fsDrawBottomDecoration(ctx, w, h) {
+    const t = this.fsTime;
+    const cakeSize = Math.min(w, h) * 0.06;
+    const balloonColors = ['#E8B4CB', '#D4A0B9', '#C4A8D8', '#B09AD8', '#A8C4E0', '#B8D8E8'];
+    const numBalloons = 8;
+
+    for (let i = 0; i < numBalloons; i++) {
+      const bx = (w / (numBalloons + 1)) * (i + 1);
+      const by = h * 0.82 + Math.sin(t * 1.5 + i * 0.8) * 15;
+      const color = balloonColors[i % balloonColors.length];
+
+      ctx.save();
+      // 线
+      ctx.beginPath();
+      ctx.moveTo(bx, by + cakeSize * 0.8);
+      ctx.lineTo(bx + Math.sin(t + i) * 5, h);
+      ctx.strokeStyle = 'rgba(196, 168, 216, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // 气球
+      ctx.beginPath();
+      ctx.ellipse(bx, by, cakeSize * 0.6, cakeSize * 0.8, 0, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.6;
+      ctx.fill();
+
+      // 光泽
+      ctx.beginPath();
+      ctx.ellipse(bx - cakeSize * 0.15, by - cakeSize * 0.2, cakeSize * 0.15, cakeSize * 0.25, -0.3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 蛋糕
+    ctx.save();
+    const emojiSize = Math.min(w, h) * 0.1;
+    ctx.font = `${emojiSize}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🎂', w / 2, h * 0.75 + Math.sin(t * 2) * 5);
+    ctx.restore();
   },
 
   // ========== 工具 ==========

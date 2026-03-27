@@ -1134,5 +1134,9 @@ I18n.translations['de'] = {
   'birthday.cardTextPlaceholder': 'Nachricht eingeben...',
   'birthday.clearCard': 'Leeren',
   'birthday.saveCard': 'Karte Speichern',
-  'birthday.savedCards': 'Meine Karten'
+  'birthday.savedCards': 'Meine Karten',
+  'birthday.tvMode': 'Vollbild-Feier',
+  'birthday.tvHint': 'Auf dem Fernseher als Geburtstagsnachricht anzeigen',
+  'birthday.happyBirthdayShort': 'Alles Gute',
+  'birthday.fsWish': 'Möge jeder Tag voller Lachen und Überraschungen sein'
 };
