@@ -17422,71 +17422,1222 @@ body {
   background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
 }
 
-/* ========== 生日派对全屏 ========== */
+/* ========== 生日派对 - 独角兽彩虹梦幻主题 ========== */
+
+/* -- 自定义字体（Google Fonts CDN） -- */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+/* -- 菜单卡片 -- */
+.card-birthday-party {
+  background: linear-gradient(135deg, #fdf2f8, #f3e8ff, #eff6ff) !important;
+  position: relative;
+  overflow: hidden;
+}
+.card-birthday-party::after {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -20%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(232, 180, 203, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+/* -- Modal 容器 -- */
 .birthday-party-modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 100000;
-  background: #1a0a2e;
-  overflow: hidden;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  z-index: 1000;
+  overflow-y: auto;
+  overflow-x: hidden;
+  animation: bpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@keyframes bpFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .birthday-party-modal.hidden {
   display: none;
 }
 
-.birthday-canvas {
-  position: absolute;
+/* -- 头部 -- */
+.bp-header {
+  position: sticky;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(232, 180, 203, 0.15);
 }
 
-.birthday-overlay {
-  position: absolute;
+.bp-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #D4A0B9, #B09AD8, #8CB4D8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+}
+
+.bp-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(232, 180, 203, 0.12);
+  color: #B09AD8;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+.bp-close-btn:active {
+  transform: scale(0.9);
+  background: rgba(232, 180, 203, 0.25);
+}
+
+/* -- 浮动粒子 -- */
+.bp-floating-particles {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
 }
 
-.birthday-name-display {
-  display: none;
-}
-
-.birthday-close-btn {
+.bp-float-particle {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 44px;
-  height: 44px;
+  bottom: -30px;
+  animation: bpFloatUp linear infinite;
+}
+
+@keyframes bpFloatUp {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.3; }
+  100% {
+    transform: translateY(-100vh) translateX(30px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* -- 内容区域 -- */
+.bp-content {
+  padding: 0 16px 100px;
+  min-height: calc(100vh - 60px);
+}
+
+/* ====== 主页视图 ====== */
+.bp-main {
+  padding-top: 8px;
+}
+
+/* 独角兽横幅 */
+.bp-unicorn-banner {
+  position: relative;
+  padding: 28px 20px 22px;
+  margin-bottom: 20px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, #fefcff 0%, #faf5ff 30%, #f5f0ff 60%, #f0f7ff 100%);
+  border: 1px solid rgba(196, 168, 216, 0.15);
+  overflow: hidden;
+  text-align: center;
+}
+
+.bp-unicorn-scene {
+  position: relative;
+  height: 100px;
+  margin-bottom: 12px;
+}
+
+.bp-unicorn-char {
+  font-size: 56px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: bpUnicornBob 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(196, 168, 216, 0.2));
+  z-index: 2;
+}
+
+@keyframes bpUnicornBob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-8px); }
+}
+
+.bp-rainbow-arc {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 80px;
+  border-radius: 80px 80px 0 0;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 180, 203, 0.25) 0%,
+    rgba(196, 168, 216, 0.2) 20%,
+    rgba(168, 196, 224, 0.18) 40%,
+    rgba(184, 216, 232, 0.15) 60%,
+    rgba(168, 216, 196, 0.12) 80%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+
+.bp-cloud {
+  position: absolute;
+  font-size: 28px;
+  opacity: 0.5;
+  animation: bpCloudDrift 6s ease-in-out infinite;
+  z-index: 0;
+}
+.bp-cloud-1 { top: 8px; left: 10%; animation-delay: 0s; }
+.bp-cloud-2 { top: 0; right: 12%; animation-delay: -2s; font-size: 22px; }
+.bp-cloud-3 { top: 30px; left: 32%; animation-delay: -4s; font-size: 18px; opacity: 0.35; }
+
+@keyframes bpCloudDrift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(10px); }
+}
+
+.bp-greeting {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #6B5B7B;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+.bp-countdown-mini {
+  font-size: 0.88rem;
+  color: #9B8BA8;
+  font-weight: 500;
+}
+.bp-countdown-mini strong {
+  color: #B09AD8;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* 功能入口卡片网格 */
+.bp-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.bp-feature-card {
+  position: relative;
+  padding: 22px 16px 18px;
+  border-radius: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+.bp-feature-card:active {
+  transform: scale(0.96);
+}
+
+.bp-card-glow {
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 80%;
+  height: 100%;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.3);
-  background: rgba(0,0,0,0.3);
-  color: #fff;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* 每张卡片独特的颜色 */
+.bp-card-countdown {
+  background: linear-gradient(150deg, #fefcff, #faf0ff);
+  border-color: rgba(196, 168, 216, 0.2);
+}
+.bp-card-countdown .bp-card-glow {
+  background: radial-gradient(circle, rgba(196, 168, 216, 0.15) 0%, transparent 70%);
+}
+
+.bp-card-wishes {
+  background: linear-gradient(150deg, #fffcf5, #fff8eb);
+  border-color: rgba(232, 196, 140, 0.2);
+}
+.bp-card-wishes .bp-card-glow {
+  background: radial-gradient(circle, rgba(232, 196, 140, 0.15) 0%, transparent 70%);
+}
+
+.bp-card-cake {
+  background: linear-gradient(150deg, #fff5f7, #fff0f3);
+  border-color: rgba(232, 180, 203, 0.2);
+}
+.bp-card-cake .bp-card-glow {
+  background: radial-gradient(circle, rgba(232, 180, 203, 0.15) 0%, transparent 70%);
+}
+
+.bp-card-cards {
+  background: linear-gradient(150deg, #f5faff, #eff6ff);
+  border-color: rgba(168, 196, 224, 0.2);
+}
+.bp-card-cards .bp-card-glow {
+  background: radial-gradient(circle, rgba(168, 196, 224, 0.15) 0%, transparent 70%);
+}
+
+.bp-card-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+}
+
+.bp-card-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #5B5070;
+  margin-bottom: 4px;
+}
+
+.bp-card-hint {
+  font-size: 0.75rem;
+  color: #A89BB5;
+  font-weight: 500;
+}
+
+/* 统计气泡 */
+.bp-stats-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.bp-stat-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 18px;
+  background: rgba(250, 245, 255, 0.8);
+  border-radius: 18px;
+  border: 1px solid rgba(196, 168, 216, 0.1);
+  min-width: 80px;
+}
+
+.bp-stat-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.bp-stat-num {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #6B5B7B;
+}
+
+.bp-stat-label {
+  font-size: 0.68rem;
+  color: #A89BB5;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* ====== 返回按钮 ====== */
+.bp-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(232, 180, 203, 0.1);
+  color: #9B8BA8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.bp-back-btn:active {
+  transform: scale(0.96);
+  background: rgba(232, 180, 203, 0.2);
+}
+
+/* ====== 倒计时视图 ====== */
+.bp-countdown-view {
+  padding-top: 8px;
+  text-align: center;
+}
+
+.bp-countdown-ring-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 10px auto 20px;
+}
+
+.bp-countdown-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.bp-ring-bg {
+  fill: none;
+  stroke: rgba(232, 180, 203, 0.1);
+  stroke-width: 8;
+}
+
+.bp-ring-progress {
+  fill: none;
+  stroke: url(#bp-ring-grad);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bp-countdown-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.bp-countdown-today {
+  font-size: 40px;
+  margin-bottom: 4px;
+  animation: bpBounce 0.8s ease-in-out infinite;
+}
+
+@keyframes bpBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.bp-countdown-big {
+  font-size: 3.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #D4A0B9, #B09AD8, #8CB4D8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.bp-countdown-unit {
+  font-size: 0.9rem;
+  color: #A89BB5;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.bp-countdown-info {
+  margin: 16px 0;
+}
+
+.bp-countdown-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #6B5B7B;
+  margin-bottom: 4px;
+}
+
+.bp-countdown-date {
+  font-size: 0.9rem;
+  color: #A89BB5;
+  font-weight: 500;
+}
+
+.bp-no-birthday {
+  color: #B09AD8;
+  font-size: 0.9rem;
+  margin: 12px 0;
+}
+
+.bp-set-birthday-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #E8B4CB, #C4A8D8);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  box-shadow: 0 4px 16px rgba(196, 168, 216, 0.3);
+}
+.bp-set-birthday-btn:active {
+  transform: scale(0.96);
+}
+
+.bp-birthday-celebration {
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #fdf2f8, #faf5ff);
+  border-radius: 20px;
+  border: 1px solid rgba(232, 180, 203, 0.2);
+}
+
+.bp-celebration-text {
+  font-size: 0.95rem;
+  color: #6B5B7B;
+  font-weight: 500;
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+
+.bp-celebrate-btn {
+  padding: 14px 36px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #E8B4CB, #C4A8D8, #A8C4E0);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  box-shadow: 0 6px 24px rgba(196, 168, 216, 0.35);
+  letter-spacing: 0.5px;
+}
+.bp-celebrate-btn:active {
+  transform: scale(0.95);
+}
+
+/* ====== 许愿墙视图 ====== */
+.bp-wishes-view {
+  padding-top: 8px;
+}
+
+.bp-wishes-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.bp-wishes-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #6B5B7B;
+}
+
+.bp-wishes-subtitle {
+  font-size: 0.82rem;
+  color: #A89BB5;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* Emoji 选择器 */
+.bp-wish-emoji-picker {
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  overflow-x: auto;
+  margin-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.bp-wish-emoji-picker::-webkit-scrollbar { display: none; }
+
+.bp-emoji-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: rgba(250, 245, 255, 0.8);
   font-size: 20px;
   cursor: pointer;
-  z-index: 100001;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s;
+}
+.bp-emoji-btn.active {
+  border-color: rgba(196, 168, 216, 0.5);
+  background: #faf5ff;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(196, 168, 216, 0.2);
+}
+
+/* 输入行 */
+.bp-wish-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.bp-wish-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid rgba(196, 168, 216, 0.15);
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #fefcff;
+  color: #5B5070;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.bp-wish-input:focus {
+  border-color: rgba(196, 168, 216, 0.4);
+}
+.bp-wish-input::placeholder {
+  color: #C4B8D0;
+}
+
+.bp-wish-add-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #E8B4CB, #C4A8D8);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  box-shadow: 0 3px 12px rgba(196, 168, 216, 0.25);
+}
+.bp-wish-add-btn:active {
+  transform: scale(0.96);
+}
+
+/* 愿望卡片 */
+.bp-wishes-wall {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bp-wish-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  border: 1px solid rgba(196, 168, 216, 0.1);
+  animation: bpWishIn 0.35s ease both;
+  position: relative;
+  box-shadow: 0 1px 4px rgba(196, 168, 216, 0.06);
+}
+
+@keyframes bpWishIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.bp-wish-emoji {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.bp-wish-text {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #5B5070;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.bp-wish-delete {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(232, 180, 203, 0.08);
+  color: #C4A8D8;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
   opacity: 0.5;
 }
-
-.birthday-close-btn:hover {
+.bp-wish-card:hover .bp-wish-delete,
+.bp-wish-card:active .bp-wish-delete {
   opacity: 1;
-  background: rgba(255,105,180,0.5);
-  border-color: #FF69B4;
-  transform: scale(1.1);
 }
 
-/* 菜单卡片颜色 - 生日派对 */
-.card-birthday-party {
-  background: linear-gradient(135deg, #ffe4f0, #e8d5f5);
+.bp-empty-wishes {
+  text-align: center;
+  padding: 40px 20px;
+  color: #B09AD8;
+}
+.bp-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+.bp-empty-wishes p {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ====== 吹蜡烛视图 ====== */
+.bp-cake-view {
+  padding-top: 8px;
+}
+
+.bp-cake-title {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.bp-cake-title h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #6B5B7B;
+}
+.bp-cake-hint {
+  font-size: 0.82rem;
+  color: #A89BB5;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.bp-cake-stage {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.bp-cake-scene {
+  position: relative;
+  display: inline-block;
+  padding: 30px 20px 0;
+}
+
+/* 蛋糕主体 */
+.bp-cake-body {
+  position: relative;
+}
+
+.bp-cake-top {
+  position: relative;
+  z-index: 2;
+}
+
+.bp-cake-frosting {
+  height: 18px;
+  width: 240px;
+  margin: 0 auto;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(90deg, #E8B4CB, #D4A0B9, #C4A8D8, #B09AD8, #A8C4E0, #B8D8E8, #A8D8C4);
+  position: relative;
+  z-index: 1;
+}
+.bp-cake-frosting::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background:
+    radial-gradient(circle at 12% 0, #E8B4CB 12px, transparent 12px),
+    radial-gradient(circle at 28% 0, #D4A0B9 12px, transparent 12px),
+    radial-gradient(circle at 44% 0, #C4A8D8 12px, transparent 12px),
+    radial-gradient(circle at 60% 0, #B09AD8 12px, transparent 12px),
+    radial-gradient(circle at 76% 0, #A8C4E0 12px, transparent 12px),
+    radial-gradient(circle at 92% 0, #B8D8E8 12px, transparent 12px);
+}
+
+.bp-candles-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 20px 8px;
+  position: relative;
+  z-index: 3;
+}
+
+.bp-candle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.bp-candle:active {
+  transform: scale(0.9);
+}
+
+.bp-candle-stick {
+  width: 10px;
+  height: 32px;
+  border-radius: 3px 3px 0 0;
+  position: relative;
+}
+.bp-candle-stick::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 2px;
+  right: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 1px;
+}
+
+.bp-flame {
+  position: relative;
+  width: 14px;
+  height: 20px;
+  margin-bottom: 2px;
+  transition: all 0.3s ease;
+}
+
+.bp-flame-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: radial-gradient(ellipse at 50% 70%, #fff 0%, #FFE5A0 30%, #FFB347 60%, #FF8C42 100%);
+  animation: bpFlicker 0.6s ease-in-out infinite alternate;
+  box-shadow: 0 0 8px 2px rgba(255, 179, 71, 0.4), 0 0 16px 4px rgba(255, 179, 71, 0.2);
+}
+
+@keyframes bpFlicker {
+  0% { transform: scaleX(1) scaleY(1) rotate(-2deg); }
+  25% { transform: scaleX(0.9) scaleY(1.05) rotate(1deg); }
+  50% { transform: scaleX(1.05) scaleY(0.95) rotate(-1deg); }
+  75% { transform: scaleX(0.95) scaleY(1.02) rotate(2deg); }
+  100% { transform: scaleX(1) scaleY(0.98) rotate(0deg); }
+}
+
+.bp-flame-out {
+  opacity: 0;
+  transform: scaleY(0) translateY(10px);
+  transition: all 0.4s ease;
+}
+.bp-flame-out .bp-flame-inner {
+  animation: none;
+}
+
+.bp-flame-relight {
+  animation: bpRelight 0.5s ease;
+}
+@keyframes bpRelight {
+  0% { opacity: 0; transform: scaleY(0); }
+  50% { opacity: 0.7; transform: scaleY(1.3); }
+  100% { opacity: 1; transform: scaleY(1); }
+}
+
+.bp-smoke {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(to top, rgba(180, 180, 200, 0.4), transparent);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  animation: bpSmoke 1s ease-out forwards;
+}
+@keyframes bpSmoke {
+  0% { opacity: 0.6; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-30px) scaleX(2); }
+}
+
+.bp-cake-layer {
+  width: 240px;
+  margin: 0 auto;
+  position: relative;
+}
+.bp-cake-layer-1 {
+  height: 36px;
+  background: linear-gradient(180deg, #FFF0F5, #FDE8F0);
+  border-radius: 0 0 4px 4px;
+  border-left: 2px solid rgba(232, 180, 203, 0.15);
+  border-right: 2px solid rgba(232, 180, 203, 0.15);
+}
+.bp-cake-layer-2 {
+  height: 32px;
+  background: linear-gradient(180deg, #F3E8FF, #EDE0FF);
+  border-left: 2px solid rgba(196, 168, 216, 0.15);
+  border-right: 2px solid rgba(196, 168, 216, 0.15);
+  width: 250px;
+}
+.bp-cake-layer-3 {
+  height: 28px;
+  background: linear-gradient(180deg, #EFF6FF, #E8F0FF);
+  border-radius: 0 0 8px 8px;
+  border-left: 2px solid rgba(168, 196, 224, 0.15);
+  border-right: 2px solid rgba(168, 196, 224, 0.15);
+  border-bottom: 2px solid rgba(168, 196, 224, 0.15);
+  width: 260px;
+}
+.bp-cake-plate {
+  width: 290px;
+  height: 12px;
+  background: linear-gradient(180deg, #f8f6f9, #eee8f0);
+  border-radius: 0 0 50% 50%;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(196, 168, 216, 0.1);
+}
+
+.bp-cake-message {
+  font-size: 0.9rem;
+  color: #9B8BA8;
+  font-weight: 500;
+  margin-top: 16px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+.bp-msg-celebrate {
+  font-size: 1rem;
+  color: #6B5B7B;
+  font-weight: 600;
+  animation: bpBounce 0.6s ease;
+}
+
+.bp-cake-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.bp-blow-all-btn, .bp-relight-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.bp-blow-all-btn {
+  background: linear-gradient(135deg, #E8B4CB, #C4A8D8);
+  color: white;
+  box-shadow: 0 3px 12px rgba(196, 168, 216, 0.25);
+}
+.bp-relight-btn {
+  background: rgba(250, 245, 255, 0.8);
+  color: #8B7B9B;
+  border: 1px solid rgba(196, 168, 216, 0.2);
+}
+.bp-blow-all-btn:active, .bp-relight-btn:active {
+  transform: scale(0.96);
+}
+
+/* ====== 贺卡制作视图 ====== */
+.bp-cards-view {
+  padding-top: 8px;
+}
+
+.bp-cards-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #6B5B7B;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* 贺卡画布 */
+.bp-card-canvas-wrap {
+  margin-bottom: 14px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(196, 168, 216, 0.12);
+  border: 1px solid rgba(196, 168, 216, 0.15);
+}
+
+.bp-card-canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  transition: background 0.3s ease;
+  overflow: hidden;
+}
+
+.bp-card-text-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #D4A0B9, #B09AD8, #8CB4D8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+  max-width: 80%;
+  word-break: break-word;
+}
+
+.bp-card-stickers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.bp-placed-sticker {
+  position: absolute;
+  font-size: 32px;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: filter 0.15s ease;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+  z-index: 2;
+}
+.bp-placed-sticker:active {
+  cursor: grabbing;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
+/* 编辑文字输入 */
+.bp-card-edit-row {
+  margin-bottom: 10px;
+}
+
+.bp-card-text-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid rgba(196, 168, 216, 0.15);
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #fefcff;
+  color: #5B5070;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.bp-card-text-input:focus {
+  border-color: rgba(196, 168, 216, 0.4);
+}
+
+/* 背景色选择器 */
+.bp-card-bg-picker {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.bp-bg-option {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.bp-bg-option.active {
+  border-color: rgba(196, 168, 216, 0.5);
+  transform: scale(1.15);
+  box-shadow: 0 2px 8px rgba(196, 168, 216, 0.3);
+}
+
+/* 贴纸面板 */
+.bp-sticker-panel {
+  background: rgba(250, 245, 255, 0.5);
+  border-radius: 16px;
+  padding: 10px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(196, 168, 216, 0.1);
+}
+
+.bp-sticker-row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+  justify-content: center;
+}
+.bp-sticker-row:last-child {
+  margin-bottom: 0;
+}
+
+.bp-sticker-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bp-sticker-btn:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* 操作按钮 */
+.bp-card-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.bp-clear-card-btn {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid rgba(196, 168, 216, 0.2);
+  border-radius: 14px;
+  background: rgba(250, 245, 255, 0.6);
+  color: #8B7B9B;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.bp-save-card-btn {
+  flex: 2;
+  padding: 12px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #E8B4CB, #C4A8D8);
+  color: white;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 3px 12px rgba(196, 168, 216, 0.25);
+  transition: all 0.2s ease;
+}
+.bp-clear-card-btn:active, .bp-save-card-btn:active {
+  transform: scale(0.97);
+}
+
+/* 已保存贺卡 */
+.bp-saved-cards {
+  margin-top: 8px;
+}
+
+.bp-saved-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6B5B7B;
+  margin-bottom: 10px;
+}
+
+.bp-saved-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.bp-saved-card-thumb {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(196, 168, 216, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.bp-saved-card-thumb:active {
+  transform: scale(0.96);
+}
+
+.bp-thumb-preview {
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 8px;
+}
+
+.bp-thumb-text {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #8B7B9B;
+  text-align: center;
+  z-index: 1;
+}
+
+.bp-thumb-sticker {
+  position: absolute;
+  font-size: 14px;
+  opacity: 0.6;
+}
+.bp-thumb-sticker:nth-child(2) { top: 4px; right: 4px; }
+.bp-thumb-sticker:nth-child(3) { bottom: 4px; left: 4px; }
+.bp-thumb-sticker:nth-child(4) { bottom: 4px; right: 4px; }
+
+.bp-delete-card-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.15);
+  color: white;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.bp-saved-card-thumb:hover .bp-delete-card-btn,
+.bp-saved-card-thumb:active .bp-delete-card-btn {
+  opacity: 1;
+}
+
+/* 响应式 */
+@media (max-width: 360px) {
+  .bp-feature-grid {
+    gap: 8px;
+  }
+  .bp-feature-card {
+    padding: 18px 12px 14px;
+  }
+  .bp-card-icon {
+    font-size: 30px;
+  }
+  .bp-cake-frosting, .bp-cake-layer-1 { width: 200px; }
+  .bp-cake-layer-2 { width: 210px; }
+  .bp-cake-layer-3 { width: 220px; }
+  .bp-cake-plate { width: 240px; }
+  .bp-saved-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

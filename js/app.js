@@ -113,6 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof EnglishBoost !== 'undefined') {
     EnglishBoost.init();
   }
+  if (typeof BirthdayParty !== 'undefined') {
+    BirthdayParty.init();
+  }
   // 初始化各模块
   initVideos();
   initMath();

@@ -515,7 +515,7 @@
           <div class="menu-card card-birthday-party" data-category="play" onclick="showBirthdayParty()">
             <div class="card-icon">🦄</div>
             <div class="card-title" data-i18n="menu.birthdayParty">生日派对</div>
-            <div class="card-desc" data-i18n="menu.birthdayParty.desc">全屏生日庆祝</div>
+            <div class="card-desc" data-i18n="menu.birthdayParty.desc">独角兽彩虹派对</div>
           </div>
 
         </div>
@@ -3028,6 +3028,19 @@
   </div>
 
   <!-- 家庭积分榜弹窗 -->
+  <!-- 生日派对 -->
+  <div id="birthday-party-modal" class="birthday-party-modal hidden">
+    <div class="bp-floating-particles"></div>
+    <div class="bp-header">
+      <button class="bp-close-btn" onclick="closeBirthdayParty()">✕</button>
+      <h2>🦄 <span data-i18n="birthday.title">生日派对</span></h2>
+      <div style="width: 34px;"></div>
+    </div>
+    <div id="birthday-party-content" class="bp-content">
+      <!-- 动态生成 -->
+    </div>
+  </div>
+
   <div id="chore-tracker-modal" class="chore-tracker-modal hidden">
     <div class="chore-tracker-container">
       <div class="ct-header">
@@ -3052,15 +3065,6 @@
         <!-- 动态渲染内容 -->
       </div>
     </div>
-  </div>
-
-  <!-- 生日派对全屏 -->
-  <div id="birthday-party-modal" class="birthday-party-modal hidden">
-    <canvas id="birthday-canvas" class="birthday-canvas"></canvas>
-    <div class="birthday-overlay">
-      <div class="birthday-name-display" id="birthday-name"></div>
-    </div>
-    <button class="birthday-close-btn" onclick="closeBirthdayParty()">✕</button>
   </div>
 
   <!-- PWA 更新提示 -->

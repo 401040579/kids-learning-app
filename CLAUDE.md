@@ -70,7 +70,8 @@ kids-learning-app/
 │   ├── drawSmashData.js # 画线砸怪兽关卡数据
 │   ├── ragdollRobot.js  # 弹弹机器人游戏
 │   ├── ragdollRobotData.js # 弹弹机器人关卡数据
-│   └── choreTracker.js    # 家庭积分榜
+│   ├── choreTracker.js    # 家庭积分榜
+│   └── birthdayParty.js   # 生日派对
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -127,6 +128,7 @@ kids-learning-app/
 | 画线砸怪兽 | drawSmash.js | ✅ 完成（6章30关/物理引擎/弹跳垫） |
 | 弹弹机器人 | ragdollRobot.js | ✅ 完成（5章30关/布娃娃物理/弹射收星） |
 | 家庭积分榜 | choreTracker.js | ✅ 完成（任务打卡/加减分/奖励兑换/语音输入） |
+| 生日派对 | birthdayParty.js | ✅ 完成（倒计时/许愿墙/吹蜡烛/贺卡制作） |
 
 ## 常用命令
 
@@ -165,6 +167,7 @@ const CACHE_NAME = 'kids-learning-vXX';
 | kidsDrawSmash | 画线砸怪兽进度和星星 |
 | kidsRagdollRobot | 弹弹机器人进度和星星 |
 | kidsChoreTracker | 家庭积分榜数据 |
+| kidsBirthdayParty | 生日派对数据 |
 
 ## 注意事项
 

@@ -40,6 +40,7 @@ const urlsToCache = [
   '/js/choreTracker.js',
   '/js/englishBoostData.js',
   '/js/englishBoost.js',
+  '/js/birthdayParty.js',
   // i18n files
   '/js/i18n.js',
   '/js/locales/en.js',
