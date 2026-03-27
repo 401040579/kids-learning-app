@@ -29,6 +29,16 @@ const BirthdayParty = {
   fsTextScaleDir: 1,
   fsTime: 0,
 
+  // 堆积+吹风系统
+  fsPile: [],              // 堆积在底部的emoji [{emoji, x, y, rot, size}]
+  fsPileMaxY: 0,           // 当前堆积最高点（从底部往上）
+  fsWindActive: false,     // 风是否在吹
+  fsWindTime: 0,           // 风的动画时间
+  fsWindForce: 0,          // 风力（0~1）
+  fsPileCycleTimer: 0,     // 堆积周期计时（秒）
+  fsPileCycleDuration: 600, // 多少秒触发一次风（600=10分钟）
+  fsFallingEmojis: [],     // 从天上飘落到底部堆积的emoji
+
   // ========== 初始化 ==========
   init() {
     this.loadData();
@@ -889,6 +899,7 @@ const BirthdayParty = {
     this.fsCtx = this.fsCanvas.getContext('2d');
     this.fsResizeCanvas();
     this.fsInitParticles();
+    this.fsInitPileSystem();
     this.fsAnimate();
     this.fsRequestFullscreen(modal);
     this.fsRequestWakeLock();
@@ -919,6 +930,10 @@ const BirthdayParty = {
     this.fsUnicorns = [];
     this.fsStars = [];
     this.fsFloatingEmojis = [];
+    this.fsPile = [];
+    this.fsFallingEmojis = [];
+    this.fsWindActive = false;
+    this.fsPileCycleTimer = 0;
   },
 
   fsResizeCanvas() {
@@ -1056,6 +1071,9 @@ const BirthdayParty = {
     const h = this.fsCanvas.height;
     this.fsTime += 0.016;
 
+    // 更新堆积系统
+    this.fsUpdatePileSystem(0.016);
+
     this.fsDrawBackground(ctx, w, h);
     this.fsDrawRainbows(ctx, w, h);
     this.fsDrawStars(ctx);
@@ -1064,6 +1082,11 @@ const BirthdayParty = {
     this.fsDrawFloatingEmojis(ctx, w, h);
     this.fsDrawMainText(ctx, w, h);
     this.fsDrawBottomDecoration(ctx, w, h);
+
+    // 堆积层：先画堆积的，再画下落的，最后画风
+    this.fsDrawPile(ctx);
+    this.fsDrawFallingEmojis(ctx);
+    this.fsDrawWind(ctx, w, h);
 
     this.fsAnimationId = requestAnimationFrame(() => this.fsAnimate());
   },
@@ -1335,6 +1358,195 @@ const BirthdayParty = {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('🎂', w / 2, h * 0.75 + Math.sin(t * 2) * 5);
+    ctx.restore();
+  },
+
+  // ========== 堆积+吹风系统 ==========
+
+  fsInitPileSystem() {
+    this.fsPile = [];
+    this.fsFallingEmojis = [];
+    this.fsPileMaxY = 0;
+    this.fsWindActive = false;
+    this.fsWindTime = 0;
+    this.fsWindForce = 0;
+    this.fsPileCycleTimer = 0;
+    // 初始生成一批下落的emoji
+    this.fsSpawnFallingBatch();
+  },
+
+  // 生成一批下落的emoji
+  fsSpawnFallingBatch() {
+    const w = this.fsCanvas.width;
+    const pool = ['🎂', '🧁', '🍰', '🎁', '🎈', '🎉', '🎊', '💖', '⭐', '🌟',
+                  '🦄', '🌈', '🎀', '🍭', '🍬', '🫧', '🌸', '🦋', '✨', '💫'];
+    const count = 3 + Math.floor(Math.random() * 3); // 每批3~5个
+    for (let i = 0; i < count; i++) {
+      this.fsFallingEmojis.push({
+        emoji: pool[Math.floor(Math.random() * pool.length)],
+        x: Math.random() * w * 0.8 + w * 0.1,
+        y: -30 - Math.random() * 80,
+        size: 18 + Math.random() * 16,
+        speedY: 0.4 + Math.random() * 0.6,
+        speedX: (Math.random() - 0.5) * 0.3,
+        rot: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 2,
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: 0.01 + Math.random() * 0.02
+      });
+    }
+  },
+
+  // 更新堆积+吹风逻辑（每帧调用）
+  fsUpdatePileSystem(dt) {
+    const w = this.fsCanvas.width;
+    const h = this.fsCanvas.height;
+    const maxPileH = h * 0.33; // 堆积最多到屏幕1/3
+
+    // === 风模式 ===
+    if (this.fsWindActive) {
+      this.fsWindTime += dt;
+      // 风持续约6秒：1秒渐强，4秒满力，1秒渐弱
+      if (this.fsWindTime < 1) {
+        this.fsWindForce = this.fsWindTime; // 0→1
+      } else if (this.fsWindTime < 5) {
+        this.fsWindForce = 1;
+      } else if (this.fsWindTime < 6) {
+        this.fsWindForce = 1 - (this.fsWindTime - 5); // 1→0
+      } else {
+        // 风停了，重置
+        this.fsWindActive = false;
+        this.fsWindForce = 0;
+        this.fsWindTime = 0;
+        this.fsPile = [];
+        this.fsPileMaxY = 0;
+        this.fsPileCycleTimer = 0;
+        this.fsSpawnFallingBatch();
+        return;
+      }
+
+      // 风吹走堆积的emoji
+      for (const p of this.fsPile) {
+        p.x += (3 + Math.random() * 4) * this.fsWindForce;
+        p.y -= (0.5 + Math.random() * 1.5) * this.fsWindForce;
+        p.rot += 5 * this.fsWindForce;
+        // 轻微上下摇摆
+        p.y += Math.sin(this.fsTime * 3 + p.x * 0.01) * 0.5 * this.fsWindForce;
+      }
+      // 移除飞出屏幕的
+      this.fsPile = this.fsPile.filter(p => p.x < w + 100);
+      return;
+    }
+
+    // === 堆积模式 ===
+    this.fsPileCycleTimer += dt;
+
+    // 每隔2~3秒生成新一批下落emoji
+    if (this.fsFallingEmojis.length < 3 && this.fsPileMaxY < maxPileH) {
+      this.fsSpawnFallingBatch();
+    }
+
+    // 更新下落的emoji
+    for (let i = this.fsFallingEmojis.length - 1; i >= 0; i--) {
+      const f = this.fsFallingEmojis[i];
+      f.wobble += f.wobbleSpeed;
+      f.y += f.speedY;
+      f.x += f.speedX + Math.sin(f.wobble) * 0.3;
+      f.rot += f.rotSpeed;
+
+      // 计算落地位置：底部减去当前堆积高度（有微小随机）
+      const landY = h - this.fsGetPileHeightAt(f.x, w) - f.size * 0.4;
+
+      if (f.y >= landY) {
+        // 落地！加入堆积
+        this.fsPile.push({
+          emoji: f.emoji,
+          x: f.x,
+          y: landY,
+          rot: f.rot,
+          size: f.size
+        });
+        this.fsFallingEmojis.splice(i, 1);
+
+        // 更新最高点
+        const pileH = h - landY;
+        if (pileH > this.fsPileMaxY) {
+          this.fsPileMaxY = pileH;
+        }
+      }
+    }
+
+    // 到达1/3高度 或 10分钟到了 → 触发风
+    if ((this.fsPileMaxY >= maxPileH) ||
+        (this.fsPileCycleTimer >= this.fsPileCycleDuration && this.fsPile.length > 0)) {
+      this.fsWindActive = true;
+      this.fsWindTime = 0;
+      this.fsFallingEmojis = []; // 停止新的下落
+    }
+  },
+
+  // 获取某x位置的堆积高度（简化：按列统计）
+  fsGetPileHeightAt(x, w) {
+    const colWidth = 40;
+    let count = 0;
+    for (const p of this.fsPile) {
+      if (Math.abs(p.x - x) < colWidth) {
+        count++;
+      }
+    }
+    // 每个emoji大约占20px高度，带随机让它不那么整齐
+    return count * 14 + Math.random() * 6;
+  },
+
+  // 绘制下落中的emoji
+  fsDrawFallingEmojis(ctx) {
+    for (const f of this.fsFallingEmojis) {
+      ctx.save();
+      ctx.translate(f.x, f.y);
+      ctx.rotate((f.rot * Math.PI) / 180);
+      ctx.font = `${f.size}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.globalAlpha = 0.85;
+      ctx.fillText(f.emoji, 0, 0);
+      ctx.restore();
+    }
+  },
+
+  // 绘制堆积的emoji
+  fsDrawPile(ctx) {
+    for (const p of this.fsPile) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rot * Math.PI) / 180);
+      ctx.font = `${p.size}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.globalAlpha = 0.9;
+      ctx.fillText(p.emoji, 0, 0);
+      ctx.restore();
+    }
+  },
+
+  // 绘制风的视觉效果（几条弧线飘过）
+  fsDrawWind(ctx, w, h) {
+    if (!this.fsWindActive || this.fsWindForce < 0.1) return;
+
+    ctx.save();
+    ctx.globalAlpha = this.fsWindForce * 0.15;
+    ctx.strokeStyle = '#C4A8D8';
+    ctx.lineWidth = 2;
+
+    const t = this.fsTime;
+    for (let i = 0; i < 6; i++) {
+      const y = h * 0.4 + i * h * 0.08 + Math.sin(t * 2 + i) * 20;
+      const startX = -50 + ((t * 200 + i * 150) % (w + 200));
+      ctx.beginPath();
+      ctx.moveTo(startX, y);
+      ctx.quadraticCurveTo(startX + 60, y - 10 + Math.sin(t * 3 + i) * 8, startX + 120, y);
+      ctx.quadraticCurveTo(startX + 180, y + 10 + Math.cos(t * 3 + i) * 8, startX + 240, y);
+      ctx.stroke();
+    }
     ctx.restore();
   },
 
