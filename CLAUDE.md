@@ -71,7 +71,8 @@ kids-learning-app/
 │   ├── ragdollRobot.js  # 弹弹机器人游戏
 │   ├── ragdollRobotData.js # 弹弹机器人关卡数据
 │   ├── choreTracker.js    # 家庭积分榜
-│   └── birthdayParty.js   # 生日派对
+│   ├── birthdayParty.js   # 生日派对
+│   └── parkWallpaper.js   # 魔法公园（声音互动壁纸）
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -129,6 +130,7 @@ kids-learning-app/
 | 弹弹机器人 | ragdollRobot.js | ✅ 完成（5章30关/布娃娃物理/弹射收星） |
 | 家庭积分榜 | choreTracker.js | ✅ 完成（任务打卡/加减分/奖励兑换/语音输入） |
 | 生日派对 | birthdayParty.js | ✅ 完成（倒计时/许愿墙/吹蜡烛/贺卡制作） |
+| 魔法公园 | parkWallpaper.js | ✅ 完成（声音互动壁纸/麦克风风力/全屏Canvas） |
 
 ## 常用命令
 

@@ -173,7 +173,8 @@ const RecentlyUsed = {
     'ragdollRobot': { icon: '🤖', nameKey: 'menu.ragdollRobot', action: () => showRagdollRobot() },
     'choreTracker': { icon: '📋', nameKey: 'menu.choreTracker', action: () => showChoreTracker() },
     'englishBoost': { icon: '🌟', nameKey: 'menu.englishBoost', action: () => showEnglishBoost() },
-    'birthdayParty': { icon: '🦄', nameKey: 'menu.birthdayParty', action: () => showBirthdayParty() }
+    'birthdayParty': { icon: '🦄', nameKey: 'menu.birthdayParty', action: () => showBirthdayParty() },
+    'parkWallpaper': { icon: '🏞️', nameKey: 'menu.parkWallpaper', action: () => showParkWallpaper() }
   },
 
   init() {

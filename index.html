@@ -518,6 +518,12 @@
             <div class="card-desc" data-i18n="menu.birthdayParty.desc">独角兽彩虹派对</div>
           </div>
 
+          <div class="menu-card card-park-wallpaper" data-category="play" onclick="showParkWallpaper()">
+            <div class="card-icon">🏞️</div>
+            <div class="card-title" data-i18n="menu.parkWallpaper">魔法公园</div>
+            <div class="card-desc" data-i18n="menu.parkWallpaper.desc">声音互动壁纸</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -3047,6 +3053,29 @@
     <button class="bp-fs-close-btn" onclick="BirthdayParty.stopFullscreen()">✕</button>
   </div>
 
+  <!-- 魔法公园 -->
+  <div id="park-wallpaper-modal" class="park-wallpaper-modal hidden">
+    <div class="pw-header">
+      <button class="pw-close-btn" onclick="closeParkWallpaper()">✕</button>
+      <h2>🏞️ <span data-i18n="park.title">魔法公园</span></h2>
+      <div style="width: 34px;"></div>
+    </div>
+    <div id="park-wallpaper-content" class="pw-content">
+      <!-- 动态生成 -->
+    </div>
+  </div>
+
+  <!-- 魔法公园全屏 -->
+  <div id="pw-fullscreen-modal" class="pw-fullscreen-modal hidden">
+    <canvas id="pw-fs-canvas" class="pw-fs-canvas"></canvas>
+    <button class="pw-fs-close-btn" onclick="ParkWallpaper.stopScene()">✕</button>
+    <div class="pw-hud hidden" id="pw-hud">
+      <div class="pw-hud-item">🎤 <span id="pw-mic-status">---</span></div>
+      <div class="pw-hud-item">🌬️ <div style="width:40px;height:6px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden"><div id="pw-wind-level" style="height:100%;background:#4ADE80;border-radius:3px;width:0%;transition:width 0.1s"></div></div></div>
+    </div>
+    <div class="pw-hud-tip">🎤 试试对着手机吹气或者说话哦~</div>
+  </div>
+
   <div id="chore-tracker-modal" class="chore-tracker-modal hidden">
     <div class="chore-tracker-container">
       <div class="ct-header">
@@ -3136,6 +3165,7 @@
   <script src="js/englishBoostData.js"></script>
   <script src="js/englishBoost.js"></script>
   <script src="js/birthdayParty.js"></script>
+  <script src="js/parkWallpaper.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
