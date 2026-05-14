@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v54';
+const CACHE_NAME = 'kids-learning-v55';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -57,7 +57,8 @@ const musicFiles = [
   '/music/christmas-light-music.mp3',
   '/music/super-relaxing-music.mp3',
   '/music/white-noise-sleep.mp3',
-  '/music/orchestral-lullabies.mp3'
+  '/music/orchestral-lullabies.mp3',
+  '/music/dida-lullaby.mp3'
 ];
 
 self.addEventListener('install', event => {

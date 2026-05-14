@@ -2273,6 +2273,15 @@ const sleepMusicList = [
     duration: '1小时',
     size: '29MB',
     file: 'music/orchestral-lullabies.mp3'
+  },
+  {
+    id: 'dida',
+    name: '滴答儿童哄睡歌曲',
+    icon: '⏰',
+    iconClass: 'dida',
+    duration: '1.5分钟',
+    size: '2.1MB',
+    file: 'music/dida-lullaby.mp3'
   }
 ];
 

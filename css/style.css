@@ -3543,6 +3543,7 @@ body {
 .music-card-icon.relax { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); }
 .music-card-icon.whitenoise { background: linear-gradient(135deg, #E3F2FD, #BBDEFB); }
 .music-card-icon.orchestra { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); }
+.music-card-icon.dida { background: linear-gradient(135deg, #FCE4EC, #F8BBD0); }
 
 .music-card-info {
   flex: 1;
