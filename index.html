@@ -3073,7 +3073,9 @@
       <div class="pw-hud-item">🎤 <span id="pw-mic-status">---</span></div>
       <div class="pw-hud-item">🌬️ <div style="width:40px;height:6px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden"><div id="pw-wind-level" style="height:100%;background:#4ADE80;border-radius:3px;width:0%;transition:width 0.1s"></div></div></div>
     </div>
-    <div class="pw-hud-tip">🎤 试试对着手机吹气或者说话哦~</div>
+    <div class="pw-hud-tip" data-i18n="park.tipSpell">🎤 试试说："下雨、彩虹、烟花、独角兽..."</div>
+    <button class="pw-spellbook-btn" onclick="ParkWallpaper.toggleSpellbook()" title="咒语大全">📖</button>
+    <div id="pw-spellbook" class="pw-spellbook hidden"></div>
   </div>
 
   <div id="chore-tracker-modal" class="chore-tracker-modal hidden">
