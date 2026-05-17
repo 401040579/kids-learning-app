@@ -53,8 +53,35 @@ const ParkWallpaper = {
 
   // 场景状态
   timeOfDay: 0.3, // 0=夜 0.3=日出 0.5=正午 0.7=黄昏 1=夜
+  timeOfDayTarget: null, // 切换白天/黑夜时的目标值
   sceneWidth: 0,
   sceneHeight: 0,
+
+  // ========== 语音咒语系统 ==========
+  voiceRecognition: null,
+  voiceActive: false,
+  voiceShouldRestart: false,
+  recentCommand: null,       // { icon, text, time }
+  commandCooldowns: {},      // { cmdKey: lastTriggerTime }
+
+  // ========== 天气/特效元素 ==========
+  weatherMode: 'sunny',      // 'sunny' | 'rain' | 'snow'
+  snowflakes: [],
+  fogOpacity: 0,
+  fogTargetOpacity: 0,
+  thunderFlash: 0,           // 0~1 雷电屏幕白光
+  thunderBolt: null,         // { points: [[x,y],...], life }
+  nightStars: [],
+  shootingStars: [],
+  fireworks: [],
+  bubbles: [],
+  balloons: [],
+  sakuraPetals: [],
+  moon: { x: 0, y: 0, radius: 38, opacity: 0, targetOpacity: 0 },
+  unicorn: null,             // { x, y, vx, life, manePhase }
+  dragon: null,              // { x, y, segments[], wingPhase, life, vx, vy }
+  bloomEffect: 0,            // 0~1 花朵放大特效强度
+  danceEffect: 0,            // 0~1 跳舞强度
 
   // ========== 初始化 ==========
   init() {
@@ -159,6 +186,9 @@ const ParkWallpaper = {
     // 麦克风异步初始化，不阻塞动画
     this.initMicrophone().catch(() => {});
 
+    // 语音咒语识别（异步、可降级）
+    this.initVoiceRecognition();
+
     // 显示/隐藏 HUD
     this.showHUD();
 
@@ -179,6 +209,7 @@ const ParkWallpaper = {
     }
 
     this.stopMicrophone();
+    this.stopVoiceRecognition();
     this.releaseWakeLock();
 
     if (document.fullscreenElement) {
@@ -199,6 +230,27 @@ const ParkWallpaper = {
     this.birds = [];
     this.raindrops = [];
     this.fountainDrops = [];
+    this.snowflakes = [];
+    this.nightStars = [];
+    this.shootingStars = [];
+    this.fireworks = [];
+    this.bubbles = [];
+    this.balloons = [];
+    this.sakuraPetals = [];
+    this.unicorn = null;
+    this.dragon = null;
+    this.thunderBolt = null;
+    this.fogOpacity = 0;
+    this.fogTargetOpacity = 0;
+    this.thunderFlash = 0;
+    this.bloomEffect = 0;
+    this.danceEffect = 0;
+    this.weatherMode = 'sunny';
+    this.timeOfDayTarget = null;
+    this.recentCommand = null;
+    this.commandCooldowns = {};
+    this.moon.opacity = 0;
+    this.moon.targetOpacity = 0;
     this.time = 0;
     this.windForce = 0;
     this.micVolume = 0;
@@ -570,6 +622,24 @@ const ParkWallpaper = {
     // 风铃计时（每隔一定时间播放风声）
     this._windSoundTimer = 0;
     this._birdTimer = 0;
+
+    // 月亮（默认隐藏，咒语触发显示）
+    this.moon.x = w * 0.18;
+    this.moon.y = h * 0.14;
+    this.moon.opacity = 0;
+    this.moon.targetOpacity = 0;
+
+    // 预生成夜空星星模板（触发"星星/黑夜"咒语时才显示）
+    this.nightStars = [];
+    for (let i = 0; i < 80; i++) {
+      this.nightStars.push({
+        x: Math.random() * w,
+        y: Math.random() * h * 0.55,
+        size: 0.6 + Math.random() * 1.8,
+        phase: Math.random() * Math.PI * 2,
+        opacity: 0
+      });
+    }
   },
 
   generateCloudPuffs() {
@@ -802,6 +872,7 @@ const ParkWallpaper = {
 
     // 更新所有元素
     this.updateWind(dt);
+    this.updateTimeOfDay(dt);
     this.updateClouds(dt);
     this.updateTrees(dt);
     this.updateFlowers(dt);
@@ -815,6 +886,21 @@ const ParkWallpaper = {
     this.updateRaindrops(dt);
     this.updateRainbow(dt);
     this.updateSounds(dt);
+    // 咒语触发的特效
+    this.updateWeatherSpawners(dt);
+    this.updateSnowflakes(dt);
+    this.updateNightStars(dt);
+    this.updateShootingStars(dt);
+    this.updateFireworks(dt);
+    this.updateBubbles(dt);
+    this.updateBalloons(dt);
+    this.updateSakuraPetals(dt);
+    this.updateMoon(dt);
+    this.updateUnicorn(dt);
+    this.updateDragon(dt);
+    this.updateFog(dt);
+    this.updateThunder(dt);
+    this.updateBloomDance(dt);
 
     // 绘制
     this.drawScene();
@@ -865,8 +951,9 @@ const ParkWallpaper = {
 
   updateTrees(dt) {
     const effectiveWind = this.windForce + this.windGust * 0.5;
-    this.trees.forEach(tree => {
-      const targetSway = effectiveWind * this.windDirection * 25;
+    const danceSway = this.danceEffect > 0.01 ? Math.sin(this.time * 5) * this.danceEffect * 18 : 0;
+    this.trees.forEach((tree, idx) => {
+      const targetSway = effectiveWind * this.windDirection * 25 + danceSway * (idx % 2 === 0 ? 1 : -1);
       tree.sway += (targetSway - tree.sway) * 0.05;
 
       // 强风下掉落叶子
@@ -888,9 +975,10 @@ const ParkWallpaper = {
 
   updateFlowers(dt) {
     const effectiveWind = this.windForce + this.windGust * 0.3;
+    const danceFactor = this.danceEffect;
     this.flowers.forEach(flower => {
-      flower.swayPhase += dt * 2;
-      const naturalSway = Math.sin(flower.swayPhase) * 3;
+      flower.swayPhase += dt * (2 + danceFactor * 6);
+      const naturalSway = Math.sin(flower.swayPhase) * (3 + danceFactor * 12);
       const windSway = effectiveWind * this.windDirection * 20;
       flower.sway = naturalSway + windSway;
 
@@ -913,9 +1001,10 @@ const ParkWallpaper = {
 
   updateGrass(dt) {
     const effectiveWind = this.windForce + this.windGust * 0.3;
+    const danceFactor = this.danceEffect;
     this.grassBlades.forEach(blade => {
-      blade.phase += dt * 3;
-      const naturalSway = Math.sin(blade.phase) * 2;
+      blade.phase += dt * (3 + danceFactor * 8);
+      const naturalSway = Math.sin(blade.phase) * (2 + danceFactor * 8);
       const windSway = effectiveWind * this.windDirection * 15;
       blade.sway = naturalSway + windSway;
     });
@@ -1150,10 +1239,16 @@ const ParkWallpaper = {
     const h = this.sceneHeight;
 
     this.drawSky(ctx, w, h);
+    this.drawNightStars(ctx);
+    this.drawMoon(ctx);
     this.drawSun(ctx, w, h);
     this.drawRainbow(ctx, w, h);
+    this.drawShootingStars(ctx);
     this.drawClouds(ctx);
+    this.drawDragon(ctx);
     this.drawBirds(ctx);
+    this.drawSakuraPetals(ctx);
+    this.drawSnowflakes(ctx);
     this.drawRaindrops(ctx);
     this.drawGround(ctx, w, h);
     this.drawTrees(ctx);
@@ -1162,12 +1257,19 @@ const ParkWallpaper = {
     this.drawGrass(ctx);
     this.drawFlowers(ctx);
     this.drawFountainDrops(ctx);
+    this.drawUnicorn(ctx);
     this.drawButterflies(ctx);
     this.drawBikeGirl(ctx);
     this.drawDandelionSeeds(ctx);
+    this.drawBubbles(ctx);
+    this.drawBalloons(ctx);
+    this.drawFireworks(ctx);
     this.drawSparkles(ctx);
     this.drawWindLines(ctx, w, h);
+    this.drawFog(ctx, w, h);
+    this.drawThunder(ctx, w, h);
     this.drawMicIndicator(ctx, w, h);
+    this.drawVoiceCommandHUD(ctx, w, h);
   },
 
   // --- 天空 ---
@@ -1565,6 +1667,7 @@ const ParkWallpaper = {
 
   // --- 花朵 ---
   drawFlowers(ctx) {
+    const bloomScale = 1 + this.bloomEffect * 0.8;
     this.flowers.forEach(flower => {
       ctx.save();
       ctx.translate(flower.x, flower.y);
@@ -1580,6 +1683,7 @@ const ParkWallpaper = {
       // 花头
       ctx.save();
       ctx.translate(flower.sway, -flower.stemHeight);
+      const size = flower.size * bloomScale;
 
       // 花瓣
       for (let i = 0; i < flower.petals; i++) {
@@ -1587,9 +1691,9 @@ const ParkWallpaper = {
         ctx.fillStyle = flower.color;
         ctx.beginPath();
         ctx.ellipse(
-          Math.cos(angle) * flower.size * 0.4,
-          Math.sin(angle) * flower.size * 0.4,
-          flower.size * 0.4, flower.size * 0.25,
+          Math.cos(angle) * size * 0.4,
+          Math.sin(angle) * size * 0.4,
+          size * 0.4, size * 0.25,
           angle, 0, Math.PI * 2
         );
         ctx.fill();
@@ -1598,7 +1702,7 @@ const ParkWallpaper = {
       // 花心
       ctx.fillStyle = '#FFD700';
       ctx.beginPath();
-      ctx.arc(0, 0, flower.size * 0.2, 0, Math.PI * 2);
+      ctx.arc(0, 0, size * 0.2, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.restore();
@@ -1999,6 +2103,18 @@ const ParkWallpaper = {
     if (windBar) {
       windBar.style.width = (this.windForce * 100) + '%';
     }
+    const micStatus = document.getElementById('pw-mic-status');
+    if (micStatus) {
+      if (this.micActive && this.voiceActive) {
+        micStatus.textContent = this.t('park.micVoice', '风+咒语');
+      } else if (this.micActive) {
+        micStatus.textContent = this.t('park.micOnly', '风');
+      } else if (this.voiceActive) {
+        micStatus.textContent = this.t('park.voiceOnly', '咒语');
+      } else {
+        micStatus.textContent = this.t('park.micOff', '触摸');
+      }
+    }
   },
 
   // ========== 工具 ==========
@@ -2006,6 +2122,1333 @@ const ParkWallpaper = {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  },
+
+  // ============================================================
+  // ========== 语音咒语系统 ==========
+  // ============================================================
+
+  // 各语言关键词映射：command → keyword 数组
+  voiceCommandKeywords: {
+    zh: {
+      sunny:        ['雨停', '雪停', '晴天', '放晴', '太阳出来', '停雨', '停雪'],
+      day:          ['白天', '天亮', '早上', '日出'],
+      night:        ['黑夜', '夜晚', '晚上', '天黑'],
+      rain:         ['下雨', '雨水', '小雨', '大雨', '雨'],
+      snow:         ['下雪', '雪花', '飘雪', '雪'],
+      thunder:      ['打雷', '雷电', '闪电', '雷'],
+      fog:          ['起雾', '大雾', '雾气', '雾'],
+      rainbow:      ['彩虹'],
+      stars:        ['满天星', '星空', '星星'],
+      fireworks:    ['烟花', '烟火', '放烟花'],
+      shootingStar: ['流星'],
+      bubbles:      ['泡泡', '气泡', '吹泡泡'],
+      balloons:     ['气球'],
+      sakura:       ['樱花', '花瓣雨'],
+      butterfly:    ['蝴蝶'],
+      birds:        ['小鸟', '鸟儿', '鸟来'],
+      unicorn:      ['独角兽', '彩虹马', '小马'],
+      dragon:       ['飞龙', '龙来', '中国龙', '龙'],
+      bloom:        ['花开', '开花', '盛开'],
+      dance:        ['跳舞', '跳起来', '一起跳']
+    },
+    en: {
+      sunny:        ['stop rain', 'stop snow', 'sunny', 'sunshine', 'clear sky'],
+      day:          ['daytime', 'day time', 'morning', 'sunrise'],
+      night:        ['nighttime', 'night time', 'night'],
+      rain:         ['raining', 'rainy', 'rain'],
+      snow:         ['snowing', 'snowy', 'snow'],
+      thunder:      ['thunder', 'lightning', 'storm'],
+      fog:          ['foggy', 'fog', 'mist'],
+      rainbow:      ['rainbow'],
+      stars:        ['starry', 'stars'],
+      fireworks:    ['fireworks', 'firework'],
+      shootingStar: ['shooting star', 'meteor', 'falling star'],
+      bubbles:      ['bubbles', 'bubble'],
+      balloons:     ['balloons', 'balloon'],
+      sakura:       ['cherry blossom', 'sakura', 'petals'],
+      butterfly:    ['butterflies', 'butterfly'],
+      birds:        ['birds', 'bird'],
+      unicorn:      ['unicorn'],
+      dragon:       ['dragon'],
+      bloom:        ['blossom', 'flowers bloom', 'bloom'],
+      dance:        ['dancing', 'dance']
+    },
+    ja: {
+      sunny:        ['晴れ', 'はれ', '止んで'],
+      day:          ['昼', 'ひる', '朝'],
+      night:        ['夜', 'よる'],
+      rain:         ['雨', 'あめ'],
+      snow:         ['雪', 'ゆき'],
+      thunder:      ['雷', 'かみなり'],
+      fog:          ['霧', 'きり'],
+      rainbow:      ['虹', 'にじ'],
+      stars:        ['星', 'ほし'],
+      fireworks:    ['花火', 'はなび'],
+      shootingStar: ['流れ星', 'ながれぼし'],
+      bubbles:      ['シャボン玉', '泡'],
+      balloons:     ['風船', 'ふうせん'],
+      sakura:       ['桜', 'さくら'],
+      butterfly:    ['蝶々', '蝶', 'ちょう'],
+      birds:        ['鳥', 'とり'],
+      unicorn:      ['ユニコーン'],
+      dragon:       ['ドラゴン', '龍', '竜'],
+      bloom:        ['咲く', '花咲け'],
+      dance:        ['ダンス', '踊る']
+    },
+    ko: {
+      sunny:        ['맑음', '맑은', '해'],
+      day:          ['낮', '아침'],
+      night:        ['밤'],
+      rain:         ['비'],
+      snow:         ['눈'],
+      thunder:      ['천둥', '번개'],
+      fog:          ['안개'],
+      rainbow:      ['무지개'],
+      stars:        ['별'],
+      fireworks:    ['불꽃놀이', '폭죽'],
+      shootingStar: ['별똥별', '유성'],
+      bubbles:      ['비눗방울', '버블'],
+      balloons:     ['풍선'],
+      sakura:       ['벚꽃'],
+      butterfly:    ['나비'],
+      birds:        ['새'],
+      unicorn:      ['유니콘'],
+      dragon:       ['용', '드래곤'],
+      bloom:        ['꽃 피어', '개화'],
+      dance:        ['춤']
+    },
+    es: {
+      sunny:        ['soleado', 'despejado', 'sol'],
+      day:          ['día', 'mañana'],
+      night:        ['noche'],
+      rain:         ['lluvia', 'llueve'],
+      snow:         ['nieve', 'nieva'],
+      thunder:      ['trueno', 'rayo', 'tormenta'],
+      fog:          ['niebla'],
+      rainbow:      ['arcoiris', 'arco iris'],
+      stars:        ['estrellas'],
+      fireworks:    ['fuegos artificiales'],
+      shootingStar: ['estrella fugaz'],
+      bubbles:      ['burbujas'],
+      balloons:     ['globos', 'globo'],
+      sakura:       ['flor de cerezo', 'sakura'],
+      butterfly:    ['mariposa'],
+      birds:        ['pájaros', 'pájaro'],
+      unicorn:      ['unicornio'],
+      dragon:       ['dragón'],
+      bloom:        ['florecer', 'flores'],
+      dance:        ['bailar', 'baile']
+    },
+    de: {
+      sunny:        ['sonnig', 'sonne'],
+      day:          ['tag', 'morgen'],
+      night:        ['nacht'],
+      rain:         ['regen', 'regnet'],
+      snow:         ['schnee', 'schneit'],
+      thunder:      ['donner', 'blitz', 'gewitter'],
+      fog:          ['nebel'],
+      rainbow:      ['regenbogen'],
+      stars:        ['sterne'],
+      fireworks:    ['feuerwerk'],
+      shootingStar: ['sternschnuppe'],
+      bubbles:      ['seifenblasen', 'blasen'],
+      balloons:     ['luftballons', 'ballons'],
+      sakura:       ['kirschblüte'],
+      butterfly:    ['schmetterling'],
+      birds:        ['vögel', 'vogel'],
+      unicorn:      ['einhorn'],
+      dragon:       ['drache'],
+      bloom:        ['blühen'],
+      dance:        ['tanzen', 'tanz']
+    },
+    fr: {
+      sunny:        ['ensoleillé', 'soleil'],
+      day:          ['jour', 'matin'],
+      night:        ['nuit'],
+      rain:         ['pluie', 'pleut'],
+      snow:         ['neige'],
+      thunder:      ['tonnerre', 'éclair', 'orage'],
+      fog:          ['brouillard'],
+      rainbow:      ['arc-en-ciel'],
+      stars:        ['étoiles'],
+      fireworks:    ["feu d'artifice", 'feux'],
+      shootingStar: ['étoile filante'],
+      bubbles:      ['bulles'],
+      balloons:     ['ballons'],
+      sakura:       ['cerisier', 'sakura'],
+      butterfly:    ['papillon'],
+      birds:        ['oiseaux', 'oiseau'],
+      unicorn:      ['licorne'],
+      dragon:       ['dragon'],
+      bloom:        ['fleurir'],
+      dance:        ['danser', 'danse']
+    }
+  },
+
+  commandIcons: {
+    rain: '☔', snow: '❄️', thunder: '⚡', fog: '🌫️', rainbow: '🌈',
+    sunny: '☀️', day: '🌅', night: '🌙', stars: '✨', fireworks: '🎆',
+    shootingStar: '⭐', bubbles: '🫧', balloons: '🎈', sakura: '🌸',
+    butterfly: '🦋', birds: '🐦', unicorn: '🦄', dragon: '🐉',
+    bloom: '🌺', dance: '💃'
+  },
+
+  getRecognitionLang() {
+    const lang = (typeof I18n !== 'undefined' && I18n.currentLang) ? I18n.currentLang : 'en';
+    const map = {
+      en: 'en-US', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR',
+      es: 'es-ES', de: 'de-DE', fr: 'fr-FR'
+    };
+    return map[lang] || 'en-US';
+  },
+
+  initVoiceRecognition() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      console.log('[ParkWallpaper] SpeechRecognition not supported');
+      this.voiceActive = false;
+      return;
+    }
+    try {
+      const rec = new SR();
+      rec.continuous = true;
+      rec.interimResults = true;
+      rec.maxAlternatives = 2;
+      rec.lang = this.getRecognitionLang();
+
+      rec.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i];
+          for (let j = 0; j < result.length; j++) {
+            const matched = this.handleVoiceCommand(result[j].transcript);
+            if (matched) return;
+          }
+        }
+      };
+
+      rec.onerror = (e) => {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+          this.voiceActive = false;
+          this.voiceShouldRestart = false;
+        }
+      };
+
+      rec.onend = () => {
+        if (this.voiceShouldRestart) {
+          try { rec.start(); } catch (e) { /* 已在运行 */ }
+        }
+      };
+
+      rec.start();
+      this.voiceRecognition = rec;
+      this.voiceShouldRestart = true;
+      this.voiceActive = true;
+    } catch (e) {
+      console.log('[ParkWallpaper] SR init failed', e);
+      this.voiceActive = false;
+    }
+  },
+
+  stopVoiceRecognition() {
+    this.voiceShouldRestart = false;
+    if (this.voiceRecognition) {
+      try { this.voiceRecognition.stop(); } catch (e) {}
+      try { this.voiceRecognition.abort(); } catch (e) {}
+      this.voiceRecognition = null;
+    }
+    this.voiceActive = false;
+  },
+
+  handleVoiceCommand(transcript) {
+    if (!transcript) return false;
+    const text = transcript.toLowerCase().trim();
+    if (!text) return false;
+
+    const lang = (typeof I18n !== 'undefined' && I18n.currentLang) ? I18n.currentLang : 'en';
+    const keywords = this.voiceCommandKeywords[lang] || this.voiceCommandKeywords.en;
+
+    // 按关键词长度倒排序，"stop rain" 优先于 "rain"
+    const pairs = [];
+    for (const cmd in keywords) {
+      for (const kw of keywords[cmd]) {
+        pairs.push({ cmd, kw: kw.toLowerCase() });
+      }
+    }
+    pairs.sort((a, b) => b.kw.length - a.kw.length);
+
+    for (const { cmd, kw } of pairs) {
+      if (text.includes(kw)) {
+        const now = this.time;
+        const last = this.commandCooldowns[cmd] || -10;
+        if (now - last < 1.5) return true; // 冷却中：算匹配但不触发
+        this.commandCooldowns[cmd] = now;
+        this.triggerCommand(cmd, kw);
+        return true;
+      }
+    }
+    return false;
+  },
+
+  triggerCommand(cmd, keyword) {
+    const icon = this.commandIcons[cmd] || '✨';
+    this.recentCommand = { icon, text: keyword, time: this.time };
+
+    switch (cmd) {
+      case 'rain':         this.triggerRain(); break;
+      case 'snow':         this.triggerSnow(); break;
+      case 'thunder':      this.triggerThunder(); break;
+      case 'fog':          this.triggerFog(); break;
+      case 'rainbow':      this.triggerRainbow(); break;
+      case 'sunny':        this.triggerSunny(); break;
+      case 'day':          this.triggerDay(); break;
+      case 'night':        this.triggerNight(); break;
+      case 'stars':        this.triggerStars(); break;
+      case 'fireworks':    this.triggerFireworks(); break;
+      case 'shootingStar': this.triggerShootingStar(); break;
+      case 'bubbles':      this.triggerBubbles(); break;
+      case 'balloons':     this.triggerBalloons(); break;
+      case 'sakura':       this.triggerSakura(); break;
+      case 'butterfly':    this.triggerButterflies(); break;
+      case 'birds':        this.triggerBirds(); break;
+      case 'unicorn':      this.triggerUnicorn(); break;
+      case 'dragon':       this.triggerDragon(); break;
+      case 'bloom':        this.triggerBloom(); break;
+      case 'dance':        this.triggerDance(); break;
+    }
+  },
+
+  // ========== 各咒语效果实现 ==========
+
+  triggerRain() {
+    this.weatherMode = 'rain';
+    this.clouds.forEach(c => { c.raining = true; c.rainTimer = 15; });
+    this.playRainSound();
+  },
+
+  triggerSnow() {
+    this.weatherMode = 'snow';
+    this.playMagicChime();
+    // 初始撒一波雪花
+    for (let i = 0; i < 60; i++) {
+      this.snowflakes.push(this.makeSnowflake(true));
+    }
+  },
+
+  makeSnowflake(initial = false) {
+    return {
+      x: Math.random() * this.sceneWidth,
+      y: initial ? Math.random() * this.sceneHeight * 0.6 : -10,
+      size: 1.5 + Math.random() * 3,
+      vy: 0.4 + Math.random() * 1.2,
+      vxBase: (Math.random() - 0.5) * 0.6,
+      swayPhase: Math.random() * Math.PI * 2,
+      opacity: 0.6 + Math.random() * 0.4
+    };
+  },
+
+  triggerThunder() {
+    this.thunderFlash = 1;
+    // 生成闪电折线
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    const startX = w * (0.2 + Math.random() * 0.6);
+    const points = [[startX, 0]];
+    let y = 0;
+    let x = startX;
+    while (y < h * 0.55) {
+      y += 15 + Math.random() * 25;
+      x += (Math.random() - 0.5) * 60;
+      points.push([x, y]);
+    }
+    this.thunderBolt = { points, life: 0.35 };
+    this.playThunderSound();
+  },
+
+  playThunderSound() {
+    if (!this.soundCtx) return;
+    try {
+      // 短促"咔"
+      this.playTone(120, 0.15, 'square', 0.18);
+      // 0.4 秒后低沉雷声噪音
+      setTimeout(() => {
+        if (!this.soundCtx) return;
+        const dur = 1.2;
+        const buf = this.soundCtx.createBuffer(1, this.soundCtx.sampleRate * dur, this.soundCtx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          const env = Math.exp(-i / (data.length * 0.4));
+          data[i] = (Math.random() * 2 - 1) * env;
+        }
+        const src = this.soundCtx.createBufferSource();
+        src.buffer = buf;
+        const filter = this.soundCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 200;
+        const gain = this.soundCtx.createGain();
+        gain.gain.value = 0.25;
+        src.connect(filter); filter.connect(gain); gain.connect(this.soundCtx.destination);
+        src.start();
+      }, 400);
+    } catch (e) {}
+  },
+
+  triggerFog() {
+    this.fogTargetOpacity = 0.55;
+  },
+
+  triggerRainbow() {
+    this.rainbow.targetOpacity = 1;
+    this.playMagicChime();
+  },
+
+  triggerSunny() {
+    this.weatherMode = 'sunny';
+    // 让云朵停止下雨
+    this.clouds.forEach(c => { c.raining = false; c.rainTimer = 0; });
+    // 渐弱雨/雪/雾
+    this.fogTargetOpacity = 0;
+    // 雪花保留让其落完
+    this.timeOfDayTarget = 0.5;
+    this.moon.targetOpacity = 0;
+    this.playMagicChime();
+  },
+
+  triggerDay() {
+    this.timeOfDayTarget = 0.5;
+    this.moon.targetOpacity = 0;
+    // 星星渐弱
+    this.nightStars.forEach(s => s.opacity = 0);
+  },
+
+  triggerNight() {
+    this.timeOfDayTarget = 0.98;
+    this.moon.targetOpacity = 1;
+    // 星星渐显
+    this.nightStars.forEach(s => s.opacity = 0.6 + Math.random() * 0.4);
+    this.playMagicChime();
+  },
+
+  triggerStars() {
+    // 不切夜，但加强星星显示
+    this.nightStars.forEach(s => s.opacity = Math.max(s.opacity, 0.8));
+    this.playMagicChime();
+  },
+
+  triggerFireworks() {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    for (let i = 0; i < 4; i++) {
+      setTimeout(() => {
+        this.fireworks.push({
+          x: w * (0.2 + Math.random() * 0.6),
+          y: h,
+          vy: -(7 + Math.random() * 3),
+          targetY: h * (0.15 + Math.random() * 0.25),
+          color: this.randomFireworkColor(),
+          exploded: false,
+          particles: [],
+          life: 1
+        });
+        this.playTone(800 + Math.random() * 400, 0.3, 'sine', 0.06);
+      }, i * 300);
+    }
+  },
+
+  randomFireworkColor() {
+    const colors = ['#FF6B9D', '#FFD93D', '#6BCB77', '#4D96FF', '#FF6B6B', '#C780FA', '#FFAA5A'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  },
+
+  triggerShootingStar() {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    for (let i = 0; i < 3; i++) {
+      this.shootingStars.push({
+        x: Math.random() * w * 0.5,
+        y: Math.random() * h * 0.3,
+        vx: 8 + Math.random() * 4,
+        vy: 4 + Math.random() * 2,
+        life: 1.2,
+        maxLife: 1.2
+      });
+    }
+    this.playTone(2000, 0.4, 'sine', 0.08);
+  },
+
+  triggerBubbles() {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    for (let i = 0; i < 30; i++) {
+      this.bubbles.push({
+        x: Math.random() * w,
+        y: h + Math.random() * 50,
+        size: 6 + Math.random() * 18,
+        vy: -(0.5 + Math.random() * 1.2),
+        swayPhase: Math.random() * Math.PI * 2,
+        life: 1
+      });
+    }
+    this.playTone(1500, 0.1, 'sine', 0.06);
+  },
+
+  triggerBalloons() {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    const colors = ['#FF69B4', '#FFD93D', '#6BCB77', '#4D96FF', '#FF6B6B', '#C780FA'];
+    for (let i = 0; i < 8; i++) {
+      this.balloons.push({
+        x: 50 + Math.random() * (w - 100),
+        y: h + 40 + i * 20,
+        vy: -(0.6 + Math.random() * 0.5),
+        swayPhase: Math.random() * Math.PI * 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 18 + Math.random() * 10,
+        stringLen: 30 + Math.random() * 20
+      });
+    }
+  },
+
+  triggerSakura() {
+    // 持续产生樱花，由 sakuraSpawnTime 控制
+    this._sakuraSpawnUntil = this.time + 12;
+    this.playMagicChime();
+  },
+
+  triggerButterflies() {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    const groundY = h * 0.6;
+    for (let i = 0; i < 10; i++) {
+      this.butterflies.push({
+        x: Math.random() * w,
+        y: groundY - 20 - Math.random() * 100,
+        targetX: Math.random() * w,
+        targetY: groundY - 50 - Math.random() * 80,
+        wingPhase: Math.random() * Math.PI * 2,
+        speed: 0.5 + Math.random() * 1,
+        color1: this.randomButterflyColor(),
+        color2: this.randomButterflyColor(),
+        size: 8 + Math.random() * 6,
+        scattered: false
+      });
+    }
+    // 限制总数避免爆炸
+    if (this.butterflies.length > 30) {
+      this.butterflies.splice(0, this.butterflies.length - 30);
+    }
+  },
+
+  triggerBirds() {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    for (let i = 0; i < 5; i++) {
+      this.birds.push({
+        x: Math.random() * w,
+        y: h * 0.1 + Math.random() * h * 0.2,
+        speed: 1 + Math.random() * 2,
+        wingPhase: Math.random() * Math.PI * 2,
+        size: 4 + Math.random() * 4,
+        chirpTimer: Math.random() * 5
+      });
+    }
+    if (this.birds.length > 15) {
+      this.birds.splice(0, this.birds.length - 15);
+    }
+    this.playBirdChirp();
+  },
+
+  triggerUnicorn() {
+    if (this.unicorn) return; // 已有就不重复
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    const fromRight = Math.random() > 0.5;
+    this.unicorn = {
+      x: fromRight ? w + 80 : -80,
+      y: h * 0.6 - 5,
+      vx: fromRight ? -2.4 : 2.4,
+      bobPhase: 0,
+      manePhase: 0,
+      life: 1
+    };
+    this.playMagicChime();
+  },
+
+  triggerDragon() {
+    if (this.dragon) return;
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    const fromRight = Math.random() > 0.5;
+    const baseY = h * (0.15 + Math.random() * 0.2);
+    const segments = [];
+    for (let i = 0; i < 14; i++) {
+      segments.push({
+        x: fromRight ? w + 60 + i * 22 : -60 - i * 22,
+        y: baseY,
+        phase: i * 0.5
+      });
+    }
+    this.dragon = {
+      vx: fromRight ? -3 : 3,
+      baseY: baseY,
+      wavePhase: 0,
+      segments,
+      life: 1,
+      fromRight
+    };
+    this.playTone(220, 0.6, 'sawtooth', 0.12);
+    setTimeout(() => this.playTone(180, 0.5, 'sawtooth', 0.1), 200);
+  },
+
+  triggerBloom() {
+    this.bloomEffect = 1;
+    // 花朵周围撒一圈粉色亮片
+    this.flowers.forEach(f => {
+      for (let i = 0; i < 3; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const r = 12 + Math.random() * 15;
+        this.sparkles.push({
+          x: f.x + Math.cos(a) * r,
+          y: f.y - f.stemHeight + Math.sin(a) * r,
+          vx: Math.cos(a) * 0.6,
+          vy: Math.sin(a) * 0.6 - 0.5,
+          life: 1,
+          size: 3 + Math.random() * 3,
+          color: f.color,
+          type: 'star'
+        });
+      }
+    });
+    this.playMagicChime();
+  },
+
+  triggerDance() {
+    this.danceEffect = 1;
+    this.playTone(523, 0.2, 'sine', 0.1);
+    setTimeout(() => this.playTone(659, 0.2, 'sine', 0.1), 200);
+    setTimeout(() => this.playTone(784, 0.3, 'sine', 0.1), 400);
+  },
+
+  // ========== 各特效 update 方法 ==========
+
+  updateTimeOfDay(dt) {
+    if (this.timeOfDayTarget !== null) {
+      const diff = this.timeOfDayTarget - this.timeOfDay;
+      if (Math.abs(diff) < 0.005) {
+        this.timeOfDay = this.timeOfDayTarget;
+        this.timeOfDayTarget = null;
+      } else {
+        this.timeOfDay += diff * 0.04;
+      }
+    }
+  },
+
+  updateWeatherSpawners(dt) {
+    // 持续雪
+    if (this.weatherMode === 'snow') {
+      if (Math.random() < 0.6) {
+        this.snowflakes.push(this.makeSnowflake());
+      }
+    }
+    // 持续雨：让云朵保持下雨 + 全屏额外雨滴
+    if (this.weatherMode === 'rain') {
+      this.clouds.forEach(c => {
+        if (c.rainTimer < 3) c.rainTimer = 10;
+        c.raining = true;
+      });
+      // 全屏倾盆大雨：从云层之外也降雨
+      for (let i = 0; i < 4; i++) {
+        if (Math.random() < 0.8) {
+          this.raindrops.push({
+            x: Math.random() * this.sceneWidth,
+            y: -10,
+            speed: 5 + Math.random() * 5,
+            size: 2 + Math.random() * 2,
+            sparkle: Math.random() > 0.5,
+            life: 1
+          });
+        }
+      }
+    }
+    // 持续樱花
+    if (this._sakuraSpawnUntil && this.time < this._sakuraSpawnUntil) {
+      if (Math.random() < 0.4) {
+        this.sakuraPetals.push({
+          x: Math.random() * this.sceneWidth,
+          y: -10,
+          vy: 0.6 + Math.random() * 0.8,
+          vxBase: (Math.random() - 0.5) * 0.5,
+          swayPhase: Math.random() * Math.PI * 2,
+          size: 5 + Math.random() * 5,
+          rotation: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 0.08
+        });
+      }
+    }
+  },
+
+  updateSnowflakes(dt) {
+    const h = this.sceneHeight;
+    const wind = this.windForce * this.windDirection;
+    this.snowflakes.forEach(s => {
+      s.swayPhase += dt * 1.5;
+      const sway = Math.sin(s.swayPhase) * 0.6;
+      s.x += sway + s.vxBase + wind * 2;
+      s.y += s.vy * (0.6 + s.size * 0.2);
+    });
+    this.snowflakes = this.snowflakes.filter(s => s.y < h * 0.62);
+    // 上限
+    if (this.snowflakes.length > 300) this.snowflakes.splice(0, this.snowflakes.length - 300);
+  },
+
+  updateNightStars(dt) {
+    this.nightStars.forEach(s => {
+      s.phase += dt * 2;
+    });
+  },
+
+  updateShootingStars(dt) {
+    this.shootingStars.forEach(s => {
+      s.x += s.vx;
+      s.y += s.vy;
+      s.life -= dt * 0.5;
+    });
+    this.shootingStars = this.shootingStars.filter(s => s.life > 0 && s.x < this.sceneWidth + 100);
+  },
+
+  updateFireworks(dt) {
+    this.fireworks.forEach(fw => {
+      if (!fw.exploded) {
+        fw.y += fw.vy;
+        fw.vy += 0.12; // 上升减速
+        if (fw.y <= fw.targetY || fw.vy >= 0) {
+          fw.exploded = true;
+          // 爆炸
+          const particleCount = 35 + Math.floor(Math.random() * 20);
+          for (let i = 0; i < particleCount; i++) {
+            const a = (i / particleCount) * Math.PI * 2 + Math.random() * 0.2;
+            const speed = 2 + Math.random() * 3;
+            fw.particles.push({
+              x: fw.x, y: fw.y,
+              vx: Math.cos(a) * speed,
+              vy: Math.sin(a) * speed,
+              life: 1
+            });
+          }
+          this.playTone(120, 0.2, 'square', 0.15);
+          // 高频爆裂
+          setTimeout(() => {
+            for (let i = 0; i < 6; i++) {
+              setTimeout(() => this.playTone(2000 + Math.random() * 2000, 0.05, 'sine', 0.04), i * 30);
+            }
+          }, 50);
+        }
+      } else {
+        fw.particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.08;
+          p.vx *= 0.99;
+          p.life -= dt * 0.7;
+        });
+        fw.particles = fw.particles.filter(p => p.life > 0);
+        if (fw.particles.length === 0) fw.life = 0;
+      }
+    });
+    this.fireworks = this.fireworks.filter(fw => fw.life > 0);
+  },
+
+  updateBubbles(dt) {
+    this.bubbles.forEach(b => {
+      b.swayPhase += dt * 1.5;
+      b.x += Math.sin(b.swayPhase) * 0.8 + this.windForce * this.windDirection;
+      b.y += b.vy;
+      b.life -= dt * 0.08;
+    });
+    this.bubbles = this.bubbles.filter(b => b.life > 0 && b.y > -20);
+  },
+
+  updateBalloons(dt) {
+    this.balloons.forEach(b => {
+      b.swayPhase += dt * 1.2;
+      b.x += Math.sin(b.swayPhase) * 0.6 + this.windForce * this.windDirection * 1.5;
+      b.y += b.vy;
+    });
+    this.balloons = this.balloons.filter(b => b.y > -80);
+  },
+
+  updateSakuraPetals(dt) {
+    const h = this.sceneHeight;
+    const wind = this.windForce * this.windDirection;
+    this.sakuraPetals.forEach(p => {
+      p.swayPhase += dt * 1.8;
+      p.x += Math.sin(p.swayPhase) * 1.2 + p.vxBase + wind * 2.5;
+      p.y += p.vy;
+      p.rotation += p.rotSpeed;
+    });
+    this.sakuraPetals = this.sakuraPetals.filter(p => p.y < h * 0.62);
+    if (this.sakuraPetals.length > 200) this.sakuraPetals.splice(0, this.sakuraPetals.length - 200);
+  },
+
+  updateMoon(dt) {
+    this.moon.opacity += (this.moon.targetOpacity - this.moon.opacity) * 0.05;
+  },
+
+  updateUnicorn(dt) {
+    if (!this.unicorn) return;
+    const u = this.unicorn;
+    u.x += u.vx;
+    u.bobPhase += dt * 8;
+    u.manePhase += dt * 4;
+    if (u.x < -100 || u.x > this.sceneWidth + 100) {
+      this.unicorn = null;
+    }
+  },
+
+  updateDragon(dt) {
+    if (!this.dragon) return;
+    const d = this.dragon;
+    d.wavePhase += dt * 3;
+    // 头部移动
+    const head = d.segments[0];
+    head.x += d.vx;
+    head.y = d.baseY + Math.sin(d.wavePhase) * 30;
+    // 后续段跟随前一段
+    for (let i = 1; i < d.segments.length; i++) {
+      const prev = d.segments[i - 1];
+      const seg = d.segments[i];
+      const dx = prev.x - seg.x;
+      const dy = prev.y - seg.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const targetDist = 22;
+      if (dist > targetDist) {
+        seg.x += (dx / dist) * (dist - targetDist);
+        seg.y += (dy / dist) * (dist - targetDist);
+      }
+    }
+    // 飞出画面
+    const tail = d.segments[d.segments.length - 1];
+    if ((d.fromRight && tail.x < -50) || (!d.fromRight && tail.x > this.sceneWidth + 50)) {
+      this.dragon = null;
+    }
+  },
+
+  updateFog(dt) {
+    this.fogOpacity += (this.fogTargetOpacity - this.fogOpacity) * 0.04;
+    // 雾会慢慢自然消散
+    if (this.fogTargetOpacity > 0) {
+      this.fogTargetOpacity -= dt * 0.02;
+      if (this.fogTargetOpacity < 0) this.fogTargetOpacity = 0;
+    }
+  },
+
+  updateThunder(dt) {
+    this.thunderFlash -= dt * 3;
+    if (this.thunderFlash < 0) this.thunderFlash = 0;
+    if (this.thunderBolt) {
+      this.thunderBolt.life -= dt;
+      if (this.thunderBolt.life <= 0) this.thunderBolt = null;
+    }
+  },
+
+  updateBloomDance(dt) {
+    if (this.bloomEffect > 0) {
+      this.bloomEffect -= dt * 0.18;
+      if (this.bloomEffect < 0) this.bloomEffect = 0;
+    }
+    if (this.danceEffect > 0) {
+      this.danceEffect -= dt * 0.12;
+      if (this.danceEffect < 0) this.danceEffect = 0;
+    }
+  },
+
+  // ========== 各特效 draw 方法 ==========
+
+  drawSnowflakes(ctx) {
+    if (this.snowflakes.length === 0) return;
+    ctx.save();
+    this.snowflakes.forEach(s => {
+      ctx.globalAlpha = s.opacity;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.fill();
+      // 小十字
+      if (s.size > 2.5) {
+        ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(s.x - s.size * 1.4, s.y);
+        ctx.lineTo(s.x + s.size * 1.4, s.y);
+        ctx.moveTo(s.x, s.y - s.size * 1.4);
+        ctx.lineTo(s.x, s.y + s.size * 1.4);
+        ctx.stroke();
+      }
+    });
+    ctx.restore();
+  },
+
+  drawNightStars(ctx) {
+    let any = false;
+    for (const s of this.nightStars) if (s.opacity > 0.01) { any = true; break; }
+    if (!any) return;
+    ctx.save();
+    this.nightStars.forEach(s => {
+      if (s.opacity < 0.01) return;
+      const twinkle = 0.6 + 0.4 * Math.sin(s.phase);
+      ctx.globalAlpha = s.opacity * twinkle;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  },
+
+  drawMoon(ctx) {
+    if (this.moon.opacity < 0.01) return;
+    ctx.save();
+    ctx.globalAlpha = this.moon.opacity;
+    // 光晕
+    const grad = ctx.createRadialGradient(this.moon.x, this.moon.y, 0, this.moon.x, this.moon.y, this.moon.radius * 2.5);
+    grad.addColorStop(0, 'rgba(255, 250, 220, 0.5)');
+    grad.addColorStop(1, 'rgba(255, 250, 220, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(this.moon.x, this.moon.y, this.moon.radius * 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    // 月亮本体
+    ctx.fillStyle = '#FFF8DC';
+    ctx.beginPath();
+    ctx.arc(this.moon.x, this.moon.y, this.moon.radius, 0, Math.PI * 2);
+    ctx.fill();
+    // 月坑
+    ctx.fillStyle = 'rgba(200, 190, 160, 0.5)';
+    ctx.beginPath();
+    ctx.arc(this.moon.x - 10, this.moon.y - 5, 5, 0, Math.PI * 2);
+    ctx.arc(this.moon.x + 8, this.moon.y + 7, 4, 0, Math.PI * 2);
+    ctx.arc(this.moon.x + 2, this.moon.y - 12, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  },
+
+  drawShootingStars(ctx) {
+    if (this.shootingStars.length === 0) return;
+    ctx.save();
+    this.shootingStars.forEach(s => {
+      const alpha = Math.max(0, s.life / s.maxLife);
+      ctx.globalAlpha = alpha;
+      const tailLen = 60;
+      const grad = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * 6, s.y - s.vy * 6);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(s.x - s.vx * 6, s.y - s.vy * 6);
+      ctx.stroke();
+      // 头部亮点
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  },
+
+  drawFireworks(ctx) {
+    if (this.fireworks.length === 0) return;
+    ctx.save();
+    this.fireworks.forEach(fw => {
+      if (!fw.exploded) {
+        // 上升轨迹
+        ctx.fillStyle = fw.color;
+        ctx.beginPath();
+        ctx.arc(fw.x, fw.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = fw.color;
+        ctx.globalAlpha = 0.4;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(fw.x, fw.y);
+        ctx.lineTo(fw.x, fw.y + 20);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else {
+        fw.particles.forEach(p => {
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.fillStyle = fw.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+      }
+    });
+    ctx.restore();
+  },
+
+  drawBubbles(ctx) {
+    if (this.bubbles.length === 0) return;
+    ctx.save();
+    this.bubbles.forEach(b => {
+      ctx.globalAlpha = Math.min(1, b.life) * 0.7;
+      // 外圈
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+      ctx.stroke();
+      // 彩虹反光
+      const grad = ctx.createRadialGradient(b.x - b.size * 0.4, b.y - b.size * 0.4, 0, b.x, b.y, b.size);
+      grad.addColorStop(0, 'rgba(255,255,255,0.4)');
+      grad.addColorStop(0.4, 'rgba(176,224,230,0.15)');
+      grad.addColorStop(0.7, 'rgba(255,182,193,0.1)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+      ctx.fill();
+      // 高光
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.beginPath();
+      ctx.arc(b.x - b.size * 0.35, b.y - b.size * 0.35, b.size * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  },
+
+  drawBalloons(ctx) {
+    if (this.balloons.length === 0) return;
+    ctx.save();
+    this.balloons.forEach(b => {
+      // 线
+      ctx.strokeStyle = 'rgba(120,120,120,0.6)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(b.x, b.y);
+      ctx.quadraticCurveTo(b.x + Math.sin(b.swayPhase) * 4, b.y + b.stringLen * 0.5, b.x, b.y + b.stringLen);
+      ctx.stroke();
+      // 气球本体
+      ctx.fillStyle = b.color;
+      ctx.beginPath();
+      ctx.ellipse(b.x, b.y, b.size * 0.9, b.size, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // 高光
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.beginPath();
+      ctx.ellipse(b.x - b.size * 0.35, b.y - b.size * 0.4, b.size * 0.2, b.size * 0.3, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // 底部小三角（气球嘴）
+      ctx.fillStyle = b.color;
+      ctx.beginPath();
+      ctx.moveTo(b.x - 3, b.y + b.size);
+      ctx.lineTo(b.x + 3, b.y + b.size);
+      ctx.lineTo(b.x, b.y + b.size + 5);
+      ctx.closePath();
+      ctx.fill();
+    });
+    ctx.restore();
+  },
+
+  drawSakuraPetals(ctx) {
+    if (this.sakuraPetals.length === 0) return;
+    ctx.save();
+    this.sakuraPetals.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.fillStyle = '#FFB7C5';
+      ctx.beginPath();
+      // 椭圆花瓣
+      ctx.ellipse(0, 0, p.size * 0.6, p.size, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // 中间深色
+      ctx.fillStyle = '#FF8FA8';
+      ctx.beginPath();
+      ctx.ellipse(0, p.size * 0.3, p.size * 0.2, p.size * 0.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+    ctx.restore();
+  },
+
+  drawUnicorn(ctx) {
+    if (!this.unicorn) return;
+    const u = this.unicorn;
+    const bob = Math.sin(u.bobPhase) * 3;
+    const facingLeft = u.vx < 0;
+    ctx.save();
+    ctx.translate(u.x, u.y + bob);
+    if (facingLeft) ctx.scale(-1, 1);
+
+    // 阴影
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.beginPath();
+    ctx.ellipse(0, 8, 35, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 身体（白色）
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.ellipse(0, -10, 32, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 腿（四条简单矩形 + 跑动相位）
+    const legPhases = [0, Math.PI, Math.PI * 0.5, Math.PI * 1.5];
+    const legXs = [-22, -10, 8, 20];
+    ctx.fillStyle = '#FFFFFF';
+    ctx.strokeStyle = '#E0E0E0';
+    legXs.forEach((lx, i) => {
+      const ly = Math.sin(u.bobPhase + legPhases[i]) * 4;
+      ctx.beginPath();
+      ctx.moveTo(lx - 3, 0);
+      ctx.lineTo(lx + 3, 0);
+      ctx.lineTo(lx + 2, 18 + ly);
+      ctx.lineTo(lx - 2, 18 + ly);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    // 头
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.ellipse(28, -20, 12, 10, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 角（金色）
+    ctx.fillStyle = '#FFD700';
+    ctx.strokeStyle = '#FFAA00';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(32, -28);
+    ctx.lineTo(36, -42);
+    ctx.lineTo(40, -28);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // 眼睛
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(32, -20, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 彩虹鬃毛
+    const maneColors = ['#FF69B4', '#FFD700', '#7FFF00', '#00BFFF', '#9370DB'];
+    maneColors.forEach((c, i) => {
+      ctx.fillStyle = c;
+      const offset = Math.sin(u.manePhase + i * 0.5) * 3;
+      ctx.beginPath();
+      ctx.ellipse(18 - i * 4, -22 - i * 2 + offset, 6, 12, -0.4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // 彩虹尾巴
+    maneColors.forEach((c, i) => {
+      ctx.fillStyle = c;
+      const offset = Math.sin(u.manePhase + i * 0.3 + 1) * 4;
+      ctx.beginPath();
+      ctx.ellipse(-30 - i * 2, -10 + i * 3 + offset, 5, 10, 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.restore();
+  },
+
+  drawDragon(ctx) {
+    if (!this.dragon) return;
+    const d = this.dragon;
+    ctx.save();
+
+    // 身体段（从尾到头画，方便覆盖）
+    for (let i = d.segments.length - 1; i >= 0; i--) {
+      const seg = d.segments[i];
+      const radius = 14 - i * 0.6;
+      ctx.fillStyle = i % 2 === 0 ? '#D4382A' : '#E85A4F';
+      ctx.beginPath();
+      ctx.arc(seg.x, seg.y, Math.max(4, radius), 0, Math.PI * 2);
+      ctx.fill();
+      // 鳞片高光
+      ctx.fillStyle = 'rgba(255, 200, 100, 0.4)';
+      ctx.beginPath();
+      ctx.arc(seg.x, seg.y - radius * 0.3, radius * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 头部
+    const head = d.segments[0];
+    const facingLeft = d.vx < 0;
+    ctx.save();
+    ctx.translate(head.x, head.y);
+    if (facingLeft) ctx.scale(-1, 1);
+
+    // 头
+    ctx.fillStyle = '#D4382A';
+    ctx.beginPath();
+    ctx.ellipse(8, 0, 18, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // 角
+    ctx.fillStyle = '#FFD700';
+    ctx.beginPath();
+    ctx.moveTo(0, -10);
+    ctx.lineTo(-6, -22);
+    ctx.lineTo(4, -14);
+    ctx.closePath();
+    ctx.fill();
+    // 眼睛
+    ctx.fillStyle = '#FFD700';
+    ctx.beginPath();
+    ctx.arc(14, -3, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(15, -3, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    // 胡须
+    ctx.strokeStyle = '#FFE066';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(20, 4);
+    ctx.quadraticCurveTo(35, 8, 40, 0);
+    ctx.moveTo(20, 6);
+    ctx.quadraticCurveTo(38, 14, 45, 10);
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.restore();
+  },
+
+  drawFog(ctx, w, h) {
+    if (this.fogOpacity < 0.01) return;
+    ctx.save();
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, `rgba(220, 220, 230, ${this.fogOpacity * 0.4})`);
+    grad.addColorStop(0.5, `rgba(230, 230, 235, ${this.fogOpacity})`);
+    grad.addColorStop(1, `rgba(210, 210, 220, ${this.fogOpacity * 0.6})`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+    // 一些移动的雾团
+    const t = this.time * 8;
+    for (let i = 0; i < 5; i++) {
+      const cx = ((t + i * 200) % (w + 200)) - 100;
+      const cy = h * (0.2 + i * 0.12);
+      const r = 80 + i * 20;
+      const cloudGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      cloudGrad.addColorStop(0, `rgba(255, 255, 255, ${this.fogOpacity * 0.35})`);
+      cloudGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = cloudGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  },
+
+  drawThunder(ctx, w, h) {
+    if (this.thunderFlash > 0.01) {
+      ctx.save();
+      ctx.fillStyle = `rgba(255, 255, 240, ${Math.min(0.7, this.thunderFlash)})`;
+      ctx.fillRect(0, 0, w, h);
+      ctx.restore();
+    }
+    if (this.thunderBolt) {
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, this.thunderBolt.life * 3);
+      ctx.strokeStyle = '#FFFAA0';
+      ctx.lineWidth = 4;
+      ctx.shadowColor = '#FFFFFF';
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      const pts = this.thunderBolt.points;
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) {
+        ctx.lineTo(pts[i][0], pts[i][1]);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+  },
+
+  // ========== 咒语大全弹层 ==========
+  toggleSpellbook() {
+    const el = document.getElementById('pw-spellbook');
+    if (!el) return;
+    if (el.classList.contains('hidden')) {
+      this.renderSpellbook(el);
+      el.classList.remove('hidden');
+    } else {
+      el.classList.add('hidden');
+    }
+  },
+
+  renderSpellbook(el) {
+    const lang = (typeof I18n !== 'undefined' && I18n.currentLang) ? I18n.currentLang : 'en';
+    const keywords = this.voiceCommandKeywords[lang] || this.voiceCommandKeywords.en;
+    const order = ['rain', 'snow', 'thunder', 'fog', 'rainbow', 'sunny',
+                   'day', 'night', 'stars', 'fireworks', 'shootingStar',
+                   'bubbles', 'balloons', 'sakura', 'butterfly', 'birds',
+                   'unicorn', 'dragon', 'bloom', 'dance'];
+    const title = this.t('park.spellbookTitle', '🪄 咒语大全 — 试着说出来！');
+    let html = `<h3>${title}</h3><div class="pw-spellbook-list">`;
+    order.forEach(cmd => {
+      const kws = keywords[cmd] || [];
+      const icon = this.commandIcons[cmd] || '✨';
+      html += `<div class="pw-spell-row"><span class="pw-spell-icon">${icon}</span><span class="pw-spell-keywords">${this.escapeHtml(kws.slice(0, 3).join(' / '))}</span></div>`;
+    });
+    html += '</div>';
+    el.innerHTML = html;
+  },
+
+  // ========== 语音咒语 HUD ==========
+  drawVoiceCommandHUD(ctx, w, h) {
+    // 麦克风状态小图标右上角
+    const micActive = this.voiceActive;
+    ctx.save();
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+    const text = micActive ? '🗣️ ' + this.t('park.voiceOn', '语音咒语已开启') : '';
+    if (micActive) {
+      const tw = ctx.measureText(text).width;
+      ctx.beginPath();
+      ctx.roundRect(w - tw - 30, 25, tw + 20, 26, 13);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(text, w - 20, 43);
+    }
+
+    // 最近识别到的命令大字弹出
+    if (this.recentCommand) {
+      const dt = this.time - this.recentCommand.time;
+      const showDur = 2.0;
+      if (dt < showDur) {
+        const fadeIn = Math.min(1, dt * 6);
+        const fadeOut = dt > showDur - 0.5 ? Math.max(0, (showDur - dt) / 0.5) : 1;
+        const alpha = fadeIn * fadeOut;
+        const scale = 1 + (1 - fadeIn) * 0.5;
+        ctx.globalAlpha = alpha;
+        ctx.textAlign = 'center';
+        const cx = w / 2;
+        const cy = h * 0.18;
+        ctx.font = `${Math.floor(64 * scale)}px serif`;
+        // 阴影
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = 20;
+        ctx.fillText(this.recentCommand.icon, cx, cy);
+        ctx.shadowBlur = 0;
+        // 关键词
+        ctx.font = `bold ${Math.floor(24 * scale)}px sans-serif`;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = 'rgba(0,0,0,0.7)';
+        ctx.lineWidth = 4;
+        ctx.strokeText(this.recentCommand.text, cx, cy + 50);
+        ctx.fillText(this.recentCommand.text, cx, cy + 50);
+      }
+    }
+    ctx.restore();
   }
 };
 
