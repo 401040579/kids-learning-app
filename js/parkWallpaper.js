@@ -81,6 +81,12 @@ const ParkWallpaper = {
   unicorn: null,             // { x, y, vx, life, manePhase }
   dragon: null,              // { x, y, segments[], wingPhase, life, vx, vy }
   cake: null,                // { x, y, targetY, bounce, life, candles[] }
+  tornado: null,             // { x, vx, baseY, height, baseRadius, topRadius, swirlPhase, captured[] }
+  tornadoRegenPending: false,
+  tornadoRegenTimer: 0,
+  tornadoRegenItems: null,
+  _regenCooldown: 0,
+  kids: [],                  // 一群小孩 NPC
   liveTranscript: '',        // 实时识别到的文字（用于 HUD 显示）
   liveTranscriptTime: 0,     // 最近识别时间
   bloomEffect: 0,            // 0~1 花朵放大特效强度
@@ -243,6 +249,12 @@ const ParkWallpaper = {
     this.unicorn = null;
     this.dragon = null;
     this.cake = null;
+    this.tornado = null;
+    this.tornadoRegenPending = false;
+    this.tornadoRegenTimer = 0;
+    this.tornadoRegenItems = null;
+    this._regenCooldown = 0;
+    this.kids = [];
     this.liveTranscript = '';
     this.liveTranscriptTime = 0;
     this.thunderBolt = null;
@@ -905,6 +917,9 @@ const ParkWallpaper = {
     this.updateUnicorn(dt);
     this.updateDragon(dt);
     this.updateCake(dt);
+    this.updateKids(dt);
+    this.updateTornado(dt);
+    this.updateTornadoRegen(dt);
     this.updateFog(dt);
     this.updateThunder(dt);
     this.updateBloomDance(dt);
@@ -1084,6 +1099,7 @@ const ParkWallpaper = {
 
   updateBikeGirl(dt) {
     if (!this.bikeGirl) return;
+    if (!this.bikeGirl.visible) return; // 被龙卷风卷走时跳过
     const bg = this.bikeGirl;
     const w = this.sceneWidth;
     const effectiveWind = this.windForce + this.windGust;
@@ -1267,11 +1283,13 @@ const ParkWallpaper = {
     this.drawUnicorn(ctx);
     this.drawButterflies(ctx);
     this.drawBikeGirl(ctx);
+    this.drawKids(ctx);
     this.drawDandelionSeeds(ctx);
     this.drawBubbles(ctx);
     this.drawBalloons(ctx);
     this.drawCake(ctx);
     this.drawFireworks(ctx);
+    this.drawTornado(ctx);
     this.drawSparkles(ctx);
     this.drawWindLines(ctx, w, h);
     this.drawFog(ctx, w, h);
@@ -2160,7 +2178,9 @@ const ParkWallpaper = {
       dragon:       ['飞天龙', '中国龙', '神龙', '飞龙', '龙来', '小龙', '大龙', '龙'],
       bloom:        ['花儿开', '花朵开', '花开', '开花', '盛开', '绽放'],
       dance:        ['一起跳', '跳起来', '跳舞', '舞蹈', '一起舞'],
-      cake:         ['生日蛋糕', '切蛋糕', '吃蛋糕', '蛋糕来', '大蛋糕', '蛋糕']
+      cake:         ['生日蛋糕', '切蛋糕', '吃蛋糕', '蛋糕来', '大蛋糕', '蛋糕'],
+      tornado:      ['龙卷风来', '龙卷风', '大风暴', '旋风', '风暴'],
+      kids:         ['小朋友', '小伙伴', '小孩儿', '小孩子', '小孩', '孩子们', '孩子', '小娃娃']
     },
     en: {
       sunny:        ['stop raining', 'stop snowing', 'stop rain', 'stop snow', 'clear sky', 'sunshine', 'sunny', 'the sun'],
@@ -2183,7 +2203,9 @@ const ParkWallpaper = {
       dragon:       ['dragon', 'dragons'],
       bloom:        ['flowers bloom', 'blossom', 'bloom'],
       dance:        ['dancing', 'dance'],
-      cake:         ['birthday cake', 'cake']
+      cake:         ['birthday cake', 'cake'],
+      tornado:      ['tornado', 'twister', 'whirlwind', 'cyclone'],
+      kids:         ['children', 'kids', 'little kids', 'playmates', 'friends']
     },
     ja: {
       sunny:        ['止んで', '晴れ', 'はれ', '太陽'],
@@ -2206,7 +2228,9 @@ const ParkWallpaper = {
       dragon:       ['ドラゴン', '龍', '竜'],
       bloom:        ['花咲け', '咲く'],
       dance:        ['踊る', 'ダンス'],
-      cake:         ['誕生日ケーキ', 'バースデーケーキ', 'ケーキ']
+      cake:         ['誕生日ケーキ', 'バースデーケーキ', 'ケーキ'],
+      tornado:      ['竜巻', 'たつまき', '台風'],
+      kids:         ['子供たち', '子どもたち', '子供', '子ども']
     },
     ko: {
       sunny:        ['맑음', '맑은', '해', '햇빛'],
@@ -2229,7 +2253,9 @@ const ParkWallpaper = {
       dragon:       ['용', '드래곤'],
       bloom:        ['꽃 피어', '개화', '꽃이 피'],
       dance:        ['춤'],
-      cake:         ['생일 케이크', '케이크']
+      cake:         ['생일 케이크', '케이크'],
+      tornado:      ['토네이도', '회오리바람', '회오리'],
+      kids:         ['아이들', '친구들', '어린이']
     },
     es: {
       sunny:        ['soleado', 'despejado', 'sol'],
@@ -2252,7 +2278,9 @@ const ParkWallpaper = {
       dragon:       ['dragón'],
       bloom:        ['florecer', 'flores'],
       dance:        ['bailar', 'baile'],
-      cake:         ['pastel de cumpleaños', 'pastel', 'tarta']
+      cake:         ['pastel de cumpleaños', 'pastel', 'tarta'],
+      tornado:      ['tornado', 'remolino', 'torbellino'],
+      kids:         ['niños', 'amigos']
     },
     de: {
       sunny:        ['sonnig', 'sonne'],
@@ -2275,7 +2303,9 @@ const ParkWallpaper = {
       dragon:       ['drache'],
       bloom:        ['blühen'],
       dance:        ['tanzen', 'tanz'],
-      cake:         ['geburtstagskuchen', 'kuchen', 'torte']
+      cake:         ['geburtstagskuchen', 'kuchen', 'torte'],
+      tornado:      ['tornado', 'wirbelsturm', 'wirbelwind'],
+      kids:         ['kinder', 'freunde']
     },
     fr: {
       sunny:        ['ensoleillé', 'soleil'],
@@ -2298,7 +2328,9 @@ const ParkWallpaper = {
       dragon:       ['dragon'],
       bloom:        ['fleurir'],
       dance:        ['danser', 'danse'],
-      cake:         ["gâteau d'anniversaire", 'gâteau']
+      cake:         ["gâteau d'anniversaire", 'gâteau'],
+      tornado:      ['tornade', 'tourbillon'],
+      kids:         ['enfants', 'amis']
     }
   },
 
@@ -2307,7 +2339,7 @@ const ParkWallpaper = {
     sunny: '☀️', day: '🌅', night: '🌙', stars: '✨', fireworks: '🎆',
     shootingStar: '⭐', bubbles: '🫧', balloons: '🎈', sakura: '🌸',
     butterfly: '🦋', birds: '🐦', unicorn: '🦄', dragon: '🐉',
-    bloom: '🌺', dance: '💃', cake: '🎂'
+    bloom: '🌺', dance: '💃', cake: '🎂', tornado: '🌪️', kids: '👫'
   },
 
   getRecognitionLang() {
@@ -2482,6 +2514,8 @@ const ParkWallpaper = {
       case 'bloom':        this.triggerBloom(); break;
       case 'dance':        this.triggerDance(); break;
       case 'cake':         this.triggerCake(); break;
+      case 'tornado':      this.triggerTornado(); break;
+      case 'kids':         this.triggerKids(); break;
     }
   },
 
@@ -2836,6 +2870,90 @@ const ParkWallpaper = {
     notes.forEach((n, i) => setTimeout(() => this.playTone(n, 0.3, 'sine', 0.1), i * 280));
   },
 
+  triggerTornado() {
+    if (this.tornado) return;
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    const fromRight = Math.random() > 0.5;
+    this.tornado = {
+      x: fromRight ? w + 80 : -80,
+      vx: fromRight ? -1.9 : 1.9,
+      baseY: h * 0.6,
+      height: h * 0.55,
+      baseRadius: 30,
+      topRadius: 95,
+      swirlPhase: 0,
+      captured: [],
+      bikeGirlSnatched: false,
+      life: 1
+    };
+    this.playTornadoSound();
+  },
+
+  playTornadoSound() {
+    if (!this.soundCtx) return;
+    try {
+      // 低沉持续轰隆
+      const dur = 3;
+      const buf = this.soundCtx.createBuffer(1, this.soundCtx.sampleRate * dur, this.soundCtx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) {
+        // 颤动包络
+        const t = i / this.soundCtx.sampleRate;
+        const env = Math.min(1, t * 2) * Math.min(1, (dur - t) * 1.5);
+        data[i] = (Math.random() * 2 - 1) * env * 0.6;
+      }
+      const src = this.soundCtx.createBufferSource();
+      src.buffer = buf;
+      const filter = this.soundCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 280;
+      const gain = this.soundCtx.createGain();
+      gain.gain.value = 0.18;
+      src.connect(filter); filter.connect(gain); gain.connect(this.soundCtx.destination);
+      src.start();
+    } catch (e) {}
+  },
+
+  triggerKids() {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    const groundY = h * 0.6;
+    const palettes = [
+      { skin: '#FFD7B3', shirt: '#FF69B4', pant: '#3F51B5', hair: '#3E2723' },
+      { skin: '#E8B89A', shirt: '#FFD93D', pant: '#FF6347', hair: '#5D4037' },
+      { skin: '#FFE0CC', shirt: '#6BCB77', pant: '#4D96FF', hair: '#212121' },
+      { skin: '#D9A877', shirt: '#9370DB', pant: '#FF8C42', hair: '#4E342E' },
+      { skin: '#FFCCAA', shirt: '#4ADE80', pant: '#FF6B9D', hair: '#6D4C41' }
+    ];
+    const count = 5;
+    for (let i = 0; i < count; i++) {
+      this.kids.push(this._makeKid(palettes[i % palettes.length], w, groundY));
+    }
+    if (this.kids.length > 10) {
+      this.kids.splice(0, this.kids.length - 10);
+    }
+    // 欢笑声
+    [600, 800, 700, 900].forEach((f, i) =>
+      setTimeout(() => this.playTone(f, 0.12, 'sine', 0.06), i * 100));
+  },
+
+  _makeKid(palette, w, groundY) {
+    return {
+      x: 60 + Math.random() * Math.max(40, w - 120),
+      y: groundY - 2,
+      vx: (Math.random() > 0.5 ? 1 : -1) * (0.8 + Math.random() * 0.6),
+      animPhase: Math.random() * Math.PI * 2,
+      jumpY: 0,
+      jumpV: 0,
+      jumpTimer: 1 + Math.random() * 3,
+      colors: palette,
+      hairType: Math.random() > 0.5 ? 'pigtail' : 'short',
+      hasBalloon: Math.random() > 0.6,
+      balloonColor: ['#FF69B4', '#FFD93D', '#6BCB77', '#4D96FF', '#C780FA'][Math.floor(Math.random() * 5)]
+    };
+  },
+
   // ========== 各特效 update 方法 ==========
 
   updateTimeOfDay(dt) {
@@ -3052,6 +3170,245 @@ const ParkWallpaper = {
     // 8 秒后慢慢消失
     c.life -= dt * 0.12;
     if (c.life <= 0) this.cake = null;
+  },
+
+  updateKids(dt) {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    const groundY = h * 0.6;
+    this.kids.forEach(k => {
+      k.animPhase += dt * 6 * Math.sign(k.vx || 1);
+      k.x += k.vx;
+      // 边界反向
+      if (k.x < 30) { k.x = 30; k.vx = Math.abs(k.vx); }
+      if (k.x > w - 30) { k.x = w - 30; k.vx = -Math.abs(k.vx); }
+      // 风影响：风大时被吹飘
+      if (this.windForce > 0.4) {
+        k.x += this.windDirection * this.windForce * 1.5;
+      }
+      // 偶尔随机变向
+      if (Math.random() < 0.003) k.vx = -k.vx;
+      // 跳跃
+      k.jumpTimer -= dt;
+      if (k.jumpTimer <= 0 && k.jumpY === 0) {
+        k.jumpV = -7;
+        k.jumpTimer = 1.5 + Math.random() * 3;
+      }
+      if (k.jumpV !== 0 || k.jumpY < 0) {
+        k.jumpV += 25 * dt;
+        k.jumpY += k.jumpV;
+        if (k.jumpY >= 0) { k.jumpY = 0; k.jumpV = 0; }
+      }
+      // 确保贴地
+      k.y = groundY - 2;
+    });
+  },
+
+  updateTornado(dt) {
+    if (!this.tornado) return;
+    const t = this.tornado;
+    const w = this.sceneWidth;
+    t.x += t.vx;
+    t.swirlPhase += dt * 15;
+
+    // 给定高度下的吸入半径
+    const radiusAt = (heightAbove) => {
+      const factor = Math.max(0, Math.min(1, heightAbove / t.height));
+      return t.baseRadius + (t.topRadius - t.baseRadius) * factor;
+    };
+    const inRange = (x, heightAbove) => {
+      if (heightAbove < -10 || heightAbove > t.height + 20) return false;
+      const r = radiusAt(Math.max(0, heightAbove));
+      return Math.abs(x - t.x) < r * 1.4;
+    };
+
+    // 吸入花朵
+    for (let i = this.flowers.length - 1; i >= 0; i--) {
+      const f = this.flowers[i];
+      const h = (t.baseY - f.y) + f.stemHeight;
+      if (inRange(f.x, h)) {
+        t.captured.push(this._makeCapture('flower', f));
+        this.flowers.splice(i, 1);
+      }
+    }
+    // 吸入蝴蝶
+    for (let i = this.butterflies.length - 1; i >= 0; i--) {
+      const b = this.butterflies[i];
+      const h = t.baseY - b.y;
+      if (inRange(b.x, h)) {
+        t.captured.push(this._makeCapture('butterfly', b));
+        this.butterflies.splice(i, 1);
+      }
+    }
+    // 吸入鸟
+    for (let i = this.birds.length - 1; i >= 0; i--) {
+      const b = this.birds[i];
+      const h = t.baseY - b.y;
+      if (inRange(b.x, h)) {
+        t.captured.push(this._makeCapture('bird', b));
+        this.birds.splice(i, 1);
+      }
+    }
+    // 吸入气球
+    for (let i = this.balloons.length - 1; i >= 0; i--) {
+      const b = this.balloons[i];
+      const h = t.baseY - b.y;
+      if (inRange(b.x, h)) {
+        t.captured.push(this._makeCapture('balloon', b));
+        this.balloons.splice(i, 1);
+      }
+    }
+    // 吸入小孩
+    for (let i = this.kids.length - 1; i >= 0; i--) {
+      const k = this.kids[i];
+      if (inRange(k.x, 40)) {
+        t.captured.push(this._makeCapture('kid', k));
+        this.kids.splice(i, 1);
+      }
+    }
+    // 吸入自行车女孩
+    if (!t.bikeGirlSnatched && this.bikeGirl && this.bikeGirl.visible) {
+      if (inRange(this.bikeGirl.x, 35)) {
+        t.captured.push(this._makeCapture('bikeGirl', this.bikeGirl));
+        t.bikeGirlSnatched = true;
+        this.bikeGirl.visible = false;
+      }
+    }
+    // 吸入蒲公英植株（让它"释放"）
+    this.dandelionPlants.forEach(dp => {
+      if (!dp.released && inRange(dp.x, 30)) {
+        this.releaseDandelionSeeds(dp);
+      }
+    });
+
+    // 更新已捕获元素的位置
+    t.captured.forEach(c => {
+      c.angle += dt * c.spinSpeed;
+      c.heightOffset += dt * 35;
+      if (c.heightOffset > t.height + 50) c.heightOffset = t.height + 50;
+      const r = radiusAt(c.heightOffset);
+      c.x = t.x + Math.cos(c.angle) * r * 0.95;
+      c.y = t.baseY - c.heightOffset + Math.sin(c.angle) * r * 0.25;
+    });
+
+    // 龙卷风出场：清理并启动重生
+    if ((t.vx < 0 && t.x < -200) || (t.vx > 0 && t.x > w + 200)) {
+      this.tornadoRegenItems = t.captured.map(c => c.kind);
+      this.tornadoRegenPending = true;
+      this.tornadoRegenTimer = 0;
+      this._regenCooldown = 0;
+      this.tornado = null;
+    }
+  },
+
+  _makeCapture(kind, item) {
+    return {
+      kind, item,
+      angle: Math.random() * Math.PI * 2,
+      heightOffset: 20 + Math.random() * 80,
+      spinSpeed: 7 + Math.random() * 5,
+      x: item.x || 0,
+      y: item.y || 0
+    };
+  },
+
+  updateTornadoRegen(dt) {
+    if (!this.tornadoRegenPending) return;
+    this.tornadoRegenTimer += dt;
+    // 等 2 秒再开始重生
+    if (this.tornadoRegenTimer < 2) return;
+    this._regenCooldown -= dt;
+    if (this._regenCooldown > 0) return;
+    if (!this.tornadoRegenItems || this.tornadoRegenItems.length === 0) {
+      this.tornadoRegenPending = false;
+      return;
+    }
+    const kind = this.tornadoRegenItems.shift();
+    this._regenCooldown = 0.25 + Math.random() * 0.15;
+    switch (kind) {
+      case 'flower':    this._regenFlower(); break;
+      case 'butterfly': this._regenButterfly(); break;
+      case 'bird':      this._regenBird(); break;
+      case 'kid':       this._regenKid(); break;
+      case 'bikeGirl':  this._regenBikeGirl(); break;
+      // balloon 不复活（短命特效）
+    }
+  },
+
+  _regenFlower() {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    const groundY = h * 0.6;
+    const f = {
+      x: Math.random() * w,
+      y: groundY + 10 + Math.random() * (h - groundY - 40),
+      size: 8 + Math.random() * 10,
+      color: this.randomFlowerColor(),
+      sway: 0,
+      swayPhase: Math.random() * Math.PI * 2,
+      petals: 5 + Math.floor(Math.random() * 3),
+      stemHeight: 15 + Math.random() * 25,
+      _grow: 0
+    };
+    this.flowers.push(f);
+    // 小亮片：花朵复活
+    for (let i = 0; i < 3; i++) {
+      this.sparkles.push({
+        x: f.x, y: f.y - f.stemHeight,
+        vx: (Math.random() - 0.5) * 2, vy: -1 - Math.random(),
+        life: 0.6, size: 3, color: f.color, type: 'star'
+      });
+    }
+  },
+
+  _regenButterfly() {
+    const w = this.sceneWidth;
+    const groundY = this.sceneHeight * 0.6;
+    this.butterflies.push({
+      x: Math.random() * w,
+      y: groundY - 30 - Math.random() * 80,
+      targetX: Math.random() * w,
+      targetY: groundY - 50 - Math.random() * 80,
+      wingPhase: Math.random() * Math.PI * 2,
+      speed: 0.5 + Math.random() * 1,
+      color1: this.randomButterflyColor(),
+      color2: this.randomButterflyColor(),
+      size: 8 + Math.random() * 6,
+      scattered: false
+    });
+  },
+
+  _regenBird() {
+    const w = this.sceneWidth;
+    const h = this.sceneHeight;
+    this.birds.push({
+      x: Math.random() > 0.5 ? -20 : w + 20,
+      y: h * 0.1 + Math.random() * h * 0.2,
+      speed: 1 + Math.random() * 2,
+      wingPhase: Math.random() * Math.PI * 2,
+      size: 4 + Math.random() * 4,
+      chirpTimer: Math.random() * 10
+    });
+  },
+
+  _regenKid() {
+    const w = this.sceneWidth;
+    const groundY = this.sceneHeight * 0.6;
+    const palettes = [
+      { skin: '#FFD7B3', shirt: '#FF69B4', pant: '#3F51B5', hair: '#3E2723' },
+      { skin: '#E8B89A', shirt: '#FFD93D', pant: '#FF6347', hair: '#5D4037' },
+      { skin: '#FFE0CC', shirt: '#6BCB77', pant: '#4D96FF', hair: '#212121' },
+      { skin: '#D9A877', shirt: '#9370DB', pant: '#FF8C42', hair: '#4E342E' }
+    ];
+    this.kids.push(this._makeKid(palettes[Math.floor(Math.random() * palettes.length)], w, groundY));
+  },
+
+  _regenBikeGirl() {
+    if (!this.bikeGirl) return;
+    this.bikeGirl.x = -100;
+    this.bikeGirl.visible = true;
+    this.bikeGirl.speed = 1.5;
+    this.bikeGirl.pauseTimer = 0;
   },
 
   updateFog(dt) {
@@ -3551,6 +3908,324 @@ const ParkWallpaper = {
     ctx.restore();
   },
 
+  drawKids(ctx) {
+    if (this.kids.length === 0) return;
+    this.kids.forEach(k => {
+      this._drawKid(ctx, k.x, k.y + k.jumpY, k);
+    });
+  },
+
+  _drawKid(ctx, x, y, k) {
+    const facing = k.vx < 0 ? -1 : 1;
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 阴影（不随翻转）
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.beginPath();
+    ctx.ellipse(0, 4, 12, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.save();
+    ctx.scale(facing, 1);
+
+    const legSwing = Math.sin(k.animPhase) * 8;
+    const armSwing = Math.sin(k.animPhase + Math.PI) * 7;
+
+    // 腿
+    ctx.strokeStyle = k.colors.pant;
+    ctx.lineWidth = 4.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-2.5, -14);
+    ctx.lineTo(-2.5 + legSwing * 0.2, -5);
+    ctx.lineTo(-1 + legSwing, 1);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(2.5, -14);
+    ctx.lineTo(2.5 - legSwing * 0.2, -5);
+    ctx.lineTo(1 - legSwing, 1);
+    ctx.stroke();
+
+    // 身体（衬衫）
+    ctx.fillStyle = k.colors.shirt;
+    ctx.beginPath();
+    ctx.ellipse(0, -22, 7, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 手臂
+    ctx.strokeStyle = k.colors.shirt;
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-6, -25);
+    ctx.lineTo(-8 + armSwing, -15);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(6, -25);
+    ctx.lineTo(8 - armSwing, -15);
+    ctx.stroke();
+    // 手
+    ctx.fillStyle = k.colors.skin;
+    ctx.beginPath();
+    ctx.arc(-8 + armSwing, -15, 1.8, 0, Math.PI * 2);
+    ctx.arc(8 - armSwing, -15, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 头
+    ctx.fillStyle = k.colors.skin;
+    ctx.beginPath();
+    ctx.arc(0, -36, 7.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 头发
+    ctx.fillStyle = k.colors.hair;
+    if (k.hairType === 'pigtail') {
+      ctx.beginPath();
+      ctx.arc(-7, -36, 3.5, 0, Math.PI * 2);
+      ctx.arc(7, -36, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      // 头顶刘海
+      ctx.beginPath();
+      ctx.arc(0, -39, 7, Math.PI, 0);
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.arc(0, -39, 7.5, Math.PI, Math.PI * 0.1);
+      ctx.fill();
+    }
+
+    // 眼睛
+    ctx.fillStyle = '#222';
+    ctx.beginPath();
+    ctx.arc(-2.5, -36, 0.9, 0, Math.PI * 2);
+    ctx.arc(2.5, -36, 0.9, 0, Math.PI * 2);
+    ctx.fill();
+    // 笑脸
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(0, -33, 2, 0.2, Math.PI - 0.2);
+    ctx.stroke();
+    // 脸蛋红晕
+    ctx.fillStyle = 'rgba(255,160,170,0.5)';
+    ctx.beginPath();
+    ctx.arc(-4.5, -34, 1.8, 0, Math.PI * 2);
+    ctx.arc(4.5, -34, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore(); // 取消翻转
+
+    // 气球（不翻转，跟着头）
+    if (k.hasBalloon) {
+      ctx.strokeStyle = 'rgba(120,120,120,0.6)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(facing * 6, -28);
+      ctx.quadraticCurveTo(facing * 8, -45, facing * 6 + 2, -58);
+      ctx.stroke();
+      ctx.fillStyle = k.balloonColor;
+      ctx.beginPath();
+      ctx.ellipse(facing * 6 + 2, -66, 7, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.beginPath();
+      ctx.arc(facing * 6, -69, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  },
+
+  drawTornado(ctx) {
+    if (!this.tornado) return;
+    const t = this.tornado;
+    ctx.save();
+
+    // 渲染漏斗：从底部到顶部用渐变填充垂直条带
+    const segments = 32;
+    for (let i = 0; i < segments; i++) {
+      const f1 = i / segments;
+      const f2 = (i + 1) / segments;
+      const h1 = f1 * t.height;
+      const h2 = f2 * t.height;
+      const r1 = t.baseRadius + (t.topRadius - t.baseRadius) * f1;
+      const r2 = t.baseRadius + (t.topRadius - t.baseRadius) * f2;
+      // 该层的旋转抖动
+      const wobble = Math.sin(t.swirlPhase * 0.4 + i * 0.7) * 6;
+
+      const grad = ctx.createLinearGradient(t.x - r1, 0, t.x + r1, 0);
+      grad.addColorStop(0, 'rgba(110, 100, 90, 0)');
+      grad.addColorStop(0.25, 'rgba(140, 130, 120, 0.55)');
+      grad.addColorStop(0.5, 'rgba(170, 160, 150, 0.78)');
+      grad.addColorStop(0.75, 'rgba(140, 130, 120, 0.55)');
+      grad.addColorStop(1, 'rgba(110, 100, 90, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(t.x - r1 + wobble, t.baseY - h1);
+      ctx.lineTo(t.x + r1 + wobble, t.baseY - h1);
+      ctx.lineTo(t.x + r2, t.baseY - h2);
+      ctx.lineTo(t.x - r2, t.baseY - h2);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // 螺旋线条（提升漩涡感）
+    ctx.strokeStyle = 'rgba(60, 50, 40, 0.55)';
+    ctx.lineWidth = 2.5;
+    const lineCount = 6;
+    for (let l = 0; l < lineCount; l++) {
+      ctx.beginPath();
+      for (let s = 0; s <= segments; s++) {
+        const f = s / segments;
+        const r = t.baseRadius + (t.topRadius - t.baseRadius) * f;
+        const angle = t.swirlPhase + l * (Math.PI * 2 / lineCount) + f * Math.PI * 4;
+        const x = t.x + Math.cos(angle) * r;
+        const y = t.baseY - f * t.height + Math.sin(angle) * r * 0.18;
+        if (s === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // 顶部蘑菇云
+    ctx.fillStyle = 'rgba(100, 90, 80, 0.7)';
+    ctx.beginPath();
+    ctx.ellipse(t.x, t.baseY - t.height, t.topRadius * 1.4, t.topRadius * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(130, 120, 110, 0.55)';
+    ctx.beginPath();
+    ctx.ellipse(t.x - t.topRadius * 0.6, t.baseY - t.height - 10, t.topRadius * 0.6, t.topRadius * 0.35, 0, 0, Math.PI * 2);
+    ctx.ellipse(t.x + t.topRadius * 0.7, t.baseY - t.height - 5, t.topRadius * 0.55, t.topRadius * 0.3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 底部尘土云
+    ctx.fillStyle = 'rgba(140, 110, 80, 0.55)';
+    for (let i = 0; i < 7; i++) {
+      const a = t.swirlPhase * 0.3 + i * (Math.PI * 2 / 7);
+      const dx = Math.cos(a) * t.baseRadius * 1.6;
+      const dy = Math.sin(a) * 4;
+      ctx.beginPath();
+      ctx.arc(t.x + dx, t.baseY + 6 + dy, 12 + Math.sin(t.swirlPhase + i) * 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 被卷起的元素（绕龙卷风转）
+    t.captured.forEach(c => this._drawCapturedInTornado(ctx, c));
+
+    ctx.restore();
+  },
+
+  _drawCapturedInTornado(ctx, c) {
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    ctx.rotate(c.angle * 0.8);
+    const item = c.item;
+    switch (c.kind) {
+      case 'flower': {
+        for (let i = 0; i < (item.petals || 5); i++) {
+          const a = (i / (item.petals || 5)) * Math.PI * 2;
+          ctx.fillStyle = item.color || '#FF69B4';
+          ctx.beginPath();
+          const s = (item.size || 10) * 0.4;
+          ctx.ellipse(Math.cos(a) * s, Math.sin(a) * s, s, s * 0.6, a, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(0, 0, (item.size || 10) * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        break;
+      }
+      case 'butterfly': {
+        ctx.fillStyle = item.color1 || '#FF69B4';
+        ctx.beginPath();
+        ctx.ellipse(-5, 0, 6, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = item.color2 || '#FFD93D';
+        ctx.beginPath();
+        ctx.ellipse(5, 0, 6, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#333';
+        ctx.fillRect(-0.7, -5, 1.4, 10);
+        break;
+      }
+      case 'bird': {
+        ctx.fillStyle = '#8B7355';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 6, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#FFA500';
+        ctx.beginPath();
+        ctx.moveTo(6, 0); ctx.lineTo(10, -1); ctx.lineTo(6, 1); ctx.closePath();
+        ctx.fill();
+        break;
+      }
+      case 'balloon': {
+        ctx.fillStyle = item.color || '#FF69B4';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, (item.size || 18) * 0.7, (item.size || 18) * 0.85, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.beginPath();
+        ctx.arc(-3, -3, 2, 0, Math.PI * 2);
+        ctx.fill();
+        break;
+      }
+      case 'kid': {
+        // 抱头蹲着的小人
+        ctx.fillStyle = item.colors ? item.colors.shirt : '#FF69B4';
+        ctx.beginPath();
+        ctx.ellipse(0, 4, 7, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = item.colors ? item.colors.skin : '#FFD7B3';
+        ctx.beginPath();
+        ctx.arc(0, -6, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = item.colors ? item.colors.hair : '#5D4037';
+        ctx.beginPath();
+        ctx.arc(0, -9, 7, Math.PI, 0);
+        ctx.fill();
+        // 慌张表情
+        ctx.fillStyle = '#222';
+        ctx.beginPath();
+        ctx.arc(-2, -6, 1, 0, Math.PI * 2);
+        ctx.arc(2, -6, 1, 0, Math.PI * 2);
+        ctx.fill();
+        // 张嘴
+        ctx.fillStyle = '#700';
+        ctx.beginPath();
+        ctx.ellipse(0, -2, 1.5, 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        break;
+      }
+      case 'bikeGirl': {
+        // 小女孩 + 自行车团块
+        ctx.fillStyle = '#FF69B4';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 10, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#FFD7B3';
+        ctx.beginPath();
+        ctx.arc(0, -10, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#5D4037';
+        ctx.beginPath();
+        ctx.arc(0, -13, 6, Math.PI, 0);
+        ctx.fill();
+        // 自行车轮（两个圆）
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(-7, 10, 5, 0, Math.PI * 2);
+        ctx.arc(7, 10, 5, 0, Math.PI * 2);
+        ctx.stroke();
+        break;
+      }
+    }
+    ctx.restore();
+  },
+
   drawFog(ctx, w, h) {
     if (this.fogOpacity < 0.01) return;
     ctx.save();
@@ -3617,10 +4292,10 @@ const ParkWallpaper = {
   renderSpellbook(el) {
     const lang = (typeof I18n !== 'undefined' && I18n.currentLang) ? I18n.currentLang : 'en';
     const keywords = this.voiceCommandKeywords[lang] || this.voiceCommandKeywords.en;
-    const order = ['rain', 'snow', 'thunder', 'fog', 'rainbow', 'sunny',
+    const order = ['rain', 'snow', 'thunder', 'fog', 'tornado', 'rainbow', 'sunny',
                    'day', 'night', 'stars', 'fireworks', 'shootingStar',
                    'bubbles', 'balloons', 'sakura', 'butterfly', 'birds',
-                   'unicorn', 'dragon', 'cake', 'bloom', 'dance'];
+                   'kids', 'unicorn', 'dragon', 'cake', 'bloom', 'dance'];
     const title = this.t('park.spellbookTitle', '🪄 咒语大全 — 试着说出来！');
     let html = `<h3>${title}</h3><div class="pw-spellbook-list">`;
     order.forEach(cmd => {
