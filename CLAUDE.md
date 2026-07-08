@@ -72,7 +72,8 @@ kids-learning-app/
 │   ├── ragdollRobotData.js # 弹弹机器人关卡数据
 │   ├── choreTracker.js    # 家庭积分榜
 │   ├── birthdayParty.js   # 生日派对
-│   └── parkWallpaper.js   # 魔法公园（声音互动壁纸）
+│   ├── parkWallpaper.js   # 魔法公园（声音互动壁纸）
+│   └── toothFairy.js      # 牙仙子传统（掉牙记录/惊喜信/收藏证书）
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -131,6 +132,7 @@ kids-learning-app/
 | 家庭积分榜 | choreTracker.js | ✅ 完成（任务打卡/加减分/奖励兑换/语音输入） |
 | 生日派对 | birthdayParty.js | ✅ 完成（倒计时/许愿墙/吹蜡烛/贺卡制作） |
 | 魔法公园 | parkWallpaper.js | ✅ 完成（声音互动壁纸/麦克风风力/全屏Canvas） |
+| 牙仙子传统 | toothFairy.js | ✅ 完成（20颗牙齿地图/掉牙记录/牙仙子的信/收藏证书/惊喜揭晓/家长奖励规则） |
 
 ## 常用命令
 
@@ -170,6 +172,7 @@ const CACHE_NAME = 'kids-learning-vXX';
 | kidsRagdollRobot | 弹弹机器人进度和星星 |
 | kidsChoreTracker | 家庭积分榜数据 |
 | kidsBirthdayParty | 生日派对数据 |
+| kidsToothFairy | 牙仙子掉牙记录/奖励规则 |
 
 ## 注意事项
 

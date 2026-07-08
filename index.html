@@ -524,6 +524,12 @@
             <div class="card-desc" data-i18n="menu.parkWallpaper.desc">声音互动壁纸</div>
           </div>
 
+          <div class="menu-card card-tooth-fairy" data-category="play" onclick="showToothFairy()">
+            <div class="card-icon">🧚</div>
+            <div class="card-title" data-i18n="menu.toothFairy">牙仙子</div>
+            <div class="card-desc" data-i18n="menu.toothFairy.desc">掉牙记录·惊喜信</div>
+          </div>
+
         </div>
 
         <div class="daily-progress">
@@ -3053,6 +3059,23 @@
     <button class="bp-fs-close-btn" onclick="BirthdayParty.stopFullscreen()">✕</button>
   </div>
 
+  <!-- 牙仙子传统 -->
+  <div id="tooth-fairy-modal" class="tooth-fairy-modal hidden">
+    <div class="tf-floating-particles"></div>
+    <div class="tf-header">
+      <button class="tf-close-btn" onclick="closeToothFairy()">✕</button>
+      <h2>🧚 <span data-i18n="tooth.title">牙仙子</span></h2>
+      <div style="width: 34px;"></div>
+    </div>
+    <div id="tooth-fairy-content" class="tf-content">
+      <!-- 动态生成 -->
+    </div>
+    <!-- 惊喜揭晓浮层 -->
+    <div id="tf-surprise-overlay" class="tf-surprise-overlay hidden">
+      <div id="tf-surprise-box" class="tf-surprise-box"></div>
+    </div>
+  </div>
+
   <!-- 魔法公园 -->
   <div id="park-wallpaper-modal" class="park-wallpaper-modal hidden">
     <div class="pw-header">
@@ -3168,6 +3191,7 @@
   <script src="js/englishBoost.js"></script>
   <script src="js/birthdayParty.js"></script>
   <script src="js/parkWallpaper.js"></script>
+  <script src="js/toothFairy.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
