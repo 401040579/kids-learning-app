@@ -116,6 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof BirthdayParty !== 'undefined') {
     BirthdayParty.init();
   }
+  if (typeof ToothFairy !== 'undefined') {
+    ToothFairy.init();
+  }
   // 初始化各模块
   initVideos();
   initMath();
@@ -174,7 +177,8 @@ const RecentlyUsed = {
     'choreTracker': { icon: '📋', nameKey: 'menu.choreTracker', action: () => showChoreTracker() },
     'englishBoost': { icon: '🌟', nameKey: 'menu.englishBoost', action: () => showEnglishBoost() },
     'birthdayParty': { icon: '🦄', nameKey: 'menu.birthdayParty', action: () => showBirthdayParty() },
-    'parkWallpaper': { icon: '🏞️', nameKey: 'menu.parkWallpaper', action: () => showParkWallpaper() }
+    'parkWallpaper': { icon: '🏞️', nameKey: 'menu.parkWallpaper', action: () => showParkWallpaper() },
+    'toothFairy': { icon: '🧚', nameKey: 'menu.toothFairy', action: () => showToothFairy() }
   },
 
   init() {
