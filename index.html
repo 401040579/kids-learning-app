@@ -284,253 +284,29 @@
           </div>
         </div>
 
-        <!-- 首页分类标签 -->
+        <!-- 首页分屏标签（点击跳屏，滑动时跟随高亮） -->
         <div class="home-category-tabs">
-          <button class="home-tab active" data-category="all" onclick="filterHomeCards('all')">
-            <span class="tab-emoji">🌟</span>
-            <span data-i18n="home.tab.all">全部</span>
+          <button class="home-tab active" onclick="HomeScreen.goToPage(0)">
+            <span class="tab-emoji">⭐</span>
+            <span data-i18n="home.tab.favorites">常用</span>
           </button>
-          <button class="home-tab" data-category="learn" onclick="filterHomeCards('learn')">
+          <button class="home-tab" onclick="HomeScreen.goToPage(1)">
             <span class="tab-emoji">📚</span>
             <span data-i18n="home.tab.learn">学习</span>
           </button>
-          <button class="home-tab" data-category="play" onclick="filterHomeCards('play')">
+          <button class="home-tab" onclick="HomeScreen.goToPage(2)">
             <span class="tab-emoji">🎮</span>
             <span data-i18n="home.tab.play">游戏</span>
           </button>
-          <button class="home-tab" data-category="tools" onclick="filterHomeCards('tools')">
+          <button class="home-tab" onclick="HomeScreen.goToPage(3)">
             <span class="tab-emoji">🔧</span>
             <span data-i18n="home.tab.tools">工具</span>
           </button>
         </div>
 
-        <div class="menu-grid" id="home-menu-grid">
-          <!-- 学习类 -->
-          <div class="menu-card card-math" data-category="learn" onclick="navigateTo('math')">
-            <div class="card-icon">🔢</div>
-            <div class="card-title" data-i18n="menu.math">数学游戏</div>
-            <div class="card-desc" data-i18n="menu.math.desc">加减法挑战</div>
-          </div>
-
-          <div class="menu-card card-english" data-category="learn" onclick="navigateTo('english')">
-            <div class="card-icon">🔤</div>
-            <div class="card-title" data-i18n="menu.english">学英语</div>
-            <div class="card-desc" data-i18n="menu.english.desc">字母和单词</div>
-          </div>
-
-          <div class="menu-card card-chinese" data-category="learn" onclick="navigateTo('chinese')">
-            <div class="card-icon">📝</div>
-            <div class="card-title" data-i18n="menu.chinese">学中文</div>
-            <div class="card-desc" data-i18n="menu.chinese.desc">认字和拼音</div>
-          </div>
-
-          <div class="menu-card card-science" data-category="learn" onclick="navigateTo('science')">
-            <div class="card-icon">🔬</div>
-            <div class="card-title" data-i18n="menu.science">科学探索</div>
-            <div class="card-desc" data-i18n="menu.science.desc">发现神奇世界</div>
-          </div>
-
-          <!-- 游戏类 -->
-          <div class="menu-card card-explore" data-category="play" onclick="navigateTo('explore')">
-            <div class="card-icon">🎬</div>
-            <div class="card-title" data-i18n="menu.explore">探索视频</div>
-            <div class="card-desc" data-i18n="menu.explore.desc">看有趣的视频</div>
-          </div>
-
-          <div class="menu-card card-puzzle" data-category="play" onclick="navigateTo('puzzle')">
-            <div class="card-icon">🧩</div>
-            <div class="card-title" data-i18n="menu.puzzle">拼图游戏</div>
-            <div class="card-desc" data-i18n="menu.puzzle.desc">锻炼观察力</div>
-          </div>
-
-          <!-- 工具类 -->
-          <div class="menu-card card-timer" data-category="tools" onclick="navigateTo('timer')">
-            <div class="card-icon">⏰</div>
-            <div class="card-title" data-i18n="menu.timer">玩耍计时</div>
-            <div class="card-desc" data-i18n="menu.timer.desc">设置倒计时</div>
-          </div>
-
-          <div class="menu-card card-calendar" data-category="tools" onclick="navigateTo('calendar')">
-            <div class="card-icon">📅</div>
-            <div class="card-title" data-i18n="menu.calendar">我的日历</div>
-            <div class="card-desc" data-i18n="menu.calendar.desc">记录每一天</div>
-          </div>
-
-          <div class="menu-card card-sleep-music" data-category="tools" onclick="navigateTo('sleep-music')">
-            <div class="card-icon">🎵</div>
-            <div class="card-title" data-i18n="menu.sleepMusic">睡眠音乐</div>
-            <div class="card-desc" data-i18n="menu.sleepMusic.desc">助眠好音乐</div>
-          </div>
-
-          <div class="menu-card card-profile" data-category="tools" onclick="navigateTo('profile')">
-            <div class="card-icon">👤</div>
-            <div class="card-title" data-i18n="menu.profile">我的信息</div>
-            <div class="card-desc" data-i18n="menu.profile.desc">编辑个人资料</div>
-          </div>
-
-          <!-- P0新功能入口 -->
-          <div class="menu-card card-checkin" data-category="tools" onclick="showCheckin()">
-            <div class="card-icon">📅</div>
-            <div class="card-title" data-i18n="menu.checkin">每日签到</div>
-            <div class="card-desc" data-i18n="menu.checkin.desc">签到领奖励</div>
-            <div id="checkin-preview" class="checkin-preview-mini"></div>
-          </div>
-
-          <div class="menu-card card-achievements" data-category="tools" onclick="showAchievements()">
-            <div class="card-icon">🏆</div>
-            <div class="card-title" data-i18n="menu.achievements">我的成就</div>
-            <div class="card-desc" data-i18n="menu.achievements.desc">徽章收集</div>
-          </div>
-
-          <div class="menu-card card-wrong-questions" data-category="tools" onclick="showWrongQuestions()">
-            <div class="card-icon">📕</div>
-            <div class="card-title" data-i18n="menu.wrongQuestions">错题本</div>
-            <div class="card-desc" data-i18n="menu.wrongQuestions.desc">复习巩固</div>
-          </div>
-
-          <!-- P1新功能入口 -->
-          <div class="menu-card card-memory-game" data-category="play" onclick="showMemoryGame()">
-            <div class="card-icon">🧠</div>
-            <div class="card-title" data-i18n="menu.memory">记忆训练</div>
-            <div class="card-desc" data-i18n="menu.memory.desc">锻炼记忆力</div>
-          </div>
-
-          <div class="menu-card card-learning-pet" data-category="play" onclick="showLearningPet()">
-            <div class="card-icon">🐱</div>
-            <div class="card-title" data-i18n="menu.pet">学习宠物</div>
-            <div class="card-desc" data-i18n="menu.pet.desc">陪你一起学</div>
-          </div>
-
-          <div class="menu-card card-learning-report" data-category="tools" onclick="showLearningReport()">
-            <div class="card-icon">📊</div>
-            <div class="card-title" data-i18n="menu.report">学习报告</div>
-            <div class="card-desc" data-i18n="menu.report.desc">查看进步</div>
-          </div>
-
-          <!-- P2新功能入口 -->
-          <div class="menu-card card-picture-book" data-category="learn" onclick="showPictureBook()">
-            <div class="card-icon">📚</div>
-            <div class="card-title" data-i18n="menu.pictureBook">绘本故事</div>
-            <div class="card-desc" data-i18n="menu.pictureBook.desc">听故事学知识</div>
-          </div>
-
-          <div class="menu-card card-pronunciation" data-category="learn" onclick="showPronunciation()">
-            <div class="card-icon">🎤</div>
-            <div class="card-title" data-i18n="menu.pronunciation">跟读练习</div>
-            <div class="card-desc" data-i18n="menu.pronunciation.desc">练习发音</div>
-          </div>
-
-          <!-- 家长通知功能 -->
-          <div class="menu-card card-parent-notify" data-category="tools" onclick="openMessageToParent()">
-            <div class="card-icon">💬</div>
-            <div class="card-title" data-i18n="menu.parentMessage">给爸妈留言</div>
-            <div class="card-desc" data-i18n="menu.parentMessage.desc">发消息给家长</div>
-          </div>
-
-          <div class="menu-card card-sos" data-category="tools" onclick="triggerSOS()">
-            <div class="card-icon">🆘</div>
-            <div class="card-title" data-i18n="menu.sos">紧急求助</div>
-            <div class="card-desc" data-i18n="menu.sos.desc">通知爸爸妈妈</div>
-          </div>
-
-          <div class="menu-card card-parent-settings" data-category="tools" onclick="openParentSettings()">
-            <div class="card-icon">👨‍👩‍👧</div>
-            <div class="card-title" data-i18n="menu.parentSettings">家长设置</div>
-            <div class="card-desc" data-i18n="menu.parentSettings.desc">配置通知</div>
-          </div>
-
-          <!-- 创作功能 -->
-          <div class="menu-card card-drawing" data-category="play" onclick="openDrawing()">
-            <div class="card-icon">🎨</div>
-            <div class="card-title" data-i18n="menu.drawing">画画创作</div>
-            <div class="card-desc" data-i18n="menu.drawing.desc">自由绘画</div>
-          </div>
-
-          <div class="menu-card card-music" data-category="play" onclick="openMusic()">
-            <div class="card-icon">🎵</div>
-            <div class="card-title" data-i18n="menu.music">音乐创作</div>
-            <div class="card-desc" data-i18n="menu.music.desc">弹琴打鼓</div>
-          </div>
-
-          <div class="menu-card card-writing" data-category="learn" onclick="openWriting()">
-            <div class="card-icon">✍️</div>
-            <div class="card-title" data-i18n="menu.writing">书写练习</div>
-            <div class="card-desc" data-i18n="menu.writing.desc">汉字笔顺</div>
-          </div>
-
-          <div class="menu-card card-life-skills" data-category="learn" onclick="openLifeSkills()">
-            <div class="card-icon">🏠</div>
-            <div class="card-title" data-i18n="menu.lifeSkills">生活技能</div>
-            <div class="card-desc" data-i18n="menu.lifeSkills.desc">时钟钱币日历</div>
-          </div>
-
-          <div class="menu-card card-song-practice" data-category="learn" onclick="openSongPractice()">
-            <div class="card-icon">🎤</div>
-            <div class="card-title" data-i18n="menu.songPractice">歌曲练习</div>
-            <div class="card-desc" data-i18n="menu.songPractice.desc">跟唱新年歌</div>
-          </div>
-
-          <div class="menu-card card-family-pk" data-category="play" onclick="showFamilyPK()">
-            <div class="card-icon">👨‍👩‍👧</div>
-            <div class="card-title" data-i18n="menu.familyPK">亲子PK</div>
-            <div class="card-desc" data-i18n="menu.familyPK.desc">家庭互动挑战</div>
-          </div>
-
-          <div class="menu-card card-logic-games" data-category="play" onclick="showLogicGames()">
-            <div class="card-icon">🧩</div>
-            <div class="card-title" data-i18n="menu.logicGames">逻辑训练</div>
-            <div class="card-desc" data-i18n="menu.logicGames.desc">锻炼思维能力</div>
-          </div>
-
-          <div class="menu-card card-reaction-games" data-category="play" onclick="showReactionGames()">
-            <div class="card-icon">⚡</div>
-            <div class="card-title" data-i18n="menu.reactionGames">反应训练</div>
-            <div class="card-desc" data-i18n="menu.reactionGames.desc">锻炼反应速度</div>
-          </div>
-
-          <div class="menu-card card-draw-smash" data-category="play" onclick="showDrawSmash()">
-            <div class="card-icon">✏️</div>
-            <div class="card-title" data-i18n="menu.drawSmash">画线砸怪兽</div>
-            <div class="card-desc" data-i18n="menu.drawSmash.desc">画线解谜闯关</div>
-          </div>
-
-          <div class="menu-card card-ragdoll-robot" data-category="play" onclick="showRagdollRobot()">
-            <div class="card-icon">🤖</div>
-            <div class="card-title" data-i18n="menu.ragdollRobot">弹弹机器人</div>
-            <div class="card-desc" data-i18n="menu.ragdollRobot.desc">弹射翻滚收星星</div>
-          </div>
-
-          <div class="menu-card card-english-boost" data-category="learn" onclick="showEnglishBoost()">
-            <div class="card-icon">🌟</div>
-            <div class="card-title" data-i18n="menu.englishBoost">英语提升</div>
-            <div class="card-desc" data-i18n="menu.englishBoost.desc">听说读写全面练</div>
-          </div>
-
-          <div class="menu-card card-chore-tracker" data-category="tools" onclick="showChoreTracker()">
-            <div class="card-icon">📋</div>
-            <div class="card-title" data-i18n="menu.choreTracker">家庭积分榜</div>
-            <div class="card-desc" data-i18n="menu.choreTracker.desc">任务打卡积分</div>
-          </div>
-
-          <div class="menu-card card-birthday-party" data-category="play" onclick="showBirthdayParty()">
-            <div class="card-icon">🦄</div>
-            <div class="card-title" data-i18n="menu.birthdayParty">生日派对</div>
-            <div class="card-desc" data-i18n="menu.birthdayParty.desc">独角兽彩虹派对</div>
-          </div>
-
-          <div class="menu-card card-park-wallpaper" data-category="play" onclick="showParkWallpaper()">
-            <div class="card-icon">🏞️</div>
-            <div class="card-title" data-i18n="menu.parkWallpaper">魔法公园</div>
-            <div class="card-desc" data-i18n="menu.parkWallpaper.desc">声音互动壁纸</div>
-          </div>
-
-          <div class="menu-card card-tooth-fairy" data-category="play" onclick="showToothFairy()">
-            <div class="card-icon">🧚</div>
-            <div class="card-title" data-i18n="menu.toothFairy">牙仙子</div>
-            <div class="card-desc" data-i18n="menu.toothFairy.desc">掉牙记录·惊喜信</div>
-          </div>
-
-        </div>
+        <!-- iPhone 风分屏图标（由 homeScreen.js 渲染） -->
+        <div class="home-pager" id="home-pager"></div>
+        <div class="pager-dots" id="pager-dots"></div>
 
         <div class="daily-progress">
           <h3 data-i18n="progress.title">今日进度</h3>
@@ -538,6 +314,7 @@
             <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
           </div>
           <p class="progress-text" id="progress-text">完成 <span id="tasks-done">0</span>/10 个任务解锁奖励视频!</p>
+          <div id="checkin-preview" class="checkin-preview-mini" onclick="showCheckin()"></div>
         </div>
       </section>
 
@@ -548,92 +325,14 @@
           <h2>🎬 <span data-i18n="videos.title">探索视频</span></h2>
         </div>
 
-        <!-- 分类标签 -->
-        <div class="category-tabs" id="category-tabs">
-          <button class="category-tab active" data-category="all" onclick="filterVideos('all')">
-            <span class="tab-icon">📚</span>
-            <span class="tab-name" data-i18n="videos.all">全部</span>
-          </button>
-          <button class="category-tab" data-category="math" onclick="filterVideos('math')">
-            <span class="tab-icon">🔢</span>
-            <span class="tab-name" data-i18n="videos.math">数学</span>
-          </button>
-          <button class="category-tab" data-category="english" onclick="filterVideos('english')">
-            <span class="tab-icon">🔤</span>
-            <span class="tab-name" data-i18n="videos.english">英语</span>
-          </button>
-          <button class="category-tab" data-category="science" onclick="filterVideos('science')">
-            <span class="tab-icon">🔬</span>
-            <span class="tab-name" data-i18n="videos.science">科普</span>
-          </button>
-          <button class="category-tab" data-category="emotion" onclick="filterVideos('emotion')">
-            <span class="tab-icon">💝</span>
-            <span class="tab-name" data-i18n="videos.emotion">情绪</span>
-          </button>
-          <button class="category-tab" data-category="brain" onclick="filterVideos('brain')">
-            <span class="tab-icon">🧠</span>
-            <span class="tab-name" data-i18n="videos.brain">脑力</span>
-          </button>
-          <button class="category-tab" data-category="music" onclick="filterVideos('music')">
-            <span class="tab-icon">🎵</span>
-            <span class="tab-name" data-i18n="videos.music">音乐</span>
-          </button>
-        </div>
-
-        <!-- 当前分类描述 -->
-        <div class="category-info" id="category-info">
-          <p class="category-desc" data-i18n="videos.desc.all">精选30个适合6岁儿童的优质视频</p>
-        </div>
-
-        <!-- 视频网格 -->
+        <!-- 白名单视频列表（由 videoWhitelist.js 渲染） -->
         <div class="video-grid" id="video-grid">
-          <!-- 默认加载状态 -->
           <div class="video-loading">
             <span class="loading-icon">🎬</span>
             <p data-i18n="videos.loading">加载中...</p>
           </div>
         </div>
       </section>
-
-      <!-- 视频详情弹窗 -->
-      <div id="video-detail-modal" class="video-detail-modal hidden">
-        <div class="video-detail-content">
-          <button class="video-detail-close" onclick="closeVideoDetail()">✕</button>
-          <div class="video-detail-header">
-            <span class="video-detail-icon" id="detail-icon">🎬</span>
-            <div class="video-detail-title-area">
-              <h3 id="detail-title">视频标题</h3>
-              <p id="detail-title-zh" class="detail-title-zh">中文标题</p>
-            </div>
-          </div>
-          <div class="video-detail-meta">
-            <span class="meta-tag" id="detail-duration">⏱️ 5:00</span>
-            <span class="meta-tag" id="detail-channel">📺 频道</span>
-            <span class="meta-tag" id="detail-age">👶 5-7岁</span>
-          </div>
-          <div class="video-detail-section">
-            <h4>📖 <span data-i18n="videos.intro">简介</span></h4>
-            <p id="detail-desc">视频描述</p>
-          </div>
-          <div class="video-detail-section">
-            <h4>✅ <span data-i18n="videos.whyRecommend">为什么推荐</span></h4>
-            <p id="detail-why">推荐理由</p>
-          </div>
-          <div class="video-detail-section">
-            <h4>🎯 <span data-i18n="videos.skills">技能培养</span></h4>
-            <div class="skill-tags" id="detail-skills">
-              <!-- 技能标签由 JS 生成 -->
-            </div>
-          </div>
-          <div class="video-detail-section parent-tip">
-            <h4>💡 <span data-i18n="videos.parentTips">家长贴士</span></h4>
-            <p id="detail-parent-tip">给家长的建议</p>
-          </div>
-          <button class="btn-play-video" id="btn-play-detail" onclick="playVideoFromDetail()" data-i18n="videos.play">
-            ▶️ 播放视频
-          </button>
-        </div>
-      </div>
 
       <!-- 数学游戏页 -->
       <section id="page-math" class="page">
@@ -1752,15 +1451,15 @@
         <span class="nav-icon">🏠</span>
         <span class="nav-label" data-i18n="nav.home">首页</span>
       </div>
-      <div class="nav-item" onclick="navigateTo('home'); filterHomeCards('learn')">
+      <div class="nav-item" onclick="navigateTo('home'); HomeScreen.goToPage(1, true)">
         <span class="nav-icon">📚</span>
         <span class="nav-label" data-i18n="nav.learn">学习</span>
       </div>
-      <div class="nav-item" onclick="navigateTo('home'); filterHomeCards('play')">
+      <div class="nav-item" onclick="navigateTo('home'); HomeScreen.goToPage(2, true)">
         <span class="nav-icon">🎮</span>
         <span class="nav-label" data-i18n="nav.play">游戏</span>
       </div>
-      <div class="nav-item" onclick="navigateTo('home'); filterHomeCards('tools')">
+      <div class="nav-item" onclick="navigateTo('home'); HomeScreen.goToPage(3, true)">
         <span class="nav-icon">🔧</span>
         <span class="nav-label" data-i18n="nav.tools">工具</span>
       </div>
@@ -3166,7 +2865,6 @@
   <script src="js/learningReport.js"></script>
   <script src="js/pictureBook.js"></script>
   <script src="js/pronunciation.js"></script>
-  <script src="js/videos.js"></script>
   <script src="js/puzzle.js"></script>
   <script src="js/aiChat.js"></script>
   <script src="js/parentNotify.js"></script>
@@ -3192,6 +2890,9 @@
   <script src="js/birthdayParty.js"></script>
   <script src="js/parkWallpaper.js"></script>
   <script src="js/toothFairy.js"></script>
+  <script src="js/videoWhitelistConfig.js"></script>
+  <script src="js/videoWhitelist.js"></script>
+  <script src="js/homeScreen.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

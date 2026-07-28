@@ -76,6 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 注册 Service Worker 并监听更新
   registerServiceWorker();
 
+  // 渲染首页分屏图标（在 I18n.init 之前，让其全文档翻译顺带覆盖新渲染的图标）
+  if (typeof HomeScreen !== 'undefined') {
+    HomeScreen.init();
+  }
+
   // 初始化国际化系统
   if (typeof I18n !== 'undefined') {
     I18n.init();
@@ -120,7 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ToothFairy.init();
   }
   // 初始化各模块
-  initVideos();
+  if (typeof VideoWhitelist !== 'undefined') {
+    VideoWhitelist.init();
+  }
   initMath();
   initEnglish();
   initChinese();
@@ -282,6 +289,8 @@ function navigateTo(page) {
   }
 
   // 进入页面时初始化内容
+  if (page === 'home' && typeof HomeScreen !== 'undefined') HomeScreen.onShow();
+  if (page === 'explore' && typeof VideoWhitelist !== 'undefined') VideoWhitelist.refreshIfStale();
   if (page === 'math') generateMathQuestion();
   if (page === 'english') generateEnglishQuestion();
   if (page === 'chinese') generateChineseQuestion();
@@ -309,199 +318,54 @@ function getNavIndex(page) {
   return 0; // 默认首页
 }
 
-// ========== 首页分类筛选 ==========
-let currentHomeCategory = 'all';
-
-function filterHomeCards(category) {
-  currentHomeCategory = category;
-
-  // 更新Tab选中状态
-  document.querySelectorAll('.home-tab').forEach(tab => {
-    tab.classList.remove('active');
-    if (tab.dataset.category === category) {
-      tab.classList.add('active');
-    }
-  });
-
-  // 筛选卡片
-  const cards = document.querySelectorAll('#home-menu-grid .menu-card');
-  cards.forEach(card => {
-    const cardCategory = card.dataset.category;
-    if (category === 'all' || cardCategory === category) {
-      card.style.display = '';
-      card.style.animation = 'fadeInUp 0.3s ease forwards';
-    } else {
-      card.style.display = 'none';
-    }
-  });
-
-  // 更新底部导航高亮（如果从底部导航触发）
-  updateBottomNavForCategory(category);
-}
-
-function updateBottomNavForCategory(category) {
-  const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach((item, index) => {
-    item.classList.remove('active');
-  });
-
-  // 根据分类高亮对应的导航项
-  if (category === 'all') {
-    navItems[0].classList.add('active'); // 首页
-  } else if (category === 'learn') {
-    navItems[1].classList.add('active'); // 学习
-  } else if (category === 'play') {
-    navItems[2].classList.add('active'); // 游戏
-  } else if (category === 'tools') {
-    navItems[3].classList.add('active'); // 工具
+// 兼容旧模块的最近使用入口（logicGames/reactionGames/drawSmash/ragdollRobot 调用的是这个名字）
+function addToRecentlyUsed(featureId) {
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track(featureId);
   }
 }
 
-// ========== 视频模块 ==========
-let videoPlayer = null;
-let currentVideoFilter = 'all';
-let selectedVideo = null;
+// ========== 视频播放器（白名单制，列表渲染见 videoWhitelist.js） ==========
+let ytPlayer = null;       // YT.Player 实例
+let ytApiPromise = null;   // IFrame API 加载中的 Promise
 
-// 分类颜色映射
-const categoryColors = {
-  math: '#FF6B6B',
-  english: '#4ECDC4',
-  science: '#45B7D1',
-  emotion: '#96CEB4',
-  brain: '#DDA0DD',
-  music: '#FFD93D'
-};
+// 懒加载 YouTube IFrame API（只在真正播放时加载一次）
+function loadYouTubeAPI() {
+  if (window.YT && window.YT.Player) return Promise.resolve();
+  if (ytApiPromise) return ytApiPromise;
 
-// 分类描述映射
-const categoryDescriptions = {
-  all: '精选30个适合6岁儿童的优质视频',
-  math: '数学启蒙：加减法、数感、规律认知',
-  english: '英语启蒙：自然拼读、词汇、简单对话',
-  science: '科普探索：动物、人体、太空、自然现象',
-  emotion: '情绪与品格：情绪管理、礼貌、合作、勇气',
-  brain: '专注力与脑力：逻辑、观察、记忆、思维训练',
-  music: '音乐与运动：儿歌、律动、亲子运动'
-};
+  ytApiPromise = new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      ytApiPromise = null;
+      reject(new Error('YouTube API timeout'));
+    }, 8000);
 
-// 初始化视频列表
-function initVideos() {
-  renderVideoGrid('all');
-}
+    // 必须在插入 script 之前赋值（全仓库无其他使用者）
+    window.onYouTubeIframeAPIReady = () => {
+      clearTimeout(timer);
+      resolve();
+    };
 
-// 渲染视频网格
-function renderVideoGrid(category) {
-  const grid = document.getElementById('video-grid');
-  if (!grid) return;
-
-  // 检查视频数据是否加载
-  if (typeof videoDatabase === 'undefined' || !videoDatabase.videos) {
-    grid.innerHTML = `
-      <div class="video-error">
-        <span class="error-icon">😢</span>
-        <p>视频加载失败</p>
-        <button class="btn-retry" onclick="location.reload()">重新加载</button>
-      </div>
-    `;
-    return;
-  }
-
-  // 筛选视频
-  const videos = category === 'all'
-    ? videoDatabase.videos
-    : videoDatabase.videos.filter(v => v.category === category);
-
-  // 更新描述
-  const descEl = document.querySelector('.category-desc');
-  if (descEl) {
-    descEl.textContent = categoryDescriptions[category] || categoryDescriptions.all;
-  }
-
-  // 渲染视频卡片
-  grid.innerHTML = videos.map(video => {
-    const color = categoryColors[video.category] || '#FF69B4';
-    return `
-      <div class="video-card" style="--category-color: ${color}" onclick="showVideoDetail('${video.id}')">
-        <div class="video-thumb">${video.thumbnail}</div>
-        <div class="video-card-title">${video.titleZh}</div>
-        <div class="video-card-meta">
-          <span>⏱️ ${video.duration}</span>
-          <span>👶 ${video.ageMin}-${video.ageMax}岁</span>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-// 筛选视频
-function filterVideos(category) {
-  currentVideoFilter = category;
-
-  // 更新标签状态
-  document.querySelectorAll('.category-tab').forEach(tab => {
-    tab.classList.toggle('active', tab.dataset.category === category);
+    const script = document.createElement('script');
+    script.src = 'https://www.youtube.com/iframe_api';
+    script.onerror = () => {
+      clearTimeout(timer);
+      ytApiPromise = null;
+      reject(new Error('YouTube API load failed'));
+    };
+    document.head.appendChild(script);
   });
-
-  // 重新渲染视频
-  renderVideoGrid(category);
+  return ytApiPromise;
 }
 
-// 显示视频详情
-function showVideoDetail(videoId) {
-  const video = videoDatabase.videos.find(v => v.id === videoId);
-  if (!video) return;
-
-  selectedVideo = video;
-
-  // 填充详情内容
-  document.getElementById('detail-icon').textContent = video.thumbnail;
-  document.getElementById('detail-title').textContent = video.title;
-  document.getElementById('detail-title-zh').textContent = video.titleZh;
-  document.getElementById('detail-duration').textContent = '⏱️ ' + video.duration;
-  document.getElementById('detail-channel').textContent = '📺 ' + video.channel;
-  document.getElementById('detail-age').textContent = '👶 ' + video.ageMin + '-' + video.ageMax + '岁';
-  document.getElementById('detail-desc').textContent = video.description;
-  document.getElementById('detail-why').textContent = video.whyRecommend;
-  document.getElementById('detail-parent-tip').textContent = video.parentTips;
-
-  // 渲染技能标签
-  const skillsEl = document.getElementById('detail-skills');
-  skillsEl.innerHTML = video.skills.map(skill =>
-    `<span class="skill-tag">${skill}</span>`
-  ).join('');
-
-  // 显示弹窗
-  document.getElementById('video-detail-modal').classList.remove('hidden');
-}
-
-// 关闭视频详情
-function closeVideoDetail() {
-  document.getElementById('video-detail-modal').classList.add('hidden');
-  selectedVideo = null;
-}
-
-// 从详情页播放视频
-function playVideoFromDetail() {
-  if (selectedVideo) {
-    const titleZh = selectedVideo.titleZh;
-    const youtubeId = selectedVideo.youtubeId;
-    closeVideoDetail();
-    playVideo(titleZh, youtubeId);
-  }
-}
-
-// 播放视频
-function playVideo(name, videoId) {
-  const modal = document.getElementById('video-modal');
-  const player = document.getElementById('video-player');
-  const overlay = document.getElementById('video-overlay');
-
-  // 隐藏遮罩
-  overlay.classList.add('hidden');
+// 播放单个视频
+function playVideo(videoId, title) {
+  openVideoModal();
 
   // 📊 追踪视频播放
   if (typeof Analytics !== 'undefined') {
     Analytics.sendEvent('video_play', {
-      video_name: name,
+      video_name: title || videoId,
       video_id: videoId
     });
   }
@@ -511,44 +375,84 @@ function playVideo(name, videoId) {
     AchievementSystem.recordVideoWatch();
   }
 
-  // 获取当前页面的 origin（用于本地开发兼容）
-  const currentOrigin = window.location.origin || 'https://www.youtube.com';
-
-  // 创建 YouTube iframe (使用标准域名，增加兼容性)
-  player.innerHTML = `
-    <iframe
-      id="yt-player"
-      src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=1&fs=1"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-      allowfullscreen
-      frameborder="0">
-    </iframe>
-  `;
-
-  // 显示播放器
-  modal.classList.remove('hidden');
-
-  // 监听视频结束（通过 postMessage API）
-  window.addEventListener('message', handleVideoMessage);
-
-  // 备用方案：定时检查（如果 API 不可用）
-  setTimeout(() => {
-    // 30秒后显示返回提示（大部分儿歌较短）
-  }, 30000);
+  createYtPlayer({ videoId: videoId });
 }
 
-function handleVideoMessage(event) {
-  // YouTube iframe API 消息
-  if (event.origin.includes('youtube')) {
-    try {
-      const data = JSON.parse(event.data);
-      if (data.event === 'onStateChange' && data.info === 0) {
-        // 视频结束，显示遮罩
-        showVideoOverlay();
+// 播放整个频道的上传播放列表（列表拉不到时的兜底，无需列表数据）
+function playChannelPlaylist(channelId, name) {
+  openVideoModal();
+
+  if (typeof Analytics !== 'undefined') {
+    Analytics.sendEvent('video_play', {
+      video_name: name || channelId,
+      video_id: 'channel_playlist'
+    });
+  }
+  if (typeof AchievementSystem !== 'undefined') {
+    AchievementSystem.recordVideoWatch();
+  }
+
+  // 频道上传播放列表 ID = 频道 ID 的 UC 前缀换成 UU
+  createYtPlayer({ list: 'UU' + channelId.slice(2) });
+}
+
+function openVideoModal() {
+  document.getElementById('video-overlay').classList.add('hidden');
+  document.getElementById('video-modal').classList.remove('hidden');
+}
+
+// 用官方 IFrame API 建播放器：只有它能可靠拿到播放结束事件，
+// 从而在结束瞬间用遮罩盖住 YouTube 推荐墙（儿童安全的关键）。
+// fs:0 也是有意为之：iOS 全屏走系统播放器，DOM 遮罩盖不住。
+function createYtPlayer(source) {
+  const player = document.getElementById('video-player');
+
+  // 防连续点击叠音
+  destroyYtPlayer();
+  player.innerHTML = '<div id="yt-embed"></div>';
+
+  loadYouTubeAPI().then(() => {
+    const playerVars = {
+      autoplay: 1,
+      playsinline: 1,
+      rel: 0,
+      fs: 0,
+      origin: window.location.origin
+    };
+    const options = {
+      playerVars: playerVars,
+      events: {
+        onStateChange: (e) => {
+          if (e.data === YT.PlayerState.ENDED) showVideoOverlay();
+        },
+        onError: () => {
+          // 播放列表模式下 YouTube 会自动跳过坏视频，不打断
+          if (source.videoId) showVideoError();
+        }
       }
-    } catch (e) {
-      // 非 JSON 消息，忽略
+    };
+    if (source.videoId) {
+      options.videoId = source.videoId;
+    } else if (source.list) {
+      playerVars.listType = 'playlist';
+      playerVars.list = source.list;
     }
+    ytPlayer = new YT.Player('yt-embed', options);
+  }).catch(() => {
+    // API 加载失败（离线/被拦/超时）：降级为裸 iframe，能看但没有结束遮罩
+    const src = source.videoId
+      ? 'https://www.youtube.com/embed/' + source.videoId + '?rel=0&playsinline=1&autoplay=1&fs=0'
+      : 'https://www.youtube.com/embed/videoseries?list=' + source.list + '&rel=0&playsinline=1&autoplay=1&fs=0';
+    player.innerHTML = '<iframe src="' + src + '"' +
+      ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"' +
+      ' frameborder="0"></iframe>';
+  });
+}
+
+function destroyYtPlayer() {
+  if (ytPlayer) {
+    try { ytPlayer.destroy(); } catch (e) { /* 忽略 */ }
+    ytPlayer = null;
   }
 }
 
@@ -556,18 +460,18 @@ function showVideoOverlay() {
   document.getElementById('video-overlay').classList.remove('hidden');
 }
 
-function closeVideo() {
-  const modal = document.getElementById('video-modal');
+function showVideoError() {
   const player = document.getElementById('video-player');
+  const msg = typeof I18n !== 'undefined'
+    ? I18n.t('videos.playError', '视频播放失败，换一个试试吧')
+    : '视频播放失败，换一个试试吧';
+  player.innerHTML = '<div class="video-play-error"><span class="error-icon">😢</span><p>' + msg + '</p></div>';
+}
 
-  // 清空播放器
-  player.innerHTML = '';
-
-  // 隐藏弹窗
-  modal.classList.add('hidden');
-
-  // 移除消息监听
-  window.removeEventListener('message', handleVideoMessage);
+function closeVideo() {
+  destroyYtPlayer();
+  document.getElementById('video-player').innerHTML = '';
+  document.getElementById('video-modal').classList.add('hidden');
 }
 
 // ========== 数学游戏 ==========

@@ -11,6 +11,7 @@ I18n.translations['fr'] = {
   'home.tab.learn': 'Apprendre',
   'home.tab.play': 'Jouer',
   'home.tab.tools': 'Outils',
+  'home.tab.favorites': 'Favoris',
 
   // Menu items - Learning
   'menu.math': 'Jeux de Maths',
@@ -187,6 +188,10 @@ I18n.translations['fr'] = {
   'videos.desc.brain': 'Entraînement cérébral: logique, observation, mémoire',
   'videos.desc.music': 'Musique et mouvement: chansons, danse, exercice',
   'videos.loading': 'Chargement...',
+  'videos.empty': 'Liste indisponible — lance la chaîne !',
+  'videos.playChannel': 'Lire la chaîne',
+  'videos.parentPicks': 'Choisis par papa et maman',
+  'videos.playError': 'Impossible de lire la vidéo, essaie-en une autre !',
   'videos.channel': 'Chaîne',
   'videos.age': '5-7 ans',
   'videos.intro': 'Introduction',
@@ -1095,6 +1100,7 @@ I18n.translations['fr'] = {
   // Fête d'anniversaire
   'menu.birthdayParty': "Fête d'Anniversaire",
   'menu.birthdayParty.desc': 'Fête Licorne Arc-en-ciel',
+  'menu.parkWallpaper': 'Parc magique',
   'birthday.title': "Fête d'Anniversaire",
   'birthday.defaultName': 'Mon Cœur',
   'birthday.partyTitle': " - Fête d'Anniversaire",

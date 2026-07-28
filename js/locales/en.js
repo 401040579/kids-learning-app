@@ -11,6 +11,7 @@ I18n.translations['en'] = {
   'home.tab.learn': 'Learn',
   'home.tab.play': 'Play',
   'home.tab.tools': 'Tools',
+  'home.tab.favorites': 'Favorites',
 
   // Menu items - Learning
   'menu.math': 'Math Games',
@@ -187,6 +188,10 @@ I18n.translations['en'] = {
   'videos.desc.brain': 'Brain training: logic, observation, memory',
   'videos.desc.music': 'Music & movement: songs, dance, exercise',
   'videos.loading': 'Loading...',
+  'videos.empty': 'Video list unavailable — play the channel instead!',
+  'videos.playChannel': 'Play Channel',
+  'videos.parentPicks': 'Picked by Mom & Dad',
+  'videos.playError': 'Video failed to play — try another one!',
   'videos.channel': 'Channel',
   'videos.age': '5-7 years',
   'videos.intro': 'Introduction',
@@ -1163,6 +1168,7 @@ I18n.translations['en'] = {
   // Birthday Party
   'menu.birthdayParty': 'Birthday Party',
   'menu.birthdayParty.desc': 'Unicorn Rainbow Party',
+  'menu.parkWallpaper': 'Magic Park',
   'birthday.title': 'Birthday Party',
   'birthday.defaultName': 'Sweetie',
   'birthday.partyTitle': "'s Birthday Party",

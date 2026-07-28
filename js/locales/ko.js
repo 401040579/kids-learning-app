@@ -11,6 +11,7 @@ I18n.translations['ko'] = {
   'home.tab.learn': '학습',
   'home.tab.play': '게임',
   'home.tab.tools': '도구',
+  'home.tab.favorites': '자주 사용',
 
   // Menu items - Learning
   'menu.math': '수학 게임',
@@ -187,6 +188,10 @@ I18n.translations['ko'] = {
   'videos.desc.brain': '두뇌 훈련: 논리, 관찰력',
   'videos.desc.music': '음악 입문: 리듬, 악기',
   'videos.loading': '로딩 중...',
+  'videos.empty': '동영상 목록을 불러올 수 없어요. 채널을 재생해 보세요!',
+  'videos.playChannel': '채널 재생',
+  'videos.parentPicks': '엄마 아빠 추천',
+  'videos.playError': '동영상을 재생할 수 없어요. 다른 것을 봐요',
   'videos.channel': '채널',
   'videos.age': '5-7세',
   'videos.intro': '소개',
@@ -1092,6 +1097,7 @@ I18n.translations['ko'] = {
   // 생일 파티
   'menu.birthdayParty': '생일 파티',
   'menu.birthdayParty.desc': '유니콘 무지개 파티',
+  'menu.parkWallpaper': '마법 공원',
   'birthday.title': '생일 파티',
   'birthday.defaultName': '아가',
   'birthday.partyTitle': '의 생일 파티',

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v59';
+const CACHE_NAME = 'kids-learning-v60';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -16,7 +16,9 @@ const urlsToCache = [
   '/js/pronunciation.js',
   '/js/aiChat.js',
   '/js/parentNotify.js',
-  '/js/videos.js',
+  '/js/videoWhitelistConfig.js',
+  '/js/videoWhitelist.js',
+  '/js/homeScreen.js',
   '/js/scienceData.js',
   '/js/puzzle.js',
   '/js/puzzleData.js',
@@ -98,6 +100,9 @@ self.addEventListener('message', event => {
 
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
+
+  // 跨域请求（YouTube 播放器/缩略图/CORS 代理等）不经过 SW，直接走网络
+  if (url.origin !== self.location.origin) return;
 
   // 音乐文件使用网络优先策略，失败后使用缓存
   if (musicFiles.some(file => url.pathname.endsWith(file.replace('/music/', '')))) {

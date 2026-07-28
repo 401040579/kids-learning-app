@@ -11,6 +11,7 @@ I18n.translations['ja'] = {
   'home.tab.learn': '学習',
   'home.tab.play': 'ゲーム',
   'home.tab.tools': 'ツール',
+  'home.tab.favorites': 'よく使う',
 
   // Menu items - Learning
   'menu.math': '算数ゲーム',
@@ -187,6 +188,10 @@ I18n.translations['ja'] = {
   'videos.desc.brain': '脳トレ：論理、観察力',
   'videos.desc.music': '音楽入門：リズム、楽器',
   'videos.loading': '読み込み中...',
+  'videos.empty': '動画リストを読み込めません。チャンネルを再生しよう！',
+  'videos.playChannel': 'チャンネル再生',
+  'videos.parentPicks': 'パパママのおすすめ',
+  'videos.playError': '動画を再生できません。他のを試してね',
   'videos.channel': 'チャンネル',
   'videos.age': '5-7歳',
   'videos.intro': '紹介',
@@ -1092,6 +1097,7 @@ I18n.translations['ja'] = {
   // バースデーパーティー
   'menu.birthdayParty': 'バースデーパーティー',
   'menu.birthdayParty.desc': 'ユニコーンレインボーパーティー',
+  'menu.parkWallpaper': 'まほうの公園',
   'birthday.title': 'バースデーパーティー',
   'birthday.defaultName': 'ちゃん',
   'birthday.partyTitle': 'のバースデーパーティー',

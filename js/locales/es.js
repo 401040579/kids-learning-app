@@ -11,6 +11,7 @@ I18n.translations['es'] = {
   'home.tab.learn': 'Aprender',
   'home.tab.play': 'Jugar',
   'home.tab.tools': 'Herramientas',
+  'home.tab.favorites': 'Favoritos',
 
   // Menu items - Learning
   'menu.math': 'Juegos de Matemáticas',
@@ -187,6 +188,10 @@ I18n.translations['es'] = {
   'videos.desc.brain': 'Entrenamiento cerebral: lógica, observación, memoria',
   'videos.desc.music': 'Música y movimiento: canciones, baile, ejercicio',
   'videos.loading': 'Cargando...',
+  'videos.empty': 'No se pudo cargar la lista. ¡Reproduce el canal!',
+  'videos.playChannel': 'Reproducir canal',
+  'videos.parentPicks': 'Elegidos por papá y mamá',
+  'videos.playError': 'No se pudo reproducir. ¡Prueba otro!',
   'videos.channel': 'Canal',
   'videos.age': '5-7 años',
   'videos.intro': 'Introducción',
@@ -1095,6 +1100,7 @@ I18n.translations['es'] = {
   // Fiesta de cumpleaños
   'menu.birthdayParty': 'Fiesta de Cumpleaños',
   'menu.birthdayParty.desc': 'Fiesta de Unicornio Arcoíris',
+  'menu.parkWallpaper': 'Parque mágico',
   'birthday.title': 'Fiesta de Cumpleaños',
   'birthday.defaultName': 'Cariño',
   'birthday.partyTitle': ' - Fiesta de Cumpleaños',

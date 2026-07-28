@@ -11,6 +11,7 @@ I18n.translations['zh'] = {
   'home.tab.learn': '学习',
   'home.tab.play': '游戏',
   'home.tab.tools': '工具',
+  'home.tab.favorites': '常用',
 
   // Menu items - Learning
   'menu.math': '数学游戏',
@@ -187,6 +188,10 @@ I18n.translations['zh'] = {
   'videos.desc.brain': '专注力与脑力：逻辑、观察、记忆、思维训练',
   'videos.desc.music': '音乐与运动：儿歌、律动、亲子运动',
   'videos.loading': '加载中...',
+  'videos.empty': '视频列表加载不出来，直接播放频道吧！',
+  'videos.playChannel': '播放频道',
+  'videos.parentPicks': '爸妈精选',
+  'videos.playError': '视频播放失败，换一个试试吧',
   'videos.channel': '频道',
   'videos.age': '5-7岁',
   'videos.intro': '简介',
@@ -1166,6 +1171,7 @@ I18n.translations['zh'] = {
   // 生日派对
   'menu.birthdayParty': '生日派对',
   'menu.birthdayParty.desc': '独角兽彩虹派对',
+  'menu.parkWallpaper': '魔法公园',
   'birthday.title': '生日派对',
   'birthday.defaultName': '宝贝',
   'birthday.partyTitle': '的生日派对',

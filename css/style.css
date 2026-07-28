@@ -373,6 +373,112 @@ body {
   transform: translateY(-2px);
 }
 
+/* ========== 首页分屏（iPhone 风主屏） ========== */
+.home-pager {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  /* 注意：不加 gap 和横向 padding，翻页索引按 n×clientWidth 计算 */
+}
+
+.home-pager::-webkit-scrollbar {
+  display: none;
+}
+
+.home-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px 8px;
+  align-content: start;
+  padding: 16px 6px 8px;
+}
+
+.app-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-tile-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.85rem;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.18);
+  transition: transform 0.15s ease;
+}
+
+.app-tile:active .app-tile-icon {
+  transform: scale(0.88);
+}
+
+.app-tile-name {
+  max-width: 100%;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pager-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0 4px;
+}
+
+.pager-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 105, 180, 0.25);
+  transition: all 0.25s ease;
+}
+
+.pager-dots .dot.active {
+  width: 22px;
+  background: var(--primary);
+}
+
+@media (min-width: 768px) {
+  .app-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 22px 12px;
+  }
+
+  .app-tile-icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+    font-size: 2.2rem;
+  }
+
+  .app-tile-name {
+    font-size: 0.85rem;
+  }
+}
+
 /* 卡片筛选动画 */
 @keyframes fadeInUp {
   from {
@@ -625,6 +731,124 @@ body {
   border-radius: 25px;
   font-size: 1rem;
   cursor: pointer;
+}
+
+/* ========== 白名单频道分区（探索视频页） ========== */
+.channel-section {
+  grid-column: 1 / -1;
+}
+
+.channel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 2px 12px;
+}
+
+.channel-icon {
+  font-size: 1.4rem;
+}
+
+.channel-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.video-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.video-thumb-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(255, 105, 180, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.video-thumb-card:active {
+  transform: scale(0.96);
+}
+
+.video-thumb-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #FFE4F0;
+}
+
+.video-thumb-title {
+  padding: 8px 10px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.channel-fallback {
+  background: white;
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.channel-fallback .loading-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 10px;
+  animation: bounce 1s ease infinite;
+}
+
+.channel-fallback p {
+  margin-bottom: 14px;
+}
+
+.btn-play-channel {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 25px;
+  font-size: 1.05rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+}
+
+.btn-play-channel:active {
+  transform: scale(0.96);
+}
+
+/* 播放失败提示（在 16:9 播放器容器内居中） */
+.video-play-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: white;
+}
+
+.video-play-error .error-icon {
+  font-size: 3rem;
+}
+
+@media (min-width: 768px) {
+  .video-thumb-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .video-card {

@@ -11,6 +11,7 @@ I18n.translations['de'] = {
   'home.tab.learn': 'Lernen',
   'home.tab.play': 'Spielen',
   'home.tab.tools': 'Werkzeuge',
+  'home.tab.favorites': 'Favoriten',
 
   // Menu items - Learning
   'menu.math': 'Mathe-Spiele',
@@ -187,6 +188,10 @@ I18n.translations['de'] = {
   'videos.desc.brain': 'Gehirntraining: Logik, Beobachtung, Gedächtnis',
   'videos.desc.music': 'Musik & Bewegung: Lieder, Tanz, Sport',
   'videos.loading': 'Laden...',
+  'videos.empty': 'Videoliste nicht verfügbar – spiel den Kanal ab!',
+  'videos.playChannel': 'Kanal abspielen',
+  'videos.parentPicks': 'Von Mama & Papa ausgewählt',
+  'videos.playError': 'Video konnte nicht abgespielt werden – probier ein anderes!',
   'videos.channel': 'Kanal',
   'videos.age': '5-7 Jahre',
   'videos.intro': 'Einführung',
@@ -1095,6 +1100,7 @@ I18n.translations['de'] = {
   // Geburtstagsparty
   'menu.birthdayParty': 'Geburtstagsparty',
   'menu.birthdayParty.desc': 'Einhorn-Regenbogen-Party',
+  'menu.parkWallpaper': 'Zauberpark',
   'birthday.title': 'Geburtstagsparty',
   'birthday.defaultName': 'Schatz',
   'birthday.partyTitle': 's Geburtstagsparty',

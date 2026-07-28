@@ -25,10 +25,11 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v50)
+├── sw.js               # Service Worker (当前 v60)
 ├── css/style.css       # 所有样式
 ├── js/
-│   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用
+│   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
+│   ├── homeScreen.js   # 首页分屏（iPhone 风图标 4 屏，36 个功能入口配置）
 │   ├── i18n.js         # 国际化核心模块
 │   ├── locales/        # 多语言翻译文件
 │   │   ├── en.js       # English
@@ -54,7 +55,9 @@ kids-learning-app/
 │   ├── learningReport.js # 学习报告
 │   ├── dailyCheckin.js # 每日签到
 │   ├── wrongQuestions.js # 错题本
-│   ├── videos.js       # 视频数据
+│   ├── videoWhitelistConfig.js # 视频白名单配置（家长编辑：频道/单视频）
+│   ├── videoWhitelist.js # 视频白名单（频道 RSS 拉取/缓存/渲染）
+│   ├── videos.js       # 旧视频数据（已停用，不再加载）
 │   ├── scienceData.js  # 科学题库
 │   ├── lifeSkills.js   # 生活技能（时钟/钱币/日历）
 │   ├── lifeSkillsData.js # 生活技能数据
@@ -101,7 +104,8 @@ kids-learning-app/
 
 | 模块 | 文件 | 状态 |
 |------|------|------|
-| 探索视频 | videos.js | ✅ 完成 |
+| 首页分屏 | homeScreen.js | ✅ 完成（iPhone 风 4 屏：常用/学习/游戏/工具） |
+| 探索视频 | videoWhitelist.js + videoWhitelistConfig.js | ✅ 完成（白名单制：频道 RSS + 单视频） |
 | 数学游戏 | app.js | ✅ 完成（加减乘除/10/20/30） |
 | 英语学习 | app.js | ✅ 完成 |
 | 中文学习 | app.js | ✅ 完成 |
@@ -173,12 +177,13 @@ const CACHE_NAME = 'kids-learning-vXX';
 | kidsChoreTracker | 家庭积分榜数据 |
 | kidsBirthdayParty | 生日派对数据 |
 | kidsToothFairy | 牙仙子掉牙记录/奖励规则 |
+| videoWhitelistCache | 白名单频道视频列表缓存（6 小时过期） |
 
 ## 注意事项
 
-1. **单页应用**: 所有页面在 `index.html`，通过 `showScreen()` 切换
-2. **PWA 缓存**: 修改资源后必须更新 `sw.js` 版本号
-3. **儿童安全**: 视频用 youtube-nocookie.com，结束显示遮罩
+1. **单页应用**: 所有页面在 `index.html`，通过 `navigateTo()` 切换 `.page`；首页是 `homeScreen.js` 渲染的横向分屏（scroll-snap），全屏功能各自用 modal
+2. **PWA 缓存**: 修改资源后必须更新 `sw.js` 版本号；SW 只拦截同源请求（跨域早退）
+3. **儿童安全**: 视频白名单制——孩子只能看 `videoWhitelistConfig.js` 里配置的频道/视频；播放用官方 YouTube IFrame API（www.youtube.com + enablejsapi），结束事件触发遮罩盖住推荐墙；fs:0 禁全屏（iOS 系统全屏时 DOM 遮罩失效）
 4. **响应式**: 主要针对手机/平板，竖屏优先
 5. **离线优先**: 核心功能支持完全离线使用
 6. **多语言**: 使用 `data-i18n` 属性，调用 `I18n.t('key')` 获取翻译
