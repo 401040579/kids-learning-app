@@ -8899,6 +8899,10 @@ body {
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
+  /* fixed 定位 + left:50% 且不设宽度时，可用宽度只剩视口的一半（375px 屏上仅 188px），
+     会把「立即更新」按钮挤成竖排文字。用 max-content 按内容撑开，再用 max-width 兜底。 */
+  width: max-content;
+  max-width: calc(100vw - 24px);
   z-index: 9999;
   animation: slideUp 0.3s ease-out;
 }
@@ -8922,6 +8926,7 @@ body {
   padding: 12px 16px;
   border-radius: 50px;
   box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+  white-space: nowrap;
 }
 
 .update-icon {
