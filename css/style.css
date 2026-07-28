@@ -745,6 +745,15 @@ body {
   padding: 6px 2px 12px;
 }
 
+/* 频道标题旁的常驻播放按钮（播放列表模式，含频道全部视频） */
+.channel-header .btn-play-channel.small {
+  margin-left: auto;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(255, 105, 180, 0.3);
+}
+
 .channel-icon {
   font-size: 1.4rem;
 }

@@ -183,7 +183,7 @@ const CACHE_NAME = 'kids-learning-vXX';
 
 1. **单页应用**: 所有页面在 `index.html`，通过 `navigateTo()` 切换 `.page`；首页是 `homeScreen.js` 渲染的横向分屏（scroll-snap），全屏功能各自用 modal
 2. **PWA 缓存**: 修改资源后必须更新 `sw.js` 版本号；SW 只拦截同源请求（跨域早退）
-3. **儿童安全**: 视频白名单制——孩子只能看 `videoWhitelistConfig.js` 里配置的频道/视频；播放用官方 YouTube IFrame API（www.youtube.com + enablejsapi），结束事件触发遮罩盖住推荐墙；fs:0 禁全屏（iOS 系统全屏时 DOM 遮罩失效）
+3. **儿童安全**: 视频白名单制——孩子只能看 `videoWhitelistConfig.js` 里配置的频道/视频；播放用官方 YouTube IFrame API（www.youtube.com + enablejsapi），结束事件触发遮罩盖住推荐墙；fs:0 禁全屏（iOS 系统全屏时 DOM 遮罩失效）。频道列表：配置 apiKey 走官方 Data API 拉全量（≤500 条）；未配置走 RSS（上限 15 条/次）+ 累积缓存只增不减；「播放频道」按钮始终可播全量播放列表
 4. **响应式**: 主要针对手机/平板，竖屏优先
 5. **离线优先**: 核心功能支持完全离线使用
 6. **多语言**: 使用 `data-i18n` 属性，调用 `I18n.t('key')` 获取翻译
