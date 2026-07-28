@@ -40,12 +40,8 @@ on:
 # permissions key in the workflow file.」—— 也就是说仓库默认设成只读时，
 # workflow 里显式声明依然可以把 contents 抬到 write（唯一的例外是来自 fork 的
 # PR，本 workflow 不会被 fork PR 触发，不受影响）。
-#
-# pages: write 是为了在下面显式触发一次 Pages 构建，原因见 "Trigger GitHub Pages
-# rebuild" 那一步的注释。
 permissions:
   contents: write
-  pages: write
 
 # 定时任务、手动触发、push 触发可能撞在一起，串行执行避免两个 job 同时往 main 推。
 # 不开 cancel-in-progress：正在 commit/push 的任务被腰斩容易留下半截状态。
@@ -185,20 +181,14 @@ jobs:
             git push origin HEAD:main
           fi
 
-      # ★ 没有这一步，前面所有工作都白做 ★
-      # 本仓库的 Pages 是 legacy「Deploy from a branch」模式，而 GitHub 官方文档写明：
-      # 「Commits pushed by a GitHub Actions workflow that uses the GITHUB_TOKEN do not
-      #   trigger a GitHub Pages build.」
-      # 也就是说上一步 push 成功了，app.tao.irish 上的文件却不会更新——「每日自动刷新」
-      # 对孩子端零效果。所以这里显式调 API 让 Pages 重新构建一次。
-      - name: Trigger GitHub Pages rebuild
-        if: steps.check.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh api --method POST "repos/${{ github.repository }}/pages/builds"
-          echo "已请求 Pages 重新构建；用下面命令确认状态："
-          echo "  gh api repos/${{ github.repository }}/pages/builds/latest --jq .status"
+      # 关于站点部署：GitHub 文档有一句「Commits pushed by a workflow using the
+      # GITHUB_TOKEN do not trigger a GitHub Pages build」，据此我们一度加了一步显式
+      # 调 POST /pages/builds。但 2026-07-28 实测本仓库（legacy「Deploy from a branch」
+      # 模式）：bot 的 push 确实触发了内建的 pages-build-deployment 并部署成功，
+      # 而那次显式调用只是额外造了一个并发构建，两个互相取消、状态显示 errored。
+      # 所以这里不再显式触发 —— 依赖内建部署即可。
+      # 如果将来发现 bot 提交后站点不更新，用下面命令手动补一次：
+      #   gh api --method POST repos/401040579/kids-learning-app/pages/builds
 
       - name: Job summary
         if: always()
