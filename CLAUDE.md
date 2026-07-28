@@ -77,6 +77,8 @@ kids-learning-app/
 │   ├── birthdayParty.js   # 生日派对
 │   ├── parkWallpaper.js   # 魔法公园（声音互动壁纸）
 │   └── toothFairy.js      # 牙仙子传统（掉牙记录/惊喜信/收藏证书）
+├── docs/
+│   └── 踩坑记录.md     # ⚠️ 改代码前先看：那些与官方文档/直觉相反的实测结论
 ├── scripts/
 │   └── fetch_videos.py # 抓取白名单频道全部视频 → 生成 data/videos.json（CI 调用）
 ├── data/
@@ -195,6 +197,10 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 | videoWhitelistCache | 白名单频道视频列表缓存（6 小时过期） |
 
 ## 注意事项
+
+> 📌 **动手改代码前先翻一遍 [docs/踩坑记录.md](docs/踩坑记录.md)**。
+> 那里记的都是「照官方文档做反而是错的」「看起来像 bug 其实是环境问题」这类事实，
+> 每条都有实测日期和证据，能省掉大量重复排查。
 
 1. **单页应用**: 所有页面在 `index.html`，通过 `navigateTo()` 切换 `.page`；首页是 `homeScreen.js` 渲染的横向分屏（scroll-snap），全屏功能各自用 modal
 2. **PWA 缓存**: 修改资源后必须更新 `sw.js` 版本号；SW 只拦截同源请求（跨域早退）
