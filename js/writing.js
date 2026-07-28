@@ -821,12 +821,8 @@ async function speakCurrentChar() {
 
   try {
     // 使用 Puter.js TTS
-    if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2speech) {
-      const audio = await puter.ai.txt2speech(char.char, {
-        voice: 'Zhiyu',
-        engine: 'neural',
-        language: 'cmn-CN'
-      });
+    if (PuterTTS.available()) {
+      const audio = await PuterTTS.speak(char.char);
       audio.play();
     } else if ('speechSynthesis' in window) {
       // 使用 Web Speech API 作为后备

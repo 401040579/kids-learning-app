@@ -552,12 +552,8 @@ const PictureBook = {
 
     try {
       // 使用 Puter.js AI TTS（神经网络语音，更自然）
-      if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2speech) {
-        const audio = await puter.ai.txt2speech(page.text, {
-          voice: 'Zhiyu',      // 中文女声
-          engine: 'neural',    // 神经网络引擎，声音更自然
-          language: 'cmn-CN'   // 普通话
-        });
+      if (PuterTTS.available()) {
+        const audio = await PuterTTS.speak(page.text);
 
         this.currentAudio = audio;
 

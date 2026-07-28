@@ -242,13 +242,9 @@ const SongPractice = {
   // 使用 Puter.js 朗读（神经网络语音）
   async speak(text) {
     try {
-      if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2speech) {
-        // 使用 Puter.js 神经网络 TTS（与 aiChat/pictureBook 一致）
-        const audio = await puter.ai.txt2speech(text, {
-          voice: 'Zhiyu',      // 中文女声
-          engine: 'neural',    // 神经网络引擎，声音更自然
-          language: 'cmn-CN'   // 普通话
-        });
+      if (PuterTTS.available()) {
+        // 神经网络 TTS，不可用时由 catch 降级到 Web Speech
+        const audio = await PuterTTS.speak(text);
 
         // 设置播放速度
         audio.playbackRate = this.speed;

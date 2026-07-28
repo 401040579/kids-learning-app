@@ -10,7 +10,7 @@ const AIChat = {
 
   // 配置
   config: {
-    // Qwen2.5-0.5B（中文更好，约350MB）
+    // Qwen2.5-0.5B（约 280MB：权重 265MB + tokenizer/wasm）
     modelId: "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
     // 备选模型：SmolLM2-360M（约300MB，加载快，但中文较差）
     // modelId: "SmolLM2-360M-Instruct-q4f32_1-MLC",
@@ -74,7 +74,7 @@ const AIChat = {
 
       // 创建一个内联模块来加载WebLLM (使用 @mlc-ai/web-llm)
       const moduleCode = `
-        import * as webllm from 'https://esm.run/@mlc-ai/web-llm';
+        import * as webllm from 'https://esm.run/@mlc-ai/web-llm@0.2.84';
         window.webllm = webllm;
         window.dispatchEvent(new Event('webllm-loaded'));
       `;
@@ -223,10 +223,22 @@ const AIChat = {
   },
 
   // 检查是否已下载过模型（缓存检测）
+  // 注意：WebLLM 默认 cacheBackend 是 "cache"（Cache API），scope 名实测为
+  // webllm/model、webllm/wasm、webllm/config，**根本不写 IndexedDB**。
+  // 原来查 indexedDB.databases() 恒为 false，导致模型明明在本地，
+  // 孩子每次点开 AI 聊天都还要看一遍「需要下载 350MB」的吓人确认框。
   async checkModelCached() {
     try {
-      const dbs = await indexedDB.databases();
-      return dbs.some(db => db.name && db.name.includes('webllm'));
+      if (typeof caches !== 'undefined' && caches.keys) {
+        const names = await caches.keys();
+        if (names.some(n => n.startsWith('webllm'))) return true;
+      }
+      // 老版本 WebLLM 用 IndexedDB，一并兼容
+      if (indexedDB.databases) {
+        const dbs = await indexedDB.databases();
+        if (dbs.some(db => db.name && db.name.includes('webllm'))) return true;
+      }
+      return false;
     } catch {
       return false;
     }
@@ -630,12 +642,8 @@ const AIVoice = {
     this.stopSpeaking();
 
     try {
-      if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2speech) {
-        const audio = await puter.ai.txt2speech(text, {
-          voice: 'Zhiyu',
-          engine: 'neural',
-          language: 'cmn-CN'
-        });
+      if (PuterTTS.available()) {
+        const audio = await PuterTTS.speak(text);
 
         this.currentAudio = audio;
         audio.play();
