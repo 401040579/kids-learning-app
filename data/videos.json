@@ -3,7 +3,7 @@
   "channels": {
     "UCVgXBX_6nrVUWFXYN5nTMRQ": {
       "name": "Riko's Reading Room",
-      "videoCount": 435,
+      "videoCount": 434,
       "videos": [
         {
           "id": "OXSEc-mNeT4",
@@ -2174,11 +2174,6 @@
           "id": "RosnEqiMJmU",
           "title": "🐛 The Very Impatient Caterpillar",
           "duration": "3:29"
-        },
-        {
-          "id": "KJuQlTroRk4",
-          "title": "🐦 Pigeon Has to Go to School",
-          "duration": "2:27"
         }
       ]
     }
