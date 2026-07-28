@@ -192,6 +192,7 @@ I18n.translations['es'] = {
   'videos.playChannel': 'Reproducir canal',
   'videos.parentPicks': 'Elegidos por papá y mamá',
   'videos.playError': 'No se pudo reproducir. ¡Prueba otro!',
+  'videos.loadMore': 'Ver más',
   'videos.channel': 'Canal',
   'videos.age': '5-7 años',
   'videos.intro': 'Introducción',

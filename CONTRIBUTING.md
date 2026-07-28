@@ -51,24 +51,30 @@ docs: 更新 README 使用说明
 
 ## 视频内容更新
 
-编辑 `js/videos.js` 或 `data/videos.json` 添加/修改视频：
+视频采用**白名单制**：孩子只能看到白名单里的频道和视频。唯一的编辑入口是
+`js/videoWhitelistConfig.js`：
 
 ```javascript
-{
-  id: "category-001",
-  category: "math",           // 分类 ID
-  title: "English Title",
-  titleZh: "中文标题",
-  youtubeId: "VIDEO_ID",
-  duration: "5:00",
-  ageMin: 5,
-  ageMax: 7,
-  skills: ["技能1", "技能2"],
-  description: "视频简介",
-  whyRecommend: "推荐理由",
-  parentTips: "家长贴士"
-}
+const VIDEO_WHITELIST = {
+  apiKey: '',                                 // 可选，见文件内说明
+  channels: [
+    { channelId: 'UC...', name: '频道名', icon: '📚' }
+  ],
+  videos: [
+    { id: 'VIDEO_ID', title: '标题' }         // 单独指定的视频
+  ]
+};
 ```
+
+配置改动 push 到 main 后，GitHub Actions 会自动运行 `scripts/fetch_videos.py`
+抓取频道全部视频、重新生成 `data/videos.json` 并 bump Service Worker 版本号。
+也可以本地手动跑一次：
+
+```bash
+python3 scripts/fetch_videos.py
+```
+
+> `js/videos.js` 是旧的内置视频库，已停用不再加载，请勿在它里面加内容。
 
 ## 部署
 

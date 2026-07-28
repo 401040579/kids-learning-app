@@ -1,720 +1,2186 @@
 {
-  "meta": {
-    "title": "6岁儿童视频推荐专区",
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-20",
-    "curator": "儿童内容策展专家 + 幼儿教育顾问 + 儿童心理安全审核员",
-    "targetAge": 6,
-    "ageRange": "5-7岁",
-    "totalVideos": 30,
-    "language": "英文为主",
-    "selectionCriteria": {
-      "safetyStandards": [
-        "无暴力内容",
-        "无恐怖元素",
-        "无成人暗示",
-        "无危险模仿内容",
-        "节奏适中不刺激"
-      ],
-      "educationalValue": [
-        "认知发展",
-        "情绪管理",
-        "社交能力",
-        "学习习惯"
-      ],
-      "technicalRequirements": {
-        "durationRange": "3-12分钟为主，最长不超过20分钟",
-        "sources": ["YouTube官方频道", "PBS Kids", "Sesame Street", "National Geographic Kids"],
-        "quality": "高清画面，专业制作"
-      }
+  "generatedAt": "2026-07-28T06:58:32Z",
+  "channels": {
+    "UCVgXBX_6nrVUWFXYN5nTMRQ": {
+      "name": "Riko's Reading Room",
+      "videoCount": 435,
+      "videos": [
+        {
+          "id": "OXSEc-mNeT4",
+          "title": "🐤 Say Please, Ellie: Learning How to Say the Magic Word by Avery Smart | Read Aloud for Kids",
+          "duration": "6:39"
+        },
+        {
+          "id": "nXEWVv8P3tw",
+          "title": "🤵🏾‍♀️ A Voice of Hope: The Myrlie Evers-Williams Story by Nadia Salomon | Read Aloud for Kids",
+          "duration": "11:01"
+        },
+        {
+          "id": "RDItfEyBi3M",
+          "title": "🐤 Ellie the Tiny Little Chick by Avery Smart | Bedtime Read Aloud for Kids",
+          "duration": "5:16"
+        },
+        {
+          "id": "0OvL5BBo_Ng",
+          "title": "🍣 The Perfect Sushi",
+          "duration": "6:03"
+        },
+        {
+          "id": "D3KhdSQrImo",
+          "title": "🪙 My Rows and Piles of Coins",
+          "duration": "11:15"
+        },
+        {
+          "id": "zstG66HpvaY",
+          "title": "📖 The Story of the Saxophone by Lesa Cline-Ransome | Music Read Aloud for Kids",
+          "duration": "10:07"
+        },
+        {
+          "id": "LDdEZus6ezs",
+          "title": "❤️ In My Heart: A Book of Feelings by Jo Witek | Social Emotional Read Aloud for Kids",
+          "duration": "4:49"
+        },
+        {
+          "id": "7tlPF_cB8PE",
+          "title": "🧗🏻‍♀️ How to Solve a Problem by Ashima Shiraishi | Inspiring Read Aloud for Kids",
+          "duration": "7:12"
+        },
+        {
+          "id": "2NDqO7G66mU",
+          "title": "💬 The Very Inappropriate Word by Jim Tobin | Funny Read Aloud for Kids",
+          "duration": "7:06"
+        },
+        {
+          "id": "XX77P09UM2E",
+          "title": "🪙 Once Upon a Dime: A Math Adventure",
+          "duration": "13:55"
+        },
+        {
+          "id": "d22s14wB_WQ",
+          "title": "🦁 Trying",
+          "duration": "9:04"
+        },
+        {
+          "id": "tlL7vCDnb4Q",
+          "title": "😇 Sally Goes to Heaven by Stephen Huneck | A Gentle Read Aloud About Pet Loss for Kids",
+          "duration": "5:44"
+        },
+        {
+          "id": "pLwlR9wyCq4",
+          "title": "🍝 Dinner With the Highbrows",
+          "duration": "10:18"
+        },
+        {
+          "id": "DWfPs8fxpUE",
+          "title": "🌺 Tiny Perfect Things",
+          "duration": "3:37"
+        },
+        {
+          "id": "ccfXjaAi0_k",
+          "title": "❤️ Samsoon and Farewells by Soon Ju Kim | A Gentle Read Aloud About Saying Goodbye",
+          "duration": "5:19"
+        },
+        {
+          "id": "dZWoLYsFC4A",
+          "title": "🐷 The Story of the Three Little Pigs",
+          "duration": "7:31"
+        },
+        {
+          "id": "0h6X_M_ynmA",
+          "title": "🌙 Samsoon and the Moon | Samsoon Adventures",
+          "duration": "8:36"
+        },
+        {
+          "id": "AO3AnFKDsQA",
+          "title": "👽 E.T. the Extra-Terrestrial",
+          "duration": "11:42"
+        },
+        {
+          "id": "5no9SMRR7iw",
+          "title": "🐻 Denslow's Three Bears",
+          "duration": "7:22"
+        },
+        {
+          "id": "3vU2Fx0hDPo",
+          "title": "👩🏻‍🏫 Because I Had a Teacher",
+          "duration": "3:26"
+        },
+        {
+          "id": "98pYn5Qbq4A",
+          "title": "🏰 Dreaming Up: A Celebration of Building",
+          "duration": "5:04"
+        },
+        {
+          "id": "FLdyTLCqjgg",
+          "title": "🌱 You Belong Here",
+          "duration": "5:25"
+        },
+        {
+          "id": "USw7aS6ICfw",
+          "title": "🍀 Finding Muchness: How to Add More Life to Life",
+          "duration": "7:52"
+        },
+        {
+          "id": "CKc-q8ysAIo",
+          "title": "🍰 Eat the Cake",
+          "duration": "4:38"
+        },
+        {
+          "id": "Xwn5g5i9M74",
+          "title": "🫧 Noticing",
+          "duration": "11:11"
+        },
+        {
+          "id": "ADS87XUPr7I",
+          "title": "🍬 The Candy Dish",
+          "duration": "9:04"
+        },
+        {
+          "id": "gIigjiqpX5Y",
+          "title": "❤️‍🔥 What Do You Do With a Problem?",
+          "duration": "5:41"
+        },
+        {
+          "id": "btoUXK_7ZXA",
+          "title": "🦋 Maybe",
+          "duration": "5:56"
+        },
+        {
+          "id": "rYWZzXtTk1w",
+          "title": "🏃🏽‍♀️ The Girl Who Ran",
+          "duration": "10:29"
+        },
+        {
+          "id": "mwvIKkAaP60",
+          "title": "👽 The X Files: Earth Children Are Weird",
+          "duration": "5:26"
+        },
+        {
+          "id": "GL53hraCk38",
+          "title": "🦋 Goodnight, Butterfly",
+          "duration": "7:52"
+        },
+        {
+          "id": "FGsfYUNA1ck",
+          "title": "🔠 Take Away the A",
+          "duration": "4:21"
+        },
+        {
+          "id": "jzsqWsca8I0",
+          "title": "🦋 The Little Butterfly That Could",
+          "duration": "7:38"
+        },
+        {
+          "id": "4pQ0DGS3a0M",
+          "title": "🪰 Bug in a Vacuum",
+          "duration": "8:44"
+        },
+        {
+          "id": "jI4YAO_Q2qM",
+          "title": "🍰 It Happened on Sweet Street",
+          "duration": "7:11"
+        },
+        {
+          "id": "jSePpNzbNg0",
+          "title": "🏅 The Last Badge by George McClements | Funny Adventure Read Aloud for Kids",
+          "duration": "11:47"
+        },
+        {
+          "id": "2Xet9-Zlrb8",
+          "title": "🪹 The Perfect Nest",
+          "duration": "6:38"
+        },
+        {
+          "id": "JAYKmcxQFEU",
+          "title": "👦🏻 Raj's Rule by Lana Button | Funny Read Aloud for Kids",
+          "duration": "4:44"
+        },
+        {
+          "id": "NkLBTPtJDkQ",
+          "title": "🦫 Grumpy Groundhog",
+          "duration": "5:07"
+        },
+        {
+          "id": "_rP-LTbyVjA",
+          "title": "💤 Good Night, Body: Finding Calm from Head to Toe",
+          "duration": "6:16"
+        },
+        {
+          "id": "fxHkkGpQhCk",
+          "title": "👨🏿 I am Martin Luther King, Jr. | Ordinary People Change the World",
+          "duration": "19:18"
+        },
+        {
+          "id": "18ytFY3_q8w",
+          "title": "❤️ Caveboy Crush",
+          "duration": "6:00"
+        },
+        {
+          "id": "OQPrv_ZaEcw",
+          "title": "🐉 The Great Race: The Story of the Chinese Zodiac",
+          "duration": "6:51"
+        },
+        {
+          "id": "z_TT-X-G4rI",
+          "title": "3x4: TOON Level 1 (TOON Books)",
+          "duration": "4:43"
+        },
+        {
+          "id": "6Ie_QQ3h-BI",
+          "title": "💤 Goodnight Ganesha",
+          "duration": "7:17"
+        },
+        {
+          "id": "SCSE23tZ4D4",
+          "title": "📖 Ralph Tells a Story",
+          "duration": "9:02"
+        },
+        {
+          "id": "oWf4d3SLb2Y",
+          "title": "🎄 A Very Fuddles Christmas",
+          "duration": "5:24"
+        },
+        {
+          "id": "GYBjuORl--4",
+          "title": "🎄 The Animals’ Christmas Carol",
+          "duration": "13:36"
+        },
+        {
+          "id": "Egar5L3ZKZk",
+          "title": "👧🏻 The Gingerbread Girl Goes Animal Crackers",
+          "duration": "10:55"
+        },
+        {
+          "id": "4g6z-5bvWgs",
+          "title": "🗓️ A New Day",
+          "duration": "12:01"
+        },
+        {
+          "id": "bkWU75o-T2A",
+          "title": "👧🏻 I Am Frida Kahlo by Brad Meltzer | Biography Read Aloud for Kids",
+          "duration": "13:58"
+        },
+        {
+          "id": "opxcFEwzduw",
+          "title": "🔤 Skin Like Milk, Hair of Silk: What Are Similes and Metaphors?",
+          "duration": "3:46"
+        },
+        {
+          "id": "XZqDNqkNpfU",
+          "title": "🔤 Feet and Puppies, Thieves and Guppies: What Are Irregular Plurals?",
+          "duration": "6:02"
+        },
+        {
+          "id": "_vj4gy1RbAo",
+          "title": "👩🏿‍🦱 I Am Rosa Parks by Brad Meltzer | Black History Month Read Aloud for Kids",
+          "duration": "13:31"
+        },
+        {
+          "id": "kWz0b0biGO0",
+          "title": "👨🏻‍🎨 I Am Leonardo da Vinci by Brad Meltzer | Biography Read Aloud for Kids",
+          "duration": "16:01"
+        },
+        {
+          "id": "ruMwoeBK4TY",
+          "title": "👨🏻‍🦳 I Am Albert Einstein by Brad Meltzer | Biography Read Aloud for Kids",
+          "duration": "12:01"
+        },
+        {
+          "id": "LBnMsTbNuJM",
+          "title": "🥷🏻 Unplugged Ninja: A Children's Book About Technology, Screen Time, and Finding Balance",
+          "duration": "4:13"
+        },
+        {
+          "id": "gVViVVwkKv4",
+          "title": "👧🏻 Frida Kahlo and Her Animalitos",
+          "duration": "8:23"
+        },
+        {
+          "id": "ZHo3LYkhmQw",
+          "title": "🥋 Rena Glickman, Queen of Judo",
+          "duration": "8:45"
+        },
+        {
+          "id": "UDB2e8uK5b0",
+          "title": "Wild Fibonacci: Nature's Secret Code Revealed",
+          "duration": "6:42"
+        },
+        {
+          "id": "Uz0fm1WLRF4",
+          "title": "🐌 Blockhead: The Life of Fibonacci (Math)",
+          "duration": "13:19"
+        },
+        {
+          "id": "fF_c0fu4wck",
+          "title": "💋 The Kissing Hand",
+          "duration": "5:18"
+        },
+        {
+          "id": "sjamQc2aqHM",
+          "title": "🦷 Cavities vs. Toothpaste: A Silly Hygiene Book about Brushing Teeth!",
+          "duration": "9:02"
+        },
+        {
+          "id": "SfHaS2Bp_3E",
+          "title": "🦠 Germs vs. Soap: A Silly Hygiene Book about Washing Hands!",
+          "duration": "8:18"
+        },
+        {
+          "id": "8ibxwoBJR48",
+          "title": "👦🏻 The Boy Who Loved Math: The Improbable Life of Paul Erdos",
+          "duration": "12:58"
+        },
+        {
+          "id": "TjYqqfwveMM",
+          "title": "🐢 Emma’s Turtle",
+          "duration": "4:51"
+        },
+        {
+          "id": "bkYn1h69eKM",
+          "title": "Skin Like Milk, Hair of Silk: What Are Similes and Metaphors?",
+          "duration": "3:46"
+        },
+        {
+          "id": "lo2mpjpBSBY",
+          "title": "💵 A Dollar, A Penny, How Much and How Many",
+          "duration": "3:42"
+        },
+        {
+          "id": "8Ct_nh0mOk0",
+          "title": "🌱 We Are Growing! | Elephant & Piggie Like Reading!",
+          "duration": "4:40"
+        },
+        {
+          "id": "Lbl5aY4vLfA",
+          "title": "🍋 It Began with Lemonade",
+          "duration": "4:10"
+        },
+        {
+          "id": "ZYvDxNGibiw",
+          "title": "👩🏼‍🚀 The Astronaut With a Song for the Stars: The Story of Dr. Ellen Ochoa (Amazing Scientists 4)",
+          "duration": "7:35"
+        },
+        {
+          "id": "0LjDgF7iPKE",
+          "title": "🆗 The OK Book",
+          "duration": "2:46"
+        },
+        {
+          "id": "AU-Rq3FTquE",
+          "title": "✋🏻 Definitely Do Not Open this Book",
+          "duration": "6:05"
+        },
+        {
+          "id": "2dKRXvS_i3k",
+          "title": "👁 The Doctor with an Eye to Eyes: : The Story of Dr. Patricia Bath (Amazing Scientists, 2)",
+          "duration": "7:57"
+        },
+        {
+          "id": "LPQMGmCG-K8",
+          "title": "🥄 Spork",
+          "duration": "4:44"
+        },
+        {
+          "id": "3fomDC_ccQ0",
+          "title": "🎓 Last Day Blues | The Jitters Series",
+          "duration": "6:28"
+        },
+        {
+          "id": "Fws3vi2rWHA",
+          "title": "🦷 Sweet Tooth",
+          "duration": "11:58"
+        },
+        {
+          "id": "60inFBrfbwY",
+          "title": "👨🏻‍🦳 Albert Einstein | Little People, BIG DREAMS",
+          "duration": "5:04"
+        },
+        {
+          "id": "hW3XfD8PV_4",
+          "title": "👩🏻 Coco Chanel | Little People, BIG DREAMS",
+          "duration": "3:03"
+        },
+        {
+          "id": "0kfWM7DZBis",
+          "title": "💰 Lily Learns about Wants and Needs",
+          "duration": "5:48"
+        },
+        {
+          "id": "3EtuFD-i5TA",
+          "title": "🌊 Ocean Soup: A Recipe for You, Me, and a Cleaner Sea",
+          "duration": "5:17"
+        },
+        {
+          "id": "YU76LViesNk",
+          "title": "👩🏻‍🦳 Jane Goodall | Little People, BIG DREAMS",
+          "duration": "4:18"
+        },
+        {
+          "id": "MYu-L0rZSSA",
+          "title": "👧🏻 When Sophie Thinks She Can’t",
+          "duration": "6:11"
+        },
+        {
+          "id": "LezVKlc3g8A",
+          "title": "📖 How This Book Was Made",
+          "duration": "7:30"
+        },
+        {
+          "id": "HMANpcGN45A",
+          "title": "♾️ Math Curse",
+          "duration": "12:30"
+        },
+        {
+          "id": "IczUCdJWyI0",
+          "title": "🔢 I'm Trying to Love Math",
+          "duration": "8:41"
+        },
+        {
+          "id": "pljJXnKSxCE",
+          "title": "👧🏻 When Sophie Gets Angry, Really Really Angry",
+          "duration": "2:54"
+        },
+        {
+          "id": "TnM70VhzrEE",
+          "title": "🪨 I'm Trying to Love Rocks",
+          "duration": "8:48"
+        },
+        {
+          "id": "r9kwbjyXG54",
+          "title": "🗑 I'm Trying to Love Garbage",
+          "duration": "10:29"
+        },
+        {
+          "id": "0FN6jalUe0s",
+          "title": "🎨 Vincent Paints His House",
+          "duration": "4:26"
+        },
+        {
+          "id": "NpVD_Q-mtp4",
+          "title": "🐰 The ABC Bunny",
+          "duration": "2:33"
+        },
+        {
+          "id": "ZjPvjf07VLE",
+          "title": "🐴 Biblioburro: A True Story from Colombia",
+          "duration": "4:30"
+        },
+        {
+          "id": "l6dYkV3iLM0",
+          "title": "🐷 The True Story of The 3 Little Pigs",
+          "duration": "8:01"
+        },
+        {
+          "id": "VwqTyEvN37I",
+          "title": "🎨 I Ain't Gonna Paint No More!",
+          "duration": "3:34"
+        },
+        {
+          "id": "3l7xTaHU_Zs",
+          "title": "🎓 Last to Finish, A Story About the Smartest Boy in Math Class",
+          "duration": "9:24"
+        },
+        {
+          "id": "Ny5ajUCofao",
+          "title": "📸 Picture Day Perfection",
+          "duration": "6:43"
+        },
+        {
+          "id": "UV-i8l7OdVo",
+          "title": "👦🏻 Pablo Picasso by Maria Isabel Sanchez | Biography Read Aloud for Kids",
+          "duration": "5:50"
+        },
+        {
+          "id": "GO44NNfJoIc",
+          "title": "👩🏻‍💼 Emmy Noether: The Most Important Mathematician You've Never Heard Of",
+          "duration": "14:10"
+        },
+        {
+          "id": "NX0hJ18lslU",
+          "title": "👩🏾‍💼 Counting on Katherine: How Katherine Johnson Saved Apollo 13",
+          "duration": "9:25"
+        },
+        {
+          "id": "_e-HU2P9QWA",
+          "title": "😡 Way Past Mad | Great Big Feelings",
+          "duration": "5:49"
+        },
+        {
+          "id": "6vjAP5NyuPs",
+          "title": "☹️ Way Past Worried | Great Big Feelings",
+          "duration": "5:26"
+        },
+        {
+          "id": "Bln0XXbSmdM",
+          "title": "👧🏻 Violet Shrink",
+          "duration": "8:51"
+        },
+        {
+          "id": "TBrjb1KlOtk",
+          "title": "🐟 The Pout-Pout Fish and the Mad, Mad Day | A Pout-Pout Fish Adventure",
+          "duration": "5:23"
+        },
+        {
+          "id": "DeO-th7BHXw",
+          "title": "🐶 One Hundred Sausages",
+          "duration": "6:58"
+        },
+        {
+          "id": "GGdTN7oLxb0",
+          "title": "🐱 Dewey: There's a Cat in the Library!",
+          "duration": "9:13"
+        },
+        {
+          "id": "CdlD395Hykg",
+          "title": "🐟 The Pout-Pout Fish and the Bully-Bully Shark | A Pout-Pout Fish Adventure",
+          "duration": "6:02"
+        },
+        {
+          "id": "wnQzpUiTOVc",
+          "title": "🐱 Negative Cat",
+          "duration": "6:03"
+        },
+        {
+          "id": "__arYKS4zOg",
+          "title": "✍🏻 How to Write a Story: Read-Aloud Book, Learn to Read and Write",
+          "duration": "7:08"
+        },
+        {
+          "id": "7gmYADliKnY",
+          "title": "👧🏻 The Girl with a Mind for Math: The Story of Raye Montague",
+          "duration": "11:44"
+        },
+        {
+          "id": "Y_cEUBJaxkA",
+          "title": "👧🏻 The Girl Who Thought in Pictures: The Story of Dr. Temple Grandin (Amazing Scientists)",
+          "duration": "11:15"
+        },
+        {
+          "id": "7ELIDY7NqoA",
+          "title": "🐱 They all Saw a Cat",
+          "duration": "4:05"
+        },
+        {
+          "id": "SiTXrQ12Fs4",
+          "title": "🐱 Pete the Cat’s Groovy Imagination",
+          "duration": "5:14"
+        },
+        {
+          "id": "8JHXLav2GjA",
+          "title": "🌸 Flower Talk: How Plants Use Color to Communicate",
+          "duration": "8:16"
+        },
+        {
+          "id": "kqdXNe_lVqY",
+          "title": "👆 Great Day for Up",
+          "duration": "3:02"
+        },
+        {
+          "id": "xnrZ3cs2BSs",
+          "title": "🐱 Bad Cat!",
+          "duration": "3:09"
+        },
+        {
+          "id": "JKQUSy5ZASE",
+          "title": "🐱 Are You a Cat?",
+          "duration": "3:54"
+        },
+        {
+          "id": "DNu80S1oJ0U",
+          "title": "🦴 One Hundred Bones",
+          "duration": "5:48"
+        },
+        {
+          "id": "qqHSZ9OrSJQ",
+          "title": "🗓 Please Try to Remember the First of Octember",
+          "duration": "5:07"
+        },
+        {
+          "id": "QkSV6tG1uZY",
+          "title": "🐱 Millions of Cats",
+          "duration": "7:59"
+        },
+        {
+          "id": "Qi5_h87ZDMk",
+          "title": "🐱 Kitten's First Full Moon",
+          "duration": "3:35"
+        },
+        {
+          "id": "Fl1t5Zz5Vf4",
+          "title": "🐱 There is a Cat in Our Class",
+          "duration": "7:25"
+        },
+        {
+          "id": "BzzgzyVNz5I",
+          "title": "🌱 When Spring Comes",
+          "duration": "3:40"
+        },
+        {
+          "id": "wQzfqhwwuOk",
+          "title": "🐯 The Year of the Tiger: Tales from the Chinese Zodiac",
+          "duration": "12:05"
+        },
+        {
+          "id": "wBYpoKskm2g",
+          "title": "🐱 Cat Knit",
+          "duration": "2:41"
+        },
+        {
+          "id": "x9ZLuwuaYSU",
+          "title": "🐔 The Little Red Hen",
+          "duration": "5:45"
+        },
+        {
+          "id": "Ff9agsoadYQ",
+          "title": "🦉 Little Owl's Snow",
+          "duration": "3:51"
+        },
+        {
+          "id": "I5gPuP7-EIQ",
+          "title": "❄️ A Thing Called Snow",
+          "duration": "5:55"
+        },
+        {
+          "id": "Vq71lkBAhIY",
+          "title": "🐱 Pete the Cat: Snow Daze",
+          "duration": "4:28"
+        },
+        {
+          "id": "fJWHFvgLJts",
+          "title": "💤 Goodnight, Numbers",
+          "duration": "2:59"
+        },
+        {
+          "id": "ARx4_gyCjz0",
+          "title": "❄️ It's Winter | Celebrate the Seasons!",
+          "duration": "6:14"
+        },
+        {
+          "id": "S-B2vKltX9I",
+          "title": "🐱 Bad Kitty by Nick Bruel | Funny Read Aloud for Kids",
+          "duration": "8:08"
+        },
+        {
+          "id": "LEgO0bbic-U",
+          "title": "🎅🏻 Santa Claus vs the Easter Bunny 🐰",
+          "duration": "6:45"
+        },
+        {
+          "id": "fB4f_Ptf2t0",
+          "title": "🐉 Me and My Dragon",
+          "duration": "3:43"
+        },
+        {
+          "id": "HLZ7fFPaV5c",
+          "title": "🍪 Cookies: Bite size Life Lessons",
+          "duration": "5:42"
+        },
+        {
+          "id": "bVOU4XVASI4",
+          "title": "🍪 One Smart Cookie: Bite-Size Lessons for the School Years and Beyond",
+          "duration": "6:56"
+        },
+        {
+          "id": "jw2MPY87CYU",
+          "title": "🍪 Sugar Cookie: Sweet Little Lessons on Love",
+          "duration": "6:13"
+        },
+        {
+          "id": "sCaDq9By7Hg",
+          "title": "🎅🏻 Santa's Secret",
+          "duration": "6:35"
+        },
+        {
+          "id": "2FKZGBPXc00",
+          "title": "🎄 A Charlie Brown Christmas",
+          "duration": "14:19"
+        },
+        {
+          "id": "ILcp-W6JeNs",
+          "title": "🍪 Tough Cookie: A Christmas Story",
+          "duration": "6:51"
+        },
+        {
+          "id": "JHcmzG1LAJM",
+          "title": "👧🏻 The Gingerbread Girl",
+          "duration": "10:45"
+        },
+        {
+          "id": "RUhog62en9w",
+          "title": "🦃 Turkey Claus | Turkey Trouble",
+          "duration": "6:37"
+        },
+        {
+          "id": "Tmk6oQud9-A",
+          "title": "🎅🏻 Five Little Monkeys Looking for Santa | A Five Little Monkeys Story",
+          "duration": "6:24"
+        },
+        {
+          "id": "7025JCLG4F0",
+          "title": "🎅🏻 Santa’s Underwear",
+          "duration": "5:49"
+        },
+        {
+          "id": "iC9kc8DOZWw",
+          "title": "🎄 How the Grinch Stole Christmas",
+          "duration": "11:40"
+        },
+        {
+          "id": "3iKfyP9H-SE",
+          "title": "🎅🏻 The Polar Express",
+          "duration": "9:50"
+        },
+        {
+          "id": "ICWSx7mQe6Y",
+          "title": "🎄 Christmas Cookies: Bite-Size Holiday Lessons",
+          "duration": "5:22"
+        },
+        {
+          "id": "hJb2_jORevo",
+          "title": "🎄Home Alone 2 - Lost in New York",
+          "duration": "9:21"
+        },
+        {
+          "id": "PYQNgOC1GF0",
+          "title": "🎄 The Night Before Christmas",
+          "duration": "5:14"
+        },
+        {
+          "id": "x80MYZmpCUY",
+          "title": "🎅🏻 Santa Retires",
+          "duration": "5:04"
+        },
+        {
+          "id": "8gqSejV43ho",
+          "title": "🎄 Home Alone: The Classic Illustrated Storybook | Christmas Read Aloud for Kids",
+          "duration": "9:45"
+        },
+        {
+          "id": "AoSBFmLXdBY",
+          "title": "🐵 Grumpy Monkey Oh, No! Christmas",
+          "duration": "7:21"
+        },
+        {
+          "id": "rObCy35d0XU",
+          "title": "🐉 Pierre & Paul : Dragon!",
+          "duration": "5:31"
+        },
+        {
+          "id": "u6_Sef_Jkqg",
+          "title": "🐷 Some Pig! | A Charlotte's Web Picture Book",
+          "duration": "7:03"
+        },
+        {
+          "id": "3lnfUjzN_gM",
+          "title": "㊔ The Name Jar",
+          "duration": "15:50"
+        },
+        {
+          "id": "eNoVSozQIFs",
+          "title": "🌺 In Flanders Fields",
+          "duration": "1:59"
+        },
+        {
+          "id": "cMgc_3Gm8CQ",
+          "title": "🌺 The Eleventh Hour",
+          "duration": "9:51"
+        },
+        {
+          "id": "YekzoGpw9M8",
+          "title": "🌺 Proud as a Peacock, Brave as a Lion",
+          "duration": "5:44"
+        },
+        {
+          "id": "4y6biyXne0M",
+          "title": "🦃 Turkey Surprise",
+          "duration": "7:10"
+        },
+        {
+          "id": "Bp5_1p8Y7v4",
+          "title": "🌺 A Poppy is to Remember by Heather Patterson | Remembrance Day Read Aloud for Kids",
+          "duration": "3:37"
+        },
+        {
+          "id": "PXFd0xpC0VE",
+          "title": "🎃 It's the Great Pumpkin Charlie Brown",
+          "duration": "12:39"
+        },
+        {
+          "id": "2C9ij2BgEVY",
+          "title": "🎃 Pumpkin Hill",
+          "duration": "6:14"
+        },
+        {
+          "id": "eWuTVlfYyyE",
+          "title": "🎃 Trick or Treat, Smell my feet",
+          "duration": "10:35"
+        },
+        {
+          "id": "e8_H6WTRbH4",
+          "title": "🧙🏻‍♀️ The Witches' Supermarket",
+          "duration": "7:36"
+        },
+        {
+          "id": "NMvrS63C_lE",
+          "title": "❤️ Duck and Hippo Give Thanks",
+          "duration": "7:58"
+        },
+        {
+          "id": "V73CnfH7xy8",
+          "title": "🎃 Mrs. McMurphy's Pumpkin",
+          "duration": "5:01"
+        },
+        {
+          "id": "ddgKgI5g0Yg",
+          "title": "🎃 Vera's Halloween",
+          "duration": "7:03"
+        },
+        {
+          "id": "jyBfApiFYbo",
+          "title": "🎃 Come with Me on Halloween",
+          "duration": "3:16"
+        },
+        {
+          "id": "C310A2FDqiI",
+          "title": "🎃 Arthur's Halloween | An Arthur Adventure",
+          "duration": "7:24"
+        },
+        {
+          "id": "glWLF463vnI",
+          "title": "👻 She Wanted to be Haunted",
+          "duration": "7:10"
+        },
+        {
+          "id": "RpHX3HEL1TQ",
+          "title": "👻 The Little Ghost Who Was A Quilt",
+          "duration": "7:47"
+        },
+        {
+          "id": "4Wq2HWj9KOQ",
+          "title": "🚲 A Bike Like Sergio's",
+          "duration": "7:51"
+        },
+        {
+          "id": "TYrqMNr1mYE",
+          "title": "David Gets in Trouble",
+          "duration": "2:20"
+        },
+        {
+          "id": "q2hCrudtzR0",
+          "title": "🎃 One Halloween Night",
+          "duration": "7:47"
+        },
+        {
+          "id": "-w-or1SLlXg",
+          "title": "7 Ate 9",
+          "duration": "5:58"
+        },
+        {
+          "id": "BnUr9F_n2oo",
+          "title": "Quiet Wyatt",
+          "duration": "4:27"
+        },
+        {
+          "id": "MfWU3IXOU6U",
+          "title": "🚌 Field Trip Fiasco by Julie Danneberg | Funny Back to School Read Aloud for Kids",
+          "duration": "10:17"
+        },
+        {
+          "id": "d_TLgDx8_RE",
+          "title": "🖼️ The Case of the Missing Chalk Drawings",
+          "duration": "3:24"
+        },
+        {
+          "id": "7A6G_4ww2RU",
+          "title": "🎓 First Day Critter Jitters",
+          "duration": "8:04"
+        },
+        {
+          "id": "PjagXG1Oz0E",
+          "title": "🇫🇷 Poppy Takes Paris: A Little Girl's Adventures in the City of Light (Big City Adventures)",
+          "duration": "12:21"
+        },
+        {
+          "id": "J-6_oU8VBhU",
+          "title": "🏴‍☠️ Pirates Don’t Go to Kindergarten",
+          "duration": "6:47"
+        },
+        {
+          "id": "kAjkth319eA",
+          "title": "🎓 First Day Jitters  | The Jitters Series",
+          "duration": "4:23"
+        },
+        {
+          "id": "8ULL3atfzrE",
+          "title": "🧰 When Grandpa Gives You a ToolBox",
+          "duration": "3:31"
+        },
+        {
+          "id": "3POLjbYZVJA",
+          "title": "🍋 When Grandma Gives You a Lemon Tree",
+          "duration": "4:00"
+        },
+        {
+          "id": "J0dwR737Kj4",
+          "title": "🐵 Maxwell the Monkey Barber",
+          "duration": "3:55"
+        },
+        {
+          "id": "MK6bJRJtzro",
+          "title": "🎓 This School Year Will Be The Best",
+          "duration": "3:30"
+        },
+        {
+          "id": "Ipd4B7FE4S0",
+          "title": "🧒🏻 Don't Touch My Hair",
+          "duration": "4:16"
+        },
+        {
+          "id": "cIRJLZbvWuU",
+          "title": "🐞 The Bug Girl (A True Story)",
+          "duration": "9:10"
+        },
+        {
+          "id": "HMbRpxGiH4g",
+          "title": "❓What If?",
+          "duration": "4:19"
+        },
+        {
+          "id": "8WxTsiF3Nss",
+          "title": "🦆 Mr Duck Means Business",
+          "duration": "5:58"
+        },
+        {
+          "id": "cdmud7GqwQE",
+          "title": "🦩 Mama Built a Little Nest",
+          "duration": "7:50"
+        },
+        {
+          "id": "yisEqYVbIxM",
+          "title": "🌟What Do You Do with a Chance?",
+          "duration": "4:25"
+        },
+        {
+          "id": "g0Y7R2asW98",
+          "title": "🪨 The Legend of Rock Paper Scissors",
+          "duration": "8:48"
+        },
+        {
+          "id": "vmYVOyAsWMw",
+          "title": "💡 What Do You Do with an Idea?",
+          "duration": "4:10"
+        },
+        {
+          "id": "IECUvYSnmUA",
+          "title": "⏰ Over-Scheduled Andrew",
+          "duration": "6:05"
+        },
+        {
+          "id": "OLXf01kvGBk",
+          "title": "🐯 Ravi's Roar | Big Bright Feelings",
+          "duration": "4:30"
+        },
+        {
+          "id": "Mo8D_UpFvSs",
+          "title": "👧🏻 The Thing Lou Couldn’t Do",
+          "duration": "5:12"
+        },
+        {
+          "id": "zrVQwkUYkqY",
+          "title": "🐭 Marathon Mouse",
+          "duration": "9:38"
+        },
+        {
+          "id": "6CwG181Ml7Q",
+          "title": "👧🏻 Mary Wrightly, So Politely",
+          "duration": "6:06"
+        },
+        {
+          "id": "c2Axh9muVUc",
+          "title": "🥔 The Couch Potato",
+          "duration": "7:54"
+        },
+        {
+          "id": "d3STU8fqhHA",
+          "title": "👦🏻 The Boy Who Picked His Nose",
+          "duration": "3:32"
+        },
+        {
+          "id": "kRKGdDvwp2M",
+          "title": "👧🏻 The Most Magnificent Thing",
+          "duration": "5:48"
+        },
+        {
+          "id": "7Pd_wF8NhAc",
+          "title": "👧🏻 Meesha Makes Friends | Big Bright Feelings",
+          "duration": "4:41"
+        },
+        {
+          "id": "j3vofFtjL3k",
+          "title": "🔴 The Dot",
+          "duration": "3:42"
+        },
+        {
+          "id": "3VZFdIC_UXk",
+          "title": "👒 The Scarecrow’s Hat",
+          "duration": "4:47"
+        },
+        {
+          "id": "r30vfuO2jrs",
+          "title": "👦🏻 Perfectly Norman | Big Bright Feelings",
+          "duration": "4:09"
+        },
+        {
+          "id": "mwjWuOImvDY",
+          "title": "😟 Ruby Finds a Worry | Big Bright Feelings",
+          "duration": "4:20"
+        },
+        {
+          "id": "iRIQq58GQJ4",
+          "title": "🐵 Grumpy Monkey Up All night",
+          "duration": "6:37"
+        },
+        {
+          "id": "q1G2eL9AXSw",
+          "title": "🐦 How to Find a Bird",
+          "duration": "4:06"
+        },
+        {
+          "id": "KOM3EM4KwFQ",
+          "title": "🍪 The Cookie Fiasco | Elephant & Piggie Like Reading!",
+          "duration": "5:32"
+        },
+        {
+          "id": "EM_Ivb2I_UY",
+          "title": "🍲 Bee-Bim Bop!",
+          "duration": "2:50"
+        },
+        {
+          "id": "tdViPybeP3c",
+          "title": "🎃 How Many Seeds in a Pumpkin",
+          "duration": "8:19"
+        },
+        {
+          "id": "c_TReOg8KGM",
+          "title": "🎓 When It's the Last Day of School by Maribeth Boelts | End of School Read Aloud for Kids",
+          "duration": "4:43"
+        },
+        {
+          "id": "maZwDfvBnU8",
+          "title": "🌳 Picture a Tree",
+          "duration": "2:18"
+        },
+        {
+          "id": "jQSWlvilJNY",
+          "title": "How Much is a Million",
+          "duration": "4:01"
+        },
+        {
+          "id": "ywPzDnxbkB8",
+          "title": "👦🏿 Jabari Tries",
+          "duration": "5:11"
+        },
+        {
+          "id": "MDN1ndgPuBE",
+          "title": "🧣 Annie and the Swiss Cheese Scarf",
+          "duration": "10:01"
+        },
+        {
+          "id": "FFUkKJjudrs",
+          "title": "🐓 Interrupting Chicken",
+          "duration": "5:08"
+        },
+        {
+          "id": "-UhcjkUUmQo",
+          "title": "🐓 Interrupting Chicken and the Elephant of Surprise",
+          "duration": "5:58"
+        },
+        {
+          "id": "qbyDcRJVPMc",
+          "title": "🌻 Watch It Grow: Backyard Life Cycles",
+          "duration": "7:09"
+        },
+        {
+          "id": "2nM6Qag_2KE",
+          "title": "🐻 There's a Bear on My Chair",
+          "duration": "2:26"
+        },
+        {
+          "id": "23NTbIoif3I",
+          "title": "👧🏻 Resilience: A book to Encourage Resilience, Persistence",
+          "duration": "7:08"
+        },
+        {
+          "id": "JMz2M2zjsiM",
+          "title": "🥚 After the Fall (How Humpty Dumpty Got Back Up Again)",
+          "duration": "4:17"
+        },
+        {
+          "id": "RTSgSz1_zyo",
+          "title": "👨🏻 It's Great Being a Daddy by Dan Bar-el | Father's Day Read Aloud for Kids",
+          "duration": "4:59"
+        },
+        {
+          "id": "mVNDaFIUgAk",
+          "title": "👨🏻 When Dads Don't Grow Up by Marjorie Blain Parker | Father's Day Read Aloud for Kids",
+          "duration": "3:22"
+        },
+        {
+          "id": "I5az3pdeZaE",
+          "title": "👨🏻 My Dad Used to be So Cool by Keith Negley | Father's Day Read Aloud for Kids",
+          "duration": "1:58"
+        },
+        {
+          "id": "npp-E0WO7VA",
+          "title": "🐵 Grumpy Monkey's Little Book of Grumpiness",
+          "duration": "2:22"
+        },
+        {
+          "id": "TbuRBw3wfCA",
+          "title": "👦🏿 Jabari Jumps",
+          "duration": "4:30"
+        },
+        {
+          "id": "6Y7VvrIP3cM",
+          "title": "🥑 Avocado Asks",
+          "duration": "5:40"
+        },
+        {
+          "id": "cyrPBCu0NNE",
+          "title": "🐘 How to Cheer Up Dad by Fred Koehler | Father's Day Read Aloud for Kids",
+          "duration": "2:24"
+        },
+        {
+          "id": "Q6asUsJjIjw",
+          "title": "👨🏻 My Dad Thinks He's Funny by Katrina Germein | Father's Day Read Aloud for Kids",
+          "duration": "4:50"
+        },
+        {
+          "id": "d6m-LFS-j1U",
+          "title": "🐺 What's the Time, Grandma Wolf?",
+          "duration": "3:22"
+        },
+        {
+          "id": "butxBmjTM0U",
+          "title": "🐻 How Big Are Your Worries Little Bear",
+          "duration": "6:54"
+        },
+        {
+          "id": "0axD7bRxHXs",
+          "title": "💰 Dirt Cheap",
+          "duration": "6:26"
+        },
+        {
+          "id": "L-vuyYHaJ1o",
+          "title": "🎨 Niko Draws a Feeling",
+          "duration": "5:56"
+        },
+        {
+          "id": "rRnoIsUK4ZQ",
+          "title": "🐵 Grumpy Monkey Party Time!",
+          "duration": "5:42"
+        },
+        {
+          "id": "V64aiWd-n4A",
+          "title": "🐱 Pete the Cat: Big Easter Adventure",
+          "duration": "4:00"
+        },
+        {
+          "id": "uBBtbqpfcYg",
+          "title": "💃 The Cranky Ballerina",
+          "duration": "3:59"
+        },
+        {
+          "id": "OESj_NVq_8o",
+          "title": "🍜 Magic Ramen: The Story of Momofuku Ando",
+          "duration": "8:39"
+        },
+        {
+          "id": "KuEFaU6ww-o",
+          "title": "🚔 Rhyme Chrime",
+          "duration": "3:03"
+        },
+        {
+          "id": "4JeTEyPhPN4",
+          "title": "🐵 Grumpy Monkey",
+          "duration": "5:55"
+        },
+        {
+          "id": "nAK0lasT61I",
+          "title": "The Teacher's Pet",
+          "duration": "5:56"
+        },
+        {
+          "id": "-q4ePxooBZY",
+          "title": "👧🏻 My Body Belongs to Me From My Head to My Toes",
+          "duration": "4:00"
+        },
+        {
+          "id": "EYH-iktR4Rk",
+          "title": "👩‍🦰 What Not to Give Your Mom On Mother's Day",
+          "duration": "2:40"
+        },
+        {
+          "id": "cPCqSeBg6v0",
+          "title": "🐻 A Visitor for bear",
+          "duration": "7:55"
+        },
+        {
+          "id": "rp11hmcYpgM",
+          "title": "👩‍🦰 A Present for Mom",
+          "duration": "4:31"
+        },
+        {
+          "id": "EQObHAfUD-I",
+          "title": "👨🏻 I Love My Daddy by Giles Andreae | Father's Day Read Aloud for Kids",
+          "duration": "2:07"
+        },
+        {
+          "id": "EY9iZDKO2Ms",
+          "title": "🔧 The Wrench",
+          "duration": "5:10"
+        },
+        {
+          "id": "VileXDDDjaU",
+          "title": "👶 Because You Are My Baby",
+          "duration": "3:09"
+        },
+        {
+          "id": "vLG91sl80ds",
+          "title": "⚠️ I Won't Go With Strangers",
+          "duration": "5:58"
+        },
+        {
+          "id": "OJ8QVmxeY9g",
+          "title": "🐻 The Berenstain Bears and the Mama's Day Surprise",
+          "duration": "8:55"
+        },
+        {
+          "id": "2Nnej7Y4dGs",
+          "title": "🕊 Pigeon Math",
+          "duration": "3:46"
+        },
+        {
+          "id": "kFskOsIZn7k",
+          "title": "👨🏻 Because I Am Your Daddy by Sherry North | Father's Day Read Aloud for Kids",
+          "duration": "3:06"
+        },
+        {
+          "id": "oM-IA8TIlzc",
+          "title": "❄️ Lemonade in Winter",
+          "duration": "8:32"
+        },
+        {
+          "id": "l8NQXGR83hg",
+          "title": "📚 Let's Go to the Library! | Peanuts",
+          "duration": "4:42"
+        },
+        {
+          "id": "7YQ08eXm-W8",
+          "title": "👀 Eyes that Kiss in the Corners",
+          "duration": "3:57"
+        },
+        {
+          "id": "Okii8Dw5AJ4",
+          "title": "😄 We Are All Wonders",
+          "duration": "3:10"
+        },
+        {
+          "id": "JCRK1HI4Vgo",
+          "title": "💰 Just Saving My Money | Little Critter",
+          "duration": "3:16"
+        },
+        {
+          "id": "AJ5f5VEMGKk",
+          "title": "🐱 Pete the Cat's Family Road Trip",
+          "duration": "4:19"
+        },
+        {
+          "id": "00wnXnK6d_M",
+          "title": "🦃 Turkey Trick or Treat",
+          "duration": "5:18"
+        },
+        {
+          "id": "9ZkYjn73Mfg",
+          "title": "🐔 The Easter Egg Farm",
+          "duration": "8:14"
+        },
+        {
+          "id": "2GW7uZvKx1g",
+          "title": "🐰 The Story of the Easter Bunny",
+          "duration": "5:05"
+        },
+        {
+          "id": "QHKiPftJEUY",
+          "title": "🦃 Turkey's Eggcellent Easter",
+          "duration": "6:04"
+        },
+        {
+          "id": "bdWjqkGFFFc",
+          "title": "🐰 We Are Going On An Egg Hunt",
+          "duration": "3:20"
+        },
+        {
+          "id": "_glznwH0nv0",
+          "title": "🐰 Happy Easter, Curious George",
+          "duration": "4:37"
+        },
+        {
+          "id": "w97Io9zOg8E",
+          "title": "🐰 Splat the Cat: Where is the Easter Bunny",
+          "duration": "3:10"
+        },
+        {
+          "id": "9TZjUHD7U1Y",
+          "title": "🐱 Here Comes the Easter Cat",
+          "duration": "4:08"
+        },
+        {
+          "id": "sYuQ2iOa5vU",
+          "title": "🌾 Finders Keepers",
+          "duration": "3:11"
+        },
+        {
+          "id": "wRUG-TPR6JU",
+          "title": "🐭 Doctor De Soto",
+          "duration": "9:26"
+        },
+        {
+          "id": "eFunDfO2DLo",
+          "title": "🎂 My Lucky Birthday",
+          "duration": "6:24"
+        },
+        {
+          "id": "qFuMT1BomgI",
+          "title": "My New Friend is So Fun (🐘 Elephant & 🐷 Piggie #21)",
+          "duration": "3:22"
+        },
+        {
+          "id": "lFNQEKlpNuQ",
+          "title": "🌱 The Bad Seed",
+          "duration": "4:48"
+        },
+        {
+          "id": "BsOXoo9faaI",
+          "title": "🐱 Splat the Cat: Makes Dad Glad by Rob Scotton | Father's Day Read Aloud for Kids",
+          "duration": "5:48"
+        },
+        {
+          "id": "dyoU90V_ju8",
+          "title": "🦊 My Lucky Day",
+          "duration": "5:27"
+        },
+        {
+          "id": "-AIS0H70g0c",
+          "title": "📖 The Book with No Pictures",
+          "duration": "4:35"
+        },
+        {
+          "id": "vfeFK4QeRHw",
+          "title": "🐸 Froggy Picks a Pumpkin",
+          "duration": "6:06"
+        },
+        {
+          "id": "uhq_9kckxss",
+          "title": "🦒 A Giraffe and A Half",
+          "duration": "6:03"
+        },
+        {
+          "id": "GuQrLclFc9E",
+          "title": "🐱(4-Year Old Reading) Pete the Cat:  I Love My White Shoes",
+          "duration": "3:19"
+        },
+        {
+          "id": "4AtdMHXrYVo",
+          "title": "👧🏻 I Will be Fierce!",
+          "duration": "2:46"
+        },
+        {
+          "id": "vY2QkM-DgqE",
+          "title": "☯️ The Race for the Chinese Zodiac",
+          "duration": "6:05"
+        },
+        {
+          "id": "gSp_fG4BZ1A",
+          "title": "🍩 Hello Arnie!: An Arnie the Doughnut Story",
+          "duration": "4:29"
+        },
+        {
+          "id": "Se_OXMdcyEo",
+          "title": "🐱 Pete the Cat's Trip to the Supermarket",
+          "duration": "3:37"
+        },
+        {
+          "id": "dj1ZrCtZKfE",
+          "title": "🐯 What About Worms | 🐘 Elephant & 🐷 Piggie Like Reading! #7",
+          "duration": "6:06"
+        },
+        {
+          "id": "wOLLDHbH8mI",
+          "title": "🦆 You Are Not a Cat!",
+          "duration": "2:53"
+        },
+        {
+          "id": "gHoCJhzTq-Y",
+          "title": "🐸 Froggy's Lemonada Stand",
+          "duration": "6:40"
+        },
+        {
+          "id": "z2xS4NAbx74",
+          "title": "❄️ The Snowy Day",
+          "duration": "3:31"
+        },
+        {
+          "id": "J0rXvYQcMIs",
+          "title": "🐭 If You Give a Mouse a Cookie",
+          "duration": "3:28"
+        },
+        {
+          "id": "xx_eZZAB1Yo",
+          "title": "📖 How to Read a Story",
+          "duration": "4:47"
+        },
+        {
+          "id": "kmrtxubMF58",
+          "title": "🧧 Peppa's Chinese New Year | Peppa Pig",
+          "duration": "4:31"
+        },
+        {
+          "id": "BBdgsPmhGbk",
+          "title": "❤️ Happy Valentine's Day, Charlie Brown! | Peanuts",
+          "duration": "5:19"
+        },
+        {
+          "id": "4BgGWiZYwO8",
+          "title": "🐱 Pete the Cat: Valentine's Day Is Cool",
+          "duration": "5:09"
+        },
+        {
+          "id": "F4LZKpasEdU",
+          "title": "🐸 Froggy's First Kiss",
+          "duration": "5:30"
+        },
+        {
+          "id": "-Efr-MVBEKc",
+          "title": "🐉 Nian, the Chinese New Year Dragon",
+          "duration": "8:20"
+        },
+        {
+          "id": "6OVhlZXO1rw",
+          "title": "🐔 The Chicken Who Couldn't",
+          "duration": "9:15"
+        },
+        {
+          "id": "ZDhqAlj6oK4",
+          "title": "🐰 The Easter Bunny's Assistant",
+          "duration": "3:26"
+        },
+        {
+          "id": "A7kO1rUzn-M",
+          "title": "🐸 Let's Go Froggy",
+          "duration": "6:23"
+        },
+        {
+          "id": "IHNW-VSPiPY",
+          "title": "🐱 Pete the Cat and the Lost Tooth",
+          "duration": "3:12"
+        },
+        {
+          "id": "Zk4dMFtRJ-o",
+          "title": "🐔 The Little Red Hen",
+          "duration": "3:32"
+        },
+        {
+          "id": "OxnrizVOXIg",
+          "title": "🦖 Here Comes Destructosaurus",
+          "duration": "4:02"
+        },
+        {
+          "id": "6adUn_c66Lc",
+          "title": "🐱 Pete the Cat Saves Christmas",
+          "duration": "3:59"
+        },
+        {
+          "id": "_FH6V9tAmPI",
+          "title": "🐠 Hooray for Fish!",
+          "duration": "2:16"
+        },
+        {
+          "id": "hBC3vKxakMQ",
+          "title": "🐱 Pete the Cat and the Surprise Teacher",
+          "duration": "3:19"
+        },
+        {
+          "id": "eqAp9mQmrk0",
+          "title": "🦖 We Don't Eat Our Classmates",
+          "duration": "5:01"
+        },
+        {
+          "id": "0xhSOEZMZtw",
+          "title": "🦍 The One and Only Ivan: Draw Me a Story",
+          "duration": "5:44"
+        },
+        {
+          "id": "hahp2OJfu3k",
+          "title": "🐻 The Three Bears",
+          "duration": "4:05"
+        },
+        {
+          "id": "UQwN3IkpBVg",
+          "title": "🩲 Creepy Pair of Underwear!",
+          "duration": "6:21"
+        },
+        {
+          "id": "gucnefHOLuY",
+          "title": "🐱 Pete the Cat and the Cool Caterpillar",
+          "duration": "4:26"
+        },
+        {
+          "id": "TQGv9eWhvY8",
+          "title": "🐱 Pete the Cat and the Tip-Top Tree House",
+          "duration": "3:27"
+        },
+        {
+          "id": "BGQdPCr3Yq4",
+          "title": "🐱 Pete the Cat and His Four Groovy Buttons",
+          "duration": "3:51"
+        },
+        {
+          "id": "ObaxE0R05_w",
+          "title": "🐦 Grumpy Bird",
+          "duration": "2:59"
+        },
+        {
+          "id": "EXiHzf8q6I8",
+          "title": "Are You Ready to Play Outside (🐘 Elephant & 🐷 Piggie #7)",
+          "duration": "3:09"
+        },
+        {
+          "id": "2YuHYUt27XU",
+          "title": "Pigs Make Me Sneeze! (🐘 Elephant & 🐷 Piggie #10)",
+          "duration": "3:26"
+        },
+        {
+          "id": "qt3o-_LlkXc",
+          "title": "I Will Take a Nap (🐘 Elephant & 🐷 Piggie #23)",
+          "duration": "3:12"
+        },
+        {
+          "id": "BRO7cH7L4K8",
+          "title": "I am Going (🐘 Elephant & 🐷 Piggie #11)",
+          "duration": "2:51"
+        },
+        {
+          "id": "LEzXvGDca3U",
+          "title": "🦍 Ivan: The Remarkable True Story of the Shopping Mall Gorilla",
+          "duration": "5:34"
+        },
+        {
+          "id": "0RIQw63jTCo",
+          "title": "🎪 The Nonsense Show",
+          "duration": "3:10"
+        },
+        {
+          "id": "kyeeGAD_Rvs",
+          "title": "🎄 Merry Christmas from the Very Hungry Caterpillar",
+          "duration": "1:15"
+        },
+        {
+          "id": "PkXfSn-kMu0",
+          "title": "🎄Don't Shake the Present!",
+          "duration": "2:13"
+        },
+        {
+          "id": "fprkNBPPG3E",
+          "title": "🎄One Wild Christmas",
+          "duration": "3:53"
+        },
+        {
+          "id": "O7OV_glPUMg",
+          "title": "🎄Duck & Goose: It's time for Christmas",
+          "duration": "1:22"
+        },
+        {
+          "id": "a0fjBX_Qpaw",
+          "title": "🎄It's Christmas and You Know it",
+          "duration": "2:45"
+        },
+        {
+          "id": "npyVzsdysV0",
+          "title": "🎄Here Comes Santa Cat",
+          "duration": "4:40"
+        },
+        {
+          "id": "3AUl9inlk3o",
+          "title": "🎄Gingerbread Man Loose at Christmas",
+          "duration": "6:22"
+        },
+        {
+          "id": "eqLtgvhm3y8",
+          "title": "🐠 Piranhas Don’t Eat Bananas",
+          "duration": "1:46"
+        },
+        {
+          "id": "WVSZj-Qj7as",
+          "title": "🎄The Night Before Christmas",
+          "duration": "4:15"
+        },
+        {
+          "id": "JM3VlvFcUr0",
+          "title": "👧🏻 My No, No, No Day!",
+          "duration": "4:13"
+        },
+        {
+          "id": "qxFzDIWAe88",
+          "title": "🎄Penguin's Christmas Wish",
+          "duration": "3:21"
+        },
+        {
+          "id": "m7dxp-FEMSo",
+          "title": "🐻 Mother Bruce",
+          "duration": "4:36"
+        },
+        {
+          "id": "0K0itz7chWo",
+          "title": "🎄 How Do Dinosaurs Say Merry Christmas?",
+          "duration": "2:00"
+        },
+        {
+          "id": "dQs-sobBvMM",
+          "title": "🦆 Duck on a Tractor",
+          "duration": "6:42"
+        },
+        {
+          "id": "mxGAyEyVkRM",
+          "title": "🎄 Bear's Christmas Star",
+          "duration": "2:56"
+        },
+        {
+          "id": "zZ9UH6JExfM",
+          "title": "🐦 The Pigeon Loves Things That Go!",
+          "duration": "0:50"
+        },
+        {
+          "id": "7MUJ2ytzckY",
+          "title": "🐱 Secret Agent Splat! | Splat the Cat",
+          "duration": "5:26"
+        },
+        {
+          "id": "j5f8W4b_-1o",
+          "title": "Can I Play Too? (🐘 Elephant & 🐷 Piggie #12)",
+          "duration": "2:29"
+        },
+        {
+          "id": "u0xhJMP36T0",
+          "title": "🦏 Rita's Rhino",
+          "duration": "4:47"
+        },
+        {
+          "id": "rV2YTV4bAIs",
+          "title": "I Broke My Trunk! (🐘 Elephant & 🐷 Piggie #14)",
+          "duration": "3:03"
+        },
+        {
+          "id": "eXahg60Am1g",
+          "title": "👨🏻 How to Surprise a Dad by Jean Reagan | Father's Day Read Aloud for Kids",
+          "duration": "5:13"
+        },
+        {
+          "id": "Ns-HKKfUooc",
+          "title": "🦆 Click, Clack, Surprise! (Farmer Brown's Barnyard Tales)",
+          "duration": "3:24"
+        },
+        {
+          "id": "IZLV5BMJkwc",
+          "title": "❤️ Little Miss Valentine",
+          "duration": "5:26"
+        },
+        {
+          "id": "1d0A0Uld8GY",
+          "title": "Click, Clack, Quack to School! (Farmer Brown's Barnyard Tales)",
+          "duration": "4:26"
+        },
+        {
+          "id": "iEqjVPXkN0E",
+          "title": "❤️ Click, Clack, Moo I Love You! (Farmer Brown's Barnyard Tales)",
+          "duration": "4:10"
+        },
+        {
+          "id": "IQGPaQQWzRo",
+          "title": "🐮 The Cow Loves Cookies",
+          "duration": "3:07"
+        },
+        {
+          "id": "0gudW1z5z2g",
+          "title": "How to Raise a Mom",
+          "duration": "5:05"
+        },
+        {
+          "id": "NYser96hxaE",
+          "title": "✋ The Bully Blockers Club",
+          "duration": "10:24"
+        },
+        {
+          "id": "199AkX0sQ-I",
+          "title": "🐷 Little Pink Pup",
+          "duration": "3:24"
+        },
+        {
+          "id": "u0uTQUOM9PM",
+          "title": "The Thank You Book (🐘 Elephant & 🐷 Piggie #25)",
+          "duration": "3:38"
+        },
+        {
+          "id": "RbsjtLjV6ag",
+          "title": "🍦 Should I Share My Ice Cream (🐘 Elephant & 🐷 Piggie #15)",
+          "duration": "2:58"
+        },
+        {
+          "id": "oIZhhLw-9mU",
+          "title": "👸 I Want My Dad! by Tony Ross | Father's Day Read Aloud for Kids",
+          "duration": "3:06"
+        },
+        {
+          "id": "EvjxMkLb5xQ",
+          "title": "🐸 Froggy Rides a Bike",
+          "duration": "5:27"
+        },
+        {
+          "id": "3m59PRtZywE",
+          "title": "🧸 I Love My New Toy! (🐘 Elephant & 🐷 Piggie #5)",
+          "duration": "2:11"
+        },
+        {
+          "id": "WApwWSvqG_U",
+          "title": "I Want a Friend! (👸 My Little Princess)",
+          "duration": "3:18"
+        },
+        {
+          "id": "vYK-eXQY380",
+          "title": "🐰 Knuffle Bunny Too: A Case of Mistaken Identity (Knuffle Bunny #2)",
+          "duration": "4:14"
+        },
+        {
+          "id": "pwwE9k6x1XU",
+          "title": "🐰 Knuffle Bunny: A Cautionary Tale by Mo Willems (Knuffle Bunny #1)",
+          "duration": "2:30"
+        },
+        {
+          "id": "Q9DkWh_QuGQ",
+          "title": "🪨 Petra by Marianna Coppo",
+          "duration": "1:55"
+        },
+        {
+          "id": "mlItwuGzG_0",
+          "title": "🐱 Splat and Seymour - Best Friends Forevermore | Splat the Cat",
+          "duration": "5:00"
+        },
+        {
+          "id": "PbcnF4bt0dQ",
+          "title": "Today I Will Fly! (🐘 Elephant & 🐷 Piggie #1)",
+          "duration": "2:48"
+        },
+        {
+          "id": "WRu8aMatQsA",
+          "title": "My Friend is Sad (🐘 Elephant & 🐷 Piggie #2)",
+          "duration": "2:30"
+        },
+        {
+          "id": "Mb3daS3yX2Y",
+          "title": "⛄️ I Want Snow! (👸 My Little Princess)",
+          "duration": "4:51"
+        },
+        {
+          "id": "dmUaz3W5F78",
+          "title": "👨🏻‍⚕️ Maybe You Should Fly a Jet! Maybe You Should Be a Vet!",
+          "duration": "3:27"
+        },
+        {
+          "id": "b0DTyoJoQZU",
+          "title": "I Really Like Slop! (🐘 Elephant & 🐷 Piggie #24)",
+          "duration": "2:34"
+        },
+        {
+          "id": "0ilNd_YRypU",
+          "title": "👤 The Shape of Me and Other Stuff",
+          "duration": "1:52"
+        },
+        {
+          "id": "_JtY9rraxSU",
+          "title": "🌳 The Giving Tree",
+          "duration": "4:35"
+        },
+        {
+          "id": "N__QV1f98Gc",
+          "title": "🎄 Click, Clack, Ho! Ho! Ho! (Farmer Brown's Barnyard Tales)",
+          "duration": "2:15"
+        },
+        {
+          "id": "bGar1LqqGj8",
+          "title": "1️⃣ Dr. Seuss's 1 2 3",
+          "duration": "3:23"
+        },
+        {
+          "id": "BubhMLGGjPU",
+          "title": "😸 Poor Puppy and Bad Kitty by Nick Bruel | Funny Read Aloud for Kids",
+          "duration": "3:34"
+        },
+        {
+          "id": "R1kRbovBU14",
+          "title": "🎓 Time for School, Charlie Brown | Peanuts",
+          "duration": "4:22"
+        },
+        {
+          "id": "3KxPzQDkzDw",
+          "title": "🎃 Click, Clack, Boo! (Farmer Brown's Barnyard Tales)",
+          "duration": "2:40"
+        },
+        {
+          "id": "XTlSIvUltaY",
+          "title": "🎄Merry Christmas, Splat | Splat the Cat",
+          "duration": "4:31"
+        },
+        {
+          "id": "S-JeKdPuhZE",
+          "title": "🐸 Froggy's Halloween",
+          "duration": "5:05"
+        },
+        {
+          "id": "1uciE_6BT94",
+          "title": "🏠 In a People House",
+          "duration": "1:57"
+        },
+        {
+          "id": "_T0LTrEUUN4",
+          "title": "🐶 Gobble Up, Snoopy! | Peanuts",
+          "duration": "3:56"
+        },
+        {
+          "id": "HWl4ojP3Lkg",
+          "title": "Oh, The Thinks You Can Think by Dr. Seuss",
+          "duration": "3:01"
+        },
+        {
+          "id": "aiScJsT4oFg",
+          "title": "🐮 Mr. Brown Can Moo! Can You? | Bright & Early Books",
+          "duration": "1:53"
+        },
+        {
+          "id": "Zsjf6Zpvz4M",
+          "title": "Listen to My Trumpet! (🐘 Elephant & 🐷 Piggie #17)",
+          "duration": "2:54"
+        },
+        {
+          "id": "-NOV68DovCE",
+          "title": "🐱 Splat the Cat and the Hotshot",
+          "duration": "3:49"
+        },
+        {
+          "id": "DfvX8Al-Xd4",
+          "title": "I Am Not Going to Get up Today!",
+          "duration": "3:25"
+        },
+        {
+          "id": "iVKpAcbels4",
+          "title": "🐸 Froggy Goes to the Library",
+          "duration": "5:19"
+        },
+        {
+          "id": "upWGoyuPa9I",
+          "title": "🐸 Froggy Builds a Snowman",
+          "duration": "5:20"
+        },
+        {
+          "id": "DrVALSZRodQ",
+          "title": "❤️ Love, Splat by Rob Scotton | Splat the Cat",
+          "duration": "5:07"
+        },
+        {
+          "id": "oLgghljrlsk",
+          "title": "🎄Bad Kitty: Searching for Santa",
+          "duration": "2:23"
+        },
+        {
+          "id": "8NJki5Cba3U",
+          "title": "🐱 Splat the Cat The Rain is a Pain",
+          "duration": "3:34"
+        },
+        {
+          "id": "4c2qQUif2eA",
+          "title": "🔠 Dr Seuss's ABC.  An Amazing Alphabet Book!",
+          "duration": "4:19"
+        },
+        {
+          "id": "pUV_ymVi-fM",
+          "title": "🎃 Scaredy Cat, Splat!",
+          "duration": "5:04"
+        },
+        {
+          "id": "bjQ7-IlgvFA",
+          "title": "🍎 Ten Apples Up On Top!",
+          "duration": "3:05"
+        },
+        {
+          "id": "TWI-OK3TsOs",
+          "title": "😌 I Can Read with My Eyes Shut! by Dr. Seuss",
+          "duration": "3:00"
+        },
+        {
+          "id": "AnedjW9ktDY",
+          "title": "🦆 I Wish that I Had Duck Feet",
+          "duration": "6:19"
+        },
+        {
+          "id": "6hElwLYeZqw",
+          "title": "🏠 Come Over to My House",
+          "duration": "5:23"
+        },
+        {
+          "id": "-3zyPE-ItHQ",
+          "title": "🎓 School Rules! by Robert Munsch",
+          "duration": "4:16"
+        },
+        {
+          "id": "NEg2Yix7iAo",
+          "title": "🎓 Amelia Bedelia's First Day of School",
+          "duration": "7:59"
+        },
+        {
+          "id": "7NlNhETTd28",
+          "title": "🐸 Froggy Gets Dressed",
+          "duration": "3:53"
+        },
+        {
+          "id": "zjrHJGBy2tA",
+          "title": "🐸 Froggy Goes to School",
+          "duration": "4:43"
+        },
+        {
+          "id": "PXtK4ld5CaE",
+          "title": "What Pet Should I Get",
+          "duration": "3:49"
+        },
+        {
+          "id": "WY587APawkU",
+          "title": "🗓️ Wacky Wednesday",
+          "duration": "3:21"
+        },
+        {
+          "id": "r5A7n6DBpV4",
+          "title": "Harold & Hog Pretend For Real! (🐘 Elephant & 🐷 Piggie #6)",
+          "duration": "3:45"
+        },
+        {
+          "id": "_CTqzWSodhA",
+          "title": "👕 Naked Mole Rat Gets Dressed",
+          "duration": "4:38"
+        },
+        {
+          "id": "NrWkNzBu9uw",
+          "title": "🐥 The Duckling Gets a Cookie!?",
+          "duration": "2:50"
+        },
+        {
+          "id": "1NKPGEmxHRA",
+          "title": "Let's Go For a Drive! (🐘 Elephant & 🐷 Piggie #18)",
+          "duration": "3:35"
+        },
+        {
+          "id": "kAWJv3T9C4c",
+          "title": "A Big Guy Took My Ball! (🐘 Elephant & 🐷 Piggie #19)",
+          "duration": "3:03"
+        },
+        {
+          "id": "g7wjprlIM1U",
+          "title": "🐦 The Pigeon Has Feelings, Too!",
+          "duration": "1:00"
+        },
+        {
+          "id": "LVf01bP6Z8Y",
+          "title": "🐶 The Pigeon Wants a Puppy!",
+          "duration": "2:05"
+        },
+        {
+          "id": "2txobHkfGH0",
+          "title": "🐦 The Pigeon Needs a Bath!",
+          "duration": "3:03"
+        },
+        {
+          "id": "66pozVftEvI",
+          "title": "🐦 The Pigeon Finds a Hot Dog!",
+          "duration": "2:25"
+        },
+        {
+          "id": "Fqsg_Tc1ICk",
+          "title": "🐦 Don't Let the Pigeon Stay Up Late!",
+          "duration": "2:23"
+        },
+        {
+          "id": "XYsGz_7hhRM",
+          "title": "🐱 The Cat in the Hat Comes Back",
+          "duration": "9:11"
+        },
+        {
+          "id": "B82exB8HZxI",
+          "title": "🐷 The True Story of the 3 Little Pigs!",
+          "duration": "5:14"
+        },
+        {
+          "id": "SWjA0QgV20U",
+          "title": "🐶 Go, Dog. Go!",
+          "duration": "3:52"
+        },
+        {
+          "id": "CVSTLKLiD_I",
+          "title": "Oh, the Places You'll Go!",
+          "duration": "7:13"
+        },
+        {
+          "id": "O3gQHWU_djs",
+          "title": "🌞 My Many Colored Days",
+          "duration": "2:19"
+        },
+        {
+          "id": "ba8d11eAbgE",
+          "title": "💤 Dr. Seuss's Sleep Book",
+          "duration": "12:25"
+        },
+        {
+          "id": "APq4FXwFahM",
+          "title": "🎓 Ally-Saurus & the First day of School",
+          "duration": "6:07"
+        },
+        {
+          "id": "RfKiGhDNHHM",
+          "title": "👩‍🦰 What Aunts Do Best",
+          "duration": "2:17"
+        },
+        {
+          "id": "6CJ8vd0_5RQ",
+          "title": "👀 The Eye Book | Bright & Early Books",
+          "duration": "1:33"
+        },
+        {
+          "id": "p1Dh_hPSUYk",
+          "title": "🦷 The Tooth Book by Dr. Seuss",
+          "duration": "3:46"
+        },
+        {
+          "id": "tICj-NY2rsg",
+          "title": "👉🏻 Marvin K. Mooney Will You Please Go Now!",
+          "duration": "2:15"
+        },
+        {
+          "id": "_vDq1--dtaE",
+          "title": "🐸 Would You Rather be a Bullfrog? | Bright & Early Books",
+          "duration": "3:31"
+        },
+        {
+          "id": "89-IR7DeYUQ",
+          "title": "🎂  Happy Birthday to You!",
+          "duration": "11:25"
+        },
+        {
+          "id": "g2S4AB1wmaE",
+          "title": "🌀There's a Wocket in My Pocket! | Bright & Early Books",
+          "duration": "2:17"
+        },
+        {
+          "id": "vEcVZfExPg8",
+          "title": "🐱 Oi Cat!",
+          "duration": "3:58"
+        },
+        {
+          "id": "SCnKCWiGn30",
+          "title": "🐚 She Sells Seashells: A Tongue Twister Story",
+          "duration": "2:23"
+        },
+        {
+          "id": "CP8kIOHs2CU",
+          "title": "🐻 The Three Bears",
+          "duration": "6:23"
+        },
+        {
+          "id": "sXalqRQgCQk",
+          "title": "🐱 Caramba",
+          "duration": "6:11"
+        },
+        {
+          "id": "VXEH4wre07s",
+          "title": "Ally-Saurus & the Very Bossy Monster",
+          "duration": "4:58"
+        },
+        {
+          "id": "KRBhjzGomCg",
+          "title": "👧🏻 The Three Silly Girls Grubb",
+          "duration": "4:07"
+        },
+        {
+          "id": "axjIjNC_72E",
+          "title": "🐱 Splat the Cat",
+          "duration": "4:27"
+        },
+        {
+          "id": "xDmi70i6aPg",
+          "title": "🐰 My World",
+          "duration": "2:39"
+        },
+        {
+          "id": "TKD0ARhGogA",
+          "title": "🐢 Emma's Turtle",
+          "duration": "4:14"
+        },
+        {
+          "id": "QPYMzGRP5C4",
+          "title": "Please Try to Remember the First of Octember!",
+          "duration": "4:02"
+        },
+        {
+          "id": "iqMEVC2FZaY",
+          "title": "🐦 Don't Let the Pigeon Drive the Bus!",
+          "duration": "2:03"
+        },
+        {
+          "id": "19j9Ig1g4SE",
+          "title": "🐠 One Fish Two Fish Red Fish Blue Fish",
+          "duration": "9:20"
+        },
+        {
+          "id": "Yc8AhwgWi1k",
+          "title": "👸 Princess Penelope's Parrot",
+          "duration": "7:41"
+        },
+        {
+          "id": "0D6Z3A-WDL0",
+          "title": "🥚 Green Eggs and Ham",
+          "duration": "4:31"
+        },
+        {
+          "id": "91k3W2W6arI",
+          "title": "🐱 The Cat in the Hat",
+          "duration": "8:38"
+        },
+        {
+          "id": "B2zBsY5jRcE",
+          "title": "🦊 Fox in Socks by Dr. Seuss",
+          "duration": "7:06"
+        },
+        {
+          "id": "Tx2aRv9WLUw",
+          "title": "Hop on Pop",
+          "duration": "4:09"
+        },
+        {
+          "id": "RosnEqiMJmU",
+          "title": "🐛 The Very Impatient Caterpillar",
+          "duration": "3:29"
+        },
+        {
+          "id": "KJuQlTroRk4",
+          "title": "🐦 Pigeon Has to Go to School",
+          "duration": "2:27"
+        }
+      ]
     }
-  },
-  "categories": [
-    {
-      "id": "math",
-      "name": "数学启蒙",
-      "nameEn": "Math Foundation",
-      "icon": "🔢",
-      "description": "加减法、数感、规律认知",
-      "color": "#FF6B6B",
-      "videoCount": 5
-    },
-    {
-      "id": "english",
-      "name": "英语启蒙",
-      "nameEn": "English Learning",
-      "icon": "🔤",
-      "description": "自然拼读、词汇、简单对话",
-      "color": "#4ECDC4",
-      "videoCount": 5
-    },
-    {
-      "id": "science",
-      "name": "科普探索",
-      "nameEn": "Science Discovery",
-      "icon": "🔬",
-      "description": "动物、人体、太空、自然现象",
-      "color": "#45B7D1",
-      "videoCount": 5
-    },
-    {
-      "id": "emotion",
-      "name": "情绪与品格",
-      "nameEn": "Emotions & Character",
-      "icon": "💝",
-      "description": "情绪管理、礼貌、合作、勇气",
-      "color": "#96CEB4",
-      "videoCount": 5
-    },
-    {
-      "id": "brain",
-      "name": "专注力与脑力",
-      "nameEn": "Focus & Brain Training",
-      "icon": "🧠",
-      "description": "逻辑、观察、记忆、思维训练",
-      "color": "#DDA0DD",
-      "videoCount": 5
-    },
-    {
-      "id": "music",
-      "name": "音乐与运动",
-      "nameEn": "Music & Movement",
-      "icon": "🎵",
-      "description": "儿歌、律动、亲子运动",
-      "color": "#FFD93D",
-      "videoCount": 5
-    }
-  ],
-  "videos": [
-    {
-      "id": "math-001",
-      "category": "math",
-      "title": "Numberblocks - The Whole of Me",
-      "titleZh": "数字积木：完整的我",
-      "youtubeId": "Pj8MHJKBwqQ",
-      "youtubeUrl": "https://www.youtube.com/watch?v=Pj8MHJKBwqQ",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/Pj8MHJKBwqQ",
-      "channel": "Numberblocks",
-      "channelType": "official",
-      "duration": "5:00",
-      "durationMinutes": 5,
-      "thumbnail": "🔢",
-      "ageMin": 4,
-      "ageMax": 7,
-      "skills": ["数感", "加法概念", "数字组合"],
-      "description": "通过可爱的数字角色学习数字如何组合，培养基础数感。",
-      "whyRecommend": "BBC官方出品，画风可爱，用视觉化方式展示数字组合，非常适合6岁孩子建立数感基础。",
-      "safetyNotes": "内容纯净，无任何不适内容，节奏平缓。",
-      "parentTips": "可以和孩子一起用积木模仿视频中的数字组合。"
-    },
-    {
-      "id": "math-002",
-      "category": "math",
-      "title": "Addition Song for Kids | Adding Up to 10",
-      "titleZh": "加法歌：10以内加法",
-      "youtubeId": "WT_wvvEvkw0",
-      "youtubeUrl": "https://www.youtube.com/watch?v=WT_wvvEvkw0",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/WT_wvvEvkw0",
-      "channel": "Jack Hartmann Kids Music Channel",
-      "channelType": "educational",
-      "duration": "3:30",
-      "durationMinutes": 3.5,
-      "thumbnail": "➕",
-      "ageMin": 5,
-      "ageMax": 7,
-      "skills": ["10以内加法", "数学歌曲", "心算"],
-      "description": "通过朗朗上口的歌曲学习10以内加法，边唱边算。",
-      "whyRecommend": "音乐节奏适中，歌词简单重复，帮助孩子在愉快氛围中记忆加法。",
-      "safetyNotes": "纯教育内容，画面简洁明快。",
-      "parentTips": "鼓励孩子跟唱，用手指比划数字。"
-    },
-    {
-      "id": "math-003",
-      "category": "math",
-      "title": "Subtraction Song for Kids",
-      "titleZh": "减法歌：学习减法",
-      "youtubeId": "QkPa9V2wtZs",
-      "youtubeUrl": "https://www.youtube.com/watch?v=QkPa9V2wtZs",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/QkPa9V2wtZs",
-      "channel": "Jack Hartmann Kids Music Channel",
-      "channelType": "educational",
-      "duration": "4:00",
-      "durationMinutes": 4,
-      "thumbnail": "➖",
-      "ageMin": 5,
-      "ageMax": 7,
-      "skills": ["减法概念", "数学歌曲", "倒数"],
-      "description": "用音乐和动作学习减法概念，理解"减少"的含义。",
-      "whyRecommend": "与加法歌配套，帮助孩子理解加减法的对应关系，歌曲朗朗上口。",
-      "safetyNotes": "内容积极向上，无不适画面。",
-      "parentTips": "可用零食或玩具实物演示减法过程。"
-    },
-    {
-      "id": "math-004",
-      "category": "math",
-      "title": "Counting by Tens | Skip Counting Song",
-      "titleZh": "10个10个数：跳数歌",
-      "youtubeId": "W8CEOlAOGas",
-      "youtubeUrl": "https://www.youtube.com/watch?v=W8CEOlAOGas",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/W8CEOlAOGas",
-      "channel": "Scratch Garden",
-      "channelType": "educational",
-      "duration": "3:15",
-      "durationMinutes": 3.25,
-      "thumbnail": "🔟",
-      "ageMin": 5,
-      "ageMax": 8,
-      "skills": ["跳数", "数列规律", "10的倍数"],
-      "description": "学习10、20、30...100的跳数规律，为大数概念打基础。",
-      "whyRecommend": "幼小衔接关键技能，用歌曲帮助记忆，为未来学习乘法打基础。",
-      "safetyNotes": "画风卡通友好，节奏欢快但不急促。",
-      "parentTips": "可以在日常生活中练习数10元钱币。"
-    },
-    {
-      "id": "math-005",
-      "category": "math",
-      "title": "Patterns for Kids | AB, AAB, ABB Patterns",
-      "titleZh": "规律认知：找规律",
-      "youtubeId": "CXXU7K1dWKQ",
-      "youtubeUrl": "https://www.youtube.com/watch?v=CXXU7K1dWKQ",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/CXXU7K1dWKQ",
-      "channel": "Homeschool Pop",
-      "channelType": "educational",
-      "duration": "6:00",
-      "durationMinutes": 6,
-      "thumbnail": "🔵🔴",
-      "ageMin": 5,
-      "ageMax": 7,
-      "skills": ["模式识别", "逻辑思维", "规律延续"],
-      "description": "学习识别和延续不同类型的规律模式，培养逻辑思维。",
-      "whyRecommend": "规律认知是数学思维的基础，视频讲解清晰，例子丰富。",
-      "safetyNotes": "纯教育内容，讲解温和清晰。",
-      "parentTips": "生活中可用积木、水果排列规律让孩子练习。"
-    },
-    {
-      "id": "english-001",
-      "category": "english",
-      "title": "Phonics Song with TWO Words - A For Apple",
-      "titleZh": "自然拼读歌：A-Z字母发音",
-      "youtubeId": "BELlZKpi1Zs",
-      "youtubeUrl": "https://www.youtube.com/watch?v=BELlZKpi1Zs",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/BELlZKpi1Zs",
-      "channel": "ChuChu TV",
-      "channelType": "official",
-      "duration": "4:30",
-      "durationMinutes": 4.5,
-      "thumbnail": "🍎",
-      "ageMin": 4,
-      "ageMax": 7,
-      "skills": ["自然拼读", "字母发音", "单词联想"],
-      "description": "每个字母配两个单词，学习字母在单词中的发音。",
-      "whyRecommend": "自然拼读是英语阅读基础，歌曲朗朗上口，画面精美，重复强化记忆。",
-      "safetyNotes": "内容纯净，全程正面教育内容。",
-      "parentTips": "每次可以专注学习3-5个字母，不必一次学完。"
-    },
-    {
-      "id": "english-002",
-      "category": "english",
-      "title": "Learn Colors, Numbers and ABCs | Kids Songs",
-      "titleZh": "颜色、数字和字母学习歌",
-      "youtubeId": "LhKglCeZNdI",
-      "youtubeUrl": "https://www.youtube.com/watch?v=LhKglCeZNdI",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/LhKglCeZNdI",
-      "channel": "Cocomelon",
-      "channelType": "official",
-      "duration": "8:00",
-      "durationMinutes": 8,
-      "thumbnail": "🌈",
-      "ageMin": 3,
-      "ageMax": 6,
-      "skills": ["颜色词汇", "数字英语", "字母复习"],
-      "description": "综合学习颜色、数字和字母的英语表达。",
-      "whyRecommend": "Cocomelon是全球最受欢迎的儿童频道之一，动画精美，歌曲洗脑，基础词汇全覆盖。",
-      "safetyNotes": "画面温馨，家庭场景为主，非常安全。",
-      "parentTips": "观看后可指着家中物品问孩子颜色的英文。"
-    },
-    {
-      "id": "english-003",
-      "category": "english",
-      "title": "Daily Routines | What Do You Do Every Day?",
-      "titleZh": "日常生活：你每天做什么？",
-      "youtubeId": "eUXkj6j6Ezw",
-      "youtubeUrl": "https://www.youtube.com/watch?v=eUXkj6j6Ezw",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/eUXkj6j6Ezw",
-      "channel": "Super Simple Songs",
-      "channelType": "official",
-      "duration": "3:30",
-      "durationMinutes": 3.5,
-      "thumbnail": "🌅",
-      "ageMin": 5,
-      "ageMax": 8,
-      "skills": ["日常词汇", "动词短语", "时间概念"],
-      "description": "学习起床、刷牙、吃饭等日常活动的英语表达。",
-      "whyRecommend": "贴近生活场景，实用性强，孩子容易理解和运用。",
-      "safetyNotes": "展示健康的日常生活习惯，正面引导。",
-      "parentTips": "可以在对应的日常场景中用英语和孩子对话。"
-    },
-    {
-      "id": "english-004",
-      "category": "english",
-      "title": "Weather Song for Kids | Sun, Rain, Wind, Snow",
-      "titleZh": "天气歌：晴天、雨天、风和雪",
-      "youtubeId": "rD6FRDd9Hew",
-      "youtubeUrl": "https://www.youtube.com/watch?v=rD6FRDd9Hew",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/rD6FRDd9Hew",
-      "channel": "Super Simple Songs",
-      "channelType": "official",
-      "duration": "2:45",
-      "durationMinutes": 2.75,
-      "thumbnail": "🌤️",
-      "ageMin": 4,
-      "ageMax": 7,
-      "skills": ["天气词汇", "自然现象", "形容词"],
-      "description": "学习各种天气的英语表达和相关动作。",
-      "whyRecommend": "配合动作学习，加深记忆，日常可以每天讨论天气练习。",
-      "safetyNotes": "内容轻松愉快，画风简洁可爱。",
-      "parentTips": "每天早上可以和孩子用英语讨论今天的天气。"
-    },
-    {
-      "id": "english-005",
-      "category": "english",
-      "title": "Feelings and Emotions Song | Happy, Sad, Angry",
-      "titleZh": "情绪词汇歌：开心、难过、生气",
-      "youtubeId": "UsISd1AMNYU",
-      "youtubeUrl": "https://www.youtube.com/watch?v=UsISd1AMNYU",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/UsISd1AMNYU",
-      "channel": "Super Simple Songs",
-      "channelType": "official",
-      "duration": "3:00",
-      "durationMinutes": 3,
-      "thumbnail": "😊",
-      "ageMin": 4,
-      "ageMax": 7,
-      "skills": ["情绪词汇", "表情认知", "情感表达"],
-      "description": "学习表达不同情绪的英语词汇，认识各种表情。",
-      "whyRecommend": "同时学习英语和情绪认知，一举两得，帮助孩子表达自己的感受。",
-      "safetyNotes": "正面展示情绪，教导健康的情绪表达。",
-      "parentTips": "当孩子有情绪时，可以问：How do you feel?"
-    },
-    {
-      "id": "science-001",
-      "category": "science",
-      "title": "All About Dinosaurs | National Geographic Kids",
-      "titleZh": "恐龙大百科",
-      "youtubeId": "BVLReTXdkPM",
-      "youtubeUrl": "https://www.youtube.com/watch?v=BVLReTXdkPM",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/BVLReTXdkPM",
-      "channel": "National Geographic Kids",
-      "channelType": "official",
-      "duration": "7:00",
-      "durationMinutes": 7,
-      "thumbnail": "🦕",
-      "ageMin": 5,
-      "ageMax": 9,
-      "skills": ["古生物知识", "科学思维", "词汇扩展"],
-      "description": "了解不同种类的恐龙，它们的特征和生活方式。",
-      "whyRecommend": "国家地理官方内容，信息准确权威，画面震撼但不恐怖，满足孩子对恐龙的好奇心。",
-      "safetyNotes": "画面经过处理，不含暴力捕食场景，适合儿童观看。",
-      "parentTips": "可以配合恐龙玩具或绘本进行拓展学习。"
-    },
-    {
-      "id": "science-002",
-      "category": "science",
-      "title": "The Solar System Song | Planet Song for Kids",
-      "titleZh": "太阳系之歌：认识八大行星",
-      "youtubeId": "mQrlgH97v94",
-      "youtubeUrl": "https://www.youtube.com/watch?v=mQrlgH97v94",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/mQrlgH97v94",
-      "channel": "KidsLearningTube",
-      "channelType": "educational",
-      "duration": "4:30",
-      "durationMinutes": 4.5,
-      "thumbnail": "🪐",
-      "ageMin": 5,
-      "ageMax": 9,
-      "skills": ["天文知识", "行星名称", "太阳系结构"],
-      "description": "用歌曲学习太阳系八大行星的名称和顺序。",
-      "whyRecommend": "太空主题对6岁孩子极具吸引力，歌曲帮助记忆行星顺序，科学启蒙的好起点。",
-      "safetyNotes": "纯科普内容，画面美观，适合儿童。",
-      "parentTips": "可以用水果做行星模型，帮助理解大小对比。"
-    },
-    {
-      "id": "science-003",
-      "category": "science",
-      "title": "How Does Your Heart Work? | Human Body for Kids",
-      "titleZh": "你的心脏是怎么工作的？",
-      "youtubeId": "9fRgFKiPl7Y",
-      "youtubeUrl": "https://www.youtube.com/watch?v=9fRgFKiPl7Y",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/9fRgFKiPl7Y",
-      "channel": "SciShow Kids",
-      "channelType": "official",
-      "duration": "5:30",
-      "durationMinutes": 5.5,
-      "thumbnail": "❤️",
-      "ageMin": 5,
-      "ageMax": 8,
-      "skills": ["人体知识", "器官功能", "科学思维"],
-      "description": "了解心脏的结构和功能，为什么心脏会跳动。",
-      "whyRecommend": "SciShow Kids专为儿童设计，讲解深入浅出，用动画清晰展示人体奥秘。",
-      "safetyNotes": "卡通化讲解，不含真实医学图像，适合儿童。",
-      "parentTips": "可以让孩子听自己和家人的心跳，感受心脏的工作。"
-    },
-    {
-      "id": "science-004",
-      "category": "science",
-      "title": "Why Do Leaves Change Color? | Fall Science",
-      "titleZh": "为什么树叶会变色？",
-      "youtubeId": "Y-DhVJVvrq0",
-      "youtubeUrl": "https://www.youtube.com/watch?v=Y-DhVJVvrq0",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/Y-DhVJVvrq0",
-      "channel": "SciShow Kids",
-      "channelType": "official",
-      "duration": "4:00",
-      "durationMinutes": 4,
-      "thumbnail": "🍂",
-      "ageMin": 5,
-      "ageMax": 8,
-      "skills": ["植物知识", "季节变化", "因果思维"],
-      "description": "探索秋天树叶变色的科学原理。",
-      "whyRecommend": "贴近自然生活，孩子容易观察验证，培养对身边自然现象的好奇心。",
-      "safetyNotes": "纯自然科普，内容温和积极。",
-      "parentTips": "秋天可以带孩子收集不同颜色的落叶，实地观察。"
-    },
-    {
-      "id": "science-005",
-      "category": "science",
-      "title": "Amazing Animals: Ocean Creatures",
-      "titleZh": "神奇动物：海洋生物",
-      "youtubeId": "HA2qCgV5Tqw",
-      "youtubeUrl": "https://www.youtube.com/watch?v=HA2qCgV5Tqw",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/HA2qCgV5Tqw",
-      "channel": "National Geographic Kids",
-      "channelType": "official",
-      "duration": "6:00",
-      "durationMinutes": 6,
-      "thumbnail": "🐙",
-      "ageMin": 4,
-      "ageMax": 8,
-      "skills": ["海洋知识", "动物认知", "生态意识"],
-      "description": "探索神奇的海洋世界，认识各种海洋生物。",
-      "whyRecommend": "国家地理官方出品，画面精美，展示真实海洋生物，激发孩子对自然的热爱。",
-      "safetyNotes": "画面唯美，不含捕食等刺激场景，对儿童友好。",
-      "parentTips": "可以结合海洋馆参观或海洋绘本拓展学习。"
-    },
-    {
-      "id": "emotion-001",
-      "category": "emotion",
-      "title": "Daniel Tiger: It's OK to Feel Sad Sometimes",
-      "titleZh": "丹尼尔老虎：难过也没关系",
-      "youtubeId": "mhDC1gMbD78",
-      "youtubeUrl": "https://www.youtube.com/watch?v=mhDC1gMbD78",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/mhDC1gMbD78",
-      "channel": "Daniel Tiger's Neighbourhood",
-      "channelType": "official",
-      "duration": "5:00",
-      "durationMinutes": 5,
-      "thumbnail": "🐯",
-      "ageMin": 4,
-      "ageMax": 7,
-      "skills": ["情绪认知", "情绪接纳", "自我安慰"],
-      "description": "学习接纳负面情绪，了解难过是正常的感受。",
-      "whyRecommend": "PBS Kids王牌节目，专门教导儿童社会情感技能，歌曲朗朗上口易记忆。",
-      "safetyNotes": "内容温暖治愈，正面引导情绪管理。",
-      "parentTips": "当孩子难过时，可以唱视频里的歌：It's OK to feel sad sometimes."
-    },
-    {
-      "id": "emotion-002",
-      "category": "emotion",
-      "title": "Sesame Street: Kindness | Being Kind to Others",
-      "titleZh": "芝麻街：善良与关爱",
-      "youtubeId": "kAo4-2UzgPo",
-      "youtubeUrl": "https://www.youtube.com/watch?v=kAo4-2UzgPo",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/kAo4-2UzgPo",
-      "channel": "Sesame Street",
-      "channelType": "official",
-      "duration": "4:30",
-      "durationMinutes": 4.5,
-      "thumbnail": "❤️",
-      "ageMin": 4,
-      "ageMax": 7,
-      "skills": ["善良品格", "同理心", "助人行为"],
-      "description": "学习如何对他人展现善意和关爱。",
-      "whyRecommend": "芝麻街50多年品牌，品格教育权威，通过可爱角色传递善良的重要性。",
-      "safetyNotes": "内容纯净正面，传递积极价值观。",
-      "parentTips": "鼓励孩子每天做一件善良的小事，晚上分享。"
-    },
-    {
-      "id": "emotion-003",
-      "category": "emotion",
-      "title": "How to Be a Good Friend | Social Skills for Kids",
-      "titleZh": "如何做一个好朋友",
-      "youtubeId": "Sg9JYJlPv1w",
-      "youtubeUrl": "https://www.youtube.com/watch?v=Sg9JYJlPv1w",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/Sg9JYJlPv1w",
-      "channel": "Learning Songs",
-      "channelType": "educational",
-      "duration": "3:30",
-      "durationMinutes": 3.5,
-      "thumbnail": "🤝",
-      "ageMin": 5,
-      "ageMax": 8,
-      "skills": ["社交技能", "友谊", "分享合作"],
-      "description": "学习交朋友的技巧：分享、倾听、合作。",
-      "whyRecommend": "幼小衔接关键技能，帮助孩子在学校建立良好的人际关系。",
-      "safetyNotes": "正面社交引导，内容健康向上。",
-      "parentTips": "可以角色扮演，练习视频中提到的交友技巧。"
-    },
-    {
-      "id": "emotion-004",
-      "category": "emotion",
-      "title": "Taking Turns | Cooperation Song for Kids",
-      "titleZh": "轮流玩：合作歌",
-      "youtubeId": "NvmziBpjAIU",
-      "youtubeUrl": "https://www.youtube.com/watch?v=NvmziBpjAIU",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/NvmziBpjAIU",
-      "channel": "Super Simple Songs",
-      "channelType": "official",
-      "duration": "2:30",
-      "durationMinutes": 2.5,
-      "thumbnail": "🔄",
-      "ageMin": 4,
-      "ageMax": 7,
-      "skills": ["轮流等待", "耐心", "公平意识"],
-      "description": "学习轮流等待的重要性和方法。",
-      "whyRecommend": "轮流是重要的社交规则，歌曲简单好学，帮助孩子理解并实践。",
-      "safetyNotes": "内容积极正面，场景贴近儿童生活。",
-      "parentTips": "玩游戏时引用歌词：Taking turns is fun!"
-    },
-    {
-      "id": "emotion-005",
-      "category": "emotion",
-      "title": "I Can Do Hard Things | Growth Mindset for Kids",
-      "titleZh": "我能做到困难的事：成长型心态",
-      "youtubeId": "iE7R6KUFGak",
-      "youtubeUrl": "https://www.youtube.com/watch?v=iE7R6KUFGak",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/iE7R6KUFGak",
-      "channel": "GoNoodle",
-      "channelType": "official",
-      "duration": "4:00",
-      "durationMinutes": 4,
-      "thumbnail": "💪",
-      "ageMin": 5,
-      "ageMax": 9,
-      "skills": ["成长心态", "自信心", "坚持不懈"],
-      "description": "培养面对困难的勇气和"我能行"的心态。",
-      "whyRecommend": "成长型心态是学业成功的关键，帮助孩子建立面对挑战的积极态度。",
-      "safetyNotes": "内容励志正面，配合动作充满活力。",
-      "parentTips": "孩子遇到困难时，一起唱：I can do hard things!"
-    },
-    {
-      "id": "brain-001",
-      "category": "brain",
-      "title": "Spot the Difference | Visual Puzzle for Kids",
-      "titleZh": "找不同：视觉挑战",
-      "youtubeId": "8ld9F-2yVlM",
-      "youtubeUrl": "https://www.youtube.com/watch?v=8ld9F-2yVlM",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/8ld9F-2yVlM",
-      "channel": "Muffalo Potato",
-      "channelType": "educational",
-      "duration": "5:00",
-      "durationMinutes": 5,
-      "thumbnail": "👀",
-      "ageMin": 5,
-      "ageMax": 9,
-      "skills": ["观察力", "注意细节", "专注力"],
-      "description": "在两幅相似图片中找出不同之处。",
-      "whyRecommend": "经典的专注力训练，画面有趣，难度适中，孩子很有成就感。",
-      "safetyNotes": "纯益智内容，无任何不适元素。",
-      "parentTips": "可以暂停视频让孩子自己找，再播放答案验证。"
-    },
-    {
-      "id": "brain-002",
-      "category": "brain",
-      "title": "Memory Game for Kids | What's Missing?",
-      "titleZh": "记忆游戏：少了什么？",
-      "youtubeId": "dH9cxzHDqYM",
-      "youtubeUrl": "https://www.youtube.com/watch?v=dH9cxzHDqYM",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/dH9cxzHDqYM",
-      "channel": "Smile and Learn",
-      "channelType": "educational",
-      "duration": "6:00",
-      "durationMinutes": 6,
-      "thumbnail": "🧩",
-      "ageMin": 4,
-      "ageMax": 7,
-      "skills": ["短期记忆", "观察力", "专注力"],
-      "description": "观察物品，然后回忆哪个物品消失了。",
-      "whyRecommend": "记忆力训练对学习至关重要，游戏形式有趣，逐步增加难度。",
-      "safetyNotes": "卡通风格，内容纯净，适合独立观看。",
-      "parentTips": "可以在家用玩具模仿游戏，加强训练效果。"
-    },
-    {
-      "id": "brain-003",
-      "category": "brain",
-      "title": "Which One is Different? | Odd One Out Puzzles",
-      "titleZh": "哪个不一样？找不同类",
-      "youtubeId": "pLtJxqFQaU4",
-      "youtubeUrl": "https://www.youtube.com/watch?v=pLtJxqFQaU4",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/pLtJxqFQaU4",
-      "channel": "Smile and Learn",
-      "channelType": "educational",
-      "duration": "5:30",
-      "durationMinutes": 5.5,
-      "thumbnail": "❓",
-      "ageMin": 5,
-      "ageMax": 8,
-      "skills": ["分类思维", "逻辑推理", "观察比较"],
-      "description": "找出一组物品中与众不同的那一个。",
-      "whyRecommend": "分类是重要的逻辑思维基础，帮助孩子学会归纳和比较。",
-      "safetyNotes": "纯益智内容，画面友好。",
-      "parentTips": "日常可以玩类似游戏：桌上放几样东西，问哪个不一样。"
-    },
-    {
-      "id": "brain-004",
-      "category": "brain",
-      "title": "Follow the Pattern | Logic Puzzles for Kids",
-      "titleZh": "规律推理：下一个是什么？",
-      "youtubeId": "cHJJPQu0QtA",
-      "youtubeUrl": "https://www.youtube.com/watch?v=cHJJPQu0QtA",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/cHJJPQu0QtA",
-      "channel": "Kids Academy",
-      "channelType": "educational",
-      "duration": "4:30",
-      "durationMinutes": 4.5,
-      "thumbnail": "🔮",
-      "ageMin": 5,
-      "ageMax": 8,
-      "skills": ["规律推理", "逻辑思维", "预测能力"],
-      "description": "观察规律，预测接下来会出现什么。",
-      "whyRecommend": "规律推理是数学和逻辑的基础，视频由浅入深，适合6岁孩子。",
-      "safetyNotes": "教育内容，画面清晰简洁。",
-      "parentTips": "可以用积木或彩色珠子创造规律让孩子接续。"
-    },
-    {
-      "id": "brain-005",
-      "category": "brain",
-      "title": "Maze Puzzles for Kids | Find the Way",
-      "titleZh": "迷宫挑战：找出路",
-      "youtubeId": "s1l25MUvGR4",
-      "youtubeUrl": "https://www.youtube.com/watch?v=s1l25MUvGR4",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/s1l25MUvGR4",
-      "channel": "Smile and Learn",
-      "channelType": "educational",
-      "duration": "5:00",
-      "durationMinutes": 5,
-      "thumbnail": "🌀",
-      "ageMin": 5,
-      "ageMax": 8,
-      "skills": ["空间思维", "路径规划", "问题解决"],
-      "description": "帮助角色找到走出迷宫的路径。",
-      "whyRecommend": "迷宫是经典的空间思维训练，培养规划和预判能力。",
-      "safetyNotes": "卡通迷宫，场景友好无压力。",
-      "parentTips": "可以配合纸质迷宫书，让孩子用手指或铅笔走迷宫。"
-    },
-    {
-      "id": "music-001",
-      "category": "music",
-      "title": "Head Shoulders Knees and Toes | Action Song",
-      "titleZh": "头肩膝脚趾：身体律动",
-      "youtubeId": "h4eueDYPTIg",
-      "youtubeUrl": "https://www.youtube.com/watch?v=h4eueDYPTIg",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/h4eueDYPTIg",
-      "channel": "Super Simple Songs",
-      "channelType": "official",
-      "duration": "2:30",
-      "durationMinutes": 2.5,
-      "thumbnail": "🙆",
-      "ageMin": 3,
-      "ageMax": 7,
-      "skills": ["身体部位", "协调性", "听指令"],
-      "description": "经典的身体部位歌曲，边唱边做动作。",
-      "whyRecommend": "经典儿歌，全球流行，帮助孩子认识身体部位同时活动身体。",
-      "safetyNotes": "动作简单安全，节奏适中。",
-      "parentTips": "可以逐渐加快速度，增加挑战和乐趣。"
-    },
-    {
-      "id": "music-002",
-      "category": "music",
-      "title": "Freeze Dance | Movement Song for Kids",
-      "titleZh": "定格舞：听音乐动起来",
-      "youtubeId": "2UcZWXvgMZE",
-      "youtubeUrl": "https://www.youtube.com/watch?v=2UcZWXvgMZE",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/2UcZWXvgMZE",
-      "channel": "The Kiboomers",
-      "channelType": "official",
-      "duration": "3:30",
-      "durationMinutes": 3.5,
-      "thumbnail": "🕺",
-      "ageMin": 4,
-      "ageMax": 8,
-      "skills": ["听觉反应", "自控力", "大肌肉运动"],
-      "description": "音乐响起时跳舞，音乐停止时定格。",
-      "whyRecommend": "训练听觉反应和自控力，同时让孩子充分活动，释放能量。",
-      "safetyNotes": "室内可安全进行，不需要额外器材。",
-      "parentTips": "全家一起玩，增加亲子互动乐趣。"
-    },
-    {
-      "id": "music-003",
-      "category": "music",
-      "title": "Animal Dance | Move Like Animals Song",
-      "titleZh": "动物舞：模仿动物动起来",
-      "youtubeId": "HpOe8lngp_o",
-      "youtubeUrl": "https://www.youtube.com/watch?v=HpOe8lngp_o",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/HpOe8lngp_o",
-      "channel": "GoNoodle",
-      "channelType": "official",
-      "duration": "4:00",
-      "durationMinutes": 4,
-      "thumbnail": "🐸",
-      "ageMin": 4,
-      "ageMax": 8,
-      "skills": ["模仿能力", "大肌肉运动", "想象力"],
-      "description": "模仿不同动物的动作和声音。",
-      "whyRecommend": "GoNoodle专为儿童设计运动内容，动作有趣，孩子很喜欢。",
-      "safetyNotes": "动作设计安全，适合室内进行。",
-      "parentTips": "可以问孩子想模仿什么动物，鼓励创意。"
-    },
-    {
-      "id": "music-004",
-      "category": "music",
-      "title": "If You're Happy and You Know It | Classic Kids Song",
-      "titleZh": "如果感到幸福你就拍拍手",
-      "youtubeId": "l4WNrvVjiTw",
-      "youtubeUrl": "https://www.youtube.com/watch?v=l4WNrvVjiTw",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/l4WNrvVjiTw",
-      "channel": "Super Simple Songs",
-      "channelType": "official",
-      "duration": "2:45",
-      "durationMinutes": 2.75,
-      "thumbnail": "👏",
-      "ageMin": 3,
-      "ageMax": 7,
-      "skills": ["情绪表达", "节奏感", "听指令"],
-      "description": "经典互动儿歌，通过动作表达快乐。",
-      "whyRecommend": "全球经典儿歌，简单好学，帮助孩子用身体表达积极情绪。",
-      "safetyNotes": "动作简单安全，适合任何场合。",
-      "parentTips": "可以创造新歌词：如果想睡觉你就打哈欠..."
-    },
-    {
-      "id": "music-005",
-      "category": "music",
-      "title": "Yoga for Kids | Cosmic Kids Yoga Adventure",
-      "titleZh": "儿童瑜伽：太空冒险",
-      "youtubeId": "LhYtcadR9nw",
-      "youtubeUrl": "https://www.youtube.com/watch?v=LhYtcadR9nw",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/LhYtcadR9nw",
-      "channel": "Cosmic Kids Yoga",
-      "channelType": "official",
-      "duration": "12:00",
-      "durationMinutes": 12,
-      "thumbnail": "🧘",
-      "ageMin": 4,
-      "ageMax": 9,
-      "skills": ["平衡协调", "专注力", "身心放松"],
-      "description": "跟随故事做瑜伽动作，放松身心。",
-      "whyRecommend": "Cosmic Kids是儿童瑜伽领导品牌，将瑜伽融入故事，孩子很容易跟着做。",
-      "safetyNotes": "动作设计考虑儿童安全，不含高难度姿势。",
-      "parentTips": "睡前做有助于帮助孩子平静下来，改善睡眠。"
-    }
-  ]
+  }
 }

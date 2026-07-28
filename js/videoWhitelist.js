@@ -1,31 +1,118 @@
 // ========== 视频白名单（只看家长指定的频道/视频） ==========
-// 白名单配置在 js/videoWhitelistConfig.js。
-// 频道视频获取分两档（结果都缓存到 localStorage，6 小时过期，离线用缓存）：
-//   1. 配置了 apiKey：官方 YouTube Data API 直连（无代理），分页拉全量（≤500 条）
-//   2. 未配置（默认）：YouTube RSS 只给最新 15 条（接口硬上限），经公共 CORS 代理
-//      获取，并采用累积缓存——每次刷新并入历史，列表只增不减
-// 频道标题旁常驻「播放频道」按钮：播放列表模式天然包含频道全部视频。
+// 白名单配置在 js/videoWhitelistConfig.js（家长唯一编辑入口）。
+//
+// 【数据分层】最终展示的是各层去重合并的结果，优先级从高到低：
+//   1. data/videos.json —— 服务端（GitHub Actions 定时脚本）预生成的频道全量清单。
+//      同源相对路径，无跨域、无代理、无 API key，SW 预缓存后离线可用。这是主力数据源，
+//      必须最快最稳，所以 init() 一进来就拉，拉到即重渲染。
+//   2. YouTube Data API —— 只在家长配了 apiKey 时启用，拉到的最新视频合并到静态清单前面。
+//   3. CORS 代理 + RSS —— 历史遗留兜底。公共免费代理近期基本全挂（403/429/522/超时），
+//      所以超时压到 5 秒且只在后台跑，绝不能拖慢首屏；失败也不影响静态清单的展示。
+//   4. localStorage 累积缓存 —— 第 2/3 层的结果落盘（去重、新在前、只增不减），
+//      离线或网络层全挂时兜底，也让 RSS 那 15 条能积少成多。
+//
+// 【为什么静态 JSON 优先】RSS 接口硬上限只有 15 条，而目标频道有 400+ 视频；
+// 公共代理又不可靠。预生成静态文件把「不确定的跨域请求」变成「确定的同源文件」。
+//
+// 【分批渲染】一个频道可能有 400+ 视频，一次性插入几百个 <img> 在低端手机上会卡，
+// 所以初始只渲染 24 条，底部「加载更多」按钮 + 滚动到底自动追加，每次再加 24 条。
+// 追加走 insertAdjacentHTML，不重渲整个列表，避免已加载的缩略图闪烁。
+//
+// 频道标题旁常驻「播放频道」按钮：播放列表模式天然包含频道全部视频，
+// 即使所有数据层都失败也永远可播。
 
 const VideoWhitelist = {
   CACHE_KEY: 'videoWhitelistCache',
   CACHE_TTL: 6 * 60 * 60 * 1000,
   FETCH_TIMEOUT: 8000,
+  PROXY_TIMEOUT: 5000,        // 代理基本全挂，超时压短，别拖慢首屏
+  STATIC_URL: 'data/videos.json',
+  PAGE_SIZE: 24,              // 每批渲染的卡片数
+  MAX_VIDEOS: 1000,           // 单频道展示上限，防止异常数据撑爆 DOM
   VIDEO_ID_RE: /^[A-Za-z0-9_-]{11}$/,
+  CHANNEL_ID_RE: /^[A-Za-z0-9_-]{6,64}$/,
+  DURATION_RE: /^\d{1,3}:\d{2}(:\d{2})?$/,
 
-  // 公共 CORS 代理，按序尝试
+  // 公共 CORS 代理，按序尝试（最后手段）
   PROXIES: [
     (url) => 'https://corsproxy.io/?url=' + encodeURIComponent(url),
     (url) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
   ],
 
+  _static: null,          // 静态清单：channelId -> { name, videos }
+  _staticState: 'idle',   // idle | loading | loaded | error
+  _staticAt: 0,
   _refreshing: false,
+  _attempted: {},         // 本次会话已尝试过网络刷新的频道（代理全挂时避免反复重试）
+  _shown: {},             // channelId -> 当前已渲染的卡片数（跨重渲染保持，防止回退）
+  _lastSig: null,         // 上次渲染的数据签名，相同则跳过 DOM 写入，避免闪烁
+  _observer: null,        // 「加载更多」哨兵的 IntersectionObserver
 
   init() {
-    this.refreshIfStale();
-    this.render();
+    this.render();        // 先用已有缓存渲染，保证秒开（离线也有内容）
+    this.ensureStatic();  // 主力数据源，到手后自动重渲
+    this.refreshIfStale(); // 后台增量刷新（可选层）
   },
 
-  // ---------- 缓存 ----------
+  // ---------- 第 1 层：静态 JSON ----------
+  ensureStatic() {
+    if (this._staticState === 'loading' || this._staticState === 'loaded') return Promise.resolve();
+    // 失败后 60 秒内不重试，避免每次进页面都白打一次请求
+    if (this._staticState === 'error' && Date.now() - this._staticAt < 60000) return Promise.resolve();
+
+    this._staticState = 'loading';
+    // 注意：这里绝不能加随机查询串做 cache-busting。SW 是 cache-first 且预缓存了
+    // data/videos.json，带查询串的请求匹配不到缓存条目，离线就直接白屏了。
+    // JSON 内容更新靠发布时 bump sw.js 的 CACHE_NAME 版本号。
+    return this.fetchWithTimeout(this.STATIC_URL, this.FETCH_TIMEOUT)
+      .then(text => {
+        this._static = this.normalizeStatic(JSON.parse(text));
+        this._staticState = 'loaded';
+        this._staticAt = Date.now();
+        this.render();
+      })
+      .catch(() => {
+        // 文件缺失 / 还没生成 / 格式损坏，都静默降级到其他层
+        this._static = null;
+        this._staticState = 'error';
+        this._staticAt = Date.now();
+        this.render();
+      });
+  },
+
+  // 静态文件同样按不可信输入处理：逐条校验 videoId，标题只收字符串
+  normalizeStatic(data) {
+    const out = {};
+    const channels = data && data.channels;
+    if (!channels || typeof channels !== 'object') return out;
+
+    for (const channelId of Object.keys(channels)) {
+      const ch = channels[channelId];
+      if (!ch || !Array.isArray(ch.videos)) continue;
+      const videos = [];
+      const seen = new Set();
+      for (const v of ch.videos) {
+        if (!v || !this.VIDEO_ID_RE.test(String(v.id || ''))) continue;
+        if (seen.has(v.id)) continue;
+        seen.add(v.id);
+        const item = { id: v.id, title: typeof v.title === 'string' ? v.title : '' };
+        if (typeof v.duration === 'string' && this.DURATION_RE.test(v.duration)) {
+          item.duration = v.duration;
+        }
+        videos.push(item);
+        if (videos.length >= this.MAX_VIDEOS) break;
+      }
+      out[channelId] = { name: typeof ch.name === 'string' ? ch.name : '', videos };
+    }
+    return out;
+  },
+
+  staticVideos(channelId) {
+    const ch = this._static && this._static[channelId];
+    return (ch && ch.videos) || [];
+  },
+
+  // ---------- 第 4 层：localStorage 累积缓存 ----------
   getCache() {
     try {
       return JSON.parse(localStorage.getItem(this.CACHE_KEY)) || {};
@@ -34,32 +121,62 @@ const VideoWhitelist = {
     }
   },
 
-  // 拉取结果并入缓存：新列表在前，历史见过但这次没拉到的旧视频保留在后
-  // （RSS 模式一次只有 15 条，靠这里积少成多）
+  // 网络层拉到的结果并入缓存：新列表在前，历史见过但这次没拉到的旧视频保留在后
   mergeIntoCache(channelId, fetched) {
-    const cache = this.getCache();
-    const old = ((cache[channelId] || {}).videos || []);
-    const seen = new Set(fetched.map(v => v.id));
-    const merged = fetched.concat(old.filter(v => !seen.has(v.id))).slice(0, 600);
-    cache[channelId] = { fetchedAt: Date.now(), videos: merged };
-    localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache));
+    try {
+      const cache = this.getCache();
+      const old = ((cache[channelId] || {}).videos || []);
+      const seen = new Set(fetched.map(v => v.id));
+      const merged = fetched.concat(old.filter(v => !seen.has(v.id))).slice(0, 600);
+      cache[channelId] = { fetchedAt: Date.now(), videos: merged };
+      localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache));
+    } catch {
+      // localStorage 满了或被禁用，不影响本次展示
+    }
+  },
+
+  cachedVideos(channelId) {
+    const c = this.getCache()[channelId];
+    return (c && Array.isArray(c.videos) ? c.videos : [])
+      .filter(v => v && this.VIDEO_ID_RE.test(String(v.id || '')));
+  },
+
+  // ---------- 合并各层 ----------
+  // 缓存（来自 API/RSS，永远是最新的那几条）在前，静态清单里没重复的接在后面。
+  // 两边都是「新 → 旧」顺序，所以合并后整体顺序仍然成立。
+  displayVideos(channelId) {
+    const head = this.cachedVideos(channelId);
+    const tail = this.staticVideos(channelId);
+    const seen = new Set();
+    const out = [];
+    for (const v of head.concat(tail)) {
+      if (seen.has(v.id)) continue;
+      seen.add(v.id);
+      out.push(v);
+      if (out.length >= this.MAX_VIDEOS) break;
+    }
+    return out;
   },
 
   channels() {
-    return (typeof VIDEO_WHITELIST !== 'undefined' && VIDEO_WHITELIST.channels) || [];
+    return ((typeof VIDEO_WHITELIST !== 'undefined' && VIDEO_WHITELIST.channels) || [])
+      .filter(ch => ch && this.CHANNEL_ID_RE.test(String(ch.channelId || '')));
   },
 
   manualVideos() {
     return ((typeof VIDEO_WHITELIST !== 'undefined' && VIDEO_WHITELIST.videos) || [])
-      .filter(v => this.VIDEO_ID_RE.test(v.id));
+      .filter(v => v && this.VIDEO_ID_RE.test(String(v.id || '')));
   },
 
-  // ---------- 拉取 ----------
-  // 超过 6 小时的频道后台刷新（stale-while-revalidate：先用旧缓存渲染，拉到新数据再重渲染）
+  // ---------- 第 2/3 层：网络拉取 ----------
+  // 超过 6 小时的频道后台刷新（stale-while-revalidate：先用已有数据渲染，拉到新的再重渲染）
   refreshIfStale() {
+    this.ensureStatic();   // 静态层没加载成功过就顺便重试
+
     if (this._refreshing) return;
     const cache = this.getCache();
     const stale = this.channels().filter(ch => {
+      if (this._attempted[ch.channelId]) return false;   // 本会话已试过，别反复打死代理
       const c = cache[ch.channelId];
       return !c || (Date.now() - c.fetchedAt) > this.CACHE_TTL;
     });
@@ -67,6 +184,7 @@ const VideoWhitelist = {
     if (stale.length === 0 || navigator.onLine === false) return;
 
     this._refreshing = true;
+    stale.forEach(ch => { this._attempted[ch.channelId] = true; });
     Promise.allSettled(stale.map(ch => this.fetchChannel(ch.channelId)))
       .then(() => {
         this._refreshing = false;
@@ -79,7 +197,7 @@ const VideoWhitelist = {
     let videos = null;
     let lastErr = null;
 
-    // 第一档：官方 Data API（配置了 key 时），直连无代理，可拉全量
+    // 第 2 层：官方 Data API（配置了 key 时），直连无代理，可拉全量
     if (key) {
       try {
         videos = await this.fetchViaApi(channelId, key);
@@ -88,12 +206,13 @@ const VideoWhitelist = {
       }
     }
 
-    // 第二档：RSS 最新 15 条，经 CORS 代理
+    // 第 3 层：RSS 最新 15 条，经 CORS 代理。实测代理目前基本全挂，
+    // 这里纯属兜底，5 秒超时，失败静默（静态清单已经把列表撑起来了）。
     if (!videos || videos.length === 0) {
       const feedUrl = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + channelId;
       for (const buildUrl of this.PROXIES) {
         try {
-          const xml = await this.fetchWithTimeout(buildUrl(feedUrl));
+          const xml = await this.fetchWithTimeout(buildUrl(feedUrl), this.PROXY_TIMEOUT);
           const list = this.parseFeed(xml);
           if (list.length === 0) throw new Error('empty feed');
           videos = list;
@@ -185,49 +304,100 @@ const VideoWhitelist = {
       .replace(/'/g, '&#39;');
   },
 
+  // onclick 只传 id（标题可能含引号），id 已经过正则校验，可安全拼进 URL / onclick
   thumbCard(video) {
+    const duration = video.duration && this.DURATION_RE.test(video.duration)
+      ? `<span class="video-thumb-duration">${video.duration}</span>` : '';
     return `
       <div class="video-thumb-card" onclick="VideoWhitelist.play('${video.id}')">
         <img class="video-thumb-img" src="https://i.ytimg.com/vi/${video.id}/mqdefault.jpg" alt="" loading="lazy">
+        ${duration}
         <div class="video-thumb-title">${this.escapeHtml(video.title || '')}</div>
       </div>`;
+  },
+
+  // 「加载更多」区块（已全部显示时返回空串）
+  moreBarHtml(channelId, shown, total) {
+    if (shown >= total) return '';
+    return `
+      <button class="btn-load-more" onclick="VideoWhitelist.loadMore('${channelId}')">
+        <span data-i18n="videos.loadMore">加载更多</span>
+        <span class="load-more-count">${shown} / ${total}</span>
+      </button>`;
+  },
+
+  // 数据签名：完全相同就跳过 DOM 写入，避免后台刷新把已加载的缩略图重渲成闪烁
+  renderSignature() {
+    const parts = [this.isBusy() ? 'busy' : 'idle'];
+    for (const ch of this.channels()) {
+      const list = this.displayVideos(ch.channelId);
+      parts.push([
+        ch.channelId,
+        list.length,
+        this._shown[ch.channelId] || 0,
+        list.length ? list[0].id : ''
+      ].join(':'));
+    }
+    parts.push('manual:' + this.manualVideos().length);
+    return parts.join('|');
+  },
+
+  // 静态清单还没到手 / 后台在刷新 → 显示「加载中」而不是空态
+  isBusy() {
+    return this._refreshing || this._staticState === 'idle' || this._staticState === 'loading';
   },
 
   render() {
     const grid = document.getElementById('video-grid');
     if (!grid) return;
 
-    const cache = this.getCache();
+    const sig = this.renderSignature();
+    if (sig === this._lastSig) return;
+
+    const busy = this.isBusy();
     let html = '';
 
     // 每个白名单频道一个分区
     for (const ch of this.channels()) {
-      const cached = cache[ch.channelId];
-      const count = cached && cached.videos ? cached.videos.length : 0;
+      const channelId = ch.channelId;
+      const list = this.displayVideos(channelId);
+      const staticName = (this._static && this._static[channelId] && this._static[channelId].name) || '';
+      const name = ch.name || staticName;
+
       html += `
         <div class="channel-section">
           <div class="channel-header">
             <span class="channel-icon">${this.escapeHtml(ch.icon || '📺')}</span>
-            <span class="channel-name">${this.escapeHtml(ch.name || '')}${count ? ' · ' + count : ''}</span>
-            <button class="btn-play-channel small" onclick="VideoWhitelist.playChannel('${this.escapeHtml(ch.channelId)}')">
+            <span class="channel-name">${this.escapeHtml(name)}${list.length ? ' · ' + list.length : ''}</span>
+            <button class="btn-play-channel small" onclick="VideoWhitelist.playChannel('${channelId}')">
               ▶️ <span data-i18n="videos.playChannel">播放频道</span>
             </button>
           </div>`;
 
-      if (cached && cached.videos.length > 0) {
-        html += `<div class="video-thumb-grid">${cached.videos.map(v => this.thumbCard(v)).join('')}</div>`;
-      } else if (this._refreshing) {
+      if (list.length > 0) {
+        // 分批：已展开过多少就还渲染多少（用户点过「加载更多」后，
+        // 后台刷新触发的重渲染不会把他弹回第一批）
+        const shown = Math.min(list.length, this._shown[channelId] || this.PAGE_SIZE);
+        this._shown[channelId] = shown;
+        html += `
+          <div class="video-thumb-grid" id="vt-grid-${channelId}">
+            ${list.slice(0, shown).map(v => this.thumbCard(v)).join('')}
+          </div>
+          <div class="video-load-more" id="vt-more-${channelId}">
+            ${this.moreBarHtml(channelId, shown, list.length)}
+          </div>`;
+      } else if (busy) {
         html += `
           <div class="channel-fallback">
             <span class="loading-icon">🎬</span>
             <p data-i18n="videos.loading">加载中...</p>
           </div>`;
       } else {
-        // 列表拿不到（首次访问且离线/代理全挂）：给一个永远可用的「播放频道」兜底
+        // 所有数据层都拿不到列表：给一个永远可用的「播放频道」兜底
         html += `
           <div class="channel-fallback">
             <p data-i18n="videos.empty">视频列表加载不出来，直接播放频道吧！</p>
-            <button class="btn-play-channel" onclick="VideoWhitelist.playChannel('${this.escapeHtml(ch.channelId)}')">
+            <button class="btn-play-channel" onclick="VideoWhitelist.playChannel('${channelId}')">
               ▶️ <span data-i18n="videos.playChannel">播放频道</span>
             </button>
           </div>`;
@@ -249,9 +419,56 @@ const VideoWhitelist = {
     }
 
     grid.innerHTML = html;
+    this._lastSig = this.renderSignature();
+
+    this.observeMoreBars();
 
     // 新渲染的 data-i18n 节点补翻译
     if (typeof I18n !== 'undefined') I18n.applyTranslations();
+  },
+
+  // 追加下一批：只往末尾插 DOM，不重渲已有卡片（避免图片闪烁）
+  loadMore(channelId) {
+    if (!this.CHANNEL_ID_RE.test(String(channelId || ''))) return;
+    const list = this.displayVideos(channelId);
+    const shown = Math.min(list.length, this._shown[channelId] || this.PAGE_SIZE);
+    if (shown >= list.length) return;
+
+    const next = list.slice(shown, shown + this.PAGE_SIZE);
+    const grid = document.getElementById('vt-grid-' + channelId);
+    if (!grid) return;
+    grid.insertAdjacentHTML('beforeend', next.map(v => this.thumbCard(v)).join(''));
+
+    this._shown[channelId] = shown + next.length;
+
+    const more = document.getElementById('vt-more-' + channelId);
+    if (more) more.innerHTML = this.moreBarHtml(channelId, this._shown[channelId], list.length);
+
+    this._lastSig = this.renderSignature();
+    this.observeMoreBars();
+    if (typeof I18n !== 'undefined') I18n.applyTranslations();
+  },
+
+  // 滚动到底自动加载（IntersectionObserver 不支持时，用户点按钮一样能加载）
+  observeMoreBars() {
+    if (typeof IntersectionObserver === 'undefined') return;
+    if (this._observer) this._observer.disconnect();
+    this._observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        // 关键：探索视频页没打开时是 display:none，此时哨兵是零尺寸矩形，
+        // Chrome 会把它判成 isIntersecting=true，导致孩子还没进页面就把
+        // 几百张卡片全渲染了（分批直接失效）。用高度过滤掉这种假命中。
+        if (entry.boundingClientRect.height <= 0) continue;
+        const id = entry.target.id.replace('vt-more-', '');
+        this.loadMore(id);
+      }
+    }, { rootMargin: '200px' });
+
+    for (const ch of this.channels()) {
+      const el = document.getElementById('vt-more-' + ch.channelId);
+      if (el && el.firstElementChild) this._observer.observe(el);
+    }
   },
 
   // ---------- 播放 ----------
@@ -260,10 +477,9 @@ const VideoWhitelist = {
     if (!this.VIDEO_ID_RE.test(videoId)) return;
 
     let title = videoId;
-    const cache = this.getCache();
     for (const ch of this.channels()) {
-      const hit = ((cache[ch.channelId] || {}).videos || []).find(v => v.id === videoId);
-      if (hit) { title = hit.title; break; }
+      const hit = this.displayVideos(ch.channelId).find(v => v.id === videoId);
+      if (hit && hit.title) { title = hit.title; break; }
     }
     const manual = this.manualVideos().find(v => v.id === videoId);
     if (manual && manual.title) title = manual.title;

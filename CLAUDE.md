@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v60)
+├── sw.js               # Service Worker (当前 v62，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -56,7 +56,7 @@ kids-learning-app/
 │   ├── dailyCheckin.js # 每日签到
 │   ├── wrongQuestions.js # 错题本
 │   ├── videoWhitelistConfig.js # 视频白名单配置（家长编辑：频道/单视频）
-│   ├── videoWhitelist.js # 视频白名单（频道 RSS 拉取/缓存/渲染）
+│   ├── videoWhitelist.js # 视频白名单（读 data/videos.json、分批渲染、播放频道兜底）
 │   ├── videos.js       # 旧视频数据（已停用，不再加载）
 │   ├── scienceData.js  # 科学题库
 │   ├── lifeSkills.js   # 生活技能（时钟/钱币/日历）
@@ -77,6 +77,12 @@ kids-learning-app/
 │   ├── birthdayParty.js   # 生日派对
 │   ├── parkWallpaper.js   # 魔法公园（声音互动壁纸）
 │   └── toothFairy.js      # 牙仙子传统（掉牙记录/惊喜信/收藏证书）
+├── scripts/
+│   └── fetch_videos.py # 抓取白名单频道全部视频 → 生成 data/videos.json（CI 调用）
+├── data/
+│   └── videos.json     # ★ CI 预生成的视频列表（同源静态文件，应用运行时读它）
+├── .github/workflows/
+│   └── update-videos.yml # 每日定时重跑抓取脚本，有变化才提交 + 自动 bump sw.js 版本
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -105,7 +111,7 @@ kids-learning-app/
 | 模块 | 文件 | 状态 |
 |------|------|------|
 | 首页分屏 | homeScreen.js | ✅ 完成（iPhone 风 4 屏：常用/学习/游戏/工具） |
-| 探索视频 | videoWhitelist.js + videoWhitelistConfig.js | ✅ 完成（白名单制：频道 RSS + 单视频） |
+| 探索视频 | videoWhitelist.js + videoWhitelistConfig.js + scripts/fetch_videos.py | ✅ 完成（白名单制：CI 预生成 data/videos.json 全量列表，同源读取免代理） |
 | 数学游戏 | app.js | ✅ 完成（加减乘除/10/20/30） |
 | 英语学习 | app.js | ✅ 完成 |
 | 中文学习 | app.js | ✅ 完成 |
@@ -151,6 +157,15 @@ git push origin main
 
 # 更新缓存版本（修改 sw.js）
 const CACHE_NAME = 'kids-learning-vXX';
+
+# 手动刷新探索视频列表（本地跑，生成 data/videos.json）
+python3 scripts/fetch_videos.py
+# 本地刷新后记得手动 bump sw.js 版本号再提交（CI 跑的话会自动 bump）
+
+# 让 CI 在线刷新一次（不用本地环境，推荐）
+gh workflow run update-videos.yml
+gh run watch          # 看进度
+gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失效
 ```
 
 ## 数据存储 (localStorage)
@@ -183,7 +198,15 @@ const CACHE_NAME = 'kids-learning-vXX';
 
 1. **单页应用**: 所有页面在 `index.html`，通过 `navigateTo()` 切换 `.page`；首页是 `homeScreen.js` 渲染的横向分屏（scroll-snap），全屏功能各自用 modal
 2. **PWA 缓存**: 修改资源后必须更新 `sw.js` 版本号；SW 只拦截同源请求（跨域早退）
-3. **儿童安全**: 视频白名单制——孩子只能看 `videoWhitelistConfig.js` 里配置的频道/视频；播放用官方 YouTube IFrame API（www.youtube.com + enablejsapi），结束事件触发遮罩盖住推荐墙；fs:0 禁全屏（iOS 系统全屏时 DOM 遮罩失效）。频道列表：配置 apiKey 走官方 Data API 拉全量（≤500 条）；未配置走 RSS（上限 15 条/次）+ 累积缓存只增不减；「播放频道」按钮始终可播全量播放列表
+3. **儿童安全 + 视频数据流**: 视频白名单制——孩子只能看 `videoWhitelistConfig.js` 里配置的频道/视频；播放用官方 YouTube IFrame API（www.youtube.com + enablejsapi），结束事件触发遮罩盖住推荐墙；fs:0 禁全屏（iOS 系统全屏时 DOM 遮罩失效）。
+
+   **列表数据流（三层）**：
+   - **主力**：CI 预生成的同源静态文件 `data/videos.json`，应用直接 `fetch('data/videos.json')`——无跨域、无代理、无 API key，SW 预缓存后离线可用，且能拿到频道全量视频（几百条）
+   - **动态更新**：`.github/workflows/update-videos.yml` 每天定时重跑 `scripts/fetch_videos.py`；只有列表真正变化才提交（忽略 `generatedAt` 时间戳差异避免空提交），并**自动 bump `sw.js` 的 CACHE_NAME**——因为 SW 是 cache-first，不换版本号老设备永远读旧缓存，更新就到不了用户手上
+   - **兜底**：「▶️ 播放频道」按钮走播放列表模式，不依赖任何列表数据，永远可播全量
+   - `apiKey` 现已降级为**可选加速项**（有网时实时补充比 CI 更新的视频），不配也完全正常
+
+   **为什么不再用 CORS 代理**：2026-07 实测 7 个免费公共代理（corsproxy.io / allorigins / codetabs / thingproxy / cors.lol / proxy.cors.sh 等）**全部失效**（403/429/522/超时），孩子端直接空列表；且 RSS 接口硬上限只有最新 15 条。**不要再引入任何运行时 CORS 代理依赖**
 4. **响应式**: 主要针对手机/平板，竖屏优先
 5. **离线优先**: 核心功能支持完全离线使用
 6. **多语言**: 使用 `data-i18n` 属性，调用 `I18n.t('key')` 获取翻译

@@ -192,6 +192,7 @@ I18n.translations['ja'] = {
   'videos.playChannel': 'チャンネル再生',
   'videos.parentPicks': 'パパママのおすすめ',
   'videos.playError': '動画を再生できません。他のを試してね',
+  'videos.loadMore': 'もっと見る',
   'videos.channel': 'チャンネル',
   'videos.age': '5-7歳',
   'videos.intro': '紹介',

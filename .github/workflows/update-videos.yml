@@ -1,0 +1,216 @@
+# ========================================================================
+# 「探索视频」列表自动更新
+#
+# 背景：以前视频列表靠浏览器经公共 CORS 代理去拉 YouTube RSS，2026-07 实测
+#       7 个免费代理全部失效（403/429/522/超时），孩子端直接空列表；而且
+#       RSS 接口本身硬上限只有最新 15 条，够不到频道的几百个视频。
+#
+# 现在的做法：服务端预生成 + 同源静态 JSON
+#       本 workflow 定时跑 scripts/fetch_videos.py，抓取白名单频道的全部视频，
+#       写进仓库里的 data/videos.json 并提交回 main。GitHub Pages 部署后，
+#       应用运行时只需要 fetch('data/videos.json') —— 无跨域、无代理、无 API key，
+#       Service Worker 预缓存后离线也能用。
+# ========================================================================
+
+name: Update videos.json
+
+on:
+  # 每天定时刷新一次，跟进频道的新投稿。
+  schedule:
+    # cron 是 5 字段且按 UTC 计算。10:17 UTC = 美西 02:17 (PST) / 03:17 (PDT)，
+    # 属于夜间低峰；分钟数故意避开 0，整点是 GitHub 定时任务最拥堵的时刻。
+    - cron: '17 10 * * *'
+
+  # Actions 页面手动点「Run workflow」，用于临时刷新或排查抓取失效。
+  workflow_dispatch:
+
+  # 家长改完白名单频道配置后 push 上来，立刻重新生成一次列表，
+  # 不用等到第二天的定时任务。
+  push:
+    branches:
+      - main
+    paths:
+      - 'js/videoWhitelistConfig.js'
+      - 'scripts/fetch_videos.py'
+      - '.github/workflows/update-videos.yml'
+
+# 仓库的 default_workflow_permissions 目前是 read。GitHub 官方文档明确写着
+# 「Anyone with write access to a repository can modify the permissions granted
+# to the GITHUB_TOKEN, adding or removing access as required, by editing the
+# permissions key in the workflow file.」—— 也就是说仓库默认设成只读时，
+# workflow 里显式声明依然可以把 contents 抬到 write（唯一的例外是来自 fork 的
+# PR，本 workflow 不会被 fork PR 触发，不受影响）。
+#
+# pages: write 是为了在下面显式触发一次 Pages 构建，原因见 "Trigger GitHub Pages
+# rebuild" 那一步的注释。
+permissions:
+  contents: write
+  pages: write
+
+# 定时任务、手动触发、push 触发可能撞在一起，串行执行避免两个 job 同时往 main 推。
+# 不开 cancel-in-progress：正在 commit/push 的任务被腰斩容易留下半截状态。
+concurrency:
+  group: update-videos
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Fetch YouTube videos and refresh data/videos.json
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      # actions/checkout 默认会把 GITHUB_TOKEN 写进 git 的 credential helper，
+      # 后面的 git push 才有凭据可用。默认是 depth=1 的浅克隆（仓库带 mp3，
+      # 完整克隆 ~169MB），只有在极少数 push 被拒绝需要 rebase 时才补拉历史。
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 抓取前先留一份旧文件，后面用来判断「除了 generatedAt 时间戳以外
+      # 到底有没有真的变化」，避免每天产生一个只改时间戳的空提交。
+      - name: Snapshot current videos.json
+        run: |
+          mkdir -p "$RUNNER_TEMP/videos-diff"
+          if [ -f data/videos.json ]; then
+            cp data/videos.json "$RUNNER_TEMP/videos-diff/old.json"
+          fi
+
+      # 抓取脚本失败就让整个 workflow 红掉，绝对不要 `|| true` 吞异常。
+      # YouTube 一旦改版导致解析失效，必须在 Actions 页面直接看到红叉，
+      # 而不是静默写出一个空列表再提交上去。
+      - name: Fetch videos
+        run: python3 scripts/fetch_videos.py
+
+      # 双保险：即使脚本自己退出码是 0，也要校验产物确实可用，
+      # 免得把一个空的/损坏的列表提交上去，孩子端反而更糟。
+      - name: Validate output and detect real changes
+        id: check
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os, re, sys
+
+          ID_RE = re.compile(r'^[A-Za-z0-9_-]{11}$')
+
+          with open('data/videos.json', encoding='utf-8') as f:
+              new = json.load(f)
+
+          channels = new.get('channels')
+          if not isinstance(channels, dict) or not channels:
+              sys.exit('校验失败：data/videos.json 里没有任何频道，抓取多半失败了')
+
+          total = 0
+          for cid, ch in channels.items():
+              videos = ch.get('videos')
+              if not isinstance(videos, list) or not videos:
+                  sys.exit(f'校验失败：频道 {cid} 的 videos 为空')
+              for v in videos:
+                  vid = str(v.get('id', ''))
+                  if not ID_RE.match(vid):
+                      sys.exit(f'校验失败：频道 {cid} 里有非法视频 id {vid!r}')
+              total += len(videos)
+
+          # 只比对 channels 内容，刻意忽略 generatedAt。
+          # 旧文件不存在、或者是历史遗留的非法 JSON，一律当作「有变化」。
+          try:
+              with open(os.environ['RUNNER_TEMP'] + '/videos-diff/old.json', encoding='utf-8') as f:
+                  old_channels = json.load(f).get('channels')
+          except Exception:
+              old_channels = None
+
+          changed = (old_channels != channels)
+          print(f'changed={"true" if changed else "false"}')
+          print(f'total={total}')
+          print(f'channel_count={len(channels)}')
+          PY
+
+      # 频道没发新视频时，把只有时间戳差异的文件还原回去，保持工作区干净，
+      # 这样后面就不会产生空提交。
+      - name: Discard timestamp-only change
+        if: steps.check.outputs.changed == 'false'
+        run: |
+          git checkout -- data/videos.json
+          echo "视频列表无变化（共 ${{ steps.check.outputs.total }} 条），跳过提交"
+
+      # ★ 关键一环 ★
+      # sw.js 采用 cache-first 策略：命中缓存就不再走网络。所以哪怕 CI 把新的
+      # data/videos.json 部署上线了，老设备上的 Service Worker 依然会一直返回
+      # 缓存里的旧 JSON —— “每天自动更新”永远到不了用户手上。
+      # 因此只要列表真的变了，就把 CACHE_NAME 里的 kids-learning-vNN 自动加一，
+      # 触发 SW 走一次 install/activate，重新装载全量缓存（含新的 videos.json）。
+      - name: Bump service worker cache version
+        if: steps.check.outputs.changed == 'true'
+        id: bump
+        run: |
+          CURRENT=$(grep -oE 'kids-learning-v[0-9]+' sw.js | head -n 1)
+          if [ -z "$CURRENT" ]; then
+            echo "::error file=sw.js::找不到 kids-learning-vNN，无法自动 bump 缓存版本"
+            exit 1
+          fi
+          OLD_NUM=${CURRENT#kids-learning-v}
+          NEW_NUM=$((OLD_NUM + 1))
+          # -i.bak 这种写法 GNU sed 和 BSD sed 都支持，本地 macOS 可以用完全相同的
+          # 命令验证；改完删掉备份文件，避免 sw.js.bak 被误提交。
+          sed -i.bak "s/kids-learning-v${OLD_NUM}/kids-learning-v${NEW_NUM}/" sw.js
+          rm -f sw.js.bak
+          echo "sw_version=v${NEW_NUM}" >> "$GITHUB_OUTPUT"
+          echo "SW 缓存版本 v${OLD_NUM} -> v${NEW_NUM}"
+          head -n 1 sw.js
+
+      - name: Commit and push
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/videos.json sw.js
+
+          # commit message 里的 [skip ci] 用来阻断「提交 -> 触发 workflow -> 再提交」
+          # 的死循环。（另外两道保险：GITHUB_TOKEN 产生的 push 本来就不会触发新的
+          # workflow run；而且 push 触发限定了 paths，data/videos.json 和 sw.js 都不在里面。）
+          git commit \
+            -m "chore(videos): 自动更新探索视频列表 [skip ci]" \
+            -m "频道数 ${{ steps.check.outputs.channel_count }}，视频数 ${{ steps.check.outputs.total }}" \
+            -m "同步 bump sw.js 缓存版本到 ${{ steps.bump.outputs.sw_version }}，让老设备能拿到新列表"
+
+          # 快路径：直接推。仅在被拒绝（main 上有别人的新提交）时才补拉完整历史再 rebase，
+          # 把 169MB 的完整克隆开销留给这种罕见情况。
+          if ! git push origin HEAD:main; then
+            echo "push 被拒绝，补拉历史后 rebase 重试一次"
+            git fetch --unshallow origin main || git fetch origin main
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      # ★ 没有这一步，前面所有工作都白做 ★
+      # 本仓库的 Pages 是 legacy「Deploy from a branch」模式，而 GitHub 官方文档写明：
+      # 「Commits pushed by a GitHub Actions workflow that uses the GITHUB_TOKEN do not
+      #   trigger a GitHub Pages build.」
+      # 也就是说上一步 push 成功了，app.tao.irish 上的文件却不会更新——「每日自动刷新」
+      # 对孩子端零效果。所以这里显式调 API 让 Pages 重新构建一次。
+      - name: Trigger GitHub Pages rebuild
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --method POST "repos/${{ github.repository }}/pages/builds"
+          echo "已请求 Pages 重新构建；用下面命令确认状态："
+          echo "  gh api repos/${{ github.repository }}/pages/builds/latest --jq .status"
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "### 探索视频列表更新"
+            echo ""
+            echo "- 频道数：${{ steps.check.outputs.channel_count }}"
+            echo "- 视频总数：${{ steps.check.outputs.total }}"
+            if [ "${{ steps.check.outputs.changed }}" = "true" ]; then
+              echo "- 结果：**已更新并提交**，SW 缓存版本 ${{ steps.bump.outputs.sw_version }}"
+            else
+              echo "- 结果：无变化，未提交"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

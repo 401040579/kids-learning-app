@@ -192,6 +192,7 @@ I18n.translations['de'] = {
   'videos.playChannel': 'Kanal abspielen',
   'videos.parentPicks': 'Von Mama & Papa ausgewählt',
   'videos.playError': 'Video konnte nicht abgespielt werden – probier ein anderes!',
+  'videos.loadMore': 'Mehr laden',
   'videos.channel': 'Kanal',
   'videos.age': '5-7 Jahre',
   'videos.intro': 'Einführung',

@@ -192,6 +192,7 @@ I18n.translations['ko'] = {
   'videos.playChannel': '채널 재생',
   'videos.parentPicks': '엄마 아빠 추천',
   'videos.playError': '동영상을 재생할 수 없어요. 다른 것을 봐요',
+  'videos.loadMore': '더 보기',
   'videos.channel': '채널',
   'videos.age': '5-7세',
   'videos.intro': '소개',

@@ -192,6 +192,7 @@ I18n.translations['en'] = {
   'videos.playChannel': 'Play Channel',
   'videos.parentPicks': 'Picked by Mom & Dad',
   'videos.playError': 'Video failed to play — try another one!',
+  'videos.loadMore': 'Load More',
   'videos.channel': 'Channel',
   'videos.age': '5-7 years',
   'videos.intro': 'Introduction',

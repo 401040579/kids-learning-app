@@ -771,12 +771,30 @@ body {
 }
 
 .video-thumb-card {
+  position: relative;
   background: white;
   border-radius: 16px;
+  padding-bottom: 10px;   /* 标题下方留白（标题自身不能有 padding-bottom，见下） */
   overflow: hidden;
   box-shadow: 0 4px 14px rgba(255, 105, 180, 0.15);
   cursor: pointer;
   transition: transform 0.2s ease;
+}
+
+/* 时长角标（叠在缩略图右下角）。
+   按标题区固定高度从底部反推定位，比用卡片高度百分比准确 */
+.video-thumb-duration {
+  position: absolute;
+  right: 6px;
+  bottom: calc(2.16rem + 24px);
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.4;
+  pointer-events: none;
 }
 
 .video-thumb-card:active {
@@ -792,13 +810,21 @@ body {
 }
 
 .video-thumb-title {
-  padding: 8px 10px 10px;
+  /* 注意 padding-bottom 必须为 0：overflow:hidden 裁的是 padding 盒边缘，
+     底部留白会让被截断的第 3 行从留白区露出来。底部间距改由卡片的
+     padding-bottom 提供（见 .video-thumb-card）。 */
+  padding: 8px 10px 0;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-dark);
   line-height: 1.35;
-  display: -webkit-box;
+  /* 固定两行高度 = 2 × 1.35 × 0.8rem(=2.16rem) + 顶部 padding。
+     新版 Chrome 会把 display:-webkit-box 强制改写成 flow-root 导致 line-clamp 失效，
+     固定高度保证那种情况下也在整行处干净截断，顺带让所有卡片等高。 */
+  height: calc(2.16rem + 8px);
+  display: -webkit-box;      /* Safari/iOS 走这条，能出省略号 */
   -webkit-line-clamp: 2;
+  line-clamp: 2;             /* 标准属性，新版 Chrome */
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -836,6 +862,39 @@ body {
 
 .btn-play-channel:active {
   transform: scale(0.96);
+}
+
+/* 「加载更多」（频道视频很多时分批显示） */
+.video-load-more {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0 4px;
+}
+
+.btn-load-more {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 26px;
+  border: none;
+  border-radius: 25px;
+  background: white;
+  color: var(--primary);
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(255, 105, 180, 0.22);
+  transition: transform 0.15s ease;
+}
+
+.btn-load-more:active {
+  transform: scale(0.96);
+}
+
+.load-more-count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-light);
 }
 
 /* 播放失败提示（在 16:9 播放器容器内居中） */

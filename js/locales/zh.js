@@ -192,6 +192,7 @@ I18n.translations['zh'] = {
   'videos.playChannel': '播放频道',
   'videos.parentPicks': '爸妈精选',
   'videos.playError': '视频播放失败，换一个试试吧',
+  'videos.loadMore': '加载更多',
   'videos.channel': '频道',
   'videos.age': '5-7岁',
   'videos.intro': '简介',
