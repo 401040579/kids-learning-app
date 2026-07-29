@@ -156,9 +156,22 @@ const RewardSystem = {
     });
   },
 
-  // 保存数据到本地存储
+  // 保存数据到本地存储。
+  // 必须「读-改-写」而不是直接把内存对象整个覆盖上去：
+  // kidsLearningData 里还存着别的模块写的字段（如科学模块的 scienceProgress），
+  // 直接覆盖会把它们抹掉——科学主题的进度条因此长期停在 0/10。
+  // 同理，别的地方如果在本对象加载后改过 totalScore，这里也不能盲目覆盖。
   saveData() {
-    safeSetItem('kidsLearningData', JSON.stringify(this.data));
+    let merged = {};
+    try {
+      const raw = localStorage.getItem('kidsLearningData');
+      if (raw) {
+        const disk = JSON.parse(raw);
+        if (disk && typeof disk === 'object') merged = disk;
+      }
+    } catch (e) { /* 磁盘数据损坏就当空的 */ }
+    Object.assign(merged, this.data);   // 只覆盖本模块负责的字段
+    safeSetItem('kidsLearningData', JSON.stringify(merged));
   },
 
   // 更新页面显示
@@ -268,13 +281,27 @@ const RewardSystem = {
   // 显示奖励弹窗
   showReward(points, message) {
     const popup = document.getElementById('reward-popup');
-    const pointsEl = document.getElementById('reward-points');
-    const messageEl = document.querySelector('.reward-message');
+    const messageEl = document.getElementById('reward-message') || document.querySelector('.reward-message');
+    if (!popup || !messageEl) return;
 
-    pointsEl.textContent = points;
-    const gotPointsTemplate = (typeof I18n !== 'undefined' && I18n.t('reward.gotPoints')) || '你获得了 {points} 分!';
-    const gotPointsText = gotPointsTemplate.replace('{points}', points);
-    messageEl.innerHTML = message + ' ' + gotPointsText;
+    // 原来的写法有个致命顺序问题：先给 #reward-points 这个 span 赋值，
+    // 紧接着又用 messageEl.innerHTML = ... 把整段重写，**把那个 span 冲掉了**。
+    // 于是第一次奖励正常，从第二次起 getElementById('reward-points') 返回 null，
+    // 赋值直接抛 TypeError —— addPoints 中断，粒子庆祝不放，
+    // 而且异常会传播到调用方，把它后面的成就检查等逻辑一起打断（28 处调用点全中）。
+    //
+    // 现在改成每次重建节点：既保住 #reward-points 的样式，又不会自毁；
+    // 同时用 textContent 而非 innerHTML，题目内容里的特殊字符也不会被当成标签。
+    const tpl = (typeof I18n !== 'undefined' && I18n.t('reward.gotPoints')) || '你获得了 {points} 分!';
+    const parts = String(tpl).split('{points}');
+
+    messageEl.textContent = '';
+    messageEl.appendChild(document.createTextNode((message || '') + ' ' + parts[0]));
+    const span = document.createElement('span');
+    span.id = 'reward-points';
+    span.textContent = points;
+    messageEl.appendChild(span);
+    if (parts.length > 1) messageEl.appendChild(document.createTextNode(parts[1]));
 
     popup.classList.remove('hidden');
 

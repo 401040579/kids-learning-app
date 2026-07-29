@@ -996,10 +996,17 @@ function saveScienceProgress(theme, questionId, isCorrect) {
   themeProgress.total++;
   if (isCorrect) {
     themeProgress.correct++;
-    data.scienceCorrect = (data.scienceCorrect || 0) + 1;
   }
 
+  // scienceProgress 是本函数独有的字段，直接写；
+  // 但 scienceCorrect 是 RewardSystem 也管的计数器，必须走它，
+  // 否则这里写进去的值会被 RewardSystem 下一次 saveData() 覆盖掉
+  // （三个科学成就一直解锁不了就是因为这个计数器总被抹回去）。
   safeSetItem('kidsLearningData', JSON.stringify(data));
+  if (isCorrect && typeof RewardSystem !== 'undefined') {
+    RewardSystem.data.scienceCorrect += 1;
+    RewardSystem.saveData();
+  }
 }
 
 // 显示主题选择界面
@@ -1217,15 +1224,14 @@ function showScienceComplete() {
   const bonusPoints = allCorrect ? 100 : 50;
   bonusEl.textContent = allCorrect ? '+100 积分奖励！全对太棒了！🎊' : '+50 积分奖励！🎊';
 
-  // 添加奖励积分
-  const saved = localStorage.getItem('kidsLearningData');
-  let data = saved ? JSON.parse(saved) : {};
-  data.totalScore = (data.totalScore || 0) + bonusPoints;
-  data.tasksDone = (data.tasksDone || 0) + 1;
-  safeSetItem('kidsLearningData', JSON.stringify(data));
-
-  // 更新显示
-  document.getElementById('total-score').textContent = data.totalScore;
+  // 添加奖励积分。
+  // 必须走 RewardSystem，不能自己读写 localStorage——否则 RewardSystem 内存里
+  // 还是旧分数，它下一次 saveData() 就会把这里加的奖励整个覆盖掉，
+  // 孩子会亲眼看到总分变少（做完科学主题 +100，随手答道数学题就没了）。
+  RewardSystem.data.totalScore += bonusPoints;
+  RewardSystem.data.tasksDone += 1;
+  RewardSystem.saveData();
+  RewardSystem.updateDisplay();
 
   // 播放完成音效和粒子效果
   RewardSystem.playSound('complete');
