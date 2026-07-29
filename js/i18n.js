@@ -25,12 +25,47 @@ const I18n = {
     fr: 'FR'
   },
 
+  // 按需加载语言包。
+  // 7 个语言包共约 356KB，但同时只用得上一个（外加英语兜底）。
+  // 所以 index.html 只静态引入 en.js，其余 6 个在真正切到该语言时才下载，
+  // 首屏因此少传约 255KB。
+  loadLocale(lang) {
+    if (this.translations[lang]) return Promise.resolve(true);
+    if (!this.supportedLanguages.includes(lang)) return Promise.resolve(false);
+    this._loading = this._loading || {};
+    if (this._loading[lang]) return this._loading[lang];
+
+    this._loading[lang] = new Promise((resolve) => {
+      const s = document.createElement('script');
+      s.src = 'js/locales/' + lang + '.js';
+      s.onload = () => resolve(true);
+      s.onerror = () => {
+        // 下载失败就继续用英语兜底，不阻塞界面
+        console.warn('[i18n] 语言包加载失败：' + lang + '，继续使用英语');
+        this._loading[lang] = null;
+        resolve(false);
+      };
+      document.head.appendChild(s);
+    });
+    return this._loading[lang];
+  },
+
   // 初始化
   init() {
     // 从 localStorage 读取语言设置，默认英语
     const savedLang = localStorage.getItem('appLanguage');
     if (savedLang && this.supportedLanguages.includes(savedLang)) {
       this.currentLang = savedLang;
+    }
+
+    // 当前语言的包还没到手（非英语时）就先补下载，到手后再翻一遍。
+    // 期间界面显示 HTML 里写死的中文兜底文案，只有一瞬间。
+    if (!this.translations[this.currentLang]) {
+      this.loadLocale(this.currentLang).then(() => {
+        this.applyTranslations();
+        this.updateLanguageSelector();
+        this.updateHeaderDropdown();
+      });
     }
 
     this.applyTranslations();
@@ -66,19 +101,22 @@ const I18n = {
   setLanguage(lang) {
     if (!this.supportedLanguages.includes(lang)) return;
 
-    this.currentLang = lang;
-    localStorage.setItem('appLanguage', lang);
-    this.applyTranslations();
-    this.updateLanguageSelector();
-    this.updateHeaderDropdown();
-    this.updateHtmlLang();
-
-    // 关闭下拉菜单
+    // 关闭下拉菜单（放在最前面，让点击立刻有反馈，不用等语言包下载）
     const dropdown = document.getElementById('lang-dropdown');
     if (dropdown) dropdown.classList.add('hidden');
 
-    // 触发语言变化事件，供其他模块监听
-    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+    // 语言包按需加载：已在内存就同步走完，没有才等一次网络
+    this.loadLocale(lang).then(() => {
+      this.currentLang = lang;
+      localStorage.setItem('appLanguage', lang);
+      this.applyTranslations();
+      this.updateLanguageSelector();
+      this.updateHeaderDropdown();
+      this.updateHtmlLang();
+
+      // 触发语言变化事件，供其他模块监听
+      window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+    });
   },
 
   // 应用翻译到所有带 data-i18n 属性的元素

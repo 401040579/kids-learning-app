@@ -2844,13 +2844,9 @@
 
   <!-- i18n System -->
   <script src="js/i18n.js"></script>
+  <!-- 只静态加载英语（兜底语言）。其余 6 个语言包约 255KB，
+       由 I18n.loadLocale() 在切到该语言时才下载，见 js/i18n.js -->
   <script src="js/locales/en.js"></script>
-  <script src="js/locales/zh.js"></script>
-  <script src="js/locales/ja.js"></script>
-  <script src="js/locales/ko.js"></script>
-  <script src="js/locales/es.js"></script>
-  <script src="js/locales/de.js"></script>
-  <script src="js/locales/fr.js"></script>
 
   <script src="js/analytics.js"></script>
   <script src="js/scienceData.js"></script>
