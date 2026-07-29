@@ -2422,7 +2422,7 @@ function setSleepTimer(minutes) {
   } else if (minutes === 0) {
     // 不限时，停止定时器
     stopSleepTimer();
-    updateTimerDisplay();
+    updateSleepTimerDisplay();
   }
 }
 
@@ -2444,20 +2444,20 @@ function startSleepTimer() {
   // 如果是不限时，则不启动
   if (sleepTimerMinutes === 0) {
     sleepTimerEndTime = null;
-    updateTimerDisplay();
+    updateSleepTimerDisplay();
     return;
   }
 
   // 使用时间戳计算结束时间（解决后台节流问题）
   sleepTimerEndTime = Date.now() + sleepTimerMinutes * 60 * 1000;
   sleepTimerSeconds = sleepTimerMinutes * 60;
-  updateTimerDisplay();
+  updateSleepTimerDisplay();
 
   sleepTimerInterval = setInterval(() => {
     // 基于时间戳计算剩余秒数（后台恢复时也能准确计算）
     const remaining = Math.max(0, Math.ceil((sleepTimerEndTime - Date.now()) / 1000));
     sleepTimerSeconds = remaining;
-    updateTimerDisplay();
+    updateSleepTimerDisplay();
 
     // 时间到
     if (sleepTimerSeconds <= 0) {
@@ -2474,7 +2474,7 @@ function stopSleepTimer() {
   }
   sleepTimerSeconds = 0;
   sleepTimerEndTime = null;
-  updateTimerDisplay();
+  updateSleepTimerDisplay();
 }
 
 // 恢复定时器（从剩余时间继续）
@@ -2491,13 +2491,13 @@ function resumeSleepTimer() {
 
   // 根据剩余秒数计算新的结束时间
   sleepTimerEndTime = Date.now() + sleepTimerSeconds * 1000;
-  updateTimerDisplay();
+  updateSleepTimerDisplay();
 
   sleepTimerInterval = setInterval(() => {
     // 基于时间戳计算剩余秒数
     const remaining = Math.max(0, Math.ceil((sleepTimerEndTime - Date.now()) / 1000));
     sleepTimerSeconds = remaining;
-    updateTimerDisplay();
+    updateSleepTimerDisplay();
 
     // 时间到
     if (sleepTimerSeconds <= 0) {
@@ -2507,7 +2507,9 @@ function resumeSleepTimer() {
 }
 
 // 更新定时器显示
-function updateTimerDisplay() {
+// 注意：这是**睡眠音乐**的倒计时显示，别和「玩耍计时」的 updateTimerDisplay 混淆。
+// 两者原来同名，后加载的这个把前面那个覆盖了，导致玩耍计时的数字永远不动。
+function updateSleepTimerDisplay() {
   const displayEl = document.getElementById('timer-remaining');
   if (!displayEl) return;
 
@@ -2552,7 +2554,7 @@ function stopSleepMusicWithFadeOut() {
       updatePlayButtonUI();
       stopDiscAnimation();
       renderSleepMusicList();
-      updateTimerDisplay();
+      updateSleepTimerDisplay();
       updateMediaSessionState();
     }
   }, fadeOutInterval);
@@ -2574,7 +2576,7 @@ function handleVisibilityChange() {
     if (remaining <= 0) {
       stopSleepMusicWithFadeOut();
     } else {
-      updateTimerDisplay();
+      updateSleepTimerDisplay();
     }
   }
 
@@ -2795,9 +2797,15 @@ function updatePetStatusBars() {
 
 // ========== P2功能 - 绘本阅读控制 ==========
 
+// 注意：pictureBook.js 里也定义了同名函数，但 app.js 最后加载，所以生效的是这一份。
+// 那边的版本带「最近使用」记录，这里必须一并保留，否则绘本永远进不了最近使用。
 function showPictureBook() {
   const modal = document.getElementById('picture-book-modal');
   if (!modal) return;
+
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('pictureBook');
+  }
 
   PictureBook.renderBookshelf();
   modal.classList.remove('hidden');
@@ -2833,9 +2841,14 @@ function closeBookComplete() {
 
 // ========== P2功能 - 跟读练习控制 ==========
 
+// 同上：pronunciation.js 里有同名定义但被这份覆盖，「最近使用」记录要在这里保留。
 function showPronunciation() {
   const modal = document.getElementById('pronunciation-modal');
   if (!modal) return;
+
+  if (typeof RecentlyUsed !== 'undefined') {
+    RecentlyUsed.track('pronunciation');
+  }
 
   Pronunciation.renderPracticeSelect();
   modal.classList.remove('hidden');
