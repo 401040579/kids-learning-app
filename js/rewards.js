@@ -10,10 +10,18 @@ const CalendarData = {
   },
 
   // 从本地存储加载数据
+  // 同样要 try/catch：本函数经 RewardSystem.init() 调用，抛异常会连累后面
+  // 十几个模块的初始化（见 RewardSystem.loadData 的注释）。
   loadData() {
-    const saved = localStorage.getItem('kidsCalendarData');
-    if (saved) {
-      this.events = JSON.parse(saved);
+    try {
+      const saved = localStorage.getItem('kidsCalendarData');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') this.events = parsed;
+      }
+    } catch (e) {
+      console.warn('[CalendarData] 日历数据损坏，已重置：', e);
+      this.events = {};
     }
   },
 
@@ -88,6 +96,17 @@ const CalendarData = {
 // ========== 奖励系统 ==========
 
 const RewardSystem = {
+  // 字段默认值（同时也是「合法字段清单」，loadData 用它校验脏数据）
+  DEFAULTS: {
+    totalScore: 0,
+    tasksDone: 0,
+    mathCorrect: 0,
+    mathStreak: 0,
+    englishCorrect: 0,
+    chineseCorrect: 0,
+    scienceCorrect: 0
+  },
+
   // 数据存储
   data: {
     totalScore: 0,
@@ -107,11 +126,34 @@ const RewardSystem = {
   },
 
   // 从本地存储加载数据
+  // 这里有两个必须防住的坑（其余模块如 achievements/dailyCheckin 早就是这么写的）：
+  //   1. 必须**合并**而不是整体替换：老版本存的数据缺少后来新增的字段
+  //      （如 scienceCorrect），整体替换后该字段变 undefined，再 += 1 就成了 NaN，
+  //      分数显示成「NaN」且会被存回去，再也回不来。
+  //   2. 必须 try/catch：本函数由 RewardSystem.init() 调用，而它排在
+  //      app.js 的 DOMContentLoaded 靠前位置。数据一旦损坏就抛异常，
+  //      后面十几个模块的 init 全部中断——签到、成就、视频列表、最近使用、
+  //      数学/英语/中文页面统统失效，而且没有任何报错提示。
   loadData() {
-    const saved = localStorage.getItem('kidsLearningData');
-    if (saved) {
-      this.data = JSON.parse(saved);
+    try {
+      const saved = localStorage.getItem('kidsLearningData');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          this.data = { ...this.data, ...parsed };
+        }
+      }
+    } catch (e) {
+      console.warn('[RewardSystem] 学习数据损坏，已重置为默认值：', e);
     }
+    // 兜底：所有计数字段必须是有限数字。
+    // null / 字符串 / NaN 都要拉回 0，否则 'x' + 1 会变成 'x1' 这种越滚越坏的脏值。
+    Object.keys(this.DEFAULTS).forEach(k => {
+      const v = this.data[k];
+      if (typeof v !== 'number' || !Number.isFinite(v)) {
+        this.data[k] = this.DEFAULTS[k];
+      }
+    });
   },
 
   // 保存数据到本地存储
