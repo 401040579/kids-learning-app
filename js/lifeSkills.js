@@ -55,7 +55,7 @@ const LifeSkills = {
 
   // 保存统计数据
   saveStats() {
-    localStorage.setItem('lifeSkillsStats', JSON.stringify(this.stats));
+    safeSetItem('lifeSkillsStats', JSON.stringify(this.stats));
   },
 
   // 显示模块选择界面

@@ -75,7 +75,7 @@ const AchievementSystem = {
 
   // 保存数据到本地存储
   saveData() {
-    localStorage.setItem('kidsAchievements', JSON.stringify(this.data));
+    safeSetItem('kidsAchievements', JSON.stringify(this.data));
   },
 
   // 检查并更新成就进度

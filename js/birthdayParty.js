@@ -53,7 +53,7 @@ const BirthdayParty = {
   },
 
   saveData() {
-    localStorage.setItem('kidsBirthdayParty', JSON.stringify(this.data));
+    safeSetItem('kidsBirthdayParty', JSON.stringify(this.data));
   },
 
   // ========== 显示/关闭 ==========

@@ -25,7 +25,7 @@ const WrongQuestions = {
 
   // 保存数据到本地存储
   saveData() {
-    localStorage.setItem('kidsWrongQuestions', JSON.stringify(this.data));
+    safeSetItem('kidsWrongQuestions', JSON.stringify(this.data));
   },
 
   // 添加错题

@@ -209,7 +209,7 @@ const RecentlyUsed = {
       recent = recent.slice(0, this.MAX_ITEMS);
     }
 
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(recent));
+    safeSetItem(this.STORAGE_KEY, JSON.stringify(recent));
 
     // 更新显示
     this.render();
@@ -534,7 +534,7 @@ const MathConfig = {
 
   // 保存配置
   save() {
-    localStorage.setItem('mathGameConfig', JSON.stringify({
+    safeSetItem('mathGameConfig', JSON.stringify({
       range: this.range,
       operators: this.operators
     }));
@@ -952,7 +952,7 @@ function loadScienceProgress() {
         nature: { completed: [], correct: 0, total: 0 }
       };
       data.scienceCorrect = 0;
-      localStorage.setItem('kidsLearningData', JSON.stringify(data));
+      safeSetItem('kidsLearningData', JSON.stringify(data));
     }
   }
 }
@@ -999,7 +999,7 @@ function saveScienceProgress(theme, questionId, isCorrect) {
     data.scienceCorrect = (data.scienceCorrect || 0) + 1;
   }
 
-  localStorage.setItem('kidsLearningData', JSON.stringify(data));
+  safeSetItem('kidsLearningData', JSON.stringify(data));
 }
 
 // 显示主题选择界面
@@ -1222,7 +1222,7 @@ function showScienceComplete() {
   let data = saved ? JSON.parse(saved) : {};
   data.totalScore = (data.totalScore || 0) + bonusPoints;
   data.tasksDone = (data.tasksDone || 0) + 1;
-  localStorage.setItem('kidsLearningData', JSON.stringify(data));
+  safeSetItem('kidsLearningData', JSON.stringify(data));
 
   // 更新显示
   document.getElementById('total-score').textContent = data.totalScore;
@@ -1566,7 +1566,7 @@ function saveProfile() {
   });
 
   // 保存到 localStorage
-  localStorage.setItem('kidsProfileData', JSON.stringify(profileData));
+  safeSetItem('kidsProfileData', JSON.stringify(profileData));
 
   // 显示成功提示
   RewardSystem.showReward(5, '信息已保存!');
@@ -2133,9 +2133,9 @@ function confirmImport() {
   if (!pendingImportData) return;
 
   const { data } = pendingImportData;
-  if (data.profile) localStorage.setItem('kidsProfileData', JSON.stringify(data.profile));
-  if (data.learning) localStorage.setItem('kidsLearningData', JSON.stringify(data.learning));
-  if (data.calendar) localStorage.setItem('kidsCalendarData', JSON.stringify(data.calendar));
+  if (data.profile) safeSetItem('kidsProfileData', JSON.stringify(data.profile));
+  if (data.learning) safeSetItem('kidsLearningData', JSON.stringify(data.learning));
+  if (data.calendar) safeSetItem('kidsCalendarData', JSON.stringify(data.calendar));
 
   closeImportConfirm();
   location.reload();
@@ -2448,7 +2448,7 @@ function setSleepTimer(minutes) {
   sleepTimerMinutes = minutes;
 
   // 保存设置
-  localStorage.setItem('sleepMusicTimer', minutes.toString());
+  safeSetItem('sleepMusicTimer', minutes.toString());
 
   // 更新UI
   updateSleepTimerUI();

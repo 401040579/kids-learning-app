@@ -39,7 +39,7 @@ const DailyCheckin = {
 
   // 保存数据到本地存储
   saveData() {
-    localStorage.setItem('kidsDailyCheckin', JSON.stringify(this.data));
+    safeSetItem('kidsDailyCheckin', JSON.stringify(this.data));
   },
 
   // 获取今天的日期字符串

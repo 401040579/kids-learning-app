@@ -845,7 +845,7 @@ const FamilyPK = {
     else if (record.winner === 'child') data.stats.childWins++;
     else data.stats.ties++;
 
-    localStorage.setItem('kidsFamilyPK', JSON.stringify(data));
+    safeSetItem('kidsFamilyPK', JSON.stringify(data));
   },
 
   // 加载历史记录

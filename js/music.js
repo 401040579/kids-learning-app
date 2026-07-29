@@ -980,7 +980,7 @@ const MusicApp = {
     };
 
     compositions.push(composition);
-    localStorage.setItem('musicCompositions', JSON.stringify(compositions));
+    safeSetItem('musicCompositions', JSON.stringify(compositions));
 
     // 📊 追踪作品保存
     if (typeof Analytics !== 'undefined') {

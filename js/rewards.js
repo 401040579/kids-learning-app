@@ -27,7 +27,7 @@ const CalendarData = {
 
   // 保存数据到本地存储
   saveData() {
-    localStorage.setItem('kidsCalendarData', JSON.stringify(this.events));
+    safeSetItem('kidsCalendarData', JSON.stringify(this.events));
   },
 
   // 获取指定日期的事件
@@ -158,7 +158,7 @@ const RewardSystem = {
 
   // 保存数据到本地存储
   saveData() {
-    localStorage.setItem('kidsLearningData', JSON.stringify(this.data));
+    safeSetItem('kidsLearningData', JSON.stringify(this.data));
   },
 
   // 更新页面显示

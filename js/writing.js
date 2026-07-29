@@ -98,7 +98,7 @@ const WritingApp = {
 
   // 保存进度
   saveProgress() {
-    localStorage.setItem('writingProgress', JSON.stringify(this.progress));
+    safeSetItem('writingProgress', JSON.stringify(this.progress));
   },
 
   // ========== 汉字练习 ==========

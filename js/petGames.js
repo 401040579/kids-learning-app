@@ -85,7 +85,7 @@ const PetGames = {
 
   // 保存统计数据
   saveStats() {
-    localStorage.setItem('petGamesStats', JSON.stringify(this.stats));
+    safeSetItem('petGamesStats', JSON.stringify(this.stats));
   },
 
   // 获取宠物emoji

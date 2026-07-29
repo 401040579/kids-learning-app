@@ -76,7 +76,7 @@ const DrawSmash = {
                 levelStars: this.levelStars,
                 totalStars: this.totalStars
             };
-            localStorage.setItem('kidsDrawSmash', JSON.stringify(data));
+            safeSetItem('kidsDrawSmash', JSON.stringify(data));
         } catch (e) {
             console.error('保存画线砸怪兽数据失败:', e);
         }

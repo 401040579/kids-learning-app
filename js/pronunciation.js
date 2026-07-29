@@ -80,7 +80,7 @@ const Pronunciation = {
 
   // 保存统计数据
   saveStats() {
-    localStorage.setItem('kidsPronunciationStats', JSON.stringify(this.stats));
+    safeSetItem('kidsPronunciationStats', JSON.stringify(this.stats));
   },
 
   // 初始化语音识别

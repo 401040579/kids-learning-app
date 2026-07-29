@@ -118,7 +118,7 @@ const ChoreTracker = {
   },
 
   saveData() {
-    localStorage.setItem('kidsChoreTracker', JSON.stringify(this.data));
+    safeSetItem('kidsChoreTracker', JSON.stringify(this.data));
   },
 
   // ========== 显示/关闭 ==========

@@ -87,7 +87,7 @@ const LogicGames = {
                 stats: this.stats,
                 unlocked: this.unlocked
             };
-            localStorage.setItem('kidsLogicGames', JSON.stringify(data));
+            safeSetItem('kidsLogicGames', JSON.stringify(data));
         } catch (e) {
             console.error('保存逻辑游戏数据失败:', e);
         }

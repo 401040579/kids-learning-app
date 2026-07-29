@@ -31,7 +31,7 @@ const ParentNotify = {
 
   // 保存配置
   saveConfig() {
-    localStorage.setItem('parentNotifyConfig', JSON.stringify(this.config));
+    safeSetItem('parentNotifyConfig', JSON.stringify(this.config));
   },
 
   // 设置 Bark URL

@@ -118,7 +118,7 @@ const RagdollRobot = {
                 levelStars: this.levelStars,
                 totalStars: this.totalStars
             };
-            localStorage.setItem('kidsRagdollRobot', JSON.stringify(data));
+            safeSetItem('kidsRagdollRobot', JSON.stringify(data));
         } catch (e) {
             console.error('保存弹弹机器人数据失败:', e);
         }

@@ -70,7 +70,7 @@ const ReactionGames = {
     saveStats() {
         try {
             const data = { stats: this.stats };
-            localStorage.setItem('kidsReactionGames', JSON.stringify(data));
+            safeSetItem('kidsReactionGames', JSON.stringify(data));
         } catch (e) {
             console.error('保存反应游戏数据失败:', e);
         }

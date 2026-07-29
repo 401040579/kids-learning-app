@@ -353,7 +353,7 @@ const PictureBook = {
 
   // 保存数据
   saveData() {
-    localStorage.setItem('kidsPictureBookData', JSON.stringify({
+    safeSetItem('kidsPictureBookData', JSON.stringify({
       readingHistory: this.readingHistory,
       favorites: this.favorites
     }));

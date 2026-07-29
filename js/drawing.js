@@ -623,8 +623,8 @@ const DrawingApp = {
     link.href = dataUrl;
     link.click();
 
-    // 保存到作品集
-    this.saveToGallery(dataUrl);
+    // 保存到作品集（存不下也不能中断后面的加分和家长通知）
+    const saved = this.saveToGallery();
 
     // 📊 追踪作品保存
     if (typeof Analytics !== 'undefined') {
@@ -632,7 +632,7 @@ const DrawingApp = {
     }
 
     // 显示成功提示
-    alert('画作已保存！');
+    alert(saved ? '画作已保存！' : '画作已下载到手机啦！（相册满了，先删几张老画吧~）');
 
     // 奖励积分
     if (typeof RewardSystem !== 'undefined') {
@@ -645,17 +645,46 @@ const DrawingApp = {
     }
   },
 
-  // 保存到作品集
-  saveToGallery(dataUrl) {
-    let gallery = JSON.parse(localStorage.getItem('artworkGallery') || '[]');
-    gallery.unshift({
-      id: Date.now(),
-      image: dataUrl,
-      date: new Date().toISOString()
-    });
-    // 最多保存 20 幅作品
-    gallery = gallery.slice(0, 20);
-    localStorage.setItem('artworkGallery', JSON.stringify(gallery));
+  // 把画布压成小尺寸 JPEG 再存。
+  // 原来直接存全分辨率 PNG 的 base64，一幅 1~2MB，第 3~4 幅就把整个域的
+  // localStorage 配额（iOS 约 5MB）撑爆，连带全应用 30 多处存档一起失效。
+  // 限宽 800px + JPEG 0.7 后单幅约 60~120KB。
+  compressForStorage(maxWidth, quality) {
+    try {
+      const src = this.canvas;
+      const scale = Math.min(1, maxWidth / src.width);
+      if (scale >= 1) return src.toDataURL('image/jpeg', quality);
+      const off = document.createElement('canvas');
+      off.width = Math.round(src.width * scale);
+      off.height = Math.round(src.height * scale);
+      const ctx = off.getContext('2d');
+      // JPEG 不支持透明，先铺白底，否则透明区域会变黑
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, off.width, off.height);
+      ctx.drawImage(src, 0, 0, off.width, off.height);
+      return off.toDataURL('image/jpeg', quality);
+    } catch (e) {
+      return null;
+    }
+  },
+
+  // 保存到作品集。返回 false 表示没存进去（调用方要告诉孩子）
+  saveToGallery() {
+    const small = this.compressForStorage(800, 0.7);
+    if (!small) return false;
+
+    let gallery = SafeStorage.getJSON('artworkGallery', []);
+    if (!Array.isArray(gallery)) gallery = [];
+    gallery.unshift({ id: Date.now(), image: small, date: new Date().toISOString() });
+    // 8 幅 × 约 100KB ≈ 0.8MB，给其他模块留足空间
+    gallery = gallery.slice(0, 8);
+
+    // 万一还是写不下，逐张丢掉最旧的再试
+    while (gallery.length > 0) {
+      if (safeSetItem('artworkGallery', JSON.stringify(gallery))) return true;
+      gallery.pop();
+    }
+    return false;
   },
 
   // 渲染工具栏

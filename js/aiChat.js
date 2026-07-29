@@ -131,7 +131,7 @@ const AIChat = {
       this.isLoading = false;
 
       // 保存启用状态
-      localStorage.setItem('aiChatEnabled', 'true');
+      safeSetItem('aiChatEnabled', 'true');
 
       return true;
     } catch (error) {

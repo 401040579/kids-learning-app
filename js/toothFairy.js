@@ -71,7 +71,7 @@ const ToothFairy = {
   },
 
   saveData() {
-    localStorage.setItem('kidsToothFairy', JSON.stringify(this.data));
+    safeSetItem('kidsToothFairy', JSON.stringify(this.data));
   },
 
   // ========== 显示/关闭 ==========

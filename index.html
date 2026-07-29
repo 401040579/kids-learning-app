@@ -2849,6 +2849,9 @@
   <!-- Hanzi Writer for Chinese character stroke order -->
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 
+  <!-- localStorage 安全写入层：必须最先加载，i18n 等模块都会用到 safeSetItem -->
+  <script src="js/safeStorage.js"></script>
+
   <!-- i18n System -->
   <script src="js/i18n.js"></script>
   <!-- 只静态加载英语（兜底语言）。其余 6 个语言包约 255KB，

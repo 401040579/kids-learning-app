@@ -108,7 +108,7 @@ const I18n = {
     // 语言包按需加载：已在内存就同步走完，没有才等一次网络
     this.loadLocale(lang).then(() => {
       this.currentLang = lang;
-      localStorage.setItem('appLanguage', lang);
+      safeSetItem('appLanguage', lang);
       this.applyTranslations();
       this.updateLanguageSelector();
       this.updateHeaderDropdown();

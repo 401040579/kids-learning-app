@@ -326,7 +326,7 @@ const LearningPet = {
 
   // 保存数据
   saveData() {
-    localStorage.setItem('kidsLearningPet', JSON.stringify(this.data));
+    safeSetItem('kidsLearningPet', JSON.stringify(this.data));
   },
 
   // 开始饥饿衰减

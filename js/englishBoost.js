@@ -72,7 +72,7 @@ const EnglishBoost = {
   },
 
   saveStats() {
-    localStorage.setItem('kidsEnglishBoost', JSON.stringify(this.stats));
+    safeSetItem('kidsEnglishBoost', JSON.stringify(this.stats));
   },
 
   // ========== 主界面 ==========

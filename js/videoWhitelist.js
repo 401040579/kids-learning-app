@@ -129,7 +129,7 @@ const VideoWhitelist = {
       const seen = new Set(fetched.map(v => v.id));
       const merged = fetched.concat(old.filter(v => !seen.has(v.id))).slice(0, 600);
       cache[channelId] = { fetchedAt: Date.now(), videos: merged };
-      localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache));
+      safeSetItem(this.CACHE_KEY, JSON.stringify(cache));
     } catch {
       // localStorage 满了或被禁用，不影响本次展示
     }

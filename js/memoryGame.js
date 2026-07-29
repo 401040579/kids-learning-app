@@ -138,7 +138,7 @@ const MemoryGame = {
 
   // 保存统计数据
   saveStats() {
-    localStorage.setItem('kidsMemoryGameStats', JSON.stringify(this.stats));
+    safeSetItem('kidsMemoryGameStats', JSON.stringify(this.stats));
   },
 
   // 开始翻牌配对游戏
