@@ -74,6 +74,13 @@
     <div class="video-container">
       <button class="video-close" onclick="closeVideo()">✕</button>
       <div id="video-player"></div>
+      <!-- 点击盾牌：盖住整个播放器，挡掉 YouTube 自带的标题条 / 频道名 /
+           右下角「Watch on YouTube」等外链（它们都是 target=_blank，
+           孩子误触一下就跳出应用进了完整版 YouTube，白名单全被绕过）。
+           播放/暂停改由我们自己接管，孩子本来也不需要拖进度条。 -->
+      <div id="video-shield" class="video-shield" onclick="toggleVideoPlay()">
+        <span id="video-shield-icon" class="video-shield-icon"></span>
+      </div>
       <div id="video-overlay" class="video-overlay hidden">
         <div class="overlay-content">
           <span class="overlay-emoji">🌟</span>

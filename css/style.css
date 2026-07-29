@@ -1215,12 +1215,48 @@ body {
   border: none;
 }
 
+/* 点击盾牌：透明地盖住整个播放器区域。
+   目的是挡掉 YouTube 内嵌播放器里的外链（顶部标题条、频道名、
+   右下角 Watch on YouTube），它们都是 target=_blank，孩子误触就跳出应用。
+   z-index 取 5：在 iframe 之上，但低于 .video-close(10) 和 .video-overlay，
+   保证关闭按钮和「看完啦」遮罩仍可点。 */
+.video-shield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 播放/暂停的短暂提示，平时透明 */
+.video-shield-icon {
+  font-size: 3.5rem;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.video-shield-icon.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .video-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 20;
   background: rgba(0, 0, 0, 0.95);
   display: flex;
   align-items: center;

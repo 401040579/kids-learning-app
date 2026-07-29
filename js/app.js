@@ -417,6 +417,11 @@ function createYtPlayer(source) {
       playsinline: 1,
       rel: 0,
       fs: 0,
+      // controls:0 去掉 YouTube 自带控件栏（含右下角「Watch on YouTube」外链）。
+      // 注意 modestbranding 已于 2023 年废弃、加了也没用，别再指望它。
+      controls: 0,
+      disablekb: 1,
+      iv_load_policy: 3,
       origin: window.location.origin
     };
     const options = {
@@ -440,13 +445,46 @@ function createYtPlayer(source) {
     ytPlayer = new YT.Player('yt-embed', options);
   }).catch(() => {
     // API 加载失败（离线/被拦/超时）：降级为裸 iframe，能看但没有结束遮罩
+    const q = '?rel=0&playsinline=1&autoplay=1&fs=0&controls=0&disablekb=1&iv_load_policy=3';
     const src = source.videoId
-      ? 'https://www.youtube.com/embed/' + source.videoId + '?rel=0&playsinline=1&autoplay=1&fs=0'
-      : 'https://www.youtube.com/embed/videoseries?list=' + source.list + '&rel=0&playsinline=1&autoplay=1&fs=0';
+      ? 'https://www.youtube.com/embed/' + source.videoId + q
+      : 'https://www.youtube.com/embed/videoseries?list=' + source.list + q.replace('?', '&');
+    // sandbox 故意不给 allow-popups / allow-top-navigation：
+    // 即使孩子点到 iframe 里的外链，也无法跳出应用。（实测视频照常播放）
     player.innerHTML = '<iframe src="' + src + '"' +
-      ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"' +
+      ' sandbox="allow-scripts allow-same-origin allow-presentation"' +
+      ' allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"' +
       ' frameborder="0"></iframe>';
   });
+}
+
+// 点击盾牌接管播放/暂停（YouTube 自带控件已被 controls:0 关掉）
+function toggleVideoPlay() {
+  const icon = document.getElementById('video-shield-icon');
+  const flash = (emoji) => {
+    if (!icon) return;
+    icon.textContent = emoji;
+    icon.classList.add('show');
+    clearTimeout(icon._t);
+    icon._t = setTimeout(() => icon.classList.remove('show'), 600);
+  };
+
+  if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') {
+    // 降级路径（裸 iframe）没有可控播放器，点一下只给个提示，别让孩子觉得没反应
+    flash('▶️');
+    return;
+  }
+  try {
+    if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+      ytPlayer.pauseVideo();
+      flash('⏸️');
+    } else {
+      ytPlayer.playVideo();
+      flash('▶️');
+    }
+  } catch (e) {
+    /* 播放器还没就绪，忽略 */
+  }
 }
 
 function destroyYtPlayer() {
