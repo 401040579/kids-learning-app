@@ -39,5 +39,9 @@ build/
 .cache/
 
 # Python
+.venv/
+.pytest_cache/
+*.sqlite3
+*.sqlite3-*
 __pycache__/
 *.py[cod]
