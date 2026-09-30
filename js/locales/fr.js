@@ -116,7 +116,7 @@ I18n.translations['fr'] = {
   'profile.export': 'Exporter les Données',
   'profile.import': 'Importer les Données',
   'profile.refresh': 'Actualiser',
-  'profile.data.warning': 'L\'importation écrasera toutes les données actuelles',
+  'profile.data.warning': 'Exporte tes données avant l’importation. Les sauvegardes contiennent des informations personnelles et les réglages de notification ; garde-les privées.',
 
   // Settings
   'settings.language': 'Langue',

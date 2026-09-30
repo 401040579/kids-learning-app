@@ -691,7 +691,7 @@
                 <span data-i18n="profile.refresh">强制刷新</span>
               </button>
             </div>
-            <p class="data-warning" data-i18n="profile.data.warning">⚠️ 导入数据会覆盖当前所有数据</p>
+            <p class="data-warning" data-i18n="profile.data.warning">⚠️ 导入前请先导出当前记录。备份含个人信息及通知配置，请妥善保管。</p>
           </div>
         </div>
       </section>
@@ -719,7 +719,7 @@
         <div class="confirm-modal-content">
           <div class="confirm-icon">⚠️</div>
           <h3 class="confirm-title">确认导入</h3>
-          <p class="confirm-message">导入数据将覆盖当前所有数据，此操作不可撤销。</p>
+          <p class="confirm-message" id="import-confirm-message">导入将替换本机记录，请先保存一份当前备份。</p>
           <div class="confirm-btns">
             <button class="btn-confirm-cancel" onclick="closeImportConfirm()">取消</button>
             <button class="btn-confirm-ok" onclick="confirmImport()">确认导入</button>
@@ -2851,6 +2851,7 @@
 
   <!-- localStorage 安全写入层：必须最先加载，i18n 等模块都会用到 safeSetItem -->
   <script src="js/safeStorage.js"></script>
+  <script src="js/dataBackup.js"></script>
 
   <!-- i18n System -->
   <script src="js/i18n.js"></script>

@@ -116,7 +116,7 @@ I18n.translations['ja'] = {
   'profile.export': 'エクスポート',
   'profile.import': 'インポート',
   'profile.refresh': '強制リフレッシュ',
-  'profile.data.warning': 'インポートすると現在のデータが上書きされます',
+  'profile.data.warning': '読み込む前に現在のデータを書き出してください。バックアップには個人情報と通知設定が含まれるため、安全に保管してください。',
 
   // Settings
   'settings.language': '言語',

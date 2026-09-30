@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v74';
+const CACHE_NAME = 'kids-learning-v75';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -51,6 +51,7 @@ const urlsToCache = [
   '/js/toothFairy.js',
   // i18n files
   '/js/safeStorage.js',
+  '/js/dataBackup.js',
   '/js/i18n.js',
   '/js/locales/en.js',
   '/js/locales/zh.js',

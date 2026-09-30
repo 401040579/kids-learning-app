@@ -116,7 +116,7 @@ I18n.translations['ko'] = {
   'profile.export': '내보내기',
   'profile.import': '가져오기',
   'profile.refresh': '새로고침',
-  'profile.data.warning': '가져오면 현재 데이터를 덮어씁니다',
+  'profile.data.warning': '가져오기 전에 현재 기록을 내보내세요. 백업에는 개인정보와 알림 설정이 포함되므로 안전하게 보관하세요.',
 
   // Settings
   'settings.language': '언어',

@@ -47,6 +47,12 @@ npx serve .
 python3 -m http.server 8000
 ```
 
+核心存档、备份恢复、题目边界回归测试（使用 Node 内置测试工具）：
+
+```bash
+node --test tests/*.test.cjs
+```
+
 ## 自定义视频
 
 编辑 `index.html` 中的视频列表，替换 YouTube 视频 ID：

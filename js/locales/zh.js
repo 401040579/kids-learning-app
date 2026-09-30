@@ -116,7 +116,7 @@ I18n.translations['zh'] = {
   'profile.export': '导出数据',
   'profile.import': '导入数据',
   'profile.refresh': '强制刷新',
-  'profile.data.warning': '导入数据会覆盖当前所有数据',
+  'profile.data.warning': '导入前请先导出当前记录。备份含个人信息及通知配置，请妥善保管。',
 
   // Settings
   'settings.language': '语言',

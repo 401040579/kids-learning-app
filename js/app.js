@@ -2059,15 +2059,9 @@ let pendingImportData = null;
 
 // 导出数据
 function exportData() {
-  const exportData = {
-    version: "1.0",
-    exportTime: new Date().toISOString(),
-    data: {
-      profile: JSON.parse(localStorage.getItem('kidsProfileData') || '{}'),
-      learning: JSON.parse(localStorage.getItem('kidsLearningData') || '{}'),
-      calendar: JSON.parse(localStorage.getItem('kidsCalendarData') || '{}')
-    }
-  };
+  let exportData;
+  try { exportData = DataBackup.create(); }
+  catch { alert('无法读取本机记录，请检查浏览器的存储权限。'); return; }
 
   const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -2091,23 +2085,28 @@ function triggerImport() {
 function handleImportFile(event) {
   const file = event.target.files[0];
   if (!file) return;
+  if (file.size > 15 * 1024 * 1024) {
+    alert('备份文件过大，请选择本应用导出的 JSON 文件。');
+    event.target.value = '';
+    return;
+  }
 
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
       const importedData = JSON.parse(e.target.result);
-      // 验证数据格式
-      if (!importedData.data) {
-        alert('❌ 文件格式不正确');
-        return;
-      }
+      const prepared = DataBackup.prepare(importedData);
       // 保存待导入数据，显示确认弹窗
       pendingImportData = importedData;
+      document.getElementById('import-confirm-message').textContent = prepared.complete
+        ? `将用备份中的 ${Object.keys(prepared.entries).length} 类记录替换本机全部应用记录。请先导出当前记录。`
+        : '这是旧版不完整备份，仅恢复个人资料、总学习数据和日历；错题本等其他记录保持不变。';
       showImportConfirm();
     } catch (error) {
-      alert('❌ 文件解析失败，请检查文件是否正确');
+      alert('❌ ' + error.message);
     }
   };
+  reader.onerror = () => { alert('无法读取备份文件，请重新选择文件。'); };
   reader.readAsText(file);
   event.target.value = ''; // 重置以支持重复选择
 }
@@ -2127,10 +2126,8 @@ function closeImportConfirm() {
 function confirmImport() {
   if (!pendingImportData) return;
 
-  const { data } = pendingImportData;
-  if (data.profile) safeSetItem('kidsProfileData', JSON.stringify(data.profile));
-  if (data.learning) safeSetItem('kidsLearningData', JSON.stringify(data.learning));
-  if (data.calendar) safeSetItem('kidsCalendarData', JSON.stringify(data.calendar));
+  try { DataBackup.restore(pendingImportData); }
+  catch (error) { alert(error.message); return; }
 
   closeImportConfirm();
   location.reload();
