@@ -7,7 +7,7 @@ import secrets
 import sqlite3
 import threading
 import time
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -17,6 +17,7 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
+from backend.learning import EVENT_SCHEMA, install_learning_routes
 
 HASHER = PasswordHasher(time_cost=3, memory_cost=65536, parallelism=1)
 LOGIN_SLOTS = threading.BoundedSemaphore(2)
@@ -81,7 +82,7 @@ class Store:
             self.path.touch(mode=0o600)
         os.chmod(self.path, 0o600)
         with self.connection() as db:
-            db.executescript(SCHEMA)
+            db.executescript(SCHEMA + EVENT_SCHEMA)
         self.dummy_hash = HASHER.hash(secrets.token_urlsafe(32))
 
     @contextmanager
@@ -166,8 +167,8 @@ class Store:
         finally:
             LOGIN_SLOTS.release()
 
-    def session(self, token):
-        with self.connection() as db:
+    def session(self, token, connection=None):
+        with (nullcontext(connection) if connection is not None else self.connection()) as db:
             row = db.execute("SELECT a.id,a.username,a.display_name,s.csrf FROM sessions s JOIN accounts a ON a.id=s.account_id WHERE s.token_hash=? AND s.expires>? AND a.disabled=0", (digest(token), int(time.time()))).fetchone()
         if not row:
             raise HTTPException(401, "请先登录")
@@ -238,8 +239,8 @@ def create_app(settings=None):
         except (ValueError, RecursionError):
             raise HTTPException(422, "请求格式不正确")
 
-    def account(request, write=False):
-        result = store.session(request.cookies.get(cookie))
+    def account(request, write=False, connection=None):
+        result = store.session(request.cookies.get(cookie), connection)
         if write and not secrets.compare_digest(request.headers.get("x-csrf-token", "").encode(), result["csrf"].encode()):
             raise HTTPException(403, "会话校验失败，请重新登录")
         return result
@@ -304,4 +305,5 @@ def create_app(settings=None):
                        (identity["id"], revision + 1, now, json.dumps(payload, ensure_ascii=False)))
         return {"revision": revision + 1, "updated_at": now}
 
+    install_learning_routes(app, store, account, body)
     return app

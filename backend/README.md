@@ -69,6 +69,13 @@ Tailscale 可以继续用于 SSH 运维，但不是用户登录或访问条件�
 | POST | `/api/logout` | 撤销当前会话 |
 | GET | `/api/snapshot` | 当前账号的备份和版本 |
 | PUT | `/api/snapshot` | `{revision, backup}`；只写当前会话所属账号 |
+| POST | `/api/learning/events` | `{expected_account_id, events}`；1–100 条，最大 128 KiB，幂等追加 |
+| GET | `/api/learning/events` | `expected_account_id` + `after` 游标 + `limit`（1–100），读取当前账号记录 |
+
+逐题记录包含 ID、带时区的答题时间、来源、学科、稳定题目 ID、题目、期望答案、实际答案和结果。
+按写入顺序分页，迟到的离线记录不会被时间游标漏掉。同 ID 同内容重传不会重复保存，内容冲突返回 409 并回滚整批。
+`expected_account_id` 用于防止切换账号后错投离线队列，不能指定数据归属；不匹配会话则返回 409。
+记录统计只能说明练习次数与正确率，不能据此断言孩子掌握了 Marble 知识点。机器人记录需另做受信适配器，当前拒绝 `source: robot`。
 
 错误语义：401 未登录/会话过期，403 来源或 CSRF 不符，409 版本冲突，413 请求过大，422 备份格式错误，429 限流。
 账号 ID 一律从服务端会话取得，忽略客户端伪造的 `X-User-Id` 或 `account_id`。

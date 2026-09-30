@@ -240,3 +240,4 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - `js/accountConfig.js` 的 `apiBase` 为空时不发后端请求。公网 Cookie 要求 Secure/HttpOnly/SameSite=Strict；API 与网页应同站或使用同源代理。
 - 当前只有手动云备份，不是自动同步。登录/退出不改本机存档，上传需要家长确认归属；未来的账号本机存档分区与逐题事件仍待实现。
 - `scope: learning` 的 v2 备份只恢复包含的键，不能删除其他本机设置；排除家长通知凭据和视频缓存，前后端登记表必须一致。SW 不拦截 `/api/` 与写请求。
+- 逐题事件接口在 `backend/learning.py`：追加与分页读取均从会话取账号；`expected_account_id` 仅检查队列归属。以 `(account_id, event_id)` 去重，同 ID 不同内容整批回滚；写入事务中重新检查撤销/过期会话。浏览器暂只允许 `source: web`，机器人尚未接入。
