@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v75';
+const CACHE_NAME = 'kids-learning-v76';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -52,6 +52,8 @@ const urlsToCache = [
   // i18n files
   '/js/safeStorage.js',
   '/js/dataBackup.js',
+  '/js/accountConfig.js',
+  '/js/account.js',
   '/js/i18n.js',
   '/js/locales/en.js',
   '/js/locales/zh.js',
@@ -109,6 +111,9 @@ self.addEventListener('fetch', event => {
 
   // 跨域请求（YouTube 播放器/缩略图/CORS 代理等）不经过 SW，直接走网络
   if (url.origin !== self.location.origin) return;
+
+  // 账号接口和写请求始终走网络，绝不能从离线缓存还原别人的会话或记录。
+  if (url.pathname === '/api' || url.pathname.startsWith('/api/') || event.request.method !== 'GET') return;
 
   // 音乐文件使用网络优先策略，失败后使用缓存
   if (musicFiles.some(file => url.pathname.endsWith(file.replace('/music/', '')))) {

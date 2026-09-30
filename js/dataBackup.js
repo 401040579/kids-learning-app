@@ -12,6 +12,7 @@ const DataBackup = {
   ],
   ARRAY_KEYS: ['artworkGallery', 'musicCompositions', 'recentlyUsed'],
   TEXT_KEYS: ['appLanguage', 'aiChatEnabled', 'sleepMusicTimer'],
+  CLOUD_EXCLUDED: ['parentNotifyConfig', 'videoWhitelistCache'],
 
   keys() { return [...this.OBJECT_KEYS, ...this.ARRAY_KEYS, ...this.TEXT_KEYS]; },
 
@@ -23,6 +24,13 @@ const DataBackup = {
     }
     // 原文导出也保留损坏的 JSON，便于恢复；导入时严格校验，不能把坏数据带到另一台设备。
     return { app: this.APP, version: this.VERSION, exportedAt: new Date().toISOString(), entries };
+  },
+
+  createLearning() {
+    const backup = this.create();
+    backup.scope = 'learning';
+    this.CLOUD_EXCLUDED.forEach(key => { delete backup.entries[key]; });
+    return backup;
   },
 
   prepare(payload) {
@@ -37,13 +45,15 @@ const DataBackup = {
       if (!Object.keys(entries).length) throw Error('旧版备份没有可恢复的数据');
       complete = false;
     } else if (payload.app === this.APP && payload.version === this.VERSION && object(payload.entries)) {
+      if (payload.scope !== undefined && payload.scope !== 'learning') throw Error('不支持的备份范围');
       entries = payload.entries;
-      complete = true;
+      complete = payload.scope !== 'learning';
     } else throw Error('不支持的备份版本或文件类型');
 
     const allowed = new Set(this.keys());
     for (const [key, raw] of Object.entries(entries)) {
       if (!allowed.has(key) || typeof raw !== 'string') throw Error('备份包含未知记录：' + key);
+      if (payload.scope === 'learning' && this.CLOUD_EXCLUDED.includes(key)) throw Error('学习备份不能包含通知配置或视频缓存');
       if (this.TEXT_KEYS.includes(key)) continue;
       let parsed;
       try {

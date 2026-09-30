@@ -129,3 +129,16 @@ test('SW 更新仅删除本应用的旧缓存，保留 WebLLM 模型', async () 
   await pending;
   assert.deepEqual(deleted, ['kids-learning-v1']);
 });
+
+test('SW 不拦截账号 API 或写请求，避免离线缓存泄露身份与备份', () => {
+  const handlers = {};
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../sw.js'), 'utf8'), {
+    URL,
+    self: { addEventListener: (name, run) => { handlers[name] = run; }, location: { origin: 'https://app.example' } },
+  });
+  for (const [url, method] of [['https://app.example/api/account', 'GET'], ['https://app.example/api/snapshot', 'GET'], ['https://app.example/other', 'POST']]) {
+    let intercepted = false;
+    handlers.fetch({ request: { url, method }, respondWith() { intercepted = true; } });
+    assert.equal(intercepted, false);
+  }
+});

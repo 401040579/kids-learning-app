@@ -74,3 +74,28 @@ test('备份登记表覆盖所有当前直接使用的存档键', () => {
     }
   }
 });
+
+test('学习云备份不包含通知凭据，恢复时保留本机通知配置', () => {
+  const a = storage({ kidsLearningData: '{"totalScore":5}', parentNotifyConfig: '{"key":"private"}', videoWhitelistCache: '{}' });
+  const backup = JSON.parse(a.run('JSON.stringify(DataBackup.createLearning())'));
+  assert.equal(backup.scope, 'learning');
+  assert.equal(backup.entries.parentNotifyConfig, undefined);
+  assert.equal(backup.entries.videoWhitelistCache, undefined);
+  const b = storage({ kidsLearningData: '{}', parentNotifyConfig: '{"key":"keep"}' });
+  b.run(`DataBackup.restore(${JSON.stringify(backup)})`);
+  assert.equal(b.disk.get('parentNotifyConfig'), '{"key":"keep"}');
+  assert.equal(JSON.parse(b.disk.get('kidsLearningData')).totalScore, 5);
+});
+
+test('前后端允许的学习备份键保持一致', () => {
+  const a = storage();
+  const keys = JSON.parse(a.run('JSON.stringify(DataBackup.keys().filter(key => !DataBackup.CLOUD_EXCLUDED.includes(key)))'));
+  const registry = JSON.parse(fs.readFileSync(path.join(__dirname, '../backend/backup_keys.json'), 'utf8'));
+  assert.deepEqual(Object.keys(registry).sort(), keys.sort());
+});
+
+test('拒绝伪造范围的备份，避免误清空本机设置', () => {
+  const a = storage();
+  assert.throws(() => a.run(`DataBackup.prepare({app:'kids-learning-app',version:2,scope:'unknown',entries:{}})`));
+  assert.throws(() => a.run(`DataBackup.prepare({app:'kids-learning-app',version:2,scope:'learning',entries:{parentNotifyConfig:'{}'}})`));
+});

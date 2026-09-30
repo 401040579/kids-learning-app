@@ -594,6 +594,30 @@
         </div>
 
         <div class="profile-container">
+          <section id="account-panel" class="data-management account-panel" aria-labelledby="account-heading">
+            <h3 id="account-heading" data-i18n="account.title">学习账号</h3>
+            <p id="account-state" data-i18n="account.guest">访客模式：可以继续学习，记录保存在本机。</p>
+            <p id="account-availability" data-i18n="account.unavailable">账号登录暂不可用，可以继续在本机学习。</p>
+            <form id="account-form" hidden>
+              <label for="account-username" data-i18n="account.username">账号</label>
+              <input id="account-username" class="form-input" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="32" required>
+              <label for="account-password" data-i18n="account.password">密码</label>
+              <input id="account-password" class="form-input" type="password" autocomplete="current-password" maxlength="128" required>
+              <button type="submit" class="btn-save-profile" data-i18n="account.login">登录</button>
+              <p class="account-note" data-i18n="account.managed">账号由家长联系管理员开通，不提供自行注册。</p>
+            </form>
+            <div id="account-tools" hidden>
+              <p class="account-note" data-i18n="account.localUnchanged">本机记录保持原样。只有点击保存后，才会上传到当前账号。</p>
+              <p id="account-backup-status"></p>
+              <div class="data-btns">
+                <button id="account-save" type="button" class="btn-export" data-i18n="account.save">保存学习备份</button>
+                <button id="account-download" type="button" class="btn-import" data-i18n="account.download">下载学习备份</button>
+                <button id="account-refresh" type="button" class="btn-refresh" data-i18n="account.refresh">刷新备份状态</button>
+              </div>
+              <button id="account-logout" type="button" class="btn-save-profile" data-i18n="account.logout">退出账号</button>
+            </div>
+            <p id="account-message" role="status" aria-live="polite"></p>
+          </section>
           <!-- 头像区域 -->
           <div class="profile-avatar-section">
             <div class="avatar-wrapper" onclick="showPhotoOptions()">
@@ -2852,6 +2876,8 @@
   <!-- localStorage 安全写入层：必须最先加载，i18n 等模块都会用到 safeSetItem -->
   <script src="js/safeStorage.js"></script>
   <script src="js/dataBackup.js"></script>
+  <script src="js/accountConfig.js"></script>
+  <script src="js/account.js"></script>
 
   <!-- i18n System -->
   <script src="js/i18n.js"></script>

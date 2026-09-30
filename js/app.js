@@ -2100,7 +2100,9 @@ function handleImportFile(event) {
       pendingImportData = importedData;
       document.getElementById('import-confirm-message').textContent = prepared.complete
         ? `将用备份中的 ${Object.keys(prepared.entries).length} 类记录替换本机全部应用记录。请先导出当前记录。`
-        : '这是旧版不完整备份，仅恢复个人资料、总学习数据和日历；错题本等其他记录保持不变。';
+        : importedData.scope === 'learning'
+          ? '这是学习备份，仅替换其中包含的本机记录；通知配置等其他设置保持不变。请先导出当前记录。'
+          : '这是旧版不完整备份，仅恢复个人资料、总学习数据和日历；错题本等其他记录保持不变。';
       showImportConfirm();
     } catch (error) {
       alert('❌ ' + error.message);
