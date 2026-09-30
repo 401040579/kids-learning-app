@@ -97,7 +97,13 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
     await page.evaluate(() => LearningHistory.sync());
   }
   async function count(page, expected) {
-    await page.waitForFunction(async expected => (await LearningHistory.records()).length === expected, expected);
+    let actual;
+    for (let attempt=0; attempt<100; attempt++) {
+      actual=await page.evaluate(async()=> (await LearningHistory.records()).length);
+      if (actual===expected) return;
+      await new Promise(resolve=>setTimeout(resolve,100));
+    }
+    assert.equal(actual,expected,'IndexedDB record count');
   }
   async function answer(page, label = 'offline') {
     await page.evaluate(label => LearningHistory.record({ subject: 'math', question_id: 'math_1_+_2', question: label, expected: '3', answer: '3', verdict: 'correct' }), label);
@@ -170,6 +176,14 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
   await b.page.reload();
   await b.page.waitForFunction(() => LearningAccount.identity?.username === 'iris');
   await count(b.page, 6); // IndexedDB 与会话重新加载仍然正常。
+  // 同一浏览器的第二标签页只能提示重载，不能并发改当前账号存档。
+  const duplicate = await a.context.newPage();
+  duplicate.on('pageerror', error=>errors.push(error.message));
+  await duplicate.goto(origin);
+  await duplicate.waitForFunction(()=>LearningAccount.booted && AppStorage.blocked);
+  assert.equal(await duplicate.locator('#profile-loading').isVisible(),true);
+  assert.equal(await duplicate.evaluate(()=>{try{AppStorage.setItem('kidsProfileData','{"name":"collision"}');return false;}catch{return true;}}),true);
+  await duplicate.close();
   // 真实模块计分进入账号分区，旧游客积分与画作保持原样。
   assert.equal(await a.page.evaluate(()=>JSON.parse(localStorage.getItem('kidsLearningData')).totalScore),80);
   await a.page.evaluate(()=>AppStorage.setItem('artworkGallery','[{"id":"iris-art"}]'));
@@ -231,7 +245,7 @@ TutorBridge(Store(Settings.environment().database)).tick()
   await b.page.waitForFunction(()=>getComputedStyle(document.getElementById('page-profile')).opacity==='1');
   await b.page.screenshot({ path: path.join(scratch, 'history.png'), fullPage: true });
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork', 'web wrong to robot review to cross-device report'], pageErrors: errors, screenshot: path.join(scratch, 'history.png') }, null, 2));
+  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork', 'web wrong to robot review to cross-device report', 'same-account tab write lock'], pageErrors: errors, screenshot: path.join(scratch, 'history.png') }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
   if (browser) await browser.close();
   if (api) api.kill('SIGTERM');

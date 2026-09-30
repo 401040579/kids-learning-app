@@ -134,3 +134,9 @@ Marble 保留 topic_id / taxonomy_version / robot 来源。unclear 不记错，�
 题单失效时回退原 Marble。新题 ID 仅进 tutor_log，不写 tutor_topics，不走 Marble 回溯，原勿扰/夜间/互斥/停止约束仍有效。
 代码在机器人仓库 `src/learning_bridge.py`、`src/tutor.py`、`src/brain_proxy.py`，测试为该仓库全套 116 项。
 真实 Chrome 临时数据链路已覆盖网页错题→机器人题单→导入 Jarvis 结果→另一设备报告；未代替 Iris 的实际口语识别验收。
+
+部署验收（2026-09-30）：生产 Iris 登录/退出、会话归属、数据桥 ready 已验证；检查后生产事件与家教日志仍为 0，未写入测试作答。
+机器人数据库新增日志列已生效，`/tutor/stop` 返回 idle。当前两台 SDK 都未连接，儿童真机口语验收未完成。
+GitHub Pages v78 已构建，公网 `apiBase` 仍空；DNS 管理入口缺失阻止公网登录上线。
+真实 Chrome 另验证同账号第二标签页禁止写入，总计 13 个场景，无页面异常。
+线上 Chrome 验证游客模式、v78 缓存激活与离线重载通过。测试中的异步条件不能直接交给 waitForFunction（本机运行时把 Promise 当作 truthy），记录数量改为 evaluate 等待完成后比较和限时重试；上述 13 场景已按真实数量重新验证。
