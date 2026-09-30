@@ -58,7 +58,33 @@ Tailscale 可以继续用于 SSH 运维，但不是用户登录或访问条件�
 - 数学/英语/中文/科学的新答题日志使用 IndexedDB 队列自动同步、断网补传、跨设备拉取；游客日志不会上传。旧 localStorage 分数与作品仍采用手动备份，尚无完整多孩子存档切换、Marble 掌握度或机器人连接。
 - 日志在作答当下固定账号，退出或切换账号不会重新标记队列。离线重新打开网页进入游客模式，联网登录原账号后补传该账号的队列。答题日志需单独导出，不在 31 键本机备份里。
 - 本机记录退出后保留，共用设备时需家长自行管理本机备份。云端数据退出后不可访问。
-- 生产需要 HTTPS 入口、进程自启、异机备份和恢复验证；使用 SQLite Backup API 生成备份副本，勿直接复制正在写的数据库文件。
+- 独立服务已在 Orin `~/robots/kids-learning-service` 运行，仅监听 `127.0.0.1:8091`。HTTPS 公网入口仍待接通，网页 `apiBase` 仍为空。
+
+## Orin 运行与备份（2026-09-29 已验证）
+
+```bash
+cd ~/robots/kids-learning-service
+# Linux 专用，独立 flock 锁；已有实例时直接退出，不重启机器人。
+/bin/sh backend/run.sh
+# 对活跃数据库生成一致性副本，不使用普通 cp。
+.venv/bin/python -m backend.backup
+```
+
+用户 crontab 已保留原有机器人自启，新增学习服务的 `@reboot`、每 5 分钟启动兜底、每天本地时间 04:35 备份。
+无需 sudo。`run.sh` 的锁随服务退出释放；重复启动验证仅保留一个实例。日常空闲 RSS 实测约 46 MiB。
+日志在 `~/.local/share/kids-learning/service.log`，备份日志同目录 `backup.log`；不记录 HTTP 访问日志或明文密码。
+
+备份默认位于 `~/.local/share/kids-learning-backups`，目录 0700、文件 0600，保留最近 14 份。
+副本撤销所有会话，转换成独立单文件并检查 `PRAGMA integrity_check`，成功后才清理旧副本。
+WAL 数据库不能直接复制，也不能在 SQLite 连接仍打开时改名；Python `with sqlite3.connect()` 不会关闭连接。
+
+已手动复制一份私有副本到 Mac，在临时数据库上验证完整性、Iris 登录和事件表读取；未覆盖生产库。
+**每日异机自动备份还没配置**，Orin 本机副本无法抵御整机/磁盘丢失。异机传输与恢复操作不得把副本放进 GitHub Pages 仓库。
+真正恢复前应暂停学习服务及它的兜底任务、保留原库和旁路日志文件；先在临时目录验证备份，再停机替换。
+恢复后需重新登录；不得误用 `brain_proxy` 的重启手法。
+
+验证命令：后端 `pytest backend/tests -q`（33 例），前端 `node --test tests/*.test.cjs`（27 例）。
+安装 Playwright 并有 Chrome 时可运行 `node tests/browser-learning.cjs`：临时数据库与测试账号覆盖真实 IndexedDB、跨设备、断网、丢失应答重传和切换账号。
 
 ## 接口
 

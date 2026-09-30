@@ -244,3 +244,5 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - `js/learningHistory.js` 使用 IndexedDB `kids-learning-history`，`events` 以 `[owner,id]` 为键。数学/英语/中文/科学每次有效作答即时固定账号归属，确认答对后不可重复提交。游客日志不迁移、不上传；原账号的断网队列只能在再次登录该账号后补传。
 - 日志上传确认后才标记已同步；拉取日志和推进游标必须在一个 IndexedDB 事务中提交。使用写入序号而非作答时间分页，避免迟到的离线作答漏拉。日志独立导出，不在 localStorage 的 31 键备份内。
 - 离线重新打开网页时不凭本机标记冒充已登录身份，进入游客模式。共用设备的 IndexedDB 不做加密隔离；账号 UI/云端隔离不能替代设备访问控制。
+- Orin 的独立服务目录为 `~/robots/kids-learning-service`，`backend/run.sh` 用独立 `flock` 防止多实例，仅监听 `127.0.0.1:8091`，不使用机器人大脑的停止命令。用户 crontab 保留原机器人自启，另加学习服务自启、5 分钟启动兜底和每日 04:35 备份。
+- `python -m backend.backup` 通过 SQLite Backup API 生成私有副本（默认保留 14 份、删除副本中的会话），不直接复制活跃数据库。WAL 模式会传给副本：须改为 DELETE journal 并真正关闭连接后再改名；sqlite3 的 `with connection` 只管理事务，不关闭连接。本轮已复制私有副本到 Mac 并临时恢复登录，未替换线上库。
