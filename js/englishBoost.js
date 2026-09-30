@@ -63,7 +63,7 @@ const EnglishBoost = {
   },
 
   loadStats() {
-    const saved = localStorage.getItem('kidsEnglishBoost');
+    const saved = AppStorage.getItem('kidsEnglishBoost');
     if (saved) {
       try {
         this.stats = { ...this.stats, ...JSON.parse(saved) };

@@ -110,7 +110,7 @@ const ChoreTracker = {
   },
 
   loadData() {
-    const saved = localStorage.getItem('kidsChoreTracker');
+    const saved = AppStorage.getItem('kidsChoreTracker');
     if (saved) {
       const parsed = JSON.parse(saved);
       this.data = { ...this.data, ...parsed };

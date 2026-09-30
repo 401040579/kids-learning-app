@@ -14,6 +14,7 @@ function storage(seed = {}, reject = () => false) {
       disk.set(key, String(value));
     }
   } });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '../js/appStorage.js'), 'utf8'), context);
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../js/dataBackup.js'), 'utf8'), context);
   return { disk, run: js => vm.runInContext(js, context) };
 }
@@ -69,7 +70,7 @@ test('备份登记表覆盖所有当前直接使用的存档键', () => {
   const folder = path.join(__dirname, '../js');
   for (const file of fs.readdirSync(folder).filter(f => f.endsWith('.js'))) {
     const code = fs.readFileSync(path.join(folder, file), 'utf8');
-    for (const match of code.matchAll(/(?:localStorage\.(?:getItem|setItem)|safeSetItem)\(['"]([^'"]+)/g)) {
+    for (const match of code.matchAll(/(?:(?:AppStorage|localStorage)\.(?:getItem|setItem)|safeSetItem)\(['"]([^'"]+)/g)) {
       assert.ok(keys.has(match[1]), `请将 ${file} 的 ${match[1]} 加入备份登记表`);
     }
   }

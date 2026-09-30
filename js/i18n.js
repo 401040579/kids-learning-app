@@ -53,7 +53,7 @@ const I18n = {
   // 初始化
   init() {
     // 从 localStorage 读取语言设置，默认英语
-    const savedLang = localStorage.getItem('appLanguage');
+    const savedLang = AppStorage.getItem('appLanguage');
     if (savedLang && this.supportedLanguages.includes(savedLang)) {
       this.currentLang = savedLang;
     }
@@ -65,6 +65,7 @@ const I18n = {
         this.applyTranslations();
         this.updateLanguageSelector();
         this.updateHeaderDropdown();
+        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: this.currentLang } }));
       });
     }
 

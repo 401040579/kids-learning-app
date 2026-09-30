@@ -56,7 +56,7 @@ const ToothFairy = {
   },
 
   loadData() {
-    const saved = localStorage.getItem('kidsToothFairy');
+    const saved = AppStorage.getItem('kidsToothFairy');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -106,7 +106,7 @@ const ToothFairy = {
   },
 
   getProfileName() {
-    const saved = localStorage.getItem('kidsProfileData');
+    const saved = AppStorage.getItem('kidsProfileData');
     if (saved) {
       try {
         const profile = JSON.parse(saved);

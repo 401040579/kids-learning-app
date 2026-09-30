@@ -14,7 +14,7 @@ const CalendarData = {
   // 十几个模块的初始化（见 RewardSystem.loadData 的注释）。
   loadData() {
     try {
-      const saved = localStorage.getItem('kidsCalendarData');
+      const saved = AppStorage.getItem('kidsCalendarData');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') this.events = parsed;

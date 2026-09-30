@@ -115,7 +115,7 @@ const VideoWhitelist = {
   // ---------- 第 4 层：localStorage 累积缓存 ----------
   getCache() {
     try {
-      return JSON.parse(localStorage.getItem(this.CACHE_KEY)) || {};
+      return JSON.parse(AppStorage.getItem(this.CACHE_KEY)) || {};
     } catch {
       return {};
     }

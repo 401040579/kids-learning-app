@@ -20,6 +20,9 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <div id="profile-loading" class="profile-loading" role="status" aria-live="polite">
+    <p id="profile-loading-message">正在打开学习存档…</p>
+  </div>
   <!-- 星星/彩带飘落效果容器 -->
   <div id="particles"></div>
 
@@ -607,12 +610,14 @@
               <p class="account-note" data-i18n="account.managed">账号由家长联系管理员开通，不提供自行注册。</p>
             </form>
             <div id="account-tools" hidden>
-              <p class="account-note" data-i18n="account.localUnchanged">登录后的新答题记录自动同步。已有分数、错题和作品仍留在本机，备份前请家长确认归属。</p>
+              <p class="account-note" data-i18n="account.localUnchanged">登录后打开独立学习存档并自动同步。退出会回到原游客存档，游客旧记录不会自动迁入。</p>
               <p id="account-backup-status"></p>
+              <p id="account-sync-status" role="status" aria-live="polite"></p>
               <div class="data-btns">
                 <button id="account-save" type="button" class="btn-export" data-i18n="account.save">保存学习备份</button>
                 <button id="account-download" type="button" class="btn-import" data-i18n="account.download">下载学习备份</button>
                 <button id="account-refresh" type="button" class="btn-refresh" data-i18n="account.refresh">刷新备份状态</button>
+                <button id="account-use-cloud" type="button" class="btn-import" data-i18n="account.useCloud">采用云端存档</button>
               </div>
               <button id="account-logout" type="button" class="btn-save-profile" data-i18n="account.logout">退出账号</button>
             </div>
@@ -2893,6 +2898,7 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 
   <!-- localStorage 安全写入层：必须最先加载，i18n 等模块都会用到 safeSetItem -->
+  <script src="js/appStorage.js"></script>
   <script src="js/safeStorage.js"></script>
   <script src="js/dataBackup.js"></script>
   <script src="js/accountConfig.js"></script>

@@ -99,7 +99,7 @@ const RagdollRobot = {
 
     loadProgress() {
         try {
-            const saved = localStorage.getItem('kidsRagdollRobot');
+            const saved = AppStorage.getItem('kidsRagdollRobot');
             if (saved) {
                 const data = JSON.parse(saved);
                 this.maxUnlockedLevel = data.maxUnlockedLevel || 1;
@@ -2330,7 +2330,7 @@ function closeRagdollRobot() {
 }
 
 // 初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
     RagdollRobot.init();
 });
 

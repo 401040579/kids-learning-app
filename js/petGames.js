@@ -77,7 +77,7 @@ const PetGames = {
 
   // 加载统计数据
   loadStats() {
-    const saved = localStorage.getItem('petGamesStats');
+    const saved = AppStorage.getItem('petGamesStats');
     if (saved) {
       this.stats = { ...this.stats, ...JSON.parse(saved) };
     }
@@ -786,4 +786,4 @@ function backToPetGameSelect() {
 }
 
 // 初始化
-PetGames.init();
+document.addEventListener('learningReady', () => PetGames.init());

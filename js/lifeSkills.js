@@ -47,7 +47,7 @@ const LifeSkills = {
 
   // 加载统计数据
   loadStats() {
-    const saved = localStorage.getItem('lifeSkillsStats');
+    const saved = AppStorage.getItem('lifeSkillsStats');
     if (saved) {
       this.stats = JSON.parse(saved);
     }
@@ -1226,6 +1226,6 @@ function playLifeSkillsAgain() {
 }
 
 // 初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   LifeSkills.init();
 });

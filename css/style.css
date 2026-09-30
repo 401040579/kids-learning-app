@@ -19837,3 +19837,15 @@ body {
   background: rgba(255,80,80,0.1); color: #FFB0B0; font-size: 0.9rem; transition: all 0.2s;
 }
 .tf-reset-btn:active { transform: scale(0.97); background: rgba(255,80,80,0.2); }
+.profile-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 30000;
+  display: grid;
+  place-content: center;
+  padding: 24px;
+  text-align: center;
+  background: #fff5fb;
+  color: #624255;
+}
+.profile-loading[hidden] { display: none; }

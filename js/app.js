@@ -72,7 +72,7 @@ function applyUpdate() {
 }
 
 // 初始化应用
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   // 一个模块的坏存档不能阻止其余学习功能启动。
   const initialize = (name, run) => SafeStorage.initialize(name, run);
   const showStorageProblem = () => {
@@ -233,7 +233,7 @@ const RecentlyUsed = {
   // 获取列表
   getList() {
     try {
-      return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || [];
+      return JSON.parse(AppStorage.getItem(this.STORAGE_KEY)) || [];
     } catch {
       return [];
     }
@@ -539,7 +539,7 @@ const MathConfig = {
 
   // 加载配置
   load() {
-    const saved = localStorage.getItem('mathGameConfig');
+    const saved = AppStorage.getItem('mathGameConfig');
     if (saved) {
       const config = JSON.parse(saved);
       this.range = config.range || 10;
@@ -675,6 +675,7 @@ function generateMathOptions(correctAnswer) {
 }
 
 function recordLearningAnswer(subject, questionId, question, expected, answer, correct) {
+  if (typeof AppStorage !== 'undefined' && AppStorage.blocked) return;
   if (typeof LearningHistory === 'undefined') return;
   try {
     LearningHistory.record({ subject, question_id: questionId, question, expected: String(expected),
@@ -1435,7 +1436,7 @@ let profileData = {
 // 初始化个人信息
 function initProfile() {
   // 从 localStorage 加载数据
-  const saved = localStorage.getItem('kidsProfileData');
+  const saved = AppStorage.getItem('kidsProfileData');
   if (saved) {
     profileData = JSON.parse(saved);
     loadProfileToForm();
@@ -1590,7 +1591,7 @@ function saveProfile() {
 }
 
 // 在 DOMContentLoaded 中初始化个人信息和倒计时
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   // 延迟初始化，确保其他模块先加载
   setTimeout(() => {
     initProfile();
@@ -1911,7 +1912,7 @@ function updateRepeatUI() {
 }
 
 // 处理表单提交
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   const form = document.getElementById('event-form');
   if (form) {
     form.addEventListener('submit', handleEventSubmit);
@@ -2253,7 +2254,7 @@ function initSleepMusic() {
   if (!sleepAudio) return;
 
   // 加载保存的设置
-  const savedTimer = localStorage.getItem('sleepMusicTimer');
+  const savedTimer = AppStorage.getItem('sleepMusicTimer');
   if (savedTimer) {
     sleepTimerMinutes = parseInt(savedTimer);
   }
@@ -2689,7 +2690,7 @@ function updateMediaSessionState() {
 }
 
 // 在DOMContentLoaded中初始化睡眠音乐
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   setTimeout(() => {
     initSleepMusic();
   }, 200);

@@ -23,7 +23,7 @@ const ParentNotify = {
 
   // 加载配置
   loadConfig() {
-    const saved = localStorage.getItem('parentNotifyConfig');
+    const saved = AppStorage.getItem('parentNotifyConfig');
     if (saved) {
       this.config = { ...this.config, ...JSON.parse(saved) };
     }
@@ -460,7 +460,7 @@ function toggleMessageVoice() {
 }
 
 // 页面加载时初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   ParentNotify.init();
 });
 

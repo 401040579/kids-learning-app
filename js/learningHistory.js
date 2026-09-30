@@ -6,7 +6,7 @@ const LearningHistory = {
   timer: null,
   problem: '',
   renderVersion: 0,
-  owner() { return typeof LearningAccount !== 'undefined' && LearningAccount.identity ? LearningAccount.identity.id : 'guest'; },
+  owner() { return typeof AppStorage !== 'undefined' ? AppStorage.owner : typeof LearningAccount !== 'undefined' && LearningAccount.identity ? LearningAccount.identity.id : 'guest'; },
   t(key) { return I18n.t('history.' + key); },
 
   open() {
@@ -50,6 +50,7 @@ const LearningHistory = {
   },
 
   record(details) {
+    if (typeof AppStorage !== 'undefined' && AppStorage.blocked) return Promise.resolve();
     // 在答题当下固定归属，不能在异步写入完成后再读取账号。
     const owner = this.owner();
     const event = { ...details, id: crypto.randomUUID(), occurred_at: new Date().toISOString(), source: 'web' };
@@ -189,4 +190,4 @@ const LearningHistory = {
   }
 };
 
-document.addEventListener('DOMContentLoaded', () => LearningHistory.init());
+document.addEventListener('learningReady', () => LearningHistory.init());

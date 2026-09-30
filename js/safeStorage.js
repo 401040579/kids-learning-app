@@ -43,7 +43,7 @@ const SafeStorage = {
   set(key, value) {
     const str = typeof value === 'string' ? value : JSON.stringify(value);
     try {
-      localStorage.setItem(key, str);
+      AppStorage.setItem(key, str);
       return true;
     } catch (e) {
       if (!this.isQuotaError(e)) {
@@ -55,9 +55,9 @@ const SafeStorage = {
       for (const victim of this.EVICTABLE) {
         if (victim === key) continue;
         try {
-          if (localStorage.getItem(victim) === null) continue;
-          localStorage.removeItem(victim);
-          localStorage.setItem(key, str);
+          if (AppStorage.getItem(victim) === null) continue;
+          AppStorage.removeItem(victim);
+          AppStorage.setItem(key, str);
           console.warn('[SafeStorage] 配额已满，已清理 ' + victim + ' 后写入成功：' + key);
           return true;
         } catch (e2) {
@@ -79,7 +79,7 @@ const SafeStorage = {
   // 读取并 JSON.parse，损坏时返回 fallback 而不是抛异常
   getJSON(key, fallback) {
     try {
-      const raw = localStorage.getItem(key);
+      const raw = AppStorage.getItem(key);
       if (raw === null) return fallback;
       const v = JSON.parse(raw);
       return v === null || v === undefined ? fallback : v;

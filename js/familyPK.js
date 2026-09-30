@@ -856,7 +856,7 @@ const FamilyPK = {
   // 加载历史数据
   loadHistoryData() {
     try {
-      const saved = localStorage.getItem('kidsFamilyPK');
+      const saved = AppStorage.getItem('kidsFamilyPK');
       if (saved) {
         return JSON.parse(saved);
       }

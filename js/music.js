@@ -969,7 +969,7 @@ const MusicApp = {
   // ========== 保存作品 ==========
 
   saveComposition() {
-    const compositions = JSON.parse(localStorage.getItem('musicCompositions') || '[]');
+    const compositions = JSON.parse(AppStorage.getItem('musicCompositions') || '[]');
 
     const composition = {
       id: Date.now(),

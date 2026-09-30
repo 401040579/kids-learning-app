@@ -384,6 +384,6 @@ function toggleSongPinyin() {
 }
 
 // 初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   SongPractice.init();
 });

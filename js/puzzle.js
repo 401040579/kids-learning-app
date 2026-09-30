@@ -727,7 +727,7 @@ function backToPuzzleSelect() {
 }
 
 // 初始化时自动调用（如果页面已经加载）
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   // 延迟初始化，确保其他模块先加载
   setTimeout(() => {
     initPuzzle();

@@ -19,7 +19,7 @@ const DataBackup = {
   create() {
     const entries = {};
     for (const key of this.keys()) {
-      const raw = localStorage.getItem(key);
+      const raw = AppStorage.getItem(key);
       if (raw !== null) entries[key] = raw;
     }
     // 原文导出也保留损坏的 JSON，便于恢复；导入时严格校验，不能把坏数据带到另一台设备。
@@ -72,16 +72,16 @@ const DataBackup = {
   restore(payload) {
     const prepared = this.prepare(payload);
     const keys = prepared.complete ? this.keys() : Object.keys(prepared.entries);
-    const previous = new Map(keys.map(key => [key, localStorage.getItem(key)]));
+    const previous = new Map(keys.map(key => [key, AppStorage.getItem(key)]));
     try {
       // 此处不用 safeSetItem 的自动淘汰策略，避免导入失败时误删其他作品。
       // 先释放被替换记录所占的空间；失败则移除本次写入，再恢复原值。
-      keys.forEach(key => localStorage.removeItem(key));
-      Object.entries(prepared.entries).forEach(([key, raw]) => localStorage.setItem(key, raw));
+      keys.forEach(key => AppStorage.removeItem(key));
+      Object.entries(prepared.entries).forEach(([key, raw]) => AppStorage.setItem(key, raw));
     } catch (error) {
       try {
-        keys.forEach(key => localStorage.removeItem(key));
-        previous.forEach((raw, key) => { if (raw !== null) localStorage.setItem(key, raw); });
+        keys.forEach(key => AppStorage.removeItem(key));
+        previous.forEach((raw, key) => { if (raw !== null) AppStorage.setItem(key, raw); });
       } catch {
         throw Error('恢复未完成，旧记录也未能全部还原。请保留备份文件，暂时不要继续学习。');
       }

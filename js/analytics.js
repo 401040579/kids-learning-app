@@ -152,6 +152,6 @@ const Analytics = {
 };
 
 // 页面加载时初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   Analytics.init();
 });

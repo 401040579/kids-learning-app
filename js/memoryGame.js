@@ -122,7 +122,7 @@ const MemoryGame = {
 
   // 加载统计数据
   loadStats() {
-    const saved = localStorage.getItem('kidsMemoryGameStats');
+    const saved = AppStorage.getItem('kidsMemoryGameStats');
     if (saved) {
       this.stats = JSON.parse(saved);
     } else {

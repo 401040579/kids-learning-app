@@ -20,7 +20,7 @@ function app(seed = {}) {
     setTimeout() {}, clearTimeout() {},
   });
   const run = source => vm.runInContext(source, context);
-  for (const file of ['safeStorage', 'rewards', 'achievements', 'wrongQuestions', 'dailyCheckin', 'pronunciation', 'app']) {
+  for (const file of ['appStorage', 'dataBackup', 'safeStorage', 'rewards', 'achievements', 'wrongQuestions', 'dailyCheckin', 'pronunciation', 'app']) {
     run(fs.readFileSync(path.join(__dirname, '../js', file + '.js'), 'utf8'));
   }
   return { run, disk };

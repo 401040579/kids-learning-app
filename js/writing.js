@@ -90,7 +90,7 @@ const WritingApp = {
 
   // 加载进度
   loadProgress() {
-    const saved = localStorage.getItem('writingProgress');
+    const saved = AppStorage.getItem('writingProgress');
     if (saved) {
       this.progress = JSON.parse(saved);
     }

@@ -509,7 +509,7 @@ function clearAIChat() {
 }
 
 // 页面加载时初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   AIChat.init();
 });
 
@@ -751,7 +751,7 @@ closeAIChat = function() {
 };
 
 // 页面加载时初始化语音
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
   AIVoice.init();
 });
 

@@ -67,7 +67,7 @@ const LogicGames = {
      */
     loadStats() {
         try {
-            const saved = localStorage.getItem('kidsLogicGames');
+            const saved = AppStorage.getItem('kidsLogicGames');
             if (saved) {
                 const data = JSON.parse(saved);
                 this.stats = data.stats || this.stats;
@@ -934,7 +934,7 @@ function closeLogicGames() {
 }
 
 // 初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
     LogicGames.init();
 });
 

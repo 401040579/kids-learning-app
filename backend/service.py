@@ -17,7 +17,7 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
-from backend.learning import EVENT_SCHEMA, install_learning_routes
+from backend.learning import EVENT_SCHEMA, install_learning_routes, check_owner
 
 HASHER = PasswordHasher(time_cost=3, memory_cost=65536, parallelism=1)
 LOGIN_SLOTS = threading.BoundedSemaphore(2)
@@ -278,15 +278,19 @@ def create_app(settings=None):
     @app.get("/api/snapshot")
     def get_snapshot(request: Request):
         identity = account(request)
+        if request.query_params.get("expected_account_id") is not None:
+            check_owner(identity, request.query_params["expected_account_id"])
         with store.connection() as db:
             row = db.execute("SELECT * FROM snapshots WHERE account_id=?", (identity["id"],)).fetchone()
-        return {"revision": row["revision"] if row else 0, "updated_at": row["updated_at"] if row else None,
+        return {"account_id": identity["id"], "revision": row["revision"] if row else 0, "updated_at": row["updated_at"] if row else None,
                 "backup": json.loads(row["payload"]) if row else None}
 
     @app.put("/api/snapshot")
     async def save_snapshot(request: Request):
         identity = account(request, write=True)
         values = await body(request)
+        if "expected_account_id" in values:
+            check_owner(identity, values["expected_account_id"])
         revision = values.get("revision")
         if type(revision) is not int or revision < 0:
             raise HTTPException(422, "备份版本无效")
@@ -303,7 +307,7 @@ def create_app(settings=None):
             now = int(time.time())
             db.execute("INSERT INTO snapshots VALUES (?,?,?,?) ON CONFLICT(account_id) DO UPDATE SET revision=excluded.revision, updated_at=excluded.updated_at, payload=excluded.payload",
                        (identity["id"], revision + 1, now, json.dumps(payload, ensure_ascii=False)))
-        return {"revision": revision + 1, "updated_at": now}
+        return {"account_id": identity["id"], "revision": revision + 1, "updated_at": now}
 
     install_learning_routes(app, store, account, body)
     return app

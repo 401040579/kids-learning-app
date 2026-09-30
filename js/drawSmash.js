@@ -54,7 +54,7 @@ const DrawSmash = {
      */
     loadProgress() {
         try {
-            const saved = localStorage.getItem('kidsDrawSmash');
+            const saved = AppStorage.getItem('kidsDrawSmash');
             if (saved) {
                 const data = JSON.parse(saved);
                 this.maxUnlockedLevel = data.maxUnlockedLevel || 1;
@@ -1290,7 +1290,7 @@ function closeDrawSmash() {
 }
 
 // 初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
     DrawSmash.init();
 });
 

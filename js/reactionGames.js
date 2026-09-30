@@ -54,7 +54,7 @@ const ReactionGames = {
      */
     loadStats() {
         try {
-            const saved = localStorage.getItem('kidsReactionGames');
+            const saved = AppStorage.getItem('kidsReactionGames');
             if (saved) {
                 const data = JSON.parse(saved);
                 this.stats = { ...this.stats, ...data.stats };
@@ -991,7 +991,7 @@ function closeReactionGames() {
 }
 
 // 初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('learningReady', () => {
     ReactionGames.init();
 });
 

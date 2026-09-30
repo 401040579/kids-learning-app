@@ -45,7 +45,7 @@ const BirthdayParty = {
   },
 
   loadData() {
-    const saved = localStorage.getItem('kidsBirthdayParty');
+    const saved = AppStorage.getItem('kidsBirthdayParty');
     if (saved) {
       const parsed = JSON.parse(saved);
       this.data = { ...this.data, ...parsed };
@@ -94,7 +94,7 @@ const BirthdayParty = {
   },
 
   getBirthday() {
-    const saved = localStorage.getItem('kidsProfileData');
+    const saved = AppStorage.getItem('kidsProfileData');
     if (saved) {
       const profile = JSON.parse(saved);
       return profile.birthday || '';
@@ -103,7 +103,7 @@ const BirthdayParty = {
   },
 
   getProfileName() {
-    const saved = localStorage.getItem('kidsProfileData');
+    const saved = AppStorage.getItem('kidsProfileData');
     if (saved) {
       const profile = JSON.parse(saved);
       return profile.name || this.t('birthday.defaultName', '宝贝');
@@ -471,7 +471,7 @@ const BirthdayParty = {
   renderCake(content) {
     const t = this.t.bind(this);
     // 根据年龄确定蜡烛数量
-    const saved = localStorage.getItem('kidsProfileData');
+    const saved = AppStorage.getItem('kidsProfileData');
     let age = 6;
     if (saved) {
       const profile = JSON.parse(saved);

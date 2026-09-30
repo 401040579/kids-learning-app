@@ -108,6 +108,15 @@ def test_conflicting_backup_does_not_overwrite_newer_device(app):
     assert actual["backup"]["scope"] == "learning"
 
 
+def test_expected_profile_owner_rejects_cookie_account_switch(app):
+    browser = client(app)
+    owner = login(browser).json()["id"]
+    assert browser.get('/api/snapshot', params={'expected_account_id': owner}).status_code == 200
+    assert browser.get('/api/snapshot', params={'expected_account_id': 'different'}).status_code == 409
+    assert browser.put('/api/snapshot', json={'expected_account_id':'different','revision':0,'backup':backup()}).status_code == 409
+    assert browser.get('/api/snapshot').json()['revision'] == 0
+
+
 @pytest.mark.parametrize("entries", [
     {"authToken": "private"}, {"parentNotifyConfig": "{}"}, {"kidsLearningData": "[]"},
     {"kidsLearningData": '{"__proto__":{}}'}, {"kidsLearningData": "broken"},

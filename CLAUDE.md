@@ -238,11 +238,18 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - **只有用户明确要求时才开通账号**。无公开注册入口、无 HTTP 创建用户接口。首个专属账号为 `iris`；通过 `python -m backend.manage` 在服务器操作。
 - 独立后端代码位于 `backend/`，运维与测试见该目录 README。不得将机器人 8090 全部转发到公网；不得把账号数据库、密码、实际备份放进仓库或公开静态目录。
 - `js/accountConfig.js` 的 `apiBase` 为空时不发后端请求。公网 Cookie 要求 Secure/HttpOnly/SameSite=Strict；API 与网页应同站或使用同源代理。
-- 旧 localStorage 存档仍是设备共用，登录/退出不改它，手动云备份需要家长确认归属。新增的逐题记录才按游客/账号分区并自动同步；不要宣传成所有游戏存档已按账号切换。
+- `AppStorage` 管理 28 个学习存档键，游客沿用原键，账号使用独立前缀；登录不自动搬入游客数据。语言、家长通知凭据和视频缓存留在设备，不进入账号云存档。模块只能通过 AppStorage 读写。
 - `scope: learning` 的 v2 备份只恢复包含的键，不能删除其他本机设置；排除家长通知凭据和视频缓存，前后端登记表必须一致。SW 不拦截 `/api/` 与写请求。
-- 逐题事件接口在 `backend/learning.py`：追加与分页读取均从会话取账号；`expected_account_id` 仅检查队列归属。以 `(account_id, event_id)` 去重，同 ID 不同内容整批回滚；写入事务中重新检查撤销/过期会话。浏览器暂只允许 `source: web`，机器人尚未接入。
+- 逐题事件接口在 `backend/learning.py`：追加与分页读取均从会话取账号；`expected_account_id` 仅检查队列归属。以 `(account_id, event_id)` 去重，同 ID 不同内容整批回滚；写入事务中重新检查撤销/过期会话。公开上传接口只允许 `source: web`；受信机器人适配器另行导入。
 - `js/learningHistory.js` 使用 IndexedDB `kids-learning-history`，`events` 以 `[owner,id]` 为键。数学/英语/中文/科学每次有效作答即时固定账号归属，确认答对后不可重复提交。游客日志不迁移、不上传；原账号的断网队列只能在再次登录该账号后补传。
 - 日志上传确认后才标记已同步；拉取日志和推进游标必须在一个 IndexedDB 事务中提交。使用写入序号而非作答时间分页，避免迟到的离线作答漏拉。日志独立导出，不在 localStorage 的 31 键备份内。
 - 离线重新打开网页时不凭本机标记冒充已登录身份，进入游客模式。共用设备的 IndexedDB 不做加密隔离；账号 UI/云端隔离不能替代设备访问控制。
 - Orin 的独立服务目录为 `~/robots/kids-learning-service`，`backend/run.sh` 用独立 `flock` 防止多实例，仅监听 `127.0.0.1:8091`，不使用机器人大脑的停止命令。用户 crontab 保留原机器人自启，另加学习服务自启、5 分钟启动兜底和每日 04:35 备份。
 - `python -m backend.backup` 通过 SQLite Backup API 生成私有副本（默认保留 14 份、删除副本中的会话），不直接复制活跃数据库。WAL 模式会传给副本：须改为 DELETE journal 并真正关闭连接后再改名；sqlite3 的 `with connection` 只管理事务，不关闭连接。本轮已复制私有副本到 Mac 并临时恢复登录，未替换线上库。
+
+## 账号存档切换（2026-09-30）
+
+- `LearningAccount` 先验证会话并取云存档，之后派发 `learningReady` 初始化游戏；登录/退出冻结写入并刷新网页。不要把独立模块恢复为 DOMContentLoaded 初始化，或立即执行 init，否则会先读游客内存。
+- 登录后保存的学习存档自动同步，新设备启动恢复云端；冲突保留本机，家长选择保存本机或采用云端，不在游戏进行中静默覆盖。未保存的画布不会自动上传，切换前应保存作品。
+- dirty 标记先于数据写入；上传确认只有 change 标记一致才能清 dirty，防止传输期间新作品被误标成已同步。Web Locks 阻止同账号多标签页并发写入；旧浏览器继续受服务端版本号保护。
+- 学习备份包含的键和完整账号恢复不同：`replaceProfile` 仅整体替换 28 个账号键并可回滚，设备配置不动。账号元数据不进入导出；IndexedDB 日志单独同步。

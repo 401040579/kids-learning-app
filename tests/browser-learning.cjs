@@ -51,7 +51,11 @@ let api, browser;
       if (url === origin + '/js/accountConfig.js') return route.fulfill({ contentType: 'application/javascript', body: `window.LEARNING_ACCOUNT_CONFIG=${JSON.stringify({ apiBase: enabled ? endpoint : '' })};` });
       return url.startsWith(origin + '/') || url.startsWith(endpoint + '/') ? route.continue() : route.abort();
     });
-    await context.addInitScript(() => localStorage.setItem('appLanguage', 'zh'));
+    await context.addInitScript(() => {
+      localStorage.setItem('appLanguage', 'zh');
+      if (!localStorage.getItem('kidsLearningData')) localStorage.setItem('kidsLearningData','{"totalScore":80}');
+      if (!localStorage.getItem('artworkGallery')) localStorage.setItem('artworkGallery','[{"id":"guest-art"}]');
+    });
     const page = await context.newPage();
     page.on('pageerror', error => errors.push(error.message));
     page.on('dialog', dialog => dialog.accept());
@@ -66,10 +70,16 @@ let api, browser;
     return { context, page };
   }
   async function signIn(page, name = 'iris') {
+    await page.evaluate(() => navigateTo('profile'));
     await page.locator('#account-username').fill(name);
     await page.locator('#account-password').fill(password);
     await page.locator('#account-form button').click();
-    await page.waitForFunction(name => LearningAccount.identity?.username === name && !!LearningAccount.snapshot && !LearningAccount.busy, name);
+    await page.waitForFunction(name => LearningAccount.booted && LearningAccount.identity?.username === name && AppStorage.owner===LearningAccount.identity.id && !!LearningAccount.snapshot && !LearningAccount.busy, name);
+    if (!await page.evaluate(() => DailyCheckin.isCheckedToday())) {
+      await page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
+      await page.locator('.btn-checkin-later').click();
+    }
+    await page.evaluate(() => navigateTo('profile'));
     await page.evaluate(() => LearningHistory.sync());
   }
   async function count(page, expected) {
@@ -85,6 +95,7 @@ let api, browser;
   const a = await device();
   await answer(a.page, 'before login');
   await signIn(a.page);
+  assert.equal(await a.page.evaluate(()=>RewardSystem.data.totalScore),0);
   await count(a.page, 0); // 游客历史没有迁移。
   await a.page.evaluate(() => {
     generateMathQuestion();
@@ -145,6 +156,29 @@ let api, browser;
   await b.page.reload();
   await b.page.waitForFunction(() => LearningAccount.identity?.username === 'iris');
   await count(b.page, 6); // IndexedDB 与会话重新加载仍然正常。
+  // 真实模块计分进入账号分区，旧游客积分与画作保持原样。
+  assert.equal(await a.page.evaluate(()=>JSON.parse(localStorage.getItem('kidsLearningData')).totalScore),80);
+  await a.page.evaluate(()=>AppStorage.setItem('artworkGallery','[{"id":"iris-art"}]'));
+  await a.page.evaluate(()=>LearningAccount.save());
+  const expectedScore=await a.page.evaluate(()=>JSON.parse(AppStorage.getItem('kidsLearningData')).totalScore);
+  const c=await device();
+  await signIn(c.page);
+  assert.equal(await c.page.evaluate(()=>RewardSystem.data.totalScore),expectedScore);
+  assert.equal(await c.page.evaluate(()=>JSON.parse(AppStorage.getItem('artworkGallery'))[0].id),'iris-art');
+  await b.page.evaluate(()=>{
+    LearningAccount.profileProblem='';
+    AppStorage.setItem('kidsLearningData','{"totalScore":601}');
+    return LearningAccount.syncProfile();
+  });
+  assert.equal(await b.page.evaluate(()=>JSON.parse(AppStorage.getItem('kidsLearningData')).totalScore),601);
+  assert.match(await b.page.evaluate(()=>LearningAccount.profileProblem),/不同版本|different version/);
+  await b.page.evaluate(()=>LearningAccount.useCloud());
+  await b.page.waitForFunction(score=>LearningAccount.booted&&RewardSystem.data.totalScore===score,expectedScore);
+  assert.equal(await b.page.evaluate(()=>JSON.parse(AppStorage.getItem('artworkGallery'))[0].id),'iris-art');
+  if (!await b.page.evaluate(()=>DailyCheckin.isCheckedToday())) {
+    await b.page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
+    await b.page.locator('.btn-checkin-later').click();
+  }
   const downloadPromise = b.page.waitForEvent('download');
   await b.page.evaluate(() => { navigateTo('profile'); document.getElementById('science-feedback-modal')?.classList.add('hidden'); });
   await b.page.locator('#history-download').click();
@@ -155,7 +189,7 @@ let api, browser;
   assert.equal(exported.events.some(event => event.question === 'before login'), false);
   await b.page.screenshot({ path: path.join(scratch, 'history.png'), fullPage: true });
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export'], pageErrors: errors, screenshot: path.join(scratch, 'history.png') }, null, 2));
+  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork'], pageErrors: errors, screenshot: path.join(scratch, 'history.png') }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
   if (browser) await browser.close();
   if (api) api.kill('SIGTERM');
