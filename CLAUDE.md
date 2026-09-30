@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v73，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v74，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -150,6 +150,9 @@ kids-learning-app/
 ## 常用命令
 
 ```bash
+# 无第三方依赖的核心逻辑回归测试
+node --test tests/*.test.cjs
+
 # 本地运行
 npx serve .
 # 或
@@ -218,3 +221,12 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 5. **离线优先**: 核心功能支持完全离线使用
 6. **多语言**: 使用 `data-i18n` 属性，调用 `I18n.t('key')` 获取翻译
 7. **TTS 语音**: 优先使用 Puter.js 神经网络语音，降级到 Web Speech API
+
+## 学习数据基础修复（2026-09-29）
+
+- `RewardSystem` 只加载/写回 `DEFAULTS` 声明的计数器（含拼图计数）。不要把 `scienceProgress` 等模块存档读入奖励系统内存，再用整对象覆盖磁盘。旧版合并式写入仍会覆盖老用户科学进度，重新打开已有存档才能复现。
+- 结构化读取使用 `SafeStorage.getObject(key, defaults)`；主要模块分别初始化，读取/保存失败显示提示。读取损坏数据时保留原文，不自动删除。结构兜底并不等于完整的数据迁移或云同步。
+- 存储空间不足时只允许自动清理 `videoWhitelistCache`。画作和音乐作品属于用户数据，不能作为缓存自动淘汰；空间仍不足时提示保存失败。
+- 错题再次答错须取消已掌握状态并重置复习间隔；数学题完成到切题之间只能计分一次；加法结果不得超过设置范围。
+- SW 激活只清理 `kids-learning-v*` 旧缓存，不能删除同源 WebLLM 模型缓存。
+- 回归测试在 `tests/storage.test.cjs`，使用 Node 内置测试工具，不连接第三方服务。

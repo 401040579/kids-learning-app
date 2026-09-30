@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v73';
+const CACHE_NAME = 'kids-learning-v74';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -82,7 +82,7 @@ self.addEventListener('activate', event => {
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames
-          .filter(name => name !== CACHE_NAME)
+          .filter(name => name.startsWith('kids-learning-v') && name !== CACHE_NAME)
           .map(name => caches.delete(name))
       );
     }).then(() => {

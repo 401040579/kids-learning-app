@@ -16,11 +16,14 @@ const WrongQuestions = {
 
   // 从本地存储加载数据
   loadData() {
-    const saved = localStorage.getItem('kidsWrongQuestions');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      this.data = { ...this.data, ...parsed };
-    }
+    this.data = SafeStorage.getObject('kidsWrongQuestions', this.data);
+    const valid = this.data.questions.filter(q => q && typeof q.id === 'string' &&
+      typeof q.question === 'string' && typeof q.correctAnswer === 'string' &&
+      Array.isArray(q.options) && q.options.every(o => typeof o === 'string') &&
+      Array.isArray(q.userAnswers));
+    if (valid.length !== this.data.questions.length) SafeStorage.reportIssue('kidsWrongQuestions');
+    this.data.questions = valid;
+    this.data.masteredCount = this.getMastered().length;
   },
 
   // 保存数据到本地存储
@@ -37,6 +40,15 @@ const WrongQuestions = {
 
     if (existingIndex >= 0) {
       // 已存在，增加错误次数
+      const existing = this.data.questions[existingIndex];
+      if (existing.mastered) {
+        existing.mastered = false;
+        delete existing.masteredTime;
+        this.data.masteredCount = this.getMastered().length;
+      }
+      // 再次答错从短间隔重新复习，不能沿用过去的掌握或长间隔。
+      existing.reviewTimes = 0;
+      existing.lastReviewTime = null;
       this.data.questions[existingIndex].wrongTimes++;
       this.data.questions[existingIndex].lastWrongTime = new Date().toISOString();
       this.data.questions[existingIndex].userAnswers.push(questionData.userAnswer);

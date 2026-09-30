@@ -30,11 +30,7 @@ const DailyCheckin = {
 
   // 从本地存储加载数据
   loadData() {
-    const saved = localStorage.getItem('kidsDailyCheckin');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      this.data = { ...this.data, ...parsed };
-    }
+    this.data = SafeStorage.getObject('kidsDailyCheckin', this.data);
   },
 
   // 保存数据到本地存储

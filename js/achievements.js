@@ -66,11 +66,7 @@ const AchievementSystem = {
 
   // 从本地存储加载数据
   loadData() {
-    const saved = localStorage.getItem('kidsAchievements');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      this.data = { ...this.data, ...parsed };
-    }
+    this.data = SafeStorage.getObject('kidsAchievements', this.data);
   },
 
   // 保存数据到本地存储

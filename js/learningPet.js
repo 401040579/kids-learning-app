@@ -318,10 +318,7 @@ const LearningPet = {
 
   // 加载数据
   loadData() {
-    const saved = localStorage.getItem('kidsLearningPet');
-    if (saved) {
-      this.data = { ...this.data, ...JSON.parse(saved) };
-    }
+    this.data = SafeStorage.getObject('kidsLearningPet', this.data);
   },
 
   // 保存数据

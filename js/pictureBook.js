@@ -343,12 +343,9 @@ const PictureBook = {
 
   // 加载数据
   loadData() {
-    const saved = localStorage.getItem('kidsPictureBookData');
-    if (saved) {
-      const data = JSON.parse(saved);
-      this.readingHistory = data.readingHistory || [];
-      this.favorites = data.favorites || [];
-    }
+    const data = SafeStorage.getObject('kidsPictureBookData', { readingHistory: [], favorites: [] });
+    this.readingHistory = data.readingHistory;
+    this.favorites = data.favorites;
   },
 
   // 保存数据

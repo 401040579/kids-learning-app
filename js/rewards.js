@@ -104,7 +104,8 @@ const RewardSystem = {
     mathStreak: 0,
     englishCorrect: 0,
     chineseCorrect: 0,
-    scienceCorrect: 0
+    scienceCorrect: 0,
+    puzzleCorrect: 0
   },
 
   // 数据存储
@@ -115,7 +116,8 @@ const RewardSystem = {
     mathStreak: 0,
     englishCorrect: 0,
     chineseCorrect: 0,
-    scienceCorrect: 0
+    scienceCorrect: 0,
+    puzzleCorrect: 0
   },
 
   // 初始化
@@ -126,26 +128,11 @@ const RewardSystem = {
   },
 
   // 从本地存储加载数据
-  // 这里有两个必须防住的坑（其余模块如 achievements/dailyCheckin 早就是这么写的）：
-  //   1. 必须**合并**而不是整体替换：老版本存的数据缺少后来新增的字段
-  //      （如 scienceCorrect），整体替换后该字段变 undefined，再 += 1 就成了 NaN，
-  //      分数显示成「NaN」且会被存回去，再也回不来。
-  //   2. 必须 try/catch：本函数由 RewardSystem.init() 调用，而它排在
-  //      app.js 的 DOMContentLoaded 靠前位置。数据一旦损坏就抛异常，
-  //      后面十几个模块的 init 全部中断——签到、成就、视频列表、最近使用、
-  //      数学/英语/中文页面统统失效，而且没有任何报错提示。
+  // 补齐旧存档缺失的计数字段；坏数据由 SafeStorage 提示并回退。
   loadData() {
-    try {
-      const saved = localStorage.getItem('kidsLearningData');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object') {
-          this.data = { ...this.data, ...parsed };
-        }
-      }
-    } catch (e) {
-      console.warn('[RewardSystem] 学习数据损坏，已重置为默认值：', e);
-    }
+    const saved = SafeStorage.getObject('kidsLearningData', this.DEFAULTS);
+    // 只持有自己负责的计数，不能缓存 scienceProgress 等别的模块的数据。
+    this.data = Object.fromEntries(Object.keys(this.DEFAULTS).map(key => [key, saved[key]]));
     // 兜底：所有计数字段必须是有限数字。
     // null / 字符串 / NaN 都要拉回 0，否则 'x' + 1 会变成 'x1' 这种越滚越坏的脏值。
     Object.keys(this.DEFAULTS).forEach(k => {
@@ -160,18 +147,11 @@ const RewardSystem = {
   // 必须「读-改-写」而不是直接把内存对象整个覆盖上去：
   // kidsLearningData 里还存着别的模块写的字段（如科学模块的 scienceProgress），
   // 直接覆盖会把它们抹掉——科学主题的进度条因此长期停在 0/10。
-  // 同理，别的地方如果在本对象加载后改过 totalScore，这里也不能盲目覆盖。
+  // 计数器仍由本模块维护；此处不提供多标签页并发合并。
   saveData() {
-    let merged = {};
-    try {
-      const raw = localStorage.getItem('kidsLearningData');
-      if (raw) {
-        const disk = JSON.parse(raw);
-        if (disk && typeof disk === 'object') merged = disk;
-      }
-    } catch (e) { /* 磁盘数据损坏就当空的 */ }
-    Object.assign(merged, this.data);   // 只覆盖本模块负责的字段
-    safeSetItem('kidsLearningData', JSON.stringify(merged));
+    const merged = SafeStorage.getObject('kidsLearningData');
+    Object.keys(this.DEFAULTS).forEach(key => { merged[key] = this.data[key]; });
+    return safeSetItem('kidsLearningData', JSON.stringify(merged));
   },
 
   // 更新页面显示
@@ -402,15 +382,7 @@ const RewardSystem = {
 
   // 重置数据（可选功能）
   reset() {
-    this.data = {
-      totalScore: 0,
-      tasksDone: 0,
-      mathCorrect: 0,
-      mathStreak: 0,
-      englishCorrect: 0,
-      chineseCorrect: 0,
-      scienceCorrect: 0
-    };
+    this.data = { ...this.DEFAULTS };
     this.saveData();
     this.updateDisplay();
   }

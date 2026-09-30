@@ -72,10 +72,7 @@ const Pronunciation = {
 
   // 加载统计数据
   loadStats() {
-    const saved = localStorage.getItem('kidsPronunciationStats');
-    if (saved) {
-      this.stats = JSON.parse(saved);
-    }
+    this.stats = SafeStorage.getObject('kidsPronunciationStats', this.stats);
   },
 
   // 保存统计数据

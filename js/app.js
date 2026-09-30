@@ -73,73 +73,88 @@ function applyUpdate() {
 
 // 初始化应用
 document.addEventListener('DOMContentLoaded', () => {
+  // 一个模块的坏存档不能阻止其余学习功能启动。
+  const initialize = (name, run) => SafeStorage.initialize(name, run);
+  const showStorageProblem = () => {
+    if (!SafeStorage.issues.size || document.getElementById('storage-problem')) return;
+    const notice = document.createElement('div');
+    notice.id = 'storage-problem';
+    notice.setAttribute('role', 'alert');
+    notice.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:20000;padding:12px;background:#fff3cd;color:#664d03;font-size:14px;text-align:center';
+    notice.textContent = typeof I18n !== 'undefined' && I18n.currentLang === 'zh'
+      ? '部分记录未能读取或保存，请让家长先导出备份并检查本机存档。'
+      : 'Some records could not be loaded or saved. Ask a parent to back up and check this device.';
+    document.body.appendChild(notice);
+  };
+  window.addEventListener('storageProblem', showStorageProblem);
   // 注册 Service Worker 并监听更新
   registerServiceWorker();
 
   // 渲染首页分屏图标（在 I18n.init 之前，让其全文档翻译顺带覆盖新渲染的图标）
   if (typeof HomeScreen !== 'undefined') {
-    HomeScreen.init();
+    initialize('HomeScreen', () => HomeScreen.init());
   }
 
   // 初始化国际化系统
   if (typeof I18n !== 'undefined') {
-    I18n.init();
+    initialize('I18n', () => I18n.init());
   }
 
   // 初始化奖励系统
-  RewardSystem.init();
+  initialize('RewardSystem', () => RewardSystem.init());
 
   // 初始化 P0 功能模块
-  AchievementSystem.init();
-  WrongQuestions.init();
-  DailyCheckin.init();
+  initialize('AchievementSystem', () => AchievementSystem.init());
+  initialize('WrongQuestions', () => WrongQuestions.init());
+  initialize('DailyCheckin', () => DailyCheckin.init());
 
   // 初始化 P1 功能模块
   if (typeof MemoryGame !== 'undefined') {
-    MemoryGame.init();
+    initialize('MemoryGame', () => MemoryGame.init());
   }
   if (typeof LearningPet !== 'undefined') {
-    LearningPet.init();
+    initialize('LearningPet', () => LearningPet.init());
   }
 
   // 初始化 P2 功能模块
   if (typeof PictureBook !== 'undefined') {
-    PictureBook.init();
+    initialize('PictureBook', () => PictureBook.init());
   }
   if (typeof Pronunciation !== 'undefined') {
-    Pronunciation.init();
+    initialize('Pronunciation', () => Pronunciation.init());
   }
   if (typeof FamilyPK !== 'undefined') {
-    FamilyPK.init();
+    initialize('FamilyPK', () => FamilyPK.init());
   }
   if (typeof ChoreTracker !== 'undefined') {
-    ChoreTracker.init();
+    initialize('ChoreTracker', () => ChoreTracker.init());
   }
   if (typeof EnglishBoost !== 'undefined') {
-    EnglishBoost.init();
+    initialize('EnglishBoost', () => EnglishBoost.init());
   }
   if (typeof BirthdayParty !== 'undefined') {
-    BirthdayParty.init();
+    initialize('BirthdayParty', () => BirthdayParty.init());
   }
   if (typeof ToothFairy !== 'undefined') {
-    ToothFairy.init();
+    initialize('ToothFairy', () => ToothFairy.init());
   }
   // 初始化各模块
   if (typeof VideoWhitelist !== 'undefined') {
-    VideoWhitelist.init();
+    initialize('VideoWhitelist', () => VideoWhitelist.init());
   }
-  initMath();
-  initEnglish();
-  initChinese();
-  initScience();
+  initialize('math', initMath);
+  initialize('english', initEnglish);
+  initialize('chinese', initChinese);
+  initialize('science', initScience);
 
   // 更新首页签到预览
   if (typeof renderCheckinPreview === 'function') {
-    renderCheckinPreview();
+    initialize('checkinPreview', renderCheckinPreview);
   }
 
   // 初始化最近使用
-  RecentlyUsed.init();
+  initialize('RecentlyUsed', () => RecentlyUsed.init());
+  showStorageProblem();
 });
 
 // ========== 最近使用 ==========
@@ -592,7 +607,7 @@ function generateMathQuestion() {
   if (operator === '+') {
     // 加法：两数之和不超过范围
     num1 = Math.floor(Math.random() * range) + 1;
-    num2 = Math.floor(Math.random() * (range - num1)) + 1;
+    num2 = Math.floor(Math.random() * (range - num1 + 1));
     mathAnswer = num1 + num2;
   } else if (operator === '-') {
     // 减法：保证结果为正
@@ -660,7 +675,9 @@ function generateMathOptions(correctAnswer) {
 }
 
 function checkMathAnswer(answer, btn) {
+  if (!currentMathQuestion || currentMathQuestion.resolved) return;
   if (answer === mathAnswer) {
+    currentMathQuestion.resolved = true;
     btn.classList.add('correct');
     RewardSystem.mathCorrect();
 
@@ -942,52 +959,24 @@ function initScience() {
 
 // 加载科学进度
 function loadScienceProgress() {
-  const saved = localStorage.getItem('kidsLearningData');
-  if (saved) {
-    const data = JSON.parse(saved);
-    if (!data.scienceProgress) {
-      data.scienceProgress = {
-        animal: { completed: [], correct: 0, total: 0 },
-        plant: { completed: [], correct: 0, total: 0 },
-        nature: { completed: [], correct: 0, total: 0 }
-      };
-      data.scienceCorrect = 0;
-      safeSetItem('kidsLearningData', JSON.stringify(data));
-    }
-  }
+  // 读取时补默认值，不为了初始化而覆盖旧存档或清零累计答对数。
+  return getScienceProgress();
 }
 
 // 获取科学进度
 function getScienceProgress() {
-  const saved = localStorage.getItem('kidsLearningData');
-  if (saved) {
-    const data = JSON.parse(saved);
-    return data.scienceProgress || {
-      animal: { completed: [], correct: 0, total: 0 },
-      plant: { completed: [], correct: 0, total: 0 },
-      nature: { completed: [], correct: 0, total: 0 }
-    };
-  }
-  return {
+  return SafeStorage.getObject('kidsLearningData', { scienceProgress: {
     animal: { completed: [], correct: 0, total: 0 },
     plant: { completed: [], correct: 0, total: 0 },
     nature: { completed: [], correct: 0, total: 0 }
-  };
+  } }).scienceProgress;
 }
 
 // 保存科学进度
 function saveScienceProgress(theme, questionId, isCorrect) {
-  const saved = localStorage.getItem('kidsLearningData');
-  let data = saved ? JSON.parse(saved) : {};
-
-  if (!data.scienceProgress) {
-    data.scienceProgress = {
-      animal: { completed: [], correct: 0, total: 0 },
-      plant: { completed: [], correct: 0, total: 0 },
-      nature: { completed: [], correct: 0, total: 0 }
-    };
-    data.scienceCorrect = 0;
-  }
+  const data = SafeStorage.getObject('kidsLearningData');
+  data.scienceProgress = getScienceProgress();
+  if (!Object.hasOwn(data.scienceProgress, theme)) return;
 
   const themeProgress = data.scienceProgress[theme];
   if (!themeProgress.completed.includes(questionId)) {
