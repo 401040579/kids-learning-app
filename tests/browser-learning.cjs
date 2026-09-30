@@ -29,11 +29,25 @@ let api, browser;
   const port = probe.address().port;
   await new Promise(resolve => probe.close(resolve));
   const endpoint = `http://127.0.0.1:${port}`;
-  const env = { ...process.env, LEARNING_DB: path.join(scratch, 'test.sqlite3'), LEARNING_DEVELOPMENT: '1', LEARNING_ORIGINS: origin };
+  const env = { ...process.env, LEARNING_DB: path.join(scratch, 'test.sqlite3'), LEARNING_DEVELOPMENT: '1', LEARNING_ORIGINS: origin, LEARNING_ROBOT_CONFIG:path.join(scratch,'bridge.json') };
   for (const name of ['iris', 'other']) {
     const provision = spawnSync(python, ['-m', 'backend.manage', 'create', name, '--name', name, '--password-stdin'], { cwd: root, env, input: password + '\n', encoding: 'utf8' });
     assert.equal(provision.status, 0, provision.stderr);
   }
+  const fixture = spawnSync(python, ['-c', `
+import os,json,sqlite3
+from pathlib import Path
+from backend.service import Store,Settings
+root=Path(os.environ['LEARNING_DB']).parent
+source=root/'tutor.db'
+with sqlite3.connect(source) as db:
+ db.execute('CREATE TABLE tutor_log(id INTEGER PRIMARY KEY,ts TEXT,serial TEXT,topic_id TEXT,question TEXT,expected TEXT,answer TEXT,verdict TEXT,event_id TEXT,occurred_at TEXT)')
+(root/'topics.json').write_text(json.dumps({'version':'v1','topics':[]}))
+with Store(Settings.environment().database).connection() as db:
+ owner=db.execute("SELECT id FROM accounts WHERE username='iris'").fetchone()['id']
+Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':owner,'source':str(source),'taxonomy':str(root/'topics.json'),'plan_file':str(root/'plan.json')}))
+`], {cwd:root,env,encoding:'utf8'});
+  assert.equal(fixture.status,0,fixture.stderr);
   api = spawn(python, ['-m', 'uvicorn', 'backend.service:create_app', '--factory', '--host', '127.0.0.1', '--port', String(port), '--no-access-log'], { cwd: root, env, stdio: ['ignore', 'ignore', 'pipe'] });
   let apiErrors = '';
   api.stderr.on('data', data => { apiErrors += data; });
@@ -187,9 +201,37 @@ let api, browser;
   const exported = JSON.parse(fs.readFileSync(path.join(scratch, 'history.json')));
   assert.equal(exported.events.length, 6);
   assert.equal(exported.events.some(event => event.question === 'before login'), false);
+  // 网页真错题 → 私有机器人题单 → 受信日志导入 → 另一设备报告与题单更新。
+  await b.page.evaluate(()=>LearningHistory.record({subject:'math',question_id:'math_1_+_2',question:'1 + 2 = ?',expected:'3',answer:'4',verdict:'wrong'}));
+  await b.page.evaluate(()=>LearningHistory.sync());
+  await b.page.evaluate(()=>LearningPlan.refresh());
+  await b.page.locator('#plan-list button').waitFor({state:'visible'});
+  assert.equal(await b.page.locator('#plan-list li').count(),1);
+  await b.page.locator('#plan-list button').click();
+  assert.equal(await b.page.evaluate(()=>currentMathQuestion.questionId),'math_1_+_2');
+  const imported=spawnSync(python,['-c',`
+import os,sqlite3,uuid
+from datetime import datetime,timezone
+from pathlib import Path
+from backend.service import Store,Settings
+from backend.tutor_bridge import TutorBridge
+with sqlite3.connect(Path(os.environ['LEARNING_DB']).parent/'tutor.db') as db:
+ db.execute('INSERT INTO tutor_log(serial,topic_id,question,expected,answer,verdict,event_id,occurred_at) VALUES (?,?,?,?,?,?,?,?)',('0dd1a5e9','web:math_1_+_2','1加2等于多少？','3','三','correct',uuid.uuid4().hex,datetime.now(timezone.utc).isoformat()))
+TutorBridge(Store(Settings.environment().database)).tick()
+`],{cwd:root,env,encoding:'utf8'});
+  assert.equal(imported.status,0,imported.stderr);
+  await b.page.evaluate(()=>LearningHistory.sync());
+  await count(b.page,8);
+  await b.page.evaluate(()=>LearningPlan.refresh());
+  assert.equal(await b.page.locator('#plan-list li').count(),0);
+  await b.page.evaluate(()=>navigateTo('profile'));
+  assert.match(await b.page.locator('#history-latest').innerText(),/Jarvis/);
+  await c.page.evaluate(()=>LearningHistory.sync());
+  await count(c.page,8);
+  await b.page.waitForFunction(()=>getComputedStyle(document.getElementById('page-profile')).opacity==='1');
   await b.page.screenshot({ path: path.join(scratch, 'history.png'), fullPage: true });
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork'], pageErrors: errors, screenshot: path.join(scratch, 'history.png') }, null, 2));
+  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork', 'web wrong to robot review to cross-device report'], pageErrors: errors, screenshot: path.join(scratch, 'history.png') }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
   if (browser) await browser.close();
   if (api) api.kill('SIGTERM');

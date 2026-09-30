@@ -115,7 +115,7 @@ const LearningHistory = {
       });
       if (!result.has_more) break;
     }
-    if (this.owner() === owner) this.problem = '';
+    if (this.owner() === owner) { this.problem = ''; window.dispatchEvent(new Event('learningSynced')); }
   },
 
   summarize(rows, period, now = new Date()) {
@@ -153,7 +153,7 @@ const LearningHistory = {
       list.replaceChildren();
       for (const event of stats.latest) {
         const item = document.createElement('li');
-        item.textContent = `${new Date(event.occurred_at).toLocaleString()} · ${this.t(event.subject)} · ${event.question} → ${event.answer} (${this.t(event.verdict)})`;
+        item.textContent = `${new Date(event.occurred_at).toLocaleString()} · ${event.source === 'robot' ? event.robot : this.t('web')} · ${this.t(event.subject)} · ${event.question} → ${event.answer} (${this.t(event.verdict)})`;
         list.append(item);
       }
       document.getElementById('history-sync').hidden = owner === 'guest';

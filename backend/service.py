@@ -1,4 +1,5 @@
 """独立账号与云备份服务；不开注册接口，不导入任何机器人控制代码。"""
+import asyncio
 import hashlib
 import json
 import os
@@ -7,7 +8,7 @@ import secrets
 import sqlite3
 import threading
 import time
-from contextlib import contextmanager, nullcontext
+from contextlib import asynccontextmanager, contextmanager, nullcontext, suppress
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -211,7 +212,20 @@ def create_app(settings=None):
     settings = settings or Settings.environment()
     store = Store(settings.database)
     cookie = "__Host-kids_session" if settings.secure else "kids_session_dev"
-    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+    from backend.tutor_bridge import TutorBridge
+    bridge = TutorBridge(store)
+
+    @asynccontextmanager
+    async def lifespan(app):
+        task = asyncio.create_task(bridge.worker()) if bridge.config else None
+        yield
+        if task:
+            task.cancel()
+            with suppress(asyncio.CancelledError):
+                await task
+
+    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
+    app.state.bridge = bridge
     app.state.store = store
     app.add_middleware(CORSMiddleware, allow_origins=list(settings.origins), allow_credentials=True,
                        allow_methods=["GET", "POST", "PUT"], allow_headers=["Content-Type", "X-CSRF-Token"])
@@ -310,4 +324,5 @@ def create_app(settings=None):
         return {"account_id": identity["id"], "revision": revision + 1, "updated_at": now}
 
     install_learning_routes(app, store, account, body)
+    bridge.install(app, account)
     return app

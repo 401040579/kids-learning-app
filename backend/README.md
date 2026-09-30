@@ -1,6 +1,6 @@
 # 受管理的学习账号服务
 
-本服务与机器人大脑独立运行，只提供账号和学习备份。没有公开注册、用户创建、密码重置或机器人控制接口。
+本服务与机器人大脑独立运行，提供账号、学习存档、逐题记录及受信机器人数据适配器。没有公开注册、用户创建、密码重置或机器人控制接口。
 只有用户明确要求时，管理员才执行 `backend.manage` 开通账号。首个账号为 `iris`，显示名为 `Iris`。
 
 ## 本地开发与测试
@@ -83,7 +83,7 @@ WAL 数据库不能直接复制，也不能在 SQLite 连接仍打开时改名�
 真正恢复前应暂停学习服务及它的兜底任务、保留原库和旁路日志文件；先在临时目录验证备份，再停机替换。
 恢复后需重新登录；不得误用 `brain_proxy` 的重启手法。
 
-验证命令：后端 `pytest backend/tests -q`（34 例），前端 `node --test tests/*.test.cjs`（31 例）。
+验证命令：后端 `pytest backend/tests -q`（39 例），前端 `node --test tests/*.test.cjs`（31 例）。
 安装 Playwright 并有 Chrome 时可运行 `node tests/browser-learning.cjs`：临时数据库与测试账号覆盖真实 IndexedDB、跨设备、断网、丢失应答重传和切换账号。
 
 ## 接口
@@ -102,7 +102,35 @@ WAL 数据库不能直接复制，也不能在 SQLite 连接仍打开时改名�
 逐题记录包含 ID、带时区的答题时间、来源、学科、稳定题目 ID、题目、期望答案、实际答案和结果。
 按写入顺序分页，迟到的离线记录不会被时间游标漏掉。同 ID 同内容重传不会重复保存，内容冲突返回 409 并回滚整批。
 `expected_account_id` 用于防止切换账号后错投离线队列，不能指定数据归属；不匹配会话则返回 409。
-记录统计只能说明练习次数与正确率，不能据此断言孩子掌握了 Marble 知识点。机器人记录需另做受信适配器，当前拒绝 `source: robot`。
+记录统计只能说明练习次数与正确率，不能据此断言孩子掌握了 Marble 知识点。公开上传接口拒绝 `source: robot`，机器人记录仅由服务器适配器导入。
 
 错误语义：401 未登录/会话过期，403 来源或 CSRF 不符，409 版本冲突，413 请求过大，422 备份格式错误，429 限流。
 账号 ID 一律从服务端会话取得，忽略客户端伪造的 `X-User-Id` 或 `account_id`。
+
+## 机器人数据桥（2026-09-30）
+
+`backend.tutor_bridge` 每 10 秒只读机器人 SQLite（mode=ro），原子导入事件与游标；不接触 SDK 或硬件 API。
+新日志使用机器人生成的 UUID/UTC 时间，旧日志按配置时区解释；源库重新创建时扫描恢复，事件 ID 去重。
+Marble 保留 topic_id / taxonomy_version / robot 来源。unclear 不记错，不把网页题猜成 Marble 掌握度。
+目前仅适用于原家教的单个 Iris 孩子，不能把绑定改成另一个孩子来复用旧日志。
+
+绑定已有账号（不会创建账号），在 Orin 学习服务目录执行：
+
+```bash
+.venv/bin/python -m backend.tutor_bridge iris \
+  --source ~/robots/vector-project/data/tutor.db \
+  --taxonomy ~/robots/vector-project/data/marble/topics.json
+```
+
+私有配置 `~/.local/share/kids-learning/robot-bridge.json`，题单 `robot-plan.json`，均在静态目录之外。
+可用 `LEARNING_ROBOT_CONFIG` 指定私有配置路径。配置在进程启动读取，修改后重启独立服务。
+禁用账号停止导入并写空题单；同机管理员具有原有机器人管理权限，文件不是用于隔离本机管理员的边界。
+
+`GET /api/tutor/plan?expected_account_id=...` 需要账号登录，返回最多两道待复习基础加减法及数据桥状态，不提供启动/唤醒机器人操作。
+只选 0–30 加减法并从稳定题目 ID 重算答案；按实际答题时间判断最新正确/错误，迟到的离线错题不盖过较新答对。
+机器人当天已练但答错的题第二天再练；听不清仍保持原错误。网页可直接练题，机器人下次正常口令/定时会话才读取。
+
+机器人读取私有题单时检查姓名、账号标识、0600 权限和 120 秒过期时间，再次重算题目；最多占用原会话的两个名额。
+题单失效时回退原 Marble。新题 ID 仅进 tutor_log，不写 tutor_topics，不走 Marble 回溯，原勿扰/夜间/互斥/停止约束仍有效。
+代码在机器人仓库 `src/learning_bridge.py`、`src/tutor.py`、`src/brain_proxy.py`，测试为该仓库全套 116 项。
+真实 Chrome 临时数据链路已覆盖网页错题→机器人题单→导入 Jarvis 结果→另一设备报告；未代替 Iris 的实际口语识别验收。

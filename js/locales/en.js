@@ -1379,5 +1379,20 @@ I18n.translations['en'] = {
   'tooth.giftToy': 'small toy',
   'tooth.giftCandy': 'candy',
   'tooth.giftCrayon': 'crayon',
-  'tooth.giftBadge': 'badge'
+  'tooth.giftBadge': 'badge',
+  "plan.title": "Review together",
+  "plan.linked": "Shared with Jarvis / Friday for the next normal learning session.",
+  "plan.waiting": "The robot data link is unavailable. You can still practice here.",
+  "plan.unlinked": "This account is not linked to a robot. Practice here first.",
+  "plan.offline": "Unable to refresh. Try again when online.",
+  "plan.practice": "Practice here",
+  "plan.empty": "No basic addition or subtraction needs review right now.",
+  "plan.refresh": "Refresh review",
+  "plan.note": "Up to two questions. Robots review them in the next normal session. Unclear speech is not counted as a wrong answer.",
+  "history.web": "Web",
+  "history.history": "History",
+  "history.computing": "Computing",
+  "history.life_skills": "Life skills",
+  "history.social": "Social development",
+  "history.learning_to_learn": "Learning skills"
 };

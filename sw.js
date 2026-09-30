@@ -56,6 +56,7 @@ const urlsToCache = [
   '/js/accountConfig.js',
   '/js/account.js',
   '/js/learningHistory.js',
+  '/js/learningPlan.js',
   '/js/i18n.js',
   '/js/locales/en.js',
   '/js/locales/zh.js',

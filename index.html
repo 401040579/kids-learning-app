@@ -642,6 +642,14 @@
             <p class="account-note" data-i18n="history.note">从本次更新开始记录数学、英语、中文和科学的每次作答。正确率只统计答对与答错，不代表知识点掌握度。答题日志单独导出，不包含在下方的本机备份中。</p>
             <p class="account-note" data-i18n="history.offlineNote">登录后断网可继续记录；重新打开离线网页时使用访客模式。联网并登录原账号后补传之前的账号记录。</p>
           </section>
+          <section id="plan-panel" class="data-management account-panel" hidden aria-labelledby="plan-heading">
+            <h3 id="plan-heading" data-i18n="plan.title">一起复习</h3>
+            <p id="plan-status" role="status"></p>
+            <ul id="plan-list"></ul>
+            <p id="plan-empty" data-i18n="plan.empty">暂时没有需要复习的基础加减法。</p>
+            <button id="plan-refresh" type="button" class="btn-refresh" data-i18n="plan.refresh">刷新复习题</button>
+            <p class="account-note" data-i18n="plan.note">最多复习两道题。机器人会在下次正常学习时陪练，也可以在网页练习；听不清不会算答错。</p>
+          </section>
           <!-- 头像区域 -->
           <div class="profile-avatar-section">
             <div class="avatar-wrapper" onclick="showPhotoOptions()">
@@ -2904,6 +2912,7 @@
   <script src="js/accountConfig.js"></script>
   <script src="js/account.js"></script>
   <script src="js/learningHistory.js"></script>
+  <script src="js/learningPlan.js"></script>
 
   <!-- i18n System -->
   <script src="js/i18n.js"></script>

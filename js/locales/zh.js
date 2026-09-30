@@ -1382,5 +1382,20 @@ I18n.translations['zh'] = {
   'tooth.giftToy': '小玩具',
   'tooth.giftCandy': '糖果',
   'tooth.giftCrayon': '蜡笔',
-  'tooth.giftBadge': '奖章'
+  'tooth.giftBadge': '奖章',
+  "plan.title": "一起复习",
+  "plan.linked": "已和 Jarvis / Friday 共享题单，下一次正常学习时陪练。",
+  "plan.waiting": "机器人数据连接暂不可用，仍可在网页复习。",
+  "plan.unlinked": "当前账号尚未绑定机器人，可以先在网页复习。",
+  "plan.offline": "暂时无法刷新，联网后再试。",
+  "plan.practice": "网页练一练",
+  "plan.empty": "暂时没有需要复习的基础加减法。",
+  "plan.refresh": "刷新复习题",
+  "plan.note": "最多复习两道题。机器人会在下次正常学习时陪练，也可以在网页练习；听不清不会算答错。",
+  "history.web": "网页",
+  "history.history": "历史",
+  "history.computing": "计算思维",
+  "history.life_skills": "生活技能",
+  "history.social": "社交成长",
+  "history.learning_to_learn": "学习方法"
 };

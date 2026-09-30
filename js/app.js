@@ -529,6 +529,7 @@ function closeVideo() {
 
 // ========== 数学游戏 ==========
 let mathAnswer = 0;
+let mathNextTimer = null;
 let currentMathQuestion = null;  // 存储当前题目数据用于错题本
 
 // 数学游戏配置
@@ -598,6 +599,8 @@ function toggleMathOperator(op) {
 }
 
 function generateMathQuestion() {
+  if (mathNextTimer) clearTimeout(mathNextTimer);
+  mathNextTimer = null;
   const range = MathConfig.range;
   const operators = MathConfig.operators;
   const operator = operators[Math.floor(Math.random() * operators.length)];
@@ -708,7 +711,7 @@ function checkMathAnswer(answer, btn) {
     }
 
     // 延迟后生成新题
-    setTimeout(() => {
+    mathNextTimer = setTimeout(() => {
       generateMathQuestion();
     }, 1500);
   } else {

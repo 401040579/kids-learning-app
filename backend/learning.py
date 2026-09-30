@@ -18,16 +18,19 @@ CREATE INDEX IF NOT EXISTS events_account_seq ON learning_events(account_id, seq
 FIELDS = {"id", "occurred_at", "source", "subject", "question_id", "question", "expected", "answer", "verdict"}
 
 
-def validate_event(value):
-    if not isinstance(value, dict) or set(value) != FIELDS:
+def validate_event(value, *, trusted_robot=False):
+    if not isinstance(value, dict) or set(value) != (FIELDS | {"robot", "topic_id", "taxonomy_version"} if trusted_robot else FIELDS):
         raise ValueError("答题记录字段不完整或包含未知字段")
-    for key, limit in [("id", 64), ("question_id", 120), ("question", 500), ("expected", 200), ("answer", 200)]:
+    for key, limit in [("id", 64), ("question_id", 120), ("question", 500), ("expected", 200), ("answer", 2000 if trusted_robot else 200)]:
         if not isinstance(value[key], str) or not 1 <= len(value[key]) <= limit:
             raise ValueError("答题记录文字为空或过长")
     if not re.fullmatch(r"[a-zA-Z0-9_-]{16,64}", value["id"]):
         raise ValueError("答题记录 ID 无效")
-    if value["source"] != "web" or value["subject"] not in {"math", "english", "chinese", "science"}:
+    subjects = {"math", "english", "chinese", "science"} | ({"history", "computing", "life_skills", "social", "learning_to_learn"} if trusted_robot else set())
+    if value["source"] != ("robot" if trusted_robot else "web") or value["subject"] not in subjects:
         raise ValueError("不支持的答题来源或学科")
+    if trusted_robot and (value["robot"] not in {"Jarvis", "Friday"} or any(value[k] is not None and (not isinstance(value[k], str) or not 1 <= len(value[k]) <= 80) for k in ("topic_id", "taxonomy_version"))):
+        raise ValueError("机器人知识点来源无效")
     if value["verdict"] not in {"correct", "wrong", "unclear", "skipped"}:
         raise ValueError("答题结果无效")
     try:
