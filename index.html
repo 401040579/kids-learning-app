@@ -607,7 +607,7 @@
               <p class="account-note" data-i18n="account.managed">账号由家长联系管理员开通，不提供自行注册。</p>
             </form>
             <div id="account-tools" hidden>
-              <p class="account-note" data-i18n="account.localUnchanged">本机记录保持原样。只有点击保存后，才会上传到当前账号。</p>
+              <p class="account-note" data-i18n="account.localUnchanged">登录后的新答题记录自动同步。已有分数、错题和作品仍留在本机，备份前请家长确认归属。</p>
               <p id="account-backup-status"></p>
               <div class="data-btns">
                 <button id="account-save" type="button" class="btn-export" data-i18n="account.save">保存学习备份</button>
@@ -617,6 +617,25 @@
               <button id="account-logout" type="button" class="btn-save-profile" data-i18n="account.logout">退出账号</button>
             </div>
             <p id="account-message" role="status" aria-live="polite"></p>
+          </section>
+          <section id="history-panel" class="data-management account-panel" aria-labelledby="history-heading">
+            <h3 id="history-heading" data-i18n="history.title">逐题学习记录</h3>
+            <p id="history-owner"></p>
+            <label for="history-period" data-i18n="history.period">统计范围</label>
+            <select id="history-period" class="form-input">
+              <option value="week" data-i18n="history.week">最近 7 天</option>
+              <option value="month" data-i18n="history.month">本月</option>
+              <option value="all" data-i18n="history.all">全部记录</option>
+            </select>
+            <p id="history-summary"></p>
+            <p id="history-status" role="status" aria-live="polite"></p>
+            <ul id="history-latest"></ul>
+            <div class="data-btns">
+              <button id="history-sync" type="button" class="btn-refresh" hidden data-i18n="history.sync">立即同步</button>
+              <button id="history-download" type="button" class="btn-export" data-i18n="history.download">导出答题日志</button>
+            </div>
+            <p class="account-note" data-i18n="history.note">从本次更新开始记录数学、英语、中文和科学的每次作答。正确率只统计答对与答错，不代表知识点掌握度。答题日志单独导出，不包含在下方的本机备份中。</p>
+            <p class="account-note" data-i18n="history.offlineNote">登录后断网可继续记录；重新打开离线网页时使用访客模式。联网并登录原账号后补传之前的账号记录。</p>
           </section>
           <!-- 头像区域 -->
           <div class="profile-avatar-section">
@@ -2878,6 +2897,7 @@
   <script src="js/dataBackup.js"></script>
   <script src="js/accountConfig.js"></script>
   <script src="js/account.js"></script>
+  <script src="js/learningHistory.js"></script>
 
   <!-- i18n System -->
   <script src="js/i18n.js"></script>

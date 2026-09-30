@@ -1,9 +1,10 @@
-// 登录仅开启账号备份；不会自动导入、上传或把游客旧记录算到账号名下。
+// 登录开启新答题日志同步；原有本机存档仍由家长确认后手动备份。
 const LearningAccount = {
   identity: null,
   snapshot: null,
   busy: false,
   base: '',
+  notifiedOwner: null,
 
   t(key) { return I18n.t('account.' + key); },
   element(id) { return document.getElementById('account-' + id); },
@@ -36,6 +37,11 @@ const LearningAccount = {
 
   render() {
     const signedIn = !!this.identity;
+    const owner = this.identity?.id || 'guest';
+    if (owner !== this.notifiedOwner) {
+      this.notifiedOwner = owner;
+      window.dispatchEvent(new CustomEvent('accountChanged'));
+    }
     // 状态由账号决定，通用翻译不能把已登录状态覆盖成“访客”。
     this.element('state').removeAttribute('data-i18n');
     this.element('form').hidden = !this.base || signedIn;
@@ -55,6 +61,7 @@ const LearningAccount = {
   message(value) { this.element('message').textContent = value; },
 
   async request(path, { method = 'GET', body } = {}) {
+    const requestedOwner = this.identity?.id;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
     try {
@@ -65,7 +72,7 @@ const LearningAccount = {
       });
       const result = await response.json();
       if (!response.ok) {
-        if (response.status === 401) { this.identity = null; this.snapshot = null; this.render(); }
+        if (response.status === 401 && this.identity?.id === requestedOwner) { this.identity = null; this.snapshot = null; this.render(); }
         throw Error(typeof result.detail === 'string' ? result.detail : this.t('failed'));
       }
       return result;

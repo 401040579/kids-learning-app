@@ -674,8 +674,17 @@ function generateMathOptions(correctAnswer) {
   `).join('');
 }
 
+function recordLearningAnswer(subject, questionId, question, expected, answer, correct) {
+  if (typeof LearningHistory === 'undefined') return;
+  try {
+    LearningHistory.record({ subject, question_id: questionId, question, expected: String(expected),
+      answer: String(answer), verdict: correct ? 'correct' : 'wrong' });
+  } catch { console.warn('答题日志暂不可用，仍可继续学习'); }
+}
+
 function checkMathAnswer(answer, btn) {
   if (!currentMathQuestion || currentMathQuestion.resolved) return;
+  recordLearningAnswer('math', currentMathQuestion.questionId, currentMathQuestion.question, mathAnswer, answer, answer === mathAnswer);
   if (answer === mathAnswer) {
     currentMathQuestion.resolved = true;
     btn.classList.add('correct');
@@ -763,7 +772,7 @@ function initEnglish() {
 }
 
 function generateEnglishQuestion() {
-  currentEnglishWord = englishWords[Math.floor(Math.random() * englishWords.length)];
+  currentEnglishWord = { ...englishWords[Math.floor(Math.random() * englishWords.length)], resolved: false };
 
   document.getElementById('english-image').textContent = currentEnglishWord.image;
   document.getElementById('english-word').textContent = currentEnglishWord.word;
@@ -786,7 +795,11 @@ function generateEnglishQuestion() {
 }
 
 function checkEnglishAnswer(answer, btn) {
+  if (!currentEnglishWord || currentEnglishWord.resolved) return;
+  recordLearningAnswer('english', `english_${currentEnglishWord.word}`, currentEnglishWord.word,
+    currentEnglishWord.meaning, answer, answer === currentEnglishWord.meaning);
   if (answer === currentEnglishWord.meaning) {
+    currentEnglishWord.resolved = true;
     btn.classList.add('correct');
     RewardSystem.englishCorrect();
 
@@ -878,7 +891,7 @@ function initChinese() {
 }
 
 function generateChineseQuestion() {
-  currentChineseChar = chineseChars[Math.floor(Math.random() * chineseChars.length)];
+  currentChineseChar = { ...chineseChars[Math.floor(Math.random() * chineseChars.length)], resolved: false };
 
   document.getElementById('chinese-char').textContent = currentChineseChar.char;
   document.getElementById('chinese-pinyin').textContent = currentChineseChar.pinyin;
@@ -894,7 +907,11 @@ function generateChineseQuestion() {
 }
 
 function checkChineseAnswer(answer, btn) {
+  if (!currentChineseChar || currentChineseChar.resolved) return;
+  recordLearningAnswer('chinese', `chinese_${currentChineseChar.char}`, `${currentChineseChar.char} (${currentChineseChar.pinyin})`,
+    currentChineseChar.correct, answer, answer === currentChineseChar.correct);
   if (answer === currentChineseChar.correct) {
+    currentChineseChar.resolved = true;
     btn.classList.add('correct');
     RewardSystem.chineseCorrect();
 
@@ -1062,7 +1079,7 @@ function showScienceQuestion() {
     return;
   }
 
-  currentScienceQuestion = currentScienceQuestions[currentScienceIndex];
+  currentScienceQuestion = { ...currentScienceQuestions[currentScienceIndex], resolved: false };
 
   // 更新进度
   document.getElementById('science-current').textContent = currentScienceIndex + 1;
@@ -1089,9 +1106,14 @@ function showScienceQuestion() {
 
 // 检查答案
 function checkScienceAnswer(answerId, btn) {
+  if (!currentScienceQuestion || currentScienceQuestion.resolved) return;
   const isCorrect = answerId === currentScienceQuestion.answer;
   const correctOption = currentScienceQuestion.options.find(opt => opt.id === currentScienceQuestion.answer);
   const userOption = currentScienceQuestion.options.find(opt => opt.id === answerId);
+  if (!correctOption || !userOption) return;
+  currentScienceQuestion.resolved = true;
+  recordLearningAnswer('science', `science_${currentScienceQuestion.id}`, currentScienceQuestion.question,
+    correctOption.text, userOption.text, isCorrect);
 
   // 禁用所有按钮
   document.querySelectorAll('.quiz-option-btn').forEach(b => {
