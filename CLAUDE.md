@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v75，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v76，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -231,3 +231,12 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - SW 激活只清理 `kids-learning-v*` 旧缓存，不能删除同源 WebLLM 模型缓存。
 - 回归测试在 `tests/storage.test.cjs`，使用 Node 内置测试工具，不连接第三方服务。
 - `DataBackup` 在 `js/dataBackup.js` 登记本应用的 31 个存档键。新增持久数据时必须同步登记并明确根类型；测试会检查直接使用的存档键。v2 备份保存原文并校验导入，恢复失败尝试还原旧记录；v1 只恢复旧版导出的三类数据。完整备份包含个人资料和家长通知配置，不能上传到仓库。WebLLM 缓存和同源第三方凭据不导出。
+
+## 账号规则（2026-09-29 用户确认）
+
+- 用户端采用公网 HTTPS + 账号，不要求安装 Tailscale。游客保留纯网页和本机存档功能；后端故障不能阻止学习。
+- **只有用户明确要求时才开通账号**。无公开注册入口、无 HTTP 创建用户接口。首个专属账号为 `iris`；通过 `python -m backend.manage` 在服务器操作。
+- 独立后端代码位于 `backend/`，运维与测试见该目录 README。不得将机器人 8090 全部转发到公网；不得把账号数据库、密码、实际备份放进仓库或公开静态目录。
+- `js/accountConfig.js` 的 `apiBase` 为空时不发后端请求。公网 Cookie 要求 Secure/HttpOnly/SameSite=Strict；API 与网页应同站或使用同源代理。
+- 当前只有手动云备份，不是自动同步。登录/退出不改本机存档，上传需要家长确认归属；未来的账号本机存档分区与逐题事件仍待实现。
+- `scope: learning` 的 v2 备份只恢复包含的键，不能删除其他本机设置；排除家长通知凭据和视频缓存，前后端登记表必须一致。SW 不拦截 `/api/` 与写请求。
