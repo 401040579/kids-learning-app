@@ -370,3 +370,31 @@ test('初始化保留 HTML 入口，新问题和预览使用 textContent 防止�
   assert.equal(a.element('study-question').children.length, 0);
   assert.match(a.element('study-preview').children[0].textContent, /<img/);
 });
+
+test('语言切换更新复用课程窗口的按钮，不改变未保存答案与提示证据', async () => {
+  const a = app({ record: () => false });
+  a.run('StudySession.init()');
+  await a.run('StudySession.start()');
+  a.run('StudySession.showHint()');
+  await a.run("StudySession.answer('2')");
+  const pending = a.json('StudySession.current.pending');
+  const labels = {
+    stop: 'Take a break', hint: 'Give me a hint', reference: 'Read the story again',
+    skip: 'Skip this question', retrySave: 'Retry saving this answer', close: 'Back to the playground'
+  };
+  a.context.I18n.t = (key, fallback) => labels[key.replace(/^study\./, '')] || fallback;
+  a.listeners.get('languageChanged')();
+  for (const [id, key] of Object.entries({
+    'study-stop': 'stop', 'study-hint-button': 'hint', 'study-reference-button': 'reference',
+    'study-skip': 'skip', 'study-retry': 'retrySave', 'study-close': 'close'
+  })) assert.equal(a.element(id).textContent, labels[key]);
+  assert.deepEqual(a.json('StudySession.current.pending'), pending);
+  assert.equal(a.run('StudySession.current.hintUsed'), true);
+  assert.equal(a.element('study-retry').classList.contains('hidden'), false);
+  assert.equal(a.element('study-choices').children.every(button => button.disabled), true);
+  a.run('StudySession.stop(); StudySession.close(); StudySession.current = null');
+  a.context.I18n.t = (key, fallback) => fallback;
+  a.listeners.get('languageChanged')();
+  assert.equal(a.element('study-stop').textContent, '先休息');
+  assert.equal(a.element('study-close').textContent, '回到乐园');
+});

@@ -90,14 +90,14 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
     try {
       await Promise.all([page.waitForEvent('domcontentloaded'), action()]);
     } catch (error) {
-      console.error('Reload failed:', await page.evaluate(() => ({
-        documentChanged: !!window.__learningTestDocument,
+      console.error('Reload failed:', await page.evaluate(previous => ({
+        documentChanged: window.__learningTestDocument !== previous,
         busy: LearningAccount.busy, syncing: !!LearningAccount.profileSyncing,
         profileProblem: LearningAccount.profileProblem, frozen: AppStorage.blocked,
         revision: LearningAccount.snapshot?.revision, hasBackup: !!LearningAccount.snapshot?.backup,
         notice: document.getElementById('account-message')?.textContent,
         checkinReminder: !document.getElementById('checkin-reminder-modal').classList.contains('hidden')
-      })));
+      }), previous));
       throw error;
     }
     await page.waitForFunction(previous => window.__learningTestDocument !== previous &&
@@ -108,6 +108,10 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
     await reloadAction(page, () => page.locator('#account-logout').click());
     assert.equal(await page.evaluate(() => AppStorage.owner), 'guest');
     assert.equal(await page.evaluate(() => LearningAccount.identity), null);
+    if (!await page.evaluate(() => DailyCheckin.isCheckedToday())) {
+      await page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
+      await page.locator('.btn-checkin-later').click();
+    }
   }
   async function signIn(page, name = 'iris') {
     await page.evaluate(() => navigateTo('profile'));
@@ -459,9 +463,19 @@ TutorBridge(Store(Settings.environment().database)).tick()
   await lesson.page.waitForFunction(()=>document.querySelector('.learning-report-modal-content').getBoundingClientRect().width>300 && document.querySelector('.learning-report-modal-content').getAnimations().every(animation=>animation.playState==='finished'));
   assert.match(await lesson.page.locator('#learning-report-content').innerText(),/提示后答对|看过提示/);
   await lesson.page.screenshot({path:path.join(scratch,'study-report.png')});
+  await lesson.page.locator('#learning-report-modal .modal-close-btn').click();
+  await lesson.page.evaluate(()=>StudySession.start());
+  await lesson.page.locator('#study-close').waitFor({state:'visible'});
+  await lesson.page.evaluate(()=>I18n.setLanguage('en'));
+  await lesson.page.waitForFunction(()=>document.getElementById('study-stop').textContent==='Take a break');
+  assert.equal(await lesson.page.locator('#study-hint-button').innerText(),'Give me a hint');
+  assert.equal(await lesson.page.locator('#study-skip').innerText(),'Skip this question');
+  assert.equal(await lesson.page.locator('#study-close').innerText(),'Back to the playground');
+  await lesson.page.evaluate(()=>I18n.setLanguage('zh'));
+  await lesson.page.waitForFunction(()=>document.getElementById('study-stop').textContent==='先休息');
   await lesson.context.close();
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork', 'web wrong to robot review to cross-device report', 'same-account tab write lock', 'period reports use real events', 'book resume and completion rewards', 'honest word matching feedback', 'single module button entrypoints', 'recording deadline and saved performance restore', 'SOS failed service feedback', 'offline daily lesson with hint evidence', 'idempotent answer retry after storage failure', 'daily question budget and skip', 'optional reading comprehension with reference', 'reading completion deduplicates after reload', 'parent course evidence report'], pageErrors: errors, screenshot: path.join(scratch, 'history.png'), reportScreenshot:path.join(scratch,'report.png'),musicScreenshot:path.join(scratch,'music.png'),studyScreenshot:path.join(scratch,'study.png'),studyReportScreenshot:path.join(scratch,'study-report.png') }, null, 2));
+  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork', 'web wrong to robot review to cross-device report', 'same-account tab write lock', 'period reports use real events', 'book resume and completion rewards', 'honest word matching feedback', 'single module button entrypoints', 'recording deadline and saved performance restore', 'SOS failed service feedback', 'offline daily lesson with hint evidence', 'idempotent answer retry after storage failure', 'daily question budget and skip', 'optional reading comprehension with reference', 'reading completion deduplicates after reload', 'parent course evidence report', 'reused lesson controls follow language changes'], pageErrors: errors, screenshot: path.join(scratch, 'history.png'), reportScreenshot:path.join(scratch,'report.png'),musicScreenshot:path.join(scratch,'music.png'),studyScreenshot:path.join(scratch,'study.png'),studyReportScreenshot:path.join(scratch,'study-report.png') }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
   if (browser) await browser.close();
   if (api) api.kill('SIGTERM');

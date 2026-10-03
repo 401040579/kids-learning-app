@@ -155,8 +155,24 @@ const StudySession = {
     if (node) node.classList.toggle('hidden', !show);
   },
 
+  translateControls() {
+    // 窗口复用且可能正在加载/已结束，不能只在创建节点时翻译按钮。
+    for (const [id, key, fallback] of [
+      ['study-stop', 'stop', '先休息'],
+      ['study-hint-button', 'hint', '给我一点提示'],
+      ['study-reference-button', 'reference', '再看看故事'],
+      ['study-skip', 'skip', '这题先跳过'],
+      ['study-retry', 'retrySave', '重试保存这次答案'],
+      ['study-close', 'close', '回到乐园']
+    ]) {
+      const node = document.getElementById(id);
+      if (node) node.textContent = this.text(key, fallback);
+    }
+  },
+
   present() {
     this.ensureModal().classList.remove('hidden');
+    this.translateControls();
     document.getElementById('study-stop')?.focus();
   },
 
@@ -264,6 +280,7 @@ const StudySession = {
   valid(session) { return this.current === session && session.token === this.startVersion && this.allowed(session.owner); },
 
   render() {
+    this.translateControls();
     const session = this.current;
     if (!session || !this.valid(session)) return;
     document.getElementById('study-title').textContent = session.kind === 'reading' ? this.text('readingTitle', '聊聊刚才的故事') : this.text('title', '今天的小练习');
