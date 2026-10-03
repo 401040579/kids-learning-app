@@ -283,6 +283,11 @@
           <p class="welcome-subtitle" data-i18n="app.welcome.subtitle">今天想学什么呢?</p>
         </div>
 
+        <div class="study-home-card">
+          <div><strong data-i18n="study.homeTitle">🌱 今天学一点</strong><p data-i18n="study.homeNote">几道小题，慢慢来。可以提示，也可以休息。</p></div>
+          <button id="study-start" type="button" class="btn-refresh" data-i18n="study.start">开始短课</button>
+        </div>
+
         <!-- 最近使用 -->
         <div class="recent-used-section hidden" id="recent-used-section">
           <div class="section-header">
@@ -649,6 +654,20 @@
             <p id="plan-empty" data-i18n="plan.empty">暂时没有需要复习的基础加减法。</p>
             <button id="plan-refresh" type="button" class="btn-refresh" data-i18n="plan.refresh">刷新复习题</button>
             <p class="account-note" data-i18n="plan.note">最多复习两道题。机器人会在下次正常学习时陪练，也可以在网页练习；听不清不会算答错。</p>
+          </section>
+          <section id="study-panel" class="data-management account-panel" aria-labelledby="study-heading">
+            <h3 id="study-heading" data-i18n="study.title">每日短课与复习</h3>
+            <p id="study-status" role="status" aria-live="polite"></p>
+            <ul id="study-preview"></ul>
+            <div class="study-settings">
+              <label for="study-daily-count" data-i18n="study.dailyCount">每天最多几题</label>
+              <select id="study-daily-count" class="form-input"><option value="2">2</option><option value="4" selected>4</option><option value="6">6</option></select>
+              <label for="study-minutes" data-i18n="study.minutes">每轮时长（分钟）</label>
+              <select id="study-minutes" class="form-input"><option value="3">3</option><option value="5" selected>5</option><option value="10">10</option></select>
+            </div>
+            <button id="study-start-profile" type="button" class="btn-refresh" data-i18n="study.start">开始短课</button>
+            <p class="account-note" data-i18n="study.note">先复习到期的题，再学一点新内容。提示后的答案单独记录，不当作独立答对。课程目前为中文，适合 5–7 岁亲子使用；每天按洛杉矶时区计算。</p>
+            <p class="account-note"><a href="data/CURRICULUM-LICENSE.md" data-i18n="study.source">题库来源与许可</a></p>
           </section>
           <!-- 头像区域 -->
           <div class="profile-avatar-section">
@@ -2913,6 +2932,8 @@
   <script src="js/account.js"></script>
   <script src="js/learningHistory.js"></script>
   <script src="js/learningPlan.js"></script>
+  <script src="js/studyEngine.js"></script>
+  <script src="js/studySession.js"></script>
 
   <!-- i18n System -->
   <script src="js/i18n.js"></script>

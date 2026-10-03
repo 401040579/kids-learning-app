@@ -50,14 +50,28 @@ const LearningHistory = {
   },
 
   record(details) {
-    if (typeof AppStorage !== 'undefined' && AppStorage.blocked) return Promise.resolve();
+    if (typeof AppStorage !== 'undefined' && AppStorage.blocked) return Promise.resolve(false);
     // 在答题当下固定归属，不能在异步写入完成后再读取账号。
     const owner = this.owner();
-    const event = { ...details, id: crypto.randomUUID(), occurred_at: new Date().toISOString(), source: 'web' };
+    // 短课保存失败重试沿用答题当时的 ID/时间，不生成第二条作答证据。
+    const event = { ...details, id: details.id || crypto.randomUUID(), occurred_at: details.occurred_at || new Date().toISOString(), source: 'web' };
+    if (!/^[a-zA-Z0-9_-]{16,64}$/.test(event.id) || !Number.isFinite(Date.parse(event.occurred_at))) return Promise.resolve(false);
+    const canonical = value => JSON.stringify(value, Object.keys(value).sort());
     this.writes = this.writes.catch(() => {}).then(() => this.transaction(['events'], 'readwrite', tx => {
-      tx.objectStore('events').add({ owner, id: event.id, synced: 0, event });
-    })).then(() => { this.problem = ''; this.render(); this.schedule(); })
-      .catch(() => { this.problem = 'storage'; this.render(); });
+      const store = tx.objectStore('events'), request = store.get([owner, event.id]);
+      request.onsuccess = () => {
+        if (!request.result) store.add({ owner, id: event.id, synced: 0, event });
+        else if (canonical(request.result.event) !== canonical(event)) tx.abort();
+      };
+    })).then(() => {
+      // UI 的刷新失败不能把已提交记录误报为保存失败。
+      if (owner === this.owner()) this.problem = '';
+      try { this.render(); this.schedule(); window.dispatchEvent(new CustomEvent('learningRecorded', { detail: { owner } })); } catch {}
+      return true;
+    }).catch(() => {
+      if (owner === this.owner()) { this.problem = 'storage'; try { this.render(); } catch {} }
+      return false;
+    });
     return this.writes;
   },
 

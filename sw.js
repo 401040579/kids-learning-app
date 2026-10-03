@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v79';
+const CACHE_NAME = 'kids-learning-v80';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,6 +6,8 @@ const urlsToCache = [
   // 探索视频列表：由 GitHub Actions 定时抓取并写入仓库的同源静态 JSON。
   // 预缓存后离线也能看到列表；内容更新靠 CI 自动 bump 上面的 CACHE_NAME 版本号来生效。
   '/data/videos.json',
+  '/data/curriculum.json',
+  '/data/CURRICULUM-LICENSE.md',
   '/js/app.js',
   '/js/rewards.js',
   '/js/achievements.js',
@@ -57,6 +59,8 @@ const urlsToCache = [
   '/js/account.js',
   '/js/learningHistory.js',
   '/js/learningPlan.js',
+  '/js/studyEngine.js',
+  '/js/studySession.js',
   '/js/i18n.js',
   '/js/locales/en.js',
   '/js/locales/zh.js',

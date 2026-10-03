@@ -794,6 +794,39 @@ const PictureBook = {
     if (cover) cover.textContent = this.currentBook.cover;
     const reward = modal.querySelector('.reward-text');
     if (reward) reward.textContent = this.text('pictureBook.completedReward', '+{points} 积分').replace('{points}', '15');
+    // 完成自报和理解作答分开：题库不可用不能阻止绘本阅读或本次完成。
+    if (typeof StudySession !== 'undefined') {
+      const bookId = this.currentBook.id;
+      const completionId = this.bookProgress[bookId]?.activeSession?.id;
+      const owner = AppStorage.owner;
+      const actions = modal.querySelector('.complete-actions');
+      let button = document.getElementById('book-understanding-start');
+      let status = document.getElementById('book-understanding-status');
+      if (!button && actions) {
+        button = document.createElement('button');
+        button.id = 'book-understanding-start'; button.type = 'button'; button.className = 'btn-read-again';
+        actions.append(button);
+      }
+      if (!status && actions) {
+        status = document.createElement('p'); status.id = 'book-understanding-status';
+        status.setAttribute('role', 'status'); actions.append(status);
+      }
+      if (status) status.textContent = '';
+      if (button) {
+        button.textContent = this.text('pictureBook.understandingStart', '想聊聊故事吗？做两道小题');
+        button.disabled = false;
+        button.onclick = async () => {
+          if (AppStorage.blocked || AppStorage.owner !== owner || !completionId || this.currentBook?.id !== bookId || this.bookProgress[bookId]?.activeSession?.id !== completionId) return;
+          button.disabled = true;
+          let started = false;
+          try { started = await StudySession.startReading(bookId, completionId); } catch { /* 保留正常阅读入口 */ }
+          if (AppStorage.blocked || AppStorage.owner !== owner || this.currentBook?.id !== bookId || this.bookProgress[bookId]?.activeSession?.id !== completionId) return;
+          button.disabled = false;
+          if (started) modal.classList.add('hidden');
+          else if (status) status.textContent = this.text('pictureBook.understandingUnavailable', '故事小题暂时打不开，可以直接休息或继续看书。');
+        };
+      }
+    }
     modal.classList.remove('hidden');
   },
 

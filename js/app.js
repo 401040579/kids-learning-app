@@ -1575,6 +1575,10 @@ function handlePhotoSelect(event) {
 
 // 保存个人信息
 function saveProfile() {
+  if (AppStorage.blocked) return;
+  // 短课设置由另一入口保存；不能被此页较旧的 profileData 内存覆盖。
+  const latestProfile = SafeStorage.getObject('kidsProfileData', {});
+  if (latestProfile.learningSettings) profileData.learningSettings = latestProfile.learningSettings;
   // 收集数据
   profileData.name = document.getElementById('profile-name').value.trim();
   profileData.age = parseInt(document.getElementById('profile-age').textContent) || 6;
@@ -1587,7 +1591,7 @@ function saveProfile() {
   });
 
   // 保存到 localStorage
-  safeSetItem('kidsProfileData', JSON.stringify(profileData));
+  if (!safeSetItem('kidsProfileData', JSON.stringify(profileData))) return;
 
   // 显示成功提示
   RewardSystem.showReward(5, '信息已保存!');

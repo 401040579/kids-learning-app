@@ -27,7 +27,11 @@ test('逐题报告按真实作答时间筛选，unclear/skipped 不稀释正确�
 test('异步保存前固定账号归属，切换账号不把旧题算给新账号', async () => {
   const run = history();
   const promise = run(`let saved;
-    LearningHistory.transaction = async (names, mode, apply) => apply({objectStore:()=>({add:row=>{saved=row}})});
+    LearningHistory.transaction = async (names, mode, apply) => {
+      const request={result:null};
+      apply({objectStore:()=>({get:()=>request,add:row=>{saved=row}})});
+      request.onsuccess();
+    };
     LearningHistory.render = () => {}; LearningHistory.schedule = () => {};
     const writing = LearningHistory.record({subject:'math',question:'1+2',expected:'3',answer:'3',verdict:'correct'});
     LearningAccount.identity = {id:'other-id'};
@@ -35,6 +39,36 @@ test('异步保存前固定账号归属，切换账号不把旧题算给新账�
   await promise;
   assert.equal(run('saved.owner'), 'iris-id');
   assert.equal(run('saved.synced'), 0);
+});
+
+test('保存只在事务确认后成功；重试保留同一ID，冲突和读写失败不伪造成功', async () => {
+  const run=history();
+  run(`let savedRows=new Map();
+    LearningHistory.transaction=async(names,mode,apply)=>{
+      const requests=[]; let aborted=false;
+      const store={get:key=>{const request={result:savedRows.get(key.join(':'))};requests.push(request);return request;},
+        add:row=>savedRows.set(row.owner+':'+row.id,row)};
+      apply({objectStore:()=>store,abort:()=>{aborted=true}});
+      requests.forEach(request=>request.onsuccess());
+      if(aborted) throw Error('conflict');
+    };
+    LearningHistory.render=()=>{};LearningHistory.schedule=()=>{};
+    const detail={id:'stable-answer-00000001',occurred_at:'2026-10-01T12:00:00.123Z',subject:'math',question_id:'math_1_+_2',question:'1+2',expected:'3',answer:'3',verdict:'correct'};`);
+  assert.equal(await run('LearningHistory.record(detail)'),true);
+  assert.equal(await run('LearningHistory.record({...detail})'),true);
+  assert.equal(run('savedRows.size'),1);
+  assert.equal(await run("LearningHistory.record({...detail,answer:'4'})"),false);
+  assert.equal(run('savedRows.size'),1);
+  run("LearningHistory.transaction=async()=>{throw Error('quota')};");
+  assert.equal(await run("LearningHistory.record({...detail,id:'stable-answer-00000002'})"),false);
+  assert.equal(run('savedRows.size'),1);
+});
+
+test('事务已成功时刷新UI的异常不要求重写记录', async () => {
+  const run=history();
+  run(`LearningHistory.transaction=async()=>{};
+    LearningHistory.render=()=>{throw Error('UI')};LearningHistory.schedule=()=>{};`);
+  assert.equal(await run("LearningHistory.record({subject:'math'})"),true);
 });
 
 test('同步失败不把离线队列标记为已确认', async () => {

@@ -8,6 +8,7 @@ const LearningReport = {
     english: { name: '英语', english: 'English', icon: '🔤', color: '#4ECDC4' },
     chinese: { name: '中文', english: 'Chinese', icon: '📝', color: '#45B7D1' },
     science: { name: '科学', english: 'Science', icon: '🔬', color: '#96CEB4' },
+    reading: { name: '阅读理解', english: 'Reading comprehension', icon: '📖', color: '#DCA86B' },
     history: { name: '历史', english: 'History', icon: '🏛️', color: '#C49ADB' },
     computing: { name: '计算机', english: 'Computing', icon: '💻', color: '#91AECE' },
     life_skills: { name: '生活技能', english: 'Life skills', icon: '🏡', color: '#E3B96B' },
@@ -20,6 +21,7 @@ const LearningReport = {
     heading: ['{period}学习报告', '{period} learning report'], loading: ['正在读取学习记录…', 'Loading learning records…'],
     unavailable: ['学习记录暂时无法读取，请稍后重试。累计积分不能代替本期记录。', 'Learning records could not be read. Please try again. Lifetime points cannot replace period records.'],
     records: ['作答记录', 'Answer records'], correct: ['答对', 'Correct'], wrong: ['答错', 'Incorrect'], accuracy: ['正确率', 'Accuracy'],
+    unclear: ['无法判断', 'Unclear'], skipped: ['跳过', 'Skipped'],
     verdictNote: ['无法判断 {unclear} 次，跳过 {skipped} 次；正确率只计算答对与答错。', 'Unclear: {unclear}; skipped: {skipped}. Accuracy includes only correct and incorrect answers.'],
     days: ['有作答的天数：{days}', 'Days with answer records: {days}'],
     scope: ['仅统计本期逐题日志，不用累计奖励推算。重复练习按每次作答记录。', 'Based on individual answer records in this period. Lifetime rewards are not estimates of period activity. Repeated attempts are counted separately.'],
@@ -38,7 +40,27 @@ const LearningReport = {
     streak: ['当前连续签到：{count} 天', 'Current check-in streak: {count} days'],
     wrongBook: ['当前错题本：待复习 {unmastered} 道 · 已掌握 {mastered} 道', 'Current wrong-answer notebook: to review {unmastered} · mastered {mastered}'],
     shareLoading: ['报告还未读完，请稍后再分享。', 'The report is still loading. Please try sharing again shortly.'],
-    copied: ['报告已复制到剪贴板！', 'Report copied to clipboard!'], copyFailed: ['复制失败，请手动复制。', 'Copy failed. Please copy manually.']
+    copied: ['报告已复制到剪贴板！', 'Report copied to clipboard!'], copyFailed: ['复制失败，请手动复制。', 'Copy failed. Please copy manually.'],
+    evidence: ['本期练习证据', 'Practice evidence in this period'],
+    independentCorrect: ['未用提示答对', 'Correct without a hint'], assistedCorrect: ['提示后答对', 'Correct after a hint'],
+    unknownCorrect: ['答对但提示状态未知', 'Correct, hint use unknown'],
+    evidenceSample: ['可判断作答样本 {judged} 次；其中 {unknownHintAttempts} 次没有记录是否使用提示（旧网页或机器人等）。', 'There are {judged} judged attempts; hint use was not recorded for {unknownHintAttempts} attempts, including older web or robot records.'],
+    evidenceNote: ['这里只说明记录到的练习表现。同题同日重复不会变成多个知识点已掌握，也不依据复习阶段判断能力。', 'These are observations from practice. Repeating a question on one day does not establish mastery of multiple skills, and review stages are not ability scores.'],
+    evidenceEmpty: ['本期还没有可判断的作答样本，证据不足，暂不判断学习能力。', 'There are no judged attempts in this period. Evidence is insufficient to assess learning ability.'],
+    courseUnavailable: ['课程证据信息暂时无法读取。本期作答统计仍可查看，请稍后重试。', 'Course evidence could not be loaded. Period answer totals remain available; please try again.'],
+    topics: ['近期课程知识点练习', 'Recent practice by course topic'],
+    courseSample: ['匹配当前课程的记录：{courseAttempts} 次作答、{questionCount} 道不同题、{topicCount} 个练习知识点。', 'Records matching the current course: {courseAttempts} attempts, {questionCount} distinct questions, and {topicCount} practiced topics.'],
+    courseEmpty: ['本期没有能匹配当前课程版本的练习证据。旧模块和机器人记录仍计入上方统计，不据此推断课程能力。', 'There is no practice evidence matching the current course version in this period. Older web and robot records remain in the totals above, but cannot establish course ability.'],
+    topicSample: ['{attempts} 次作答 · {questionCount} 道题 · 未用提示答对 {independentCorrect} 次 · 提示后答对 {assistedCorrect} 次 · 提示未知答对 {unknownCorrect} 次 · 答错 {wrong} 次', '{attempts} attempts · {questionCount} questions · correct without hints {independentCorrect} · correct after hints {assistedCorrect} · correct with unknown hints {unknownCorrect} · incorrect {wrong}'],
+    topicDays: ['在 {independentDays} 个不同日期记录到未用提示答对；这仍是练习证据，不是掌握结论。', 'Correct answers without hints were recorded on {independentDays} different days. This is practice evidence, not a mastery conclusion.'],
+    example: ['例题：{question}（最近一次：{result}）', 'Example: {question} (latest attempt: {result})'],
+    shortReview: ['短课到期复习（查看全部历史）', 'Short-lesson reviews due (using all history)'],
+    reviewDue: ['按 {timezone} 日期安排，今天还有 {count} 道到期短课题未练习。', 'Using {timezone} dates, {count} short-lesson questions are due and have not been practiced today.'],
+    reviewNone: ['目前没有今天待做的到期短课题。这不表示所有知识点已经掌握。', 'There are no due short-lesson questions left for today. This does not establish mastery of all topics.'],
+    reviewExample: ['{question} · 复习日期 {day}', '{question} · review date {day}'],
+    reviewUnavailable: ['复习安排暂时无法读取，不能把读取失败当成没有待复习题。', 'The review schedule could not be read. This must not be interpreted as having no questions to review.'],
+    readingReviewNote: ['阅读理解随对应绘本练习，另列练习证据；下面的到期清单只包含短课题。', 'Reading comprehension is practiced with its book and has separate evidence; the due list below contains short-lesson questions only.'],
+    losAngelesTimezone: ['洛杉矶', 'Los Angeles'], utcTimezone: ['协调世界时（UTC）', 'UTC']
   },
 
   t(key, values = {}) {
@@ -53,10 +75,140 @@ const LearningReport = {
   normalizePeriod(period) { return ['week', 'month', 'all'].includes(period) ? period : 'week'; },
   owner() { return typeof LearningHistory !== 'undefined' ? LearningHistory.owner() : typeof AppStorage !== 'undefined' ? AppStorage.owner : 'guest'; },
   count(value) { return Number.isFinite(value) && value >= 0 ? Math.floor(value) : 0; },
+  courseTimezone: 'America/Los_Angeles',
+  captureCourseTimezone(owner = this.owner()) {
+    try {
+      const timezone = owner === this.owner() && typeof StudySession !== 'undefined' && typeof StudySession.settings === 'function'
+        ? StudySession.settings().timezone : null;
+      if (typeof timezone === 'string' && timezone) {
+        new Intl.DateTimeFormat('en', { timeZone: timezone }).format(new Date());
+        return timezone;
+      }
+    } catch { /* 设置缺失或非法时沿用原家庭默认值。 */ }
+    return this.courseTimezone;
+  },
+  timezoneLabel(timezone) {
+    return timezone === 'America/Los_Angeles' ? this.t('losAngelesTimezone') : timezone === 'UTC' ? this.t('utcTimezone') : timezone.replaceAll('_', ' ');
+  },
   subjectName(key) {
     const definition = this.subjectDefinitions[key];
     const translated = typeof I18n !== 'undefined' ? I18n.t('history.' + key) : 'history.' + key;
     return translated !== 'history.' + key ? translated : definition[typeof I18n !== 'undefined' && I18n.currentLang === 'zh' ? 'name' : 'english'];
+  },
+
+  periodRows(rows, period, now, owner, deduplicate = true) {
+    if (!Array.isArray(rows)) throw Error('history-invalid');
+    period = this.normalizePeriod(period);
+    const end = now.getTime();
+    const start = period === 'week' ? end - 7 * 86400000
+      : period === 'month' ? new Date(now.getFullYear(), now.getMonth(), 1).getTime() : 0;
+    const ids = new Set();
+    return rows.filter(row => {
+      if (!row || row.owner !== owner || !row.event) return false;
+      const event = row.event, stamp = Date.parse(event.occurred_at);
+      if (!Number.isFinite(stamp) || stamp < start || stamp > end || !Object.hasOwn(this.subjectDefinitions, event.subject)
+        || !['correct', 'wrong', 'unclear', 'skipped'].includes(event.verdict) || !['web', 'robot'].includes(event.source)) return false;
+      if (deduplicate && event.id && ids.has(event.id)) return false;
+      if (event.id) ids.add(event.id);
+      return true;
+    });
+  },
+
+  evidenceResult(event) {
+    if (event.verdict !== 'correct') return this.t(event.verdict === 'wrong' ? 'wrong' : event.verdict === 'skipped' ? 'skipped' : 'unclear');
+    if (event.source !== 'web' || event.schema_version !== 2 || typeof event.hint_used !== 'boolean') return this.t('unknownCorrect');
+    return this.t(event.hint_used ? 'assistedCorrect' : 'independentCorrect');
+  },
+
+  courseDay(stamp, timezone = this.courseTimezone) {
+    const parts = new Intl.DateTimeFormat('en', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' })
+      .formatToParts(new Date(stamp));
+    const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+    return `${values.year}-${values.month}-${values.day}`;
+  },
+
+  // 提示状态只在 v2 网页记录明确；课程分组复用调度器的严格 canonical 校验。
+  summarizeEvidence(rows, catalog, period = 'week', now = new Date(), owner = this.owner(), timezone = this.courseTimezone) {
+    const selected = this.periodRows(rows, period, now, owner);
+    const result = { total: selected.length, judged: 0, independentCorrect: 0, assistedCorrect: 0, unknownCorrect: 0,
+      wrong: 0, unclear: 0, skipped: 0, unknownHintAttempts: 0, courseAttempts: 0, questionCount: 0,
+      questionDays: 0, independentQuestionDays: 0, topicCount: 0, topics: [], status: 'unavailable' };
+    const available = catalog && Array.isArray(catalog.topics) && Array.isArray(catalog.questions)
+      && typeof StudyEngine !== 'undefined' && typeof StudyEngine.events === 'function';
+    const questions = new Map(available ? catalog.questions.map(question => [question.id, question]) : []);
+    const definitions = new Map(available ? catalog.topics.map(topic => [topic.id, topic]) : []);
+    const groups = new Map(), questionIds = new Set(), questionDays = new Set(), independentDays = new Set();
+    for (const row of selected) {
+      const event = row.event;
+      const knownHint = event.source === 'web' && event.schema_version === 2 && typeof event.hint_used === 'boolean';
+      if (!knownHint && ['correct', 'wrong'].includes(event.verdict)) result.unknownHintAttempts++;
+      if (event.verdict === 'correct') result[knownHint ? event.hint_used ? 'assistedCorrect' : 'independentCorrect' : 'unknownCorrect']++;
+      else result[event.verdict]++;
+    }
+    // 同 ID 内容冲突时，不挑一条作为技能证据；与复习状态共用规范化、排序、去重规则。
+    const courseEvents = available ? StudyEngine.events(catalog,
+      this.periodRows(rows, period, now, owner, false).map(row => row.event), now) : [];
+    for (const { event, stamp } of courseEvents) {
+      const knownHint = event.source === 'web' && event.schema_version === 2 && typeof event.hint_used === 'boolean';
+      const question = questions.get(event.question_id), definition = question && definitions.get(question.topic_id);
+      if (!definition) continue;
+      const day = this.courseDay(stamp, timezone);
+      result.courseAttempts++;
+      questionIds.add(question.id);
+      questionDays.add(`${question.id}:${day}`);
+      if (event.verdict === 'correct' && knownHint && event.hint_used === false) independentDays.add(`${question.id}:${day}`);
+      let group = groups.get(definition.id);
+      if (!group) {
+        group = { id: definition.id, title: definition.title, subject: definition.subject, attempts: 0,
+          independentCorrect: 0, assistedCorrect: 0, unknownCorrect: 0, wrong: 0, unclear: 0, skipped: 0, lastStamp: -1,
+          questionIds: new Set(), independentDays: new Set(), questions: new Map() };
+        groups.set(definition.id, group);
+      }
+      group.attempts++;
+      group.questionIds.add(question.id);
+      if (event.verdict === 'correct') {
+        group[knownHint ? event.hint_used ? 'assistedCorrect' : 'independentCorrect' : 'unknownCorrect']++;
+        if (knownHint && event.hint_used === false) group.independentDays.add(day);
+      } else group[event.verdict]++;
+      group.lastStamp = Math.max(group.lastStamp, stamp);
+      const previous = group.questions.get(question.id);
+      // 时间优先，稳定 ID 只用于完全同时间的确定排序，不依赖到达顺序。
+      if (!previous || stamp > previous.stamp || (stamp === previous.stamp && String(event.id) > previous.eventId)) {
+        group.questions.set(question.id, { question_id: question.id, question: question.question, stamp,
+          eventId: String(event.id), verdict: event.verdict, hint_used: event.hint_used, result: this.evidenceResult(event) });
+      }
+    }
+    result.judged = result.independentCorrect + result.assistedCorrect + result.unknownCorrect + result.wrong;
+    result.questionCount = questionIds.size;
+    result.questionDays = questionDays.size;
+    result.independentQuestionDays = independentDays.size;
+    result.topicCount = groups.size;
+    result.status = available ? 'ready' : 'unavailable';
+    result.topics = [...groups.values()].sort((a, b) => b.lastStamp - a.lastStamp || a.id.localeCompare(b.id)).map(group => ({
+      id: group.id, title: group.title, subject: group.subject, attempts: group.attempts,
+      independentCorrect: group.independentCorrect, assistedCorrect: group.assistedCorrect, unknownCorrect: group.unknownCorrect, wrong: group.wrong,
+      unclear: group.unclear, skipped: group.skipped, questionCount: group.questionIds.size,
+      independentDays: group.independentDays.size, lastAt: new Date(group.lastStamp).toISOString(),
+      examples: [...group.questions.values()].sort((a, b) => b.stamp - a.stamp || a.question_id.localeCompare(b.question_id)).slice(0, 2)
+    }));
+    return result;
+  },
+
+  reviewEvidence(rows, catalog, now = new Date(), owner = this.owner(), timezone = this.courseTimezone) {
+    if (!catalog || typeof StudyEngine === 'undefined' || typeof StudyEngine.plan !== 'function') return { status: 'unavailable' };
+    try {
+      const events = this.periodRows(rows, 'all', now, owner, false).map(row => row.event);
+      const plan = StudyEngine.plan(catalog, events, { now, timezone });
+      if (!plan || !plan.states || !Number.isFinite(plan.due_count) || typeof plan.day !== 'string') throw Error('review-invalid');
+      const examples = catalog.questions.filter(question => {
+        const state = plan.states[question.id];
+        return question.book_id === null && state?.seen && !state.attempted_today && typeof state.due_day === 'string' && state.due_day <= plan.day;
+      }).map(question => ({ question_id: question.id, question: question.question, day: plan.states[question.id].due_day }))
+        .sort((a, b) => a.day.localeCompare(b.day) || catalog.questions.findIndex(q => q.id === a.question_id) - catalog.questions.findIndex(q => q.id === b.question_id)).slice(0, 4);
+      return { status: 'ready', dueCount: this.count(plan.due_count), day: plan.day, timezone: plan.timezone || timezone, examples };
+    } catch {
+      return { status: 'unavailable' };
+    }
   },
 
   // 可测的统计逻辑不读存储、不修改事件；设备本地自然月与历史面板保持一致。
@@ -68,7 +220,7 @@ const LearningReport = {
     const subjects = {};
     const makeSubject = key => ({ key, name: this.subjectName(key), icon: this.subjectDefinitions[key].icon,
       color: this.subjectDefinitions[key].color, total: 0, correct: 0, wrong: 0, unclear: 0, skipped: 0, judged: 0, accuracy: null });
-    for (const key of ['math', 'english', 'chinese', 'science']) subjects[key] = makeSubject(key);
+    for (const key of ['math', 'english', 'chinese', 'science', 'reading']) subjects[key] = makeSubject(key);
     const overview = { total: 0, totalCorrect: 0, totalWrong: 0, unclear: 0, skipped: 0, judged: 0,
       accuracy: null, activeDays: 0, pending: 0, sources: { web: 0, robot: 0, robots: { Jarvis: 0, Friday: 0 } } };
     const dates = new Set(), ids = new Set();
@@ -124,13 +276,24 @@ const LearningReport = {
   },
 
   async generateReport(period = 'week') {
-    const owner = this.owner();
+    const owner = this.owner(), version = this.renderVersion;
     if (typeof LearningHistory === 'undefined') throw Error('history-unavailable');
     await LearningHistory.writes;
-    if (owner !== this.owner()) return null;
+    if (owner !== this.owner() || version !== this.renderVersion) return null;
     const rows = await LearningHistory.records(owner);
-    if (owner !== this.owner()) return null;
-    const report = this.summarize(rows, period, new Date(), owner);
+    if (owner !== this.owner() || version !== this.renderVersion) return null;
+    // 读取日志后同步固定截止时刻和该账号的家庭时区，目录等待不能混入新设置。
+    const now = new Date(), timezone = this.captureCourseTimezone(owner);
+    let catalog = null;
+    if (typeof StudySession !== 'undefined' && typeof StudySession.loadCatalog === 'function') {
+      try { catalog = await StudySession.loadCatalog(); }
+      catch { /* 目录失败不能让可靠的旧报告消失，也不能伪装成“无课程证据”。 */ }
+    }
+    if (owner !== this.owner() || version !== this.renderVersion) return null;
+    const report = this.summarize(rows, period, now, owner);
+    try { report.evidence = this.summarizeEvidence(rows, catalog, period, now, owner, timezone); }
+    catch { report.evidence = this.summarizeEvidence(rows, null, period, now, owner, timezone); }
+    report.courseReview = this.reviewEvidence(rows, catalog, now, owner, timezone);
     report.cumulative = this.cumulativeState();
     report.suggestions = this.generateSuggestions(report);
     return report;
@@ -143,6 +306,29 @@ const LearningReport = {
     if (report.overview.unclear) suggestions.push({ icon: '🎧', text: this.t('unclearSuggestion', { count: report.overview.unclear }) });
     suggestions.push({ icon: '🌱', text: this.t('encouragement') });
     return suggestions;
+  },
+
+  generateEvidenceHTML(report) {
+    if (!report.evidence) return '';
+    const evidence = report.evidence, review = report.courseReview;
+    const e = value => this.escape(value), t = (key, values) => e(this.t(key, values));
+    const stat = (value, key) => `<div class="report-stat-card"><span class="report-stat-value">${e(value)}</span><span class="report-stat-label">${t(key)}</span></div>`;
+    const topics = evidence.status !== 'ready' ? `<p class="report-date">${t('courseUnavailable')}</p>`
+      : `<p class="report-date">${t('courseSample', evidence)}</p>${evidence.topics.length
+        ? `<div class="report-suggestions">${evidence.topics.slice(0, 6).map(topic => `<div class="report-suggestion-item"><span class="suggestion-icon">${this.subjectDefinitions[topic.subject]?.icon || '📚'}</span>
+          <div class="suggestion-text"><strong>${e(topic.title)}</strong><p>${t('topicSample', topic)}</p><p>${t('topicDays', topic)}</p>
+          ${topic.examples.map(example => `<p class="report-date">${t('example', example)}</p>`).join('')}</div></div>`).join('')}</div>`
+        : `<p>${t('courseEmpty')}</p>`}`;
+    const reviewHTML = !review || review.status !== 'ready' ? `<p class="report-date">${t('reviewUnavailable')}</p>`
+      : `<p>${t('reviewDue', { count: review.dueCount, timezone: this.timezoneLabel(review.timezone) })}</p>${review.dueCount
+        ? `<div class="report-suggestions">${review.examples.map(example => `<div class="report-suggestion-item"><span class="suggestion-icon">📕</span><span class="suggestion-text">${t('reviewExample', example)}</span></div>`).join('')}</div>`
+        : `<p class="report-date">${t('reviewNone')}</p>`}`;
+    return `<div class="report-section report-evidence-section"><h3>🔎 ${t('evidence')}</h3>
+      <div class="report-overview">${stat(evidence.independentCorrect, 'independentCorrect')}${stat(evidence.assistedCorrect, 'assistedCorrect')}${stat(evidence.unknownCorrect, 'unknownCorrect')}${stat(evidence.wrong, 'wrong')}</div>
+      <p class="report-date">${t('evidenceSample', evidence)}</p><p class="report-date">${t('evidenceNote')}</p>
+      ${evidence.judged ? '' : `<p>${t('evidenceEmpty')}</p>`}</div>
+      <div class="report-section report-course-section"><h3>📚 ${t('topics')}</h3>${topics}</div>
+      <div class="report-section report-review-section"><h3>📅 ${t('shortReview')}</h3><p class="report-date">${t('readingReviewNote')}</p>${reviewHTML}</div>`;
   },
 
   generateReportHTML(report) {
@@ -167,6 +353,7 @@ const LearningReport = {
       <div class="report-overview">${stat('📝', overview.total, 'records')}${stat('✅', overview.totalCorrect, 'correct')}${stat('🌱', overview.totalWrong, 'wrong')}${stat('📊', overview.accuracy === null ? '—' : overview.accuracy + '%', 'accuracy')}</div>
       <p class="report-date">${t('verdictNote', overview)}</p><p class="report-date">${t('days', { days: overview.activeDays })}</p>
       <p class="report-date">${t('source', overview.sources)}${robotNames ? ' · ' + e(robotNames) : ''}</p>
+      ${this.generateEvidenceHTML(report)}
       <div class="report-section"><h3>📚 ${t('distribution')}</h3><div class="report-subjects">${subjectBars}</div>${details}
         ${overview.total ? `<p>${t('mostPracticed', { subject: report.analysis.mostPracticed.name })}</p>` : `<p>${t('empty')}</p>`}</div>
       <div class="report-section"><h3>🌱 ${t('suggestions')}</h3><div class="report-suggestions">${report.suggestions.map(suggestion => `<div class="report-suggestion-item"><span class="suggestion-icon">${suggestion.icon}</span><span class="suggestion-text">${e(suggestion.text)}</span></div>`).join('')}</div></div>
@@ -179,6 +366,24 @@ const LearningReport = {
       `📝 ${this.t('records')}: ${stats.total}`, `✅ ${this.t('correct')}: ${stats.totalCorrect}`,
       `🌱 ${this.t('wrong')}: ${stats.totalWrong}`, `📊 ${this.t('accuracy')}: ${stats.accuracy === null ? '—' : stats.accuracy + '%'}`,
       this.t('verdictNote', stats), this.t('source', stats.sources), this.t('scope')];
+    if (report.evidence) {
+      const evidence = report.evidence;
+      content.push(`${this.t('independentCorrect')}: ${evidence.independentCorrect}`,
+        `${this.t('assistedCorrect')}: ${evidence.assistedCorrect}`, `${this.t('unknownCorrect')}: ${evidence.unknownCorrect}`,
+        this.t('evidenceSample', evidence));
+      if (!evidence.judged) content.push(this.t('evidenceEmpty'));
+      if (evidence.status === 'ready') {
+        content.push(this.t('courseSample', evidence));
+        for (const topic of evidence.topics.slice(0, 3)) content.push(`${topic.title}: ${this.t('topicSample', topic)}; ${this.t('topicDays', topic)}`);
+        if (!evidence.topics.length) content.push(this.t('courseEmpty'));
+      } else content.push(this.t('courseUnavailable'));
+      content.push(this.t('evidenceNote'));
+    }
+    if (report.courseReview?.status === 'ready') {
+      content.push(this.t('reviewDue', { count: report.courseReview.dueCount, timezone: this.timezoneLabel(report.courseReview.timezone) }));
+      for (const example of report.courseReview.examples.slice(0, 2)) content.push(this.t('reviewExample', example));
+      if (!report.courseReview.dueCount) content.push(this.t('reviewNone'));
+    } else if (report.evidence) content.push(this.t('reviewUnavailable'));
     return { title: content[0], content: content.join('\n') };
   }
 };
@@ -238,7 +443,8 @@ function fallbackCopyToClipboard(content, owner = LearningReport.owner()) {
 }
 
 // 刷新仅重读当前分区；退出、关闭或切换周期后旧异步结果不能覆盖新界面。
-for (const event of ['accountChanged', 'languageChanged', 'learningSynced']) window.addEventListener(event, () => {
+for (const event of ['accountChanged', 'languageChanged', 'learningSynced', 'learningRecorded']) window.addEventListener(event, update => {
+  if (event === 'learningRecorded' && update?.detail?.owner !== LearningReport.owner()) return;
   LearningReport.renderVersion++; LearningReport.activeReport = null;
   const modal = document.getElementById('learning-report-modal');
   if (modal && !modal.classList.contains('hidden')) showLearningReport(LearningReport.period);
