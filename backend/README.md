@@ -177,6 +177,10 @@ curl --fail http://127.0.0.1:8092/ready
 
 用户 crontab 保留现有任务，隧道另有 `@reboot` 和每 5 分钟的启动兜底；`run-tunnel.sh` 持独立 flock 锁，重复运行直接退出。隧道日志为 `~/.local/share/kids-learning/tunnel.log`，不用 debug 记录请求头。8092 指标仅监听回环。
 
-DNS 迁移前备份完整记录，逐条保留邮件 MX/SPF/DKIM、GitHub Pages CNAME 和域名验证；自动扫描可能漏记录。已有 DNSSEC 时先移除旧 DS，并按父区 DS 的 TTL 留足缓存过期时间，之后再改 NS；新委派生效后恢复 Cloudflare DNSSEC。不能只看到管理界面保存成功就认为缓存已清空，也不能带着旧 DS 直接切到不同签名密钥的 DNS 服务。
+DNS 迁移前备份完整记录，逐条保留邮件 MX/SPF/DKIM、GitHub Pages CNAME 和域名验证；自动扫描可能漏记录。已有 DNSSEC 时先移除旧 DS，并从所有父区权威实际确认移除时算起，按 DS 的 TTL 留足缓存过期时间，之后再改 NS。切换后恢复 Cloudflare 父区 DS 还必须等待旧子区权威 NS 的缓存期限；本域实测父 DS 为 3600 秒、旧子区 NS 为 21600 秒，不能都按 1 小时算。不能只看到管理界面保存成功就认为缓存已清空，也不能带着旧 DS 直接切到不同签名密钥的 DNS 服务。
+
+Squarespace 默认托管 DNS 的 DNSSEC 开关会立即影响签名，而注册局 DS 异步更新；本轮曾出现几分钟的验证型解析器 SERVFAIL。重新打开会生成不同 KSK，不能把开关当成原密钥回滚。默认模式没有本轮已验证的独立父 DS 删除入口；迁移须持续核对父 DS 与实际 DNSKEY，而非反复开关。自定义 NS 模式可手动管理第三方 DS；必须确认新 DS 匹配 Cloudflare DNSKEY 且旧 NS 缓存过期后才添加。
+
+Squarespace 邮件转发支持自定义 NS。切换后在原 Email 页面检查转发规则保留、无 Action required；若出现提示，使用该域 Review instructions 的 2 条 MX / 2 条 TXT 核对新权威记录。保留原规则，不删除重建、不改收件人。DNS 与页面配置验收不能代替真实邮件收信测试；未经用户要求不发送测试邮件。
 
 发布 `apiBase` 前必须验证公网 HTTPS、匿名受保护接口 401、文档/机器人路径 404、精确来源 CORS 和生产 Cookie。上线状态与证据记录在 `docs/优化记录-2026-10.md`；不要根据隧道 `/ready` 提前打开账号入口。
