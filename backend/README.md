@@ -140,3 +140,11 @@ Marble 保留 topic_id / taxonomy_version / robot 来源。unclear 不记错，�
 GitHub Pages v78 已构建，公网 `apiBase` 仍空；DNS 管理入口缺失阻止公网登录上线。
 真实 Chrome 另验证同账号第二标签页禁止写入，总计 13 个场景，无页面异常。
 线上 Chrome 验证游客模式、v78 缓存激活与离线重载通过。测试中的异步条件不能直接交给 waitForFunction（本机运行时把 Promise 当作 truthy），记录数量改为 evaluate 等待完成后比较和限时重试；上述 13 场景已按真实数量重新验证。
+
+## 复习顺序修正（2026-10-02）
+
+待复习题的最新有效结果按验证后统一为 UTC 毫秒的 `payload.occurred_at` 排序，
+同毫秒才按上传 `seq` 决胜。表中的秒精度 `occurred_at` 保持兼容，不需数据库迁移。
+网页 API 与私有题单使用同一绑定时区判断“机器人当天已练”。
+本地后端全套 43 项通过，新增回归覆盖同秒迟到的旧错/旧对、同毫秒顺序及跨日时区边界。
+数据桥 `ready` 仅表示学习数据处理成功，不表示 Jarvis / Friday 已连接。

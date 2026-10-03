@@ -60,6 +60,44 @@ def test_unclear_preserves_wrong_and_old_offline_wrong_does_not_reopen(app,tmp_p
     assert json.loads(Path(bridge.config['plan_file']).read_text())['questions']==[]
 
 
+@pytest.mark.parametrize('newest,oldest,expected_count', [
+    ('correct', 'wrong', 0), ('wrong', 'correct', 1),
+])
+def test_same_second_late_upload_uses_answer_milliseconds(app, newest, oldest, expected_count):
+    browser = client(app)
+    owner = login(browser).json()['id']
+    # 较旧记录后到达：occurred_at 列只有秒，不能用上传 seq 决定谁最新。
+    assert post(browser, owner, [event(1, verdict=newest, occurred_at='2026-09-01T12:00:00.900Z')]).status_code == 200
+    assert post(browser, owner, [event(2, verdict=oldest, occurred_at='2026-09-01T12:00:00.100Z')]).status_code == 200
+    plan = browser.get('/api/tutor/plan', params={'expected_account_id':owner}).json()
+    assert len(plan['questions']) == expected_count
+
+
+def test_equal_answer_millisecond_uses_upload_sequence(app):
+    browser = client(app)
+    owner = login(browser).json()['id']
+    stamp = '2026-09-01T12:00:00.900Z'
+    assert post(browser, owner, [event(1, verdict='wrong', occurred_at=stamp), event(2, verdict='correct', occurred_at=stamp)]).status_code == 200
+    with app.state.store.connection() as db:
+        assert review_plan(db, owner) == []
+
+
+def test_api_plan_uses_linked_child_timezone(app, monkeypatch):
+    from backend.learning import validate_event
+    browser = client(app)
+    owner = login(browser).json()['id']
+    # UTC 已到第二天，洛杉矶仍是前一天；UTC 配置必须允许复习昨天的机器人错题。
+    monkeypatch.setattr('backend.tutor_bridge.time.time', lambda: datetime(2026, 9, 2, 1, tzinfo=timezone.utc).timestamp())
+    app.state.bridge.config = {'account_id':owner, 'timezone':'UTC'}
+    value = event(source='robot', robot='Jarvis', topic_id=None, taxonomy_version=None,
+                  verdict='wrong', occurred_at='2026-09-01T23:00:00Z')
+    epoch, payload = validate_event(value, trusted_robot=True)
+    with app.state.store.connection() as db:
+        db.execute('INSERT INTO learning_events(account_id,event_id,occurred_at,payload,recorded_at) VALUES (?,?,?,?,?)', (owner,value['id'],epoch,payload,epoch))
+    result = browser.get('/api/tutor/plan', params={'expected_account_id':owner})
+    assert result.status_code == 200 and len(result.json()['questions']) == 1
+
+
 def test_legacy_and_marble_provenance_restore_and_reset(app,tmp_path):
     bridge, owner, source = setup_bridge(app,tmp_path)
     log(source,None,topic='mt_test')

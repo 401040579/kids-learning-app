@@ -46,12 +46,13 @@ def review_plan(db, owner, zone='America/Los_Angeles', now=None):
     today = datetime.fromtimestamp(now, ZoneInfo(zone)).date()
     # 看作答时间，不让迟到的离线错题盖过较新的答对记录；同毫秒用 seq 排序。
     rows = db.execute("""SELECT payload FROM (
-        SELECT payload, ROW_NUMBER() OVER (
-          PARTITION BY json_extract(payload,'$.question_id') ORDER BY occurred_at DESC, seq DESC
+        SELECT payload, seq, ROW_NUMBER() OVER (
+          PARTITION BY json_extract(payload,'$.question_id')
+          ORDER BY json_extract(payload,'$.occurred_at') DESC, seq DESC
         ) AS rank FROM learning_events WHERE account_id=?
           AND json_extract(payload,'$.subject')='math'
           AND json_extract(payload,'$.verdict') IN ('correct','wrong')
-        ) WHERE rank=1 ORDER BY json_extract(payload,'$.occurred_at') DESC""", (owner,)).fetchall()
+        ) WHERE rank=1 ORDER BY json_extract(payload,'$.occurred_at') DESC, seq DESC""", (owner,)).fetchall()
     result = []
     for row in rows:
         event = json.loads(row['payload'])
@@ -185,7 +186,7 @@ class TutorBridge:
             check_owner(identity, expected_account_id)
             linked = bool(self.config and self.config['account_id']==identity['id'])
             with self.store.connection() as db:
-                questions = review_plan(db, identity['id'])
+                questions = review_plan(db, identity['id'], self.config.get('timezone','America/Los_Angeles') if linked else 'America/Los_Angeles')
             return {'account_id':identity['id'], 'questions':questions, 'robot_linked':linked,
                     'robot_status':self.status if linked else 'unlinked', 'last_success':self.last_success if linked else None}
 
