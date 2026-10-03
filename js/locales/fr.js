@@ -395,7 +395,7 @@ I18n.translations['fr'] = {
   // Learning Report
   'report.title': 'Rapport d\'Apprentissage',
   'report.today': 'Aujourd\'hui',
-  'report.week': 'Cette Semaine',
+  "report.week": "7 derniers jours",
   'report.month': 'Ce Mois',
 
   // Parent notifications
@@ -648,8 +648,8 @@ I18n.translations['fr'] = {
   'pronunciation.ready': 'Prêt',
   'pronunciation.complete': 'Pratique Terminée!',
   'pronunciation.practiceCount': 'Nombre',
-  'pronunciation.avgScore': 'Moyenne',
-  'pronunciation.maxScore': 'Meilleur Score',
+  "pronunciation.avgScore": "Correspondance moyenne du texte",
+  "pronunciation.maxScore": "Meilleure correspondance du texte",
 
   // AI Chat
   'ai.assistant': 'Assistant',

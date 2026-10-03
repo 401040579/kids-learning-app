@@ -391,7 +391,7 @@ I18n.translations['ko'] = {
   // Learning Report
   'report.title': '학습 보고서',
   'report.today': '오늘',
-  'report.week': '이번 주',
+  "report.week": "최근 7일",
   'report.month': '이번 달',
 
   // Parent notifications
@@ -644,8 +644,8 @@ I18n.translations['ko'] = {
   'pronunciation.ready': '준비됐어요',
   'pronunciation.complete': '연습 완료!',
   'pronunciation.practiceCount': '연습 횟수',
-  'pronunciation.avgScore': '평균 점수',
-  'pronunciation.maxScore': '최고 점수',
+  "pronunciation.avgScore": "평균 텍스트 일치율",
+  "pronunciation.maxScore": "최고 텍스트 일치율",
 
   // AI Chat
   'ai.assistant': '도우미',

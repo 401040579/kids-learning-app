@@ -66,6 +66,7 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
       return url.startsWith(origin + '/') || url.startsWith(endpoint + '/') ? route.continue() : route.abort();
     });
     await context.addInitScript(() => {
+      window.__learningTestDocument = crypto.randomUUID();
       localStorage.setItem('appLanguage', 'zh');
       if (!localStorage.getItem('kidsLearningData')) localStorage.setItem('kidsLearningData','{"totalScore":80}');
       if (!localStorage.getItem('artworkGallery')) localStorage.setItem('artworkGallery','[{"id":"guest-art"}]');
@@ -74,7 +75,7 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
     page.on('pageerror', error => errors.push(error.message));
     page.on('dialog', dialog => dialog.accept());
     await page.goto(origin);
-    await page.waitForFunction(() => typeof LearningHistory !== 'undefined' && typeof RewardSystem !== 'undefined');
+    await page.waitForFunction(() => typeof LearningAccount !== 'undefined' && LearningAccount.booted && typeof LearningHistory !== 'undefined' && typeof RewardSystem !== 'undefined');
     await page.locator('#checkin-reminder-modal').waitFor({ state: 'visible' });
     await page.locator('.btn-checkin-later').click();
     await page.evaluate(() => {
@@ -83,11 +84,36 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
     });
     return { context, page };
   }
+  async function reloadAction(page, action) {
+    const previous = await page.evaluate(() => window.__learningTestDocument);
+    // 登录/退出先更新内存身份、随后才 reload；必须等新文档与存档初始化完成。
+    try {
+      await Promise.all([page.waitForEvent('domcontentloaded'), action()]);
+    } catch (error) {
+      console.error('Reload failed:', await page.evaluate(() => ({
+        documentChanged: !!window.__learningTestDocument,
+        busy: LearningAccount.busy, syncing: !!LearningAccount.profileSyncing,
+        profileProblem: LearningAccount.profileProblem, frozen: AppStorage.blocked,
+        revision: LearningAccount.snapshot?.revision, hasBackup: !!LearningAccount.snapshot?.backup,
+        notice: document.getElementById('account-message')?.textContent,
+        checkinReminder: !document.getElementById('checkin-reminder-modal').classList.contains('hidden')
+      })));
+      throw error;
+    }
+    await page.waitForFunction(previous => window.__learningTestDocument !== previous &&
+      typeof LearningAccount !== 'undefined' && LearningAccount.booted && !LearningAccount.busy,
+    previous);
+  }
+  async function signOut(page) {
+    await reloadAction(page, () => page.locator('#account-logout').click());
+    assert.equal(await page.evaluate(() => AppStorage.owner), 'guest');
+    assert.equal(await page.evaluate(() => LearningAccount.identity), null);
+  }
   async function signIn(page, name = 'iris') {
     await page.evaluate(() => navigateTo('profile'));
     await page.locator('#account-username').fill(name);
     await page.locator('#account-password').fill(password);
-    await page.locator('#account-form button').click();
+    await reloadAction(page, () => page.locator('#account-form button').click());
     await page.waitForFunction(name => LearningAccount.booted && LearningAccount.identity?.username === name && AppStorage.owner===LearningAccount.identity.id && !!LearningAccount.snapshot && !LearningAccount.busy, name);
     if (!await page.evaluate(() => DailyCheckin.isCheckedToday())) {
       await page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
@@ -108,10 +134,106 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
   async function answer(page, label = 'offline') {
     await page.evaluate(label => LearningHistory.record({ subject: 'math', question_id: 'math_1_+_2', question: label, expected: '3', answer: '3', verdict: 'correct' }), label);
   }
+  async function verifyLearningFeatures(page) {
+    await page.evaluate(async () => {
+      const owner = LearningHistory.owner(), now = new Date();
+      const base = { subject:'math',question_id:'math_1_+_2',question:'fixture',expected:'3',answer:'4',source:'web' };
+      await LearningHistory.transaction(['events'], 'readwrite', tx => {
+        for (const [id, subject, verdict, stamp] of [
+          ['browser-old-answer','math','wrong',new Date(now.getTime()-40*86400000)],
+          ['browser-noise-answer','science','unclear',now],
+          ['browser-skip-answer','chinese','skipped',now]
+        ]) tx.objectStore('events').add({owner,id,synced:0,event:{...base,id,subject,verdict,occurred_at:stamp.toISOString()}});
+      });
+      await showLearningReport('week');
+    });
+    assert.equal(await page.evaluate(() => LearningReport.activeReport.overview.total), 3);
+    assert.equal(await page.evaluate(() => LearningReport.activeReport.overview.accuracy), 100);
+    assert.match(await page.locator('#learning-report-content').innerText(), /奖励系统累计/);
+    await page.locator('.report-period-btn[data-period="all"]').click();
+    await page.waitForFunction(() => LearningReport.activeReport?.period === 'all');
+    assert.equal(await page.evaluate(() => LearningReport.activeReport.overview.total), 4);
+    assert.equal(await page.evaluate(() => LearningReport.activeReport.overview.accuracy), 50);
+    await page.screenshot({path:path.join(scratch,'report.png'),fullPage:true});
+    await page.evaluate(() => {closeLearningReport();showPictureBook();});
+    await page.locator('.book-card').first().click();
+    const book = await page.evaluate(() => PictureBook.currentBook.id);
+    const points = await page.evaluate(() => RewardSystem.data.totalScore);
+    assert.equal(await page.evaluate(id => PictureBook.bookProgress[id].completionCount,book), 0);
+    await page.locator('#book-read-area .reading-nav-btn').last().click();
+    await page.evaluate(() => closePictureBook());
+    await page.evaluate(id => {showPictureBook();openBook(id);},book);
+    assert.equal(await page.evaluate(() => PictureBook.currentPage), 1);
+    const pages = await page.evaluate(() => PictureBook.currentBook.pages.length);
+    for (let i=1;i<pages;i++) await page.locator('#book-read-area .reading-nav-btn').last().click();
+    await page.locator('#book-complete-modal').waitFor({state:'visible'});
+    await page.evaluate(() => {PictureBook.finishReading();PictureBook.finishReading();});
+    assert.equal(await page.evaluate(() => RewardSystem.data.totalScore), points+15);
+    assert.equal(await page.evaluate(() => PictureBook.completionHistory.length), 1);
+    await page.locator('#reward-popup .btn-continue').click();
+    await page.locator('#book-complete-modal .btn-read-again').click();
+    assert.equal(await page.evaluate(() => PictureBook.currentPage), 0);
+    await page.evaluate(() => {closePictureBook();showPronunciation();});
+    // 模拟浏览器识别器，覆盖实际录音按钮和事件回流，不请求麦克风或云识别。
+    await page.evaluate(() => {
+      Pronunciation.SpeechRecognitionClass = class {
+        constructor(){window.__recognitionFixture=this;}
+        start(){} stop(){} abort(){}
+      };
+      startPronunciationPractice('words');
+    });
+    await page.locator('#btn-record').click();
+    await page.evaluate(() => window.__recognitionFixture.onresult({resultIndex:0,results:[[{transcript:'电视天气预报',confidence:1}]]}));
+    assert.equal(await page.evaluate(() => Pronunciation.stats.matchedAttempts), 0);
+    assert.match(await page.locator('#practice-result').innerText(), /这次不计分/);
+    await page.evaluate(() => tryAgain());
+    await page.locator('#btn-record').click();
+    await page.evaluate(() => window.__recognitionFixture.onresult({resultIndex:0,results:[[{transcript:Pronunciation.practices.words[0].text,confidence:1}]]}));
+    assert.equal(await page.evaluate(() => Pronunciation.stats.matchedAttempts), 1);
+    assert.match(await page.locator('#practice-result').innerText(), /不是发音分数/);
+    await page.locator('#reward-popup .btn-continue').click();
+    const items=await page.evaluate(() => Pronunciation.practices.words.length);
+    for(let i=0;i<items;i++)await page.locator('#pronunciation-practice-area .btn-next').click();
+    await page.locator('#pronunciation-complete-modal').waitFor({state:'visible'});
+    assert.equal(await page.locator('#pronunciation-reward').innerText(), '+10 积分');
+    await page.evaluate(() => {closePronunciationComplete();closePronunciation();showLearningPet();});
+    await page.locator('.pet-type-card').first().click();
+    await page.locator('#pet-name-input').fill('测试宠物');
+    await page.locator('.btn-adopt-pet').click();
+    await page.locator('#pet-main-area').waitFor({state:'visible'});
+    await page.evaluate(() => {showPetMessage('测试消息');showPetAccessories();});
+    assert.equal(await page.locator('#pet-message .message-text').innerText(), '测试消息');
+    assert.match(await page.locator('#accessories-list').innerText(), /还没有装饰品/);
+    await page.evaluate(() => {closePetAccessories();closeLearningPet();});
+    await page.evaluate(() => {openMusic();MusicApp.MAX_RECORDING_MS=3000;MusicApp.startRecording();});
+    await page.locator('.piano-key[data-index="0"]').click();
+    await page.locator('.piano-key[data-index="2"]').click();
+    await page.waitForFunction(() => !MusicApp.recorder.isRecording);
+    assert.equal(await page.evaluate(() => MusicApp.recorder.events.length),2);
+    await page.locator('#music-modal .btn-save').click();
+    assert.equal(await page.evaluate(() => JSON.parse(AppStorage.getItem('musicCompositions'))[0].events.length),2);
+    await page.reload();
+    await page.waitForFunction(() => LearningAccount.booted);
+    await page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
+    await page.locator('.btn-checkin-later').click();
+    await page.evaluate(() => openMusic());
+    await page.locator('#music-open-saved').click();
+    assert.equal(await page.evaluate(() => MusicApp.recorder.events.length),2);
+    await page.screenshot({path:path.join(scratch,'music.png'),fullPage:true});
+    await page.evaluate(() => closeMusic());
+    // 假通知服务固定业务失败，不触达任何真实 Bark 设备。
+    await page.context().route('https://notification-fixture.invalid/**', route => route.fulfill({status:200,contentType:'application/json',body:'{"code":500}'}));
+    await page.evaluate(() => {ParentNotify.config.enabled=true;ParentNotify.config.dadBarkUrl='https://notification-fixture.invalid/test/';ParentNotify.config.momBarkUrl='';});
+    assert.equal(await page.evaluate(() => triggerSOS()),false);
+    assert.match(await page.locator('.music-toast').last().innerText(),/无法确认求助/);
+    assert.equal(await page.evaluate(() => ParentNotify.sosPending),false);
+    await page.evaluate(() => {ParentNotify.config.enabled=false;ParentNotify.config.dadBarkUrl='';});
+  }
   const guest = await device(false);
   await answer(guest.page, 'guest only');
   await count(guest.page, 1);
   assert.equal(await guest.page.locator('#account-form').isVisible(), false);
+  await verifyLearningFeatures(guest.page);
   const a = await device();
   await answer(a.page, 'before login');
   await signIn(a.page);
@@ -161,20 +283,22 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
   await a.context.unroute(endpoint + '/api/learning/events');
   await a.context.route(endpoint + '/api/learning/events', route => route.request().method() === 'POST' ? route.abort() : route.continue());
   await answer(a.page, 'belongs to iris');
-  await a.page.locator('#account-logout').click();
-  await a.page.waitForFunction(() => !LearningAccount.identity && !LearningAccount.busy);
+  await signOut(a.page);
   await count(a.page, 1); // 恢复的是原访客记录。
   await signIn(a.page, 'other');
   await count(a.page, 0); // Iris 未上传队列不能发给 Other。
-  await a.page.locator('#account-logout').click();
-  await a.page.waitForFunction(() => !LearningAccount.identity && !LearningAccount.busy);
+  await signOut(a.page);
   await a.context.unroute(endpoint + '/api/learning/events');
   await signIn(a.page);
   await count(a.page, 6);
   await b.page.evaluate(() => LearningHistory.sync());
   await count(b.page, 6);
   await b.page.reload();
-  await b.page.waitForFunction(() => LearningAccount.identity?.username === 'iris');
+  await b.page.waitForFunction(() => LearningAccount.booted && LearningAccount.identity?.username === 'iris' && AppStorage.owner === LearningAccount.identity.id);
+  if (!await b.page.evaluate(() => DailyCheckin.isCheckedToday())) {
+    await b.page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
+    await b.page.locator('.btn-checkin-later').click();
+  }
   await count(b.page, 6); // IndexedDB 与会话重新加载仍然正常。
   // 同一浏览器的第二标签页只能提示重载，不能并发改当前账号存档。
   const duplicate = await a.context.newPage();
@@ -200,7 +324,8 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
   });
   assert.equal(await b.page.evaluate(()=>JSON.parse(AppStorage.getItem('kidsLearningData')).totalScore),601);
   assert.match(await b.page.evaluate(()=>LearningAccount.profileProblem),/不同版本|different version/);
-  await b.page.evaluate(()=>LearningAccount.useCloud());
+  await b.page.evaluate(()=>navigateTo('profile'));
+  await reloadAction(b.page, () => b.page.locator('#account-use-cloud').click());
   await b.page.waitForFunction(score=>LearningAccount.booted&&RewardSystem.data.totalScore===score,expectedScore);
   assert.equal(await b.page.evaluate(()=>JSON.parse(AppStorage.getItem('artworkGallery'))[0].id),'iris-art');
   if (!await b.page.evaluate(()=>DailyCheckin.isCheckedToday())) {
@@ -245,7 +370,7 @@ TutorBridge(Store(Settings.environment().database)).tick()
   await b.page.waitForFunction(()=>getComputedStyle(document.getElementById('page-profile')).opacity==='1');
   await b.page.screenshot({ path: path.join(scratch, 'history.png'), fullPage: true });
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork', 'web wrong to robot review to cross-device report', 'same-account tab write lock'], pageErrors: errors, screenshot: path.join(scratch, 'history.png') }, null, 2));
+  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork', 'web wrong to robot review to cross-device report', 'same-account tab write lock', 'period reports use real events', 'book resume and completion rewards', 'honest word matching feedback', 'single module button entrypoints', 'recording deadline and saved performance restore', 'SOS failed service feedback'], pageErrors: errors, screenshot: path.join(scratch, 'history.png'), reportScreenshot:path.join(scratch,'report.png'),musicScreenshot:path.join(scratch,'music.png') }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
   if (browser) await browser.close();
   if (api) api.kill('SIGTERM');

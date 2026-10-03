@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v77，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v79，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -61,7 +61,7 @@ kids-learning-app/
 │   ├── scienceData.js  # 科学题库
 │   ├── lifeSkills.js   # 生活技能（时钟/钱币/日历）
 │   ├── lifeSkillsData.js # 生活技能数据
-│   ├── music.js        # 睡眠音乐
+│   ├── music.js        # 音乐创作（钢琴/鼓点/音序器；睡眠音乐在 app.js）
 │   ├── songPractice.js # 歌曲练习
 │   ├── songData.js     # 歌曲数据
 │   ├── familyPK.js     # 亲子PK模式
@@ -133,7 +133,8 @@ kids-learning-app/
 | 错题本 | wrongQuestions.js | ✅ 完成 |
 | 生活技能 | lifeSkills.js | ✅ 完成（时钟/钱币/日历） |
 | 歌曲练习 | songPractice.js | ✅ 完成（新年歌RAP） |
-| 睡眠音乐 | music.js | ✅ 完成 |
+| 音乐创作 | music.js | ✅ 完成（演奏录制/作品保存恢复） |
+| 睡眠音乐 | app.js | ✅ 完成 |
 | 多语言支持 | i18n.js + locales/ | ✅ 完成（7种语言） |
 | 最近使用 | app.js | ✅ 完成 |
 | 数据分析 | analytics.js | ✅ 完成（Google Analytics） |
@@ -174,31 +175,48 @@ gh run watch          # 看进度
 gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失效
 ```
 
-## 数据存储 (localStorage)
+## 数据存储
+
+通过 `AppStorage` 访问 localStorage：游客沿用原键，账号键以 `kids-learning-account:<id>:` 分区。
+完整本机备份登记 31 个键；账号存档同步/整体恢复处理其中 28 个，语言、通知配置和视频缓存属于设备。
+根类型以 `DataBackup` 和后端允许表为准。新增嵌套字段应保留旧数据，不能把累计记录猜成逐题事件。
 
 | 键名 | 说明 |
 |------|------|
-| learningProgress | 学习进度 |
-| achievements | 成就数据 |
-| dailyCheckin | 签到记录 |
-| wrongQuestions | 错题记录 |
-| petData | 宠物状态 |
-| artworkGallery | 画作作品集 |
-| parentNotifyConfig | 家长通知配置 |
-| mathConfig | 数学游戏设置 |
-| lifeSkillsStats | 生活技能统计 |
-| appLanguage | 当前语言设置 |
-| recentlyUsed | 最近使用的功能 |
-| writingProgress | 书写练习进度 |
-| familyPKHistory | 亲子PK历史记录 |
-| kidsLogicGames | 逻辑游戏统计和解锁 |
-| kidsReactionGames | 反应游戏统计 |
-| kidsDrawSmash | 画线砸怪兽进度和星星 |
-| kidsRagdollRobot | 弹弹机器人进度和星星 |
-| kidsChoreTracker | 家庭积分榜数据 |
-| kidsBirthdayParty | 生日派对数据 |
-| kidsToothFairy | 牙仙子掉牙记录/奖励规则 |
-| videoWhitelistCache | 白名单频道视频列表缓存（6 小时过期） |
+| kidsProfileData | 个人资料 |
+| kidsLearningData | 奖励累计计数与科学进度 |
+| kidsCalendarData | 日历记录 |
+| kidsAchievements | 成就 |
+| kidsWrongQuestions | 错题本 |
+| kidsDailyCheckin | 签到 |
+| kidsMemoryGameStats | 记忆游戏统计 |
+| kidsLearningPet | 宠物状态 |
+| kidsPictureBookData | 绘本打开历史、收藏及 v2 页码/阅读会话/自报完成 |
+| kidsPronunciationStats | v2 转写文字匹配统计、旧版统计单列 |
+| kidsEnglishBoost | 英语提升 |
+| kidsChoreTracker | 家庭积分榜 |
+| kidsBirthdayParty | 生日派对 |
+| kidsToothFairy | 牙仙子掉牙及奖励规则 |
+| kidsLogicGames | 逻辑游戏 |
+| kidsReactionGames | 反应游戏 |
+| kidsDrawSmash | 画线砸怪兽 |
+| kidsRagdollRobot | 弹弹机器人 |
+| lifeSkillsStats | 生活技能 |
+| mathGameConfig | 数学设置 |
+| parentNotifyConfig | 设备级 Bark 配置，完整备份含凭据，不上传云端 |
+| writingProgress | 书写进度 |
+| petGamesStats | 宠物游戏 |
+| videoWhitelistCache | 设备级可再下载缓存，不上传云端 |
+| kidsFamilyPK | 亲子 PK |
+| artworkGallery | 已保存画作数组 |
+| musicCompositions | 作品数组；v2 含演奏事件/时间/音色，旧音序器兼容 |
+| recentlyUsed | 最近使用数组 |
+| appLanguage | 设备级语言字符串 |
+| aiChatEnabled | 聊天开关字符串 |
+| sleepMusicTimer | 睡眠音乐定时字符串 |
+
+逐题事件另存 IndexedDB `kids-learning-history`，按 `[owner,id]` 分区，与 localStorage 快照分开导出。
+账号元数据/写锁不进入备份；账号认证令牌只在 HttpOnly Cookie，不放 localStorage。
 
 ## 注意事项
 
@@ -265,3 +283,14 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - 待复习题按已验证并统一为 UTC 毫秒的 `payload.occurred_at` 判断最新 correct/wrong，只有同毫秒才按 `seq` 排序。数据库秒字段不能代表同一秒内的作答先后；不需要迁移旧表。
 - 网页复习 API 与私有机器人题单使用绑定配置的同一时区判断当天，不用设备时区替代孩子的绑定时区。
 - 数据桥 `ready` 只表示数据导入/题单生成成功，不表示机器人在线。前端说明必须区分这两件事。
+
+## 第一轮功能可靠性优化（2026-10-02）
+
+- 周报告为滚动近 7 天，月报告为设备本地自然月，全部取当前分区逐题日志。unclear/skipped 单列且不进入正确率；积分/成就/错题本累计状态另列，不能反推掌握度。读取失败与零记录要区分；异步结果须检查 owner 和渲染版本。
+- 绘本旧 `readingHistory` 仅表示打开过。v2 按会话保存已展示页及显式“我读完了”；未完成能续读，完成标记保存失败不奖，同次不能重复领取。自报完成不是阅读理解证据，完成与奖励两个键也不是原子事务。
+- 跟读只比较浏览器转写文字与目标的编辑距离；不再宣称发音标准。杂音、空/低置信结果、权限失败不评分。拼音为示范自练；旧轮均值进 legacyStats，新匹配样本用 scoreTotal/matchedAttempts 累计。
+- SOS 按 HTTP 与 Bark code 判断至少一个服务接受请求，10 秒超时覆盖正文，发送中锁定重复点击。不承诺家长已看见或会立即到场。
+- 音乐保存检查 safeSetItem 结果，失败不显示成功/增成就，保留旧数据；v2 真正保存钢琴/鼓点演奏，可从作品列表恢复。旧钢琴/鼓点元数据无法补回录音，旧音序器可恢复。演奏最多 10 分钟/5,000 事件。
+- 绘本/跟读按钮统一定义在所属模块，app.js 不再重复覆盖；宠物两个选择界面入口分名，装饰品使用真实 accessories-list，提示保留 pet-message 子元素。
+- 浏览器回归必须等待新文档和 LearningAccount.booted，再读切换后的存档。重新加载会再次出现签到提醒，须先正常关闭；奖励弹窗也需按真实继续按钮处理，不能绕过遮罩声称按钮可用。
+- 详细发现→修复→验证轨迹见 `docs/优化记录-2026-10.md`。

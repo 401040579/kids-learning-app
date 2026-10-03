@@ -1345,7 +1345,7 @@
 
       <!-- 报告周期选择 -->
       <div class="report-period-selector">
-        <button class="report-period-btn active" data-period="week" onclick="changeReportPeriod('week')" data-i18n="report.week">本周</button>
+        <button class="report-period-btn active" data-period="week" onclick="changeReportPeriod('week')" data-i18n="report.week">近 7 天</button>
         <button class="report-period-btn" data-period="month" onclick="changeReportPeriod('month')" data-i18n="report.month">本月</button>
         <button class="report-period-btn" data-period="all" onclick="changeReportPeriod('all')" data-i18n="report.all">全部</button>
       </div>
@@ -1411,7 +1411,7 @@
       <div class="complete-message" data-i18n="pictureBook.completeMessage">你真棒！又读完一本故事书！</div>
       <div class="complete-reward">
         <span class="reward-icon">⭐</span>
-        <span class="reward-text">+10 积分</span>
+        <span class="reward-text">+15 积分</span>
       </div>
       <div class="complete-actions">
         <button class="btn-read-again" onclick="readBookAgain()" data-i18n="pictureBook.readAgain">再读一遍</button>
@@ -1487,21 +1487,21 @@
       <div class="complete-title" data-i18n="pronunciation.complete">练习完成!</div>
       <div class="complete-summary">
         <div class="summary-item">
-          <span class="summary-label" data-i18n="pronunciation.practiceCount">练习数量</span>
+          <span class="summary-label" data-i18n="pronunciation.practiceCount">有效匹配次数</span>
           <span class="summary-value" id="summary-count">10</span>
         </div>
         <div class="summary-item">
-          <span class="summary-label" data-i18n="pronunciation.avgScore">平均得分</span>
+          <span class="summary-label" data-i18n="pronunciation.avgScore">本组平均匹配度</span>
           <span class="summary-value" id="summary-avg-score">85</span>
         </div>
         <div class="summary-item">
-          <span class="summary-label" data-i18n="pronunciation.maxScore">最高得分</span>
+          <span class="summary-label" data-i18n="pronunciation.maxScore">本组最高匹配度</span>
           <span class="summary-value" id="summary-max-score">95</span>
         </div>
       </div>
       <div class="complete-reward">
         <span class="reward-icon">⭐</span>
-        <span class="reward-text" id="pronunciation-reward">+15 积分</span>
+        <span class="reward-text" id="pronunciation-reward">+0 积分</span>
       </div>
       <button class="btn-pronunciation-done" onclick="closePronunciationComplete()" data-i18n="feedback.awesome">太棒了!</button>
     </div>

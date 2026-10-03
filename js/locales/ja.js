@@ -391,7 +391,7 @@ I18n.translations['ja'] = {
   // Learning Report
   'report.title': '学習レポート',
   'report.today': '今日',
-  'report.week': '今週',
+  "report.week": "過去7日間",
   'report.month': '今月',
 
   // Parent notifications
@@ -644,8 +644,8 @@ I18n.translations['ja'] = {
   'pronunciation.ready': '準備完了',
   'pronunciation.complete': '練習完了!',
   'pronunciation.practiceCount': '練習回数',
-  'pronunciation.avgScore': '平均スコア',
-  'pronunciation.maxScore': '最高スコア',
+  "pronunciation.avgScore": "平均テキスト一致率",
+  "pronunciation.maxScore": "最高テキスト一致率",
 
   // AI Chat
   'ai.assistant': 'アシスタント',
