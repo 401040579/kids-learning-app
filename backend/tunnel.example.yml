@@ -1,0 +1,10 @@
+# 示例不含真实凭据。填好后保存到 ~/.local/share/kids-learning/tunnel/config.yml，0600。
+# credentials-file 必须是管理员已有的隧道凭据文件，不能放进仓库或静态站点。
+tunnel: REPLACE_WITH_TUNNEL_UUID
+credentials-file: /home/REPLACE_WITH_USER/.local/share/kids-learning/tunnel/credentials.json
+metrics: 127.0.0.1:8092
+ingress:
+  - hostname: api.tao.irish
+    path: ^/api/
+    service: http://127.0.0.1:8091
+  - service: http_status:404

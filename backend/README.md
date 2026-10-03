@@ -38,7 +38,7 @@ Python 3.12+。数据库必须在项目目录之外，防止被静态站点公�
 
 ## 网页接入
 
-把 `js/accountConfig.js` 的 `apiBase` 设为实际公网 HTTPS origin，例如 `https://api.app.tao.irish`。
+把 `js/accountConfig.js` 的 `apiBase` 设为实际公网 HTTPS origin，例如 `https://api.tao.irish`。
 留空时不请求后端，原网页继续独立工作。生产 API 应与网页同站（如同属 `tao.irish`），或通过同源 `/api/` 反向代理访问，
 以便使用 `Secure + HttpOnly + SameSite=Strict` Cookie。不能仅把任意不同站点的隧道 URL 填进去。
 
@@ -158,3 +158,25 @@ GitHub Pages v78 已构建，公网 `apiBase` 仍空；DNS 管理入口缺失阻
 Mac 异机工具：`python3 scripts/offsite_backup.py --config <私有配置路径>`。配置字段为 `host/service_directory/backup_directory/destination/keep`，SSH host 用已有管理员身份，两个远端目录需绝对路径；配置 0600，目标必须在项目外。工具先由服务器 Backup API 生成一致性、零会话副本，拉取校验成功后才清理本机旧副本。失败不输出子进程正文，不删除旧副本。
 
 本机用户 LaunchAgent `local.kids-learning.offsite-backup` 已安装，每天 09:15 尝试，Mac 保留 30 份；它依赖本机开机和 SSH 可达。可用 `launchctl print gui/$(id -u)/local.kids-learning.offsite-backup` 查看最近退出码，停用用 `launchctl bootout gui/$(id -u)/local.kids-learning.offsite-backup`。实际配置、日志和数据库不得提交。
+
+## 用户级 HTTPS 隧道（2026-10-02）
+
+网页继续由 GitHub Pages 托管。学习 API 使用同站的一层子域名 `api.tao.irish`，经 Cloudflare Tunnel 到 Orin 回环端口 8091。免费 Universal SSL 的常规覆盖包含一层子域名，不能把 `api.app.tao.irish` 当成自动获得证书的地址。
+
+`backend/tunnel.example.yml` 仅为不含凭据的模板。实际配置保存到 `~/.local/share/kids-learning/tunnel/config.yml`，专用隧道凭据放同目录；目录 0700、文件 0600。Orin 仅持有这个隧道的凭据，不接收 Mac 的 Cloudflare 账号管理证书。二进制从官方 ARM64 release 下载，核对官方 SHA256 后装到 `~/.local/bin/cloudflared`。
+
+入口必须同时匹配 `api.tao.irish` 与 `^/api/`，其他路径或主机返回 404。不能把默认兜底改成 8091，也不能转发 8090。隧道出站连接，不需要开放家中路由器端口；Tailscale 仍用于管理员 SSH。
+
+```bash
+# 用户级、独立锁，不影响学习 API 或机器人大脑。
+/bin/sh ~/robots/kids-learning-service/backend/run-tunnel.sh
+~/.local/bin/cloudflared tunnel --config ~/.local/share/kids-learning/tunnel/config.yml ingress validate
+# 本机健康仅表明隧道已连接，不等于公网 DNS/TLS 已就绪。
+curl --fail http://127.0.0.1:8092/ready
+```
+
+用户 crontab 保留现有任务，隧道另有 `@reboot` 和每 5 分钟的启动兜底；`run-tunnel.sh` 持独立 flock 锁，重复运行直接退出。隧道日志为 `~/.local/share/kids-learning/tunnel.log`，不用 debug 记录请求头。8092 指标仅监听回环。
+
+DNS 迁移前备份完整记录，逐条保留邮件 MX/SPF/DKIM、GitHub Pages CNAME 和域名验证；自动扫描可能漏记录。已有 DNSSEC 时先移除旧 DS，并按父区 DS 的 TTL 留足缓存过期时间，之后再改 NS；新委派生效后恢复 Cloudflare DNSSEC。不能只看到管理界面保存成功就认为缓存已清空，也不能带着旧 DS 直接切到不同签名密钥的 DNS 服务。
+
+发布 `apiBase` 前必须验证公网 HTTPS、匿名受保护接口 401、文档/机器人路径 404、精确来源 CORS 和生产 Cookie。上线状态与证据记录在 `docs/优化记录-2026-10.md`；不要根据隧道 `/ready` 提前打开账号入口。
