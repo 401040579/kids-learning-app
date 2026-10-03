@@ -130,6 +130,42 @@ test('SW 更新仅删除本应用的旧缓存，保留 WebLLM 模型', async () 
   assert.deepEqual(deleted, ['kids-learning-v1']);
 });
 
+test('SW 新版本安装重新获取资源，不能把旧 HTTP 缓存固化为新账号配置', async () => {
+  const origin = 'https://app.example';
+  const handlers = {}, installed = new Map();
+  const configUrl = origin + '/js/accountConfig.js';
+  const oldConfig = "window.LEARNING_ACCOUNT_CONFIG = { apiBase: '' };";
+  const newConfig = "window.LEARNING_ACCOUNT_CONFIG = { apiBase: 'https://api.example' };";
+  class WorkerRequest extends Request {
+    constructor(input, options) { super(new URL(input, origin), options); }
+  }
+  const network = async input => {
+    const request = typeof input === 'string' ? new WorkerRequest(input) : input;
+    return new Response(request.url === configUrl
+      ? (request.cache === 'reload' ? newConfig : oldConfig) : 'resource');
+  };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../sw.js'), 'utf8'), {
+    URL, Request: WorkerRequest, fetch: network,
+    self: { addEventListener: (name, run) => { handlers[name] = run; }, location: { origin } },
+    caches: {
+      open: async () => ({ addAll: async inputs => {
+        const responses = await Promise.all(inputs.map(async input => {
+          const url = typeof input === 'string' ? new URL(input, origin).href : input.url;
+          return [url, await (await network(input)).text()];
+        }));
+        for (const [url, body] of responses) installed.set(url, body);
+      } }),
+      match: async request => installed.has(request.url) ? new Response(installed.get(request.url)) : undefined
+    }
+  });
+  let installing;
+  handlers.install({ waitUntil: promise => { installing = promise; } });
+  await installing;
+  let response;
+  handlers.fetch({ request: new WorkerRequest(configUrl), respondWith: promise => { response = promise; } });
+  assert.equal(await (await response).text(), newConfig);
+});
+
 test('SW 不拦截账号 API 或写请求，避免离线缓存泄露身份与备份', () => {
   const handlers = {};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../sw.js'), 'utf8'), {

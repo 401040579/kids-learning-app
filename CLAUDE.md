@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v82，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v83，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -225,7 +225,7 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 > 每条都有实测日期和证据，能省掉大量重复排查。
 
 1. **单页应用**: 所有页面在 `index.html`，通过 `navigateTo()` 切换 `.page`；首页是 `homeScreen.js` 渲染的横向分屏（scroll-snap），全屏功能各自用 modal
-2. **PWA 缓存**: 修改资源后必须更新 `sw.js` 版本号；SW 只拦截同源请求（跨域早退）
+2. **PWA 缓存**: 修改资源后必须更新 `sw.js` 版本号；新版本安装使用 `Request(..., {cache: reload})` 重取预缓存资源，避免旧 HTTP 缓存固化进新版本。SW 只拦截同源请求（跨域早退）
 3. **儿童安全 + 视频数据流**: 视频白名单制——孩子只能看 `videoWhitelistConfig.js` 里配置的频道/视频；播放用官方 YouTube IFrame API（www.youtube.com + enablejsapi），结束事件触发遮罩盖住推荐墙；fs:0 禁全屏（iOS 系统全屏时 DOM 遮罩失效）。
 
    **列表数据流（三层）**：

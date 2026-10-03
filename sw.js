@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v82';
+const CACHE_NAME = 'kids-learning-v83';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -83,7 +83,8 @@ const musicFiles = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+      // 新版本必须重取资源；默认 HTTP 缓存可能把旧配置写入新离线缓存。
+      .then(cache => cache.addAll(urlsToCache.map(url => new Request(url, { cache: 'reload' }))))
   );
 });
 
