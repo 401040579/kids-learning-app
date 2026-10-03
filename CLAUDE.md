@@ -265,6 +265,7 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - Orin 的独立服务目录为 `~/robots/kids-learning-service`，`backend/run.sh` 用独立 `flock` 防止多实例，仅监听 `127.0.0.1:8091`，不使用机器人大脑的停止命令。用户 crontab 保留原机器人自启，另加学习服务自启、5 分钟启动兜底和每日 04:35 备份。
 - `python -m backend.backup` 通过 SQLite Backup API 生成私有副本（默认保留 14 份、删除副本中的会话），不直接复制活跃数据库。WAL 模式会传给副本：须改为 DELETE journal 并真正关闭连接后再改名；sqlite3 的 `with connection` 只管理事务，不关闭连接。本轮已复制私有副本到 Mac 并临时恢复登录，未替换线上库。
 - 公网隧道使用 `backend/run-tunnel.sh` 的独立 flock 与用户 crontab；实际凭据/配置均在仓库外，Orin 不持 Cloudflare 账号管理证书。仅 `api.tao.irish` 的 `^/api/` 转发 8091，所有其他请求 404；8090 与 8092 不公开。域名原有 DNSSEC 时必须处理父区旧 DS 及缓存期限，完成委派后恢复新签名；隧道 ready 不等于公网 HTTPS 已上线。详情见 backend README。
+- 2026-10-03 DNSSEC 已恢复：六台 `.irish` 父权威 DS 与两台 Cloudflare DNSKEY 摘要匹配，三家公共验证解析器 SOA 均 NOERROR/AD；恢复后公网 Iris 登录/退出等 27 项复验通过。原邮件转发规则和记录保留，平台 Action required 仍等待识别；不能把网站上线等同真实收信。
 - DNSSEC 迁移缓存从父权威实际撤销起算；本域旧 DS TTL 为 1 小时，旧子区 NS TTL 为 6 小时。Squarespace 默认 DNSSEC 关后再开会换 KSK，不能当作密钥回滚。恢复 Cloudflare 父 DS 必须先等旧 NS 缓存期限，并实际校验新 DNSKEY。保留并检查原邮件转发规则；公开文档/日志不包含私有目标邮箱。
 
 ## 账号存档切换（2026-09-30）
