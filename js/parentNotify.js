@@ -15,6 +15,41 @@ const ParentNotify = {
 
   // 答题计数器
   questionCount: 0,
+  requestTimeoutMs: 10000,
+  sosPending: false,
+
+  text(key, fallback) {
+    return typeof I18n !== 'undefined' ? I18n.t('parentNotify.' + key, fallback) : fallback;
+  },
+
+  // 沿用现有 toast 样式；求助成功只表示服务接受，不承诺家长已经看到。
+  showToast(message) {
+    this._toast?.remove();
+    const toast = document.createElement('div');
+    this._toast = toast;
+    toast.className = 'music-toast';
+    toast.textContent = message;
+    toast.setAttribute('role', 'alert');
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.remove();
+        if (this._toast === toast) this._toast = null;
+      }, 300);
+    }, 4000);
+  },
+
+  setSOSPending(pending) {
+    this.sosPending = pending;
+    document.querySelectorAll('[onclick]').forEach(button => {
+      const action = button.getAttribute('onclick') || '';
+      if (!/triggerSOS\(\)|HomeScreen\.launch\(['"]sos['"]\)/.test(action)) return;
+      button.disabled = pending;
+      button.setAttribute('aria-busy', String(pending));
+    });
+  },
 
   // 初始化
   init() {
@@ -54,6 +89,8 @@ const ParentNotify = {
   async sendToOne(barkUrl, title, content, options = {}) {
     if (!barkUrl) return false;
 
+    const controller = new AbortController();
+    let timeout;
     try {
       // 构建 Bark URL
       let url = barkUrl;
@@ -70,12 +107,26 @@ const ParentNotify = {
       const paramStr = params.toString();
       if (paramStr) url += '?' + paramStr;
 
-      const response = await fetch(url);
-      const result = await response.json();
-      return result.code === 200;
+      // 同时限制连接和响应正文；AbortController 之外使用 race，防止挂起的请求一直等。
+      const request = (async () => {
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) return false;
+        const result = await response.json();
+        return result?.code === 200;
+      })();
+      const deadline = new Promise(resolve => {
+        timeout = setTimeout(() => {
+          controller.abort();
+          resolve(false);
+        }, this.requestTimeoutMs);
+      });
+      return await Promise.race([request, deadline]);
     } catch (error) {
-      console.error('通知发送错误:', error);
+      // Bark URL 含设备凭据，不把请求对象/URL 写入日志。
+      console.warn('家长通知发送失败');
       return false;
+    } finally {
+      clearTimeout(timeout);
     }
   },
 
@@ -363,25 +414,35 @@ function usePresetMessage(message) {
 
 // SOS 紧急求助
 async function triggerSOS() {
+  if (ParentNotify.sosPending) return false;
   if (!ParentNotify.config.enabled) {
-    alert('还没有设置家长通知，请先让爸爸妈妈设置~');
-    return;
+    ParentNotify.showToast(ParentNotify.text('sosNotConfigured', '还没有设置家长通知，请直接联系身边的大人。'));
+    return false;
   }
 
   // 确认
-  const confirmed = confirm('确定要发送紧急求助吗？');
-  if (!confirmed) return;
+  const confirmed = confirm(ParentNotify.text('sosConfirm', '确定要发送紧急求助吗？'));
+  if (!confirmed) return false;
 
-  // 📊 追踪 SOS
-  if (typeof Analytics !== 'undefined') {
-    Analytics.sendEvent('sos_triggered', {});
+  ParentNotify.setSOSPending(true);
+  ParentNotify.showToast(ParentNotify.text('sosSending', '正在发送求助，请同时联系身边的大人。'));
+
+  try {
+    // 统计失败不能阻止求助。
+    if (typeof Analytics !== 'undefined') {
+      try { Analytics.sendEvent('sos_triggered', {}); } catch (error) {}
+    }
+    const success = await ParentNotify.notifySOS() === true;
+    ParentNotify.showToast(success
+      ? ParentNotify.text('sosSent', '求助通知已发出，请同时联系身边的大人。')
+      : ParentNotify.text('sosFailed', '无法确认求助已发出，请直接联系身边的大人。'));
+    return success;
+  } catch (error) {
+    ParentNotify.showToast(ParentNotify.text('sosFailed', '无法确认求助已发出，请直接联系身边的大人。'));
+    return false;
+  } finally {
+    ParentNotify.setSOSPending(false);
   }
-
-  // 发送 SOS 通知
-  await ParentNotify.notifySOS();
-
-  // 显示本地提示
-  alert('已发送紧急求助！爸爸妈妈会很快来的~');
 }
 
 // ========== 语音输入消息 ==========

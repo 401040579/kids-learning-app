@@ -31,8 +31,11 @@ const MusicApp = {
     events: [],       // [{type:'piano'|'drum', data, time}]
     startTime: 0,
     playbackTimer: null,
-    playbackTimeouts: []
+    playbackTimeouts: [],
+    durationMs: 0
   },
+  MAX_RECORDING_MS: 10 * 60 * 1000,
+  MAX_RECORDING_EVENTS: 5000,
 
   // 打击乐设置
   drums: {
@@ -70,7 +73,8 @@ const MusicApp = {
     this.initAudioContext();
 
     // 初始化音乐画板网格
-    this.initSequencerGrid();
+    if (!this.sequencer.grid.length) this.initSequencerGrid();
+    this.renderSavedWorks();
 
     console.log('MusicApp initialized');
   },
@@ -811,31 +815,57 @@ const MusicApp = {
 
   // ========== 录制与回放 ==========
 
+  stopRecordingAtLimit() {
+    if (!this.recorder.isRecording) return;
+    this.stopRecording();
+    this.showToast(this.text('recordingLimit', '录制已暂停，请先保存当前演奏。'));
+  },
+
   // 记录一个事件
   recordEvent(type, data) {
     if (!this.recorder.isRecording) return;
+    const elapsed = Math.max(0, Date.now() - this.recorder.startTime);
+    if (elapsed >= this.MAX_RECORDING_MS || this.recorder.events.length >= this.MAX_RECORDING_EVENTS) {
+      this.stopRecordingAtLimit();
+      return;
+    }
     this.recorder.events.push({
       type,
-      data,
-      time: Date.now() - this.recorder.startTime
+      data: { ...data },
+      // 系统时钟回拨时也保持录音时间线单调。
+      time: Math.max(elapsed, this.recorder.events[this.recorder.events.length - 1]?.time || 0)
     });
     this.updateRecorderUI();
   },
 
   // 开始录制
   startRecording() {
+    this.stopRecording();
+    this.stopPlayback();
     this.recorder.isRecording = true;
     this.recorder.events = [];
+    this.recorder.durationMs = 0;
     this.recorder.startTime = Date.now();
     this.updateRecorderUI();
+
+    // 无新音符、计时器 UI 不存在时也必须截止。旧会话已入队的回调不能停止新录音。
+    const deadline = setTimeout(() => {
+      if (this._recorderDeadlineTimeout === deadline) this.stopRecordingAtLimit();
+    }, this.MAX_RECORDING_MS);
+    this._recorderDeadlineTimeout = deadline;
 
     // 更新按钮状态
     const recordBtn = document.getElementById('music-record-btn');
     if (recordBtn) recordBtn.classList.add('recording');
     const timerEl = document.getElementById('music-record-timer');
     if (timerEl) {
+      timerEl.textContent = '00:00';
       this._recorderTimerInterval = setInterval(() => {
-        const elapsed = Date.now() - this.recorder.startTime;
+        const elapsed = Math.max(0, Date.now() - this.recorder.startTime);
+        if (elapsed >= this.MAX_RECORDING_MS) {
+          this.stopRecordingAtLimit();
+          return;
+        }
         const secs = Math.floor(elapsed / 1000);
         const mins = Math.floor(secs / 60);
         timerEl.textContent = `${String(mins).padStart(2,'0')}:${String(secs % 60).padStart(2,'0')}`;
@@ -845,28 +875,51 @@ const MusicApp = {
 
   // 停止录制
   stopRecording() {
+    if (this.recorder.isRecording) {
+      this.recorder.durationMs = Math.min(this.MAX_RECORDING_MS, Math.max(
+        0, Date.now() - this.recorder.startTime,
+        this.recorder.events[this.recorder.events.length - 1]?.time || 0
+      ));
+    }
     this.recorder.isRecording = false;
+    if (this._recorderDeadlineTimeout !== undefined && this._recorderDeadlineTimeout !== null) {
+      clearTimeout(this._recorderDeadlineTimeout);
+      this._recorderDeadlineTimeout = null;
+    }
     if (this._recorderTimerInterval) {
       clearInterval(this._recorderTimerInterval);
       this._recorderTimerInterval = null;
     }
     const recordBtn = document.getElementById('music-record-btn');
     if (recordBtn) recordBtn.classList.remove('recording');
+    const timerEl = document.getElementById('music-record-timer');
+    if (timerEl) {
+      const seconds = Math.floor(this.recorder.durationMs / 1000);
+      timerEl.textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+    }
     this.updateRecorderUI();
   },
 
   // 回放录制内容
   playRecording() {
     if (this.recorder.events.length === 0) {
-      this.showToast(typeof I18n !== 'undefined' ? I18n.t('music.noRecording') : '还没有录制内容');
+      this.showToast(this.text('noRecording', '还没有录制内容'));
+      return;
+    }
+
+    const events = this.normalizeRecording(this.recorder.events);
+    if (!events) {
+      this.showToast(this.text('invalidComposition', '这份作品内容不完整，暂时无法打开。'));
       return;
     }
 
     this.stopPlayback();
+    this.stopRecording();
+    this.initAudioContext();
     const playBtn = document.getElementById('music-playback-btn');
     if (playBtn) playBtn.classList.add('playing');
 
-    const totalDuration = this.recorder.events[this.recorder.events.length - 1].time;
+    const totalDuration = Math.max(1, this.recorder.durationMs, events[events.length - 1].time);
     const progressBar = document.getElementById('music-playback-progress');
 
     // 进度条动画
@@ -881,12 +934,8 @@ const MusicApp = {
       }
     }, 50);
 
-    // 回放时暂停录制，避免重复记录
-    const wasRecording = this.recorder.isRecording;
-    this.recorder.isRecording = false;
-
     // 按时间戳回放事件
-    this.recorder.playbackTimeouts = this.recorder.events.map(event => {
+    this.recorder.playbackTimeouts = events.map(event => {
       return setTimeout(() => {
         if (event.type === 'piano') {
           const savedSound = this.piano.currentSound;
@@ -944,6 +993,7 @@ const MusicApp = {
     this.stopPlayback();
     this.stopRecording();
     this.recorder.events = [];
+    this.recorder.durationMs = 0;
     const timerEl = document.getElementById('music-record-timer');
     if (timerEl) timerEl.textContent = '00:00';
     this.updateRecorderUI();
@@ -968,39 +1018,235 @@ const MusicApp = {
 
   // ========== 保存作品 ==========
 
-  saveComposition() {
-    const compositions = JSON.parse(AppStorage.getItem('musicCompositions') || '[]');
+  text(key, fallback) {
+    return typeof I18n !== 'undefined' ? I18n.t('music.' + key, fallback) : fallback;
+  },
 
-    const composition = {
+  // 保留损坏的原文，不能以空数组覆盖已有作品。
+  readCompositions() {
+    try {
+      const raw = AppStorage.getItem('musicCompositions');
+      if (raw === null) return [];
+      const compositions = JSON.parse(raw);
+      if (!Array.isArray(compositions)) throw new Error('invalid compositions');
+      return compositions;
+    } catch (error) {
+      if (typeof SafeStorage !== 'undefined') SafeStorage.reportIssue('musicCompositions');
+      return null;
+    }
+  },
+
+  // 录音是可重放的音符/鼓点事件，不是只保存当前面板名称。
+  normalizeRecording(events) {
+    if (!Array.isArray(events) || events.length > this.MAX_RECORDING_EVENTS) return null;
+    const sounds = ['piano', 'xylophone', 'bell', 'guitar', 'flute'];
+    const drumIds = this.drums.instruments.map(drum => drum.id);
+    const result = [];
+    let previousTime = 0;
+    for (const event of events) {
+      if (!event || !Number.isFinite(event.time) || event.time < previousTime ||
+        event.time > this.MAX_RECORDING_MS || !event.data || typeof event.data !== 'object') return null;
+      let data;
+      if (event.type === 'piano') {
+        const { noteIndex, sound, octaveShift = 0 } = event.data;
+        if (!Number.isInteger(noteIndex) || noteIndex < 0 || noteIndex >= this.piano.notes.length ||
+          !sounds.includes(sound) || ![-1, 0, 1].includes(octaveShift)) return null;
+        data = { noteIndex, sound, octaveShift };
+      } else if (event.type === 'drum') {
+        if (!drumIds.includes(event.data.drumId)) return null;
+        data = { drumId: event.data.drumId };
+      } else return null;
+      result.push({ type: event.type, data, time: event.time });
+      previousTime = event.time;
+    }
+    return result;
+  },
+
+  normalizeComposition(composition) {
+    if (!composition || typeof composition !== 'object' ||
+      (composition.version !== undefined && composition.version !== 2) ||
+      !['piano', 'drums', 'sequencer'].includes(composition.mode) ||
+      !Number.isFinite(composition.tempo) || composition.tempo < 40 || composition.tempo > 240) return null;
+    let grid = null;
+    let events = [];
+    let durationMs = 0;
+    if (composition.mode === 'sequencer') {
+      if (!Array.isArray(composition.grid) || composition.grid.length !== this.sequencer.rows ||
+        composition.grid.some(row => !Array.isArray(row) || row.length !== this.sequencer.cols ||
+          row.some(cell => typeof cell !== 'boolean'))) return null;
+      grid = composition.grid.map(row => row.slice());
+    } else {
+      events = this.normalizeRecording(composition.events);
+      if (!events || !events.length) return null;
+      durationMs = composition.duration_ms ?? events[events.length - 1].time;
+      if (!Number.isFinite(durationMs) || durationMs < events[events.length - 1].time ||
+        durationMs > this.MAX_RECORDING_MS) return null;
+    }
+    return { ...composition, grid, events, duration_ms: durationMs };
+  },
+
+  saveComposition() {
+    const compositions = this.readCompositions();
+    if (!compositions) {
+      this.showToast(this.text('storageInvalid', '作品存档无法读取，已保留原数据，请先导出备份。'));
+      return false;
+    }
+
+    const sequencer = this.currentMode === 'sequencer';
+    const hasContent = sequencer
+      ? this.sequencer.grid.some(row => row.some(Boolean))
+      : this.recorder.events.length > 0;
+    if (!hasContent) {
+      this.showToast(this.text('nothingToSave', '先录制一段演奏，或在音乐画板上点亮格子，再保存吧。'));
+      return false;
+    }
+
+    const composition = this.normalizeComposition({
+      version: 2,
       id: Date.now(),
       date: new Date().toISOString(),
       mode: this.currentMode,
-      grid: this.currentMode === 'sequencer' ? [...this.sequencer.grid.map(row => [...row])] : null,
-      tempo: this.sequencer.tempo
-    };
+      grid: sequencer ? this.sequencer.grid : null,
+      tempo: this.sequencer.tempo,
+      events: sequencer ? [] : this.recorder.events,
+      duration_ms: sequencer ? 0 : Math.min(this.MAX_RECORDING_MS, Math.max(
+        this.recorder.durationMs,
+        this.recorder.events[this.recorder.events.length - 1]?.time || 0,
+        this.recorder.isRecording ? Date.now() - this.recorder.startTime : 0
+      ))
+    });
+    if (!composition) {
+      this.showToast(this.text('invalidComposition', '这份作品内容不完整，暂时无法保存或打开。'));
+      return false;
+    }
 
-    compositions.push(composition);
-    safeSetItem('musicCompositions', JSON.stringify(compositions));
+    if (!safeSetItem('musicCompositions', JSON.stringify([...compositions, composition]))) {
+      this.showToast(this.text('saveFailed', '作品没有保存成功，请先备份或释放空间后再试。'));
+      return false;
+    }
 
     // 📊 追踪作品保存
     if (typeof Analytics !== 'undefined') {
-      Analytics.trackWorkSave('music', this.currentMode);
+      try { Analytics.trackWorkSave('music', this.currentMode); }
+      catch (error) { /* 统计失败不改变实际保存结果 */ }
     }
 
     // 显示保存成功提示
-    this.showToast('作品已保存！');
+    this.showToast(this.text('saved', '作品已保存！'));
+    this.renderSavedWorks();
 
     // 触发成就
     if (typeof AchievementSystem !== 'undefined') {
       AchievementSystem.checkMusicAchievement();
     }
+    return true;
+  },
+
+  // 旧版音序器按 grid/tempo/mode 恢复；旧钢琴/鼓点只有元数据，明确告知无法重放。
+  loadComposition(index) {
+    const compositions = this.readCompositions();
+    if (!compositions) {
+      this.showToast(this.text('storageInvalid', '作品存档无法读取，已保留原数据，请先导出备份。'));
+      return false;
+    }
+    const saved = Number.isInteger(index) && index >= 0 ? compositions[index] : null;
+    const composition = this.normalizeComposition(saved);
+    if (!composition) {
+      const legacy = saved && saved.version === undefined && ['piano', 'drums'].includes(saved.mode) && !saved.events;
+      this.showToast(legacy
+        ? this.text('legacyRecordingMissing', '旧作品没有保存演奏内容，无法恢复。')
+        : this.text('invalidComposition', '这份作品内容不完整，暂时无法打开。'));
+      return false;
+    }
+    this.stopRecording();
+    this.switchMode(composition.mode);
+    this.setTempo(composition.tempo);
+    this.recorder.events = composition.events;
+    this.recorder.durationMs = composition.duration_ms;
+    if (composition.grid) {
+      this.sequencer.grid = composition.grid;
+      document.querySelectorAll('.seq-cell').forEach(cell => {
+        const row = Number(cell.dataset.row), col = Number(cell.dataset.col);
+        cell.classList.toggle('active', !!this.sequencer.grid[row]?.[col]);
+      });
+    }
+    const timer = document.getElementById('music-record-timer');
+    if (timer) {
+      const seconds = Math.floor(composition.duration_ms / 1000);
+      timer.textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+    }
+    this.updateRecorderUI();
+    this.showToast(this.text('restored', '作品已打开，可以播放或继续创作。'));
+    return true;
+  },
+
+  renderSavedWorks() {
+    const container = document.querySelector('#music-modal .music-container');
+    if (!container) return;
+    let savedWorks = document.getElementById('music-saved-works');
+    if (!savedWorks) {
+      savedWorks = document.createElement('div');
+      savedWorks.id = 'music-saved-works';
+      savedWorks.className = 'music-recorder';
+      const label = document.createElement('label');
+      label.htmlFor = 'music-saved-select';
+      label.dataset.i18n = 'music.savedWorks';
+      label.textContent = this.text('savedWorks', '已保存的作品');
+      const controls = document.createElement('div');
+      controls.className = 'recorder-buttons';
+      const select = document.createElement('select');
+      select.id = 'music-saved-select';
+      select.className = 'recorder-btn';
+      const open = document.createElement('button');
+      open.id = 'music-open-saved';
+      open.className = 'recorder-btn';
+      open.dataset.i18n = 'music.openSaved';
+      open.textContent = this.text('openSaved', '打开作品');
+      open.onclick = () => this.loadComposition(Number(select.value));
+      controls.appendChild(select);
+      controls.appendChild(open);
+      savedWorks.appendChild(label);
+      savedWorks.appendChild(controls);
+      container.appendChild(savedWorks);
+    }
+    const select = document.getElementById('music-saved-select');
+    const open = document.getElementById('music-open-saved');
+    const selected = select.value;
+    select.replaceChildren();
+    const compositions = this.readCompositions();
+    if (!compositions || !compositions.length) {
+      const option = document.createElement('option');
+      option.textContent = compositions
+        ? this.text('noSavedWorks', '还没有保存作品')
+        : this.text('storageInvalid', '作品存档无法读取，已保留原数据，请先导出备份。');
+      select.appendChild(option);
+      select.disabled = true;
+      open.disabled = true;
+      return;
+    }
+    for (let index = compositions.length - 1; index >= 0; index--) {
+      const composition = compositions[index];
+      const option = document.createElement('option');
+      option.value = String(index);
+      const mode = ['piano', 'drums', 'sequencer'].includes(composition?.mode) ? composition.mode : 'title';
+      const date = new Date(composition?.date);
+      const dateLabel = Number.isFinite(date.getTime()) ? date.toLocaleString() : '';
+      option.textContent = `${index + 1}. ${this.text(mode, '音乐作品')} ${dateLabel}`;
+      select.appendChild(option);
+    }
+    if (selected && [...select.options].some(option => option.value === selected)) select.value = selected;
+    select.disabled = false;
+    open.disabled = false;
   },
 
   // 显示提示
   showToast(message) {
+    this._toast?.remove();
     const toast = document.createElement('div');
+    this._toast = toast;
     toast.className = 'music-toast';
     toast.textContent = message;
+    toast.setAttribute('role', 'status');
     document.body.appendChild(toast);
 
     setTimeout(() => {
@@ -1009,7 +1255,10 @@ const MusicApp = {
 
     setTimeout(() => {
       toast.classList.remove('show');
-      setTimeout(() => toast.remove(), 300);
+      setTimeout(() => {
+        toast.remove();
+        if (this._toast === toast) this._toast = null;
+      }, 300);
     }, 2000);
   }
 };
@@ -1095,7 +1344,7 @@ function switchMusicMode(mode) {
 
 // 保存作品
 function saveMusicComposition() {
-  MusicApp.saveComposition();
+  return MusicApp.saveComposition();
 }
 
 // 八度切换
