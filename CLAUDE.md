@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v79，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v80，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -294,3 +294,15 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - 绘本/跟读按钮统一定义在所属模块，app.js 不再重复覆盖；宠物两个选择界面入口分名，装饰品使用真实 accessories-list，提示保留 pet-message 子元素。
 - 浏览器回归必须等待新文档和 LearningAccount.booted，再读切换后的存档。重新加载会再次出现签到提醒，须先正常关闭；奖励弹窗也需按真实继续按钮处理，不能绕过遮罩声称按钮可用。
 - 详细发现→修复→验证轨迹见 `docs/优化记录-2026-10.md`。
+
+## 短课、阅读理解与间隔复习（2026-10-02）
+
+- `data/curriculum.json` 为固定中文题库，26 个 topic/52 题，含 20 个已核对 Marble v1 的数学科学点与 6 本绘本；版本/适用方式/答案/提示/讲解必须齐全。数据许可见 `data/CURRICULUM-LICENSE.md`。更改题干、答案、选项须升级题目版本，不把旧记录算成新题证据。
+- `StudyEngine` 与 `backend.study` 是同契约纯逻辑，JS/Python 有逐字段对照回归。日历间隔 1/3/7/14/30 天；同日不升阶段；错误/提示/机器人提示未知次日再测；杂音和跳过不改阶段。只能称复习阶段/练习证据，不称技能掌握。
+- `StudySession` 等 learningReady 后初始化，默认 4 题/5 分钟，可调 2–6 题/3、5、10 分钟；时间到在题间结束。设置 merge 已有 kidsProfileData.learningSettings，不新增备份键；资料编辑器也需保留这个字段。读取失败不能当零记录。
+- 新网页事件 v2 精确增加 schema_version/topic_id/taxonomy_version/question_version/hint_used；服务器从课程校验全部对应内容和判定，公开上传不能伪装 robot。受信机器人保留原始转写，提示未知为 null。v1 旧事件不迁移、不冒充新课程证据。
+- `LearningHistory.record` 返回事务提交的 true/false，允许固定 ID/时间的幂等重试；成功后的 UI 异常不能伪装保存失败。短课未保存时保留 pending，不能下一题；切号/冻结/异步回包检查 owner/token。
+- 绘本理解为可选两题，查看原文也记提示；稳定事件 ID 由 completionId/题目ID/版本派生，先查本账号日志，避免刷新后同轮重复。下一轮重读会话允许再练；读完自报不是理解证据。
+- 目录 fetch 和 JSON 正文都有 10 秒超时，失败清缓存允许重试；后端目录缺失时原账号/旧加减法仍可工作，新课程明确不可用。SW 预缓存题库与两个模块，游客离线可用。
+- 同机题单仅把到期 oral 数学/科学课接入下次正常机器人家教，总计最多占两个名额；不信题单自带题干和答案，不送 screen 阅读题、不新增公开唤醒接口。详见 `docs/短课与复习.md`。
+- 报告区分提示/未知提示，周期证据与全部历史到期复习分开；课程与报告共用本账号设置时区。Mac 异机备份工具见 scripts/offsite_backup.py，实际配置/副本/LaunchAgent 均在仓库外；失败保留旧副本。

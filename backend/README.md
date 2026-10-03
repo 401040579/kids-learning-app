@@ -148,3 +148,13 @@ GitHub Pages v78 已构建，公网 `apiBase` 仍空；DNS 管理入口缺失阻
 网页 API 与私有题单使用同一绑定时区判断“机器人当天已练”。
 本地后端全套 43 项通过，新增回归覆盖同秒迟到的旧错/旧对、同毫秒顺序及跨日时区边界。
 数据桥 `ready` 仅表示学习数据处理成功，不表示 Jarvis / Friday 已连接。
+
+## 固定课程与自动异机备份（2026-10-02）
+
+新增 `backend/study.py`、严格 v2 课程事件与 `GET /api/study/plan`，保留 v1 及旧加减法接口。部署时必须同时复制 `data/curriculum.json`；课程只用固定选项，不能从网页上传任意题干当成已审核题。详见 [短课与复习](../docs/短课与复习.md)。没有新增账号开通入口、后台机器人控制或本地模型。
+
+固定课程复习进入同机私有题单，机器人读取部署在学习服务 `data/` 的相同版本目录。先部署学习服务和课程，再部署机器人读取器；回滚可分别回到旧加减法实现。旧读取器遇到 lesson 题会安全退回 Marble；不可依赖它继续识别新课。
+
+Mac 异机工具：`python3 scripts/offsite_backup.py --config <私有配置路径>`。配置字段为 `host/service_directory/backup_directory/destination/keep`，SSH host 用已有管理员身份，两个远端目录需绝对路径；配置 0600，目标必须在项目外。工具先由服务器 Backup API 生成一致性、零会话副本，拉取校验成功后才清理本机旧副本。失败不输出子进程正文，不删除旧副本。
+
+本机用户 LaunchAgent `local.kids-learning.offsite-backup` 已安装，每天 09:15 尝试，Mac 保留 30 份；它依赖本机开机和 SSH 可达。可用 `launchctl print gui/$(id -u)/local.kids-learning.offsite-backup` 查看最近退出码，停用用 `launchctl bootout gui/$(id -u)/local.kids-learning.offsite-backup`。实际配置、日志和数据库不得提交。
