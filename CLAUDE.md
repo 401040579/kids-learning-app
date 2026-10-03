@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v81，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v82，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -255,7 +255,7 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - 用户端采用公网 HTTPS + 账号，不要求安装 Tailscale。游客保留纯网页和本机存档功能；后端故障不能阻止学习。
 - **只有用户明确要求时才开通账号**。无公开注册入口、无 HTTP 创建用户接口。首个专属账号为 `iris`；通过 `python -m backend.manage` 在服务器操作。
 - 独立后端代码位于 `backend/`，运维与测试见该目录 README。不得将机器人 8090 全部转发到公网；不得把账号数据库、密码、实际备份放进仓库或公开静态目录。
-- `js/accountConfig.js` 的 `apiBase` 为空时不发后端请求。公网 Cookie 要求 Secure/HttpOnly/SameSite=Strict；API 与网页应同站或使用同源代理。
+- 公网学习 API 为 `https://api.tao.irish`，前端仍由 GitHub Pages 在 `https://app.tao.irish` 提供；2026-10-02 公网 HTTPS 与现有 Iris 登录/退出已验证。`js/accountConfig.js` 的 `apiBase` 为空时不发后端请求。公网 Cookie 要求 Secure/HttpOnly/SameSite=Strict；API 与网页应同站或使用同源代理。
 - `AppStorage` 管理 28 个学习存档键，游客沿用原键，账号使用独立前缀；登录不自动搬入游客数据。语言、家长通知凭据和视频缓存留在设备，不进入账号云存档。模块只能通过 AppStorage 读写。
 - `scope: learning` 的 v2 备份只恢复包含的键，不能删除其他本机设置；排除家长通知凭据和视频缓存，前后端登记表必须一致。SW 不拦截 `/api/` 与写请求。
 - 逐题事件接口在 `backend/learning.py`：追加与分页读取均从会话取账号；`expected_account_id` 仅检查队列归属。以 `(account_id, event_id)` 去重，同 ID 不同内容整批回滚；写入事务中重新检查撤销/过期会话。公开上传接口只允许 `source: web`；受信机器人适配器另行导入。
