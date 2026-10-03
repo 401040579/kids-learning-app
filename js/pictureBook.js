@@ -335,6 +335,19 @@ const PictureBook = {
   currentPage: 0,
   readingHistory: [],
   favorites: [],
+  // readingHistory 是旧版的「打开过」记录，不能作为读完或掌握的证据。
+  bookProgress: {},
+  completionHistory: [],
+  autoRead: false,
+  audioRequest: 0,
+
+  text(key, fallback) {
+    return typeof I18n !== 'undefined' ? I18n.t(key, fallback) : fallback;
+  },
+
+  escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+  },
 
   // 初始化
   init() {
@@ -343,16 +356,43 @@ const PictureBook = {
 
   // 加载数据
   loadData() {
-    const data = SafeStorage.getObject('kidsPictureBookData', { readingHistory: [], favorites: [] });
-    this.readingHistory = data.readingHistory;
-    this.favorites = data.favorites;
+    const data = SafeStorage.getObject('kidsPictureBookData', { readingHistory: [], favorites: [], bookProgress: {}, completionHistory: [] });
+    this.readingHistory = data.readingHistory.filter(id => typeof id === 'string');
+    this.favorites = data.favorites.filter(id => typeof id === 'string');
+    this.bookProgress = {};
+    this.completionHistory = data.completionHistory.filter(row => row && typeof row.id === 'string' &&
+      typeof row.bookId === 'string' && typeof row.completedAt === 'string');
+    for (const book of this.books) {
+      const saved = data.bookProgress[book.id];
+      if (!saved || typeof saved !== 'object' || Array.isArray(saved)) continue;
+      const count = value => Number.isSafeInteger(value) && value >= 0 ? value : 0;
+      const pages = value => Array.isArray(value) ? [...new Set(value.filter(page => Number.isInteger(page) && page >= 0 && page < book.pages.length))] : [];
+      const session = saved.activeSession;
+      this.bookProgress[book.id] = {
+        lastPage: Math.min(count(saved.lastPage), book.pages.length - 1),
+        viewedPages: pages(saved.viewedPages),
+        openCount: count(saved.openCount),
+        lastOpenedAt: typeof saved.lastOpenedAt === 'string' ? saved.lastOpenedAt : null,
+        lastReadAt: typeof saved.lastReadAt === 'string' ? saved.lastReadAt : null,
+        completionCount: count(saved.completionCount),
+        lastCompletedAt: typeof saved.lastCompletedAt === 'string' ? saved.lastCompletedAt : null,
+        activeSession: session && typeof session.id === 'string' && typeof session.startedAt === 'string' ? {
+          id: session.id, startedAt: session.startedAt, viewedPages: pages(session.viewedPages),
+          readingStartedAt: typeof session.readingStartedAt === 'string' ? session.readingStartedAt : null,
+          completedAt: typeof session.completedAt === 'string' ? session.completedAt : null
+        } : null
+      };
+    }
   },
 
   // 保存数据
   saveData() {
-    safeSetItem('kidsPictureBookData', JSON.stringify({
+    return safeSetItem('kidsPictureBookData', JSON.stringify({
+      schemaVersion: 2,
       readingHistory: this.readingHistory,
-      favorites: this.favorites
+      favorites: this.favorites,
+      bookProgress: this.bookProgress,
+      completionHistory: this.completionHistory
     }));
   },
 
@@ -408,7 +448,10 @@ const PictureBook = {
     let html = '';
     filteredBooks.forEach(book => {
       const isFavorite = this.favorites.includes(book.id);
-      const isRead = this.readingHistory.includes(book.id);
+      const progress = this.bookProgress[book.id];
+      const badge = progress?.completionCount > 0 ? this.text('pictureBook.completedBadge', '读完过') :
+        progress?.activeSession?.readingStartedAt ? this.text('pictureBook.inProgressBadge', '正在阅读') :
+          this.readingHistory.includes(book.id) ? this.text('pictureBook.openedBadge', '打开过') : '';
 
       html += `
         <div class="book-card" onclick="openBook('${book.id}')">
@@ -421,7 +464,7 @@ const PictureBook = {
               <span>${book.duration}</span>
             </div>
           </div>
-          ${isRead ? `<div class="book-read-badge">${I18n.t('pictureBook.readBadge') || '已读'}</div>` : ''}
+          ${badge ? `<div class="book-read-badge">${this.escapeHtml(badge)}</div>` : ''}
           <button class="book-favorite-btn ${isFavorite ? 'active' : ''}"
                   onclick="event.stopPropagation(); toggleFavorite('${book.id}')">
             ${isFavorite ? '❤️' : '🤍'}
@@ -437,8 +480,23 @@ const PictureBook = {
     const book = this.books.find(b => b.id === bookId);
     if (!book) return;
 
+    this.stopReadingAudio();
     this.currentBook = book;
-    this.currentPage = 0;
+    const now = new Date().toISOString();
+    const progress = this.bookProgress[bookId] ||= {
+      lastPage: 0, viewedPages: [], openCount: 0, lastOpenedAt: null, lastReadAt: null,
+      completionCount: 0, lastCompletedAt: null, activeSession: null
+    };
+    if (!progress.activeSession || progress.activeSession.completedAt) {
+      progress.activeSession = {
+        id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        startedAt: now, readingStartedAt: null, viewedPages: [], completedAt: null
+      };
+      progress.lastPage = 0;
+    }
+    progress.openCount++;
+    progress.lastOpenedAt = now;
+    this.currentPage = progress.lastPage;
 
     // 📊 追踪绘本阅读
     if (typeof Analytics !== 'undefined') {
@@ -452,18 +510,23 @@ const PictureBook = {
     // 记录阅读历史
     if (!this.readingHistory.includes(bookId)) {
       this.readingHistory.push(bookId);
-      this.saveData();
     }
 
     this.renderReadingPage();
 
-    document.getElementById('book-select-area').classList.add('hidden');
-    document.getElementById('book-read-area').classList.remove('hidden');
+    document.getElementById('book-select-area')?.classList.add('hidden');
+    document.getElementById('book-read-area')?.classList.remove('hidden');
   },
 
   // 渲染阅读页面
   renderReadingPage() {
     if (!this.currentBook) return;
+
+    const saved = this.bookProgress[this.currentBook.id];
+    saved.lastPage = this.currentPage;
+    if (!saved.viewedPages.includes(this.currentPage)) saved.viewedPages.push(this.currentPage);
+    if (!saved.activeSession.viewedPages.includes(this.currentPage)) saved.activeSession.viewedPages.push(this.currentPage);
+    this.saveData();
 
     const page = this.currentBook.pages[this.currentPage];
     const container = document.getElementById('book-read-area');
@@ -483,7 +546,7 @@ const PictureBook = {
         <div class="reading-progress-fill" style="width: ${progress}%"></div>
       </div>
 
-      <div class="reading-content" onclick="nextPage()">
+      <div class="reading-content">
         <div class="page-image">${page.image}</div>
         <div class="page-text">${page.text}</div>
       </div>
@@ -495,16 +558,22 @@ const PictureBook = {
         <button class="reading-speak-btn" onclick="speakPageText()">
           ${I18n.t('pictureBook.speak') || '🔊 朗读'}
         </button>
-        <button class="reading-nav-btn" onclick="nextPage()" ${this.currentPage >= totalPages - 1 ? 'disabled' : ''}>
-          ${I18n.t('pictureBook.nextPage') || '下一页'} ▶
+        <button class="reading-speak-btn" onclick="toggleAutoRead()">
+          ${this.escapeHtml(this.autoRead ? this.text('pictureBook.stopAutoRead', '关闭自动朗读') : this.text('pictureBook.autoRead', '自动朗读'))}
+        </button>
+        <button class="reading-nav-btn" onclick="nextPage()" ${saved.activeSession.completedAt ? 'disabled' : ''}>
+          ${this.currentPage === totalPages - 1 ? this.escapeHtml(this.text('pictureBook.confirmFinished', '我读完了')) : `${I18n.t('pictureBook.nextPage') || '下一页'} ▶`}
         </button>
       </div>
     `;
+    if (this.autoRead && !saved.activeSession.completedAt) this.speakPageText();
   },
 
   // 上一页
   prevPage() {
     if (this.currentPage > 0) {
+      this.stopReadingAudio();
+      this.recordReadingIntent();
       this.currentPage--;
       this.renderReadingPage();
     }
@@ -512,7 +581,10 @@ const PictureBook = {
 
   // 下一页
   nextPage() {
+    if (!this.currentBook) return;
     if (this.currentPage < this.currentBook.pages.length - 1) {
+      this.stopReadingAudio();
+      this.recordReadingIntent();
       this.currentPage++;
       this.renderReadingPage();
     } else {
@@ -523,23 +595,69 @@ const PictureBook = {
 
   // 当前音频对象
   currentAudio: null,
+  currentUtterance: null,
+
+  recordReadingIntent() {
+    if (!this.currentBook) return;
+    const progress = this.bookProgress[this.currentBook.id];
+    const now = new Date().toISOString();
+    progress.lastReadAt = now;
+    progress.activeSession.readingStartedAt ||= now;
+  },
+
+  stopReadingAudio() {
+    this.audioRequest++;
+    this.currentUtterance = null;
+    if (this.currentAudio) {
+      this.currentAudio.onended = null;
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+  },
+
+  toggleAutoRead() {
+    this.autoRead = !this.autoRead;
+    this.stopReadingAudio();
+    this.renderReadingPage();
+  },
+
+  readAgain() {
+    if (!this.currentBook) return;
+    const id = this.currentBook.id;
+    this.bookProgress[id].activeSession = null;
+    this.bookProgress[id].lastPage = 0;
+    this.openBook(id);
+  },
 
   // 朗读当前页面（使用 Puter.js AI 语音）
   async speakPageText() {
     if (!this.currentBook) return;
+    this.recordReadingIntent();
+    this.saveData();
     const page = this.currentBook.pages[this.currentPage];
     const speakBtn = document.querySelector('.reading-speak-btn');
+    const book = this.currentBook;
+    const pageIndex = this.currentPage;
 
     // 如果正在播放，停止播放
-    if (this.currentAudio) {
-      this.currentAudio.pause();
-      this.currentAudio = null;
+    if (this.currentAudio || this.currentUtterance) {
+      this.stopReadingAudio();
       if (speakBtn) {
         speakBtn.innerHTML = I18n.t('pictureBook.speak') || '🔊 朗读';
         speakBtn.disabled = false;
       }
       return;
     }
+    const request = ++this.audioRequest;
+    const stillCurrent = () => this.audioRequest === request && this.currentBook === book && this.currentPage === pageIndex;
+    const ended = () => {
+      if (!stillCurrent()) return;
+      this.currentAudio = null;
+      if (speakBtn) speakBtn.innerHTML = I18n.t('pictureBook.speak') || '🔊 朗读';
+      // 自动朗读只翻页；最后仍由孩子按「我读完了」确认，不把播放结束当作理解。
+      if (this.autoRead && this.currentPage < book.pages.length - 1) this.nextPage();
+    };
 
     // 显示加载状态
     if (speakBtn) {
@@ -549,8 +667,9 @@ const PictureBook = {
 
     try {
       // 使用 Puter.js AI TTS（神经网络语音，更自然）
-      if (PuterTTS.available()) {
+      if (typeof PuterTTS !== 'undefined' && PuterTTS.available()) {
         const audio = await PuterTTS.speak(page.text);
+        if (!stillCurrent()) { audio.pause(); return; }
 
         this.currentAudio = audio;
 
@@ -561,27 +680,29 @@ const PictureBook = {
         }
 
         // 播放完成后重置
-        audio.onended = () => {
-          this.currentAudio = null;
-          if (speakBtn) {
-            speakBtn.innerHTML = I18n.t('pictureBook.speak') || '🔊 朗读';
-          }
-        };
+        audio.onended = ended;
 
-        audio.play();
+        await audio.play();
       } else {
         // 备选方案：使用 Web Speech API
-        this.speakWithWebSpeech(page.text, speakBtn);
+        if (stillCurrent()) this.speakWithWebSpeech(page.text, speakBtn, ended);
       }
     } catch (error) {
       console.error('Puter TTS 失败，使用备选方案:', error);
       // 备选方案：使用 Web Speech API
-      this.speakWithWebSpeech(page.text, speakBtn);
+      if (stillCurrent()) {
+        if (this.currentAudio) {
+          this.currentAudio.onended = null;
+          this.currentAudio.pause();
+          this.currentAudio = null;
+        }
+        this.speakWithWebSpeech(page.text, speakBtn, ended);
+      }
     }
   },
 
   // 备选语音方案（Web Speech API）
-  speakWithWebSpeech(text, speakBtn) {
+  speakWithWebSpeech(text, speakBtn, ended) {
     if ('speechSynthesis' in window) {
       speechSynthesis.cancel();
 
@@ -589,6 +710,7 @@ const PictureBook = {
       utterance.lang = 'zh-CN';
       utterance.rate = 0.8;
       utterance.pitch = 1.1;
+      this.currentUtterance = utterance;
 
       if (speakBtn) {
         speakBtn.innerHTML = I18n.t('pictureBook.speaking') || '🔊 朗读中...';
@@ -596,8 +718,19 @@ const PictureBook = {
       }
 
       utterance.onend = () => {
+        if (this.currentUtterance !== utterance) return;
+        this.currentUtterance = null;
         if (speakBtn) {
           speakBtn.innerHTML = I18n.t('pictureBook.speak') || '🔊 朗读';
+        }
+        if (ended) ended();
+      };
+      utterance.onerror = () => {
+        if (this.currentUtterance !== utterance) return;
+        this.currentUtterance = null;
+        if (speakBtn) {
+          speakBtn.innerHTML = I18n.t('pictureBook.speak') || '🔊 朗读';
+          speakBtn.disabled = false;
         }
       };
 
@@ -613,17 +746,41 @@ const PictureBook = {
 
   // 完成阅读
   finishReading() {
+    if (!this.currentBook) return false;
+    const progress = this.bookProgress[this.currentBook.id];
+    const session = progress?.activeSession;
+    if (!session || session.completedAt || this.currentPage !== this.currentBook.pages.length - 1 ||
+      session.viewedPages.length !== this.currentBook.pages.length) return false;
+    const completedAt = new Date().toISOString();
+    const previousCompletedAt = progress.lastCompletedAt;
+    session.completedAt = completedAt;
+    progress.completionCount++;
+    progress.lastCompletedAt = completedAt;
+    const completion = { id: session.id, bookId: this.currentBook.id, startedAt: session.startedAt,
+      completedAt, totalPages: this.currentBook.pages.length, viewedPages: [...session.viewedPages],
+      confirmation: 'reader_confirmed' };
+    this.completionHistory.push(completion);
+    // 先保存唯一完成标记，再发奖励；失败时允许重试，不能显示已可靠保存。
+    if (!this.saveData()) {
+      session.completedAt = null;
+      progress.completionCount--;
+      progress.lastCompletedAt = previousCompletedAt;
+      this.completionHistory.pop();
+      return false;
+    }
+    this.stopReadingAudio();
     const points = 15;
     const finishedMsg = (I18n.t('pictureBook.finishedReading') || '读完了《{title}》').replace('{title}', this.currentBook.title);
     RewardSystem.addPoints(points, finishedMsg);
 
     // 检查成就
     if (typeof AchievementSystem !== 'undefined') {
-      AchievementSystem.checkProgress('booksRead', this.readingHistory.length);
+      AchievementSystem.checkProgress('booksRead', Object.values(this.bookProgress).filter(row => row.completionCount > 0).length);
     }
 
     // 显示完成弹窗
     this.showCompleteModal();
+    return true;
   },
 
   // 显示完成弹窗
@@ -631,8 +788,12 @@ const PictureBook = {
     const modal = document.getElementById('book-complete-modal');
     if (!modal) return;
 
-    document.getElementById('complete-book-title').textContent = this.currentBook.title;
-    document.getElementById('complete-book-cover').textContent = this.currentBook.cover;
+    const title = document.getElementById('completed-book-name') || document.getElementById('complete-book-title');
+    const cover = document.getElementById('complete-book-cover');
+    if (title) title.textContent = this.currentBook.title;
+    if (cover) cover.textContent = this.currentBook.cover;
+    const reward = modal.querySelector('.reward-text');
+    if (reward) reward.textContent = this.text('pictureBook.completedReward', '+{points} 积分').replace('{points}', '15');
     modal.classList.remove('hidden');
   },
 
@@ -652,11 +813,8 @@ const PictureBook = {
   // 返回书架
   backToBookshelf() {
     // 停止所有朗读
-    if (this.currentAudio) {
-      this.currentAudio.pause();
-      this.currentAudio = null;
-    }
-    speechSynthesis.cancel();
+    this.stopReadingAudio();
+    this.autoRead = false;
 
     this.currentBook = null;
     this.currentPage = 0;
@@ -683,11 +841,7 @@ function closePictureBook() {
   const modal = document.getElementById('picture-book-modal');
   if (modal) {
     // 停止所有朗读
-    if (PictureBook.currentAudio) {
-      PictureBook.currentAudio.pause();
-      PictureBook.currentAudio = null;
-    }
-    speechSynthesis.cancel();
+    PictureBook.backToBookshelf();
     modal.classList.add('hidden');
   }
 }
@@ -714,6 +868,23 @@ function prevPage() {
 
 function nextPage() {
   PictureBook.nextPage();
+}
+
+function prevBookPage() {
+  PictureBook.prevPage();
+}
+
+function nextBookPage() {
+  PictureBook.nextPage();
+}
+
+function toggleAutoRead() {
+  PictureBook.toggleAutoRead();
+}
+
+function readBookAgain() {
+  document.getElementById('book-complete-modal')?.classList.add('hidden');
+  PictureBook.readAgain();
 }
 
 function speakPageText() {

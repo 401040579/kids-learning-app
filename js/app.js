@@ -2797,34 +2797,7 @@ function petPet() {
   }
 }
 
-function showPetAccessories() {
-  const modal = document.getElementById('pet-accessories-modal');
-  if (!modal) return;
-
-  LearningPet.renderAccessoriesList();
-  modal.classList.remove('hidden');
-}
-
-function closePetAccessories() {
-  const modal = document.getElementById('pet-accessories-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-  }
-}
-
-function closePetEvolution() {
-  const modal = document.getElementById('pet-evolution-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-  }
-}
-
-function showPetMessage(message) {
-  const messageEl = document.getElementById('pet-message');
-  if (messageEl) {
-    messageEl.querySelector('.message-text').textContent = message;
-  }
-}
+// 宠物装扮、提示与关闭入口统一定义在 learningPet.js。
 
 function updatePetStatusBars() {
   const data = LearningPet.data;
@@ -2853,88 +2826,4 @@ function updatePetStatusBars() {
 // showLearningReport, closeLearningReport, changeReportPeriod, shareReport
 // 这些函数已在 learningReport.js 中定义
 
-// ========== P2功能 - 绘本阅读控制 ==========
-
-// 注意：pictureBook.js 里也定义了同名函数，但 app.js 最后加载，所以生效的是这一份。
-// 那边的版本带「最近使用」记录，这里必须一并保留，否则绘本永远进不了最近使用。
-function showPictureBook() {
-  const modal = document.getElementById('picture-book-modal');
-  if (!modal) return;
-
-  if (typeof RecentlyUsed !== 'undefined') {
-    RecentlyUsed.track('pictureBook');
-  }
-
-  PictureBook.renderBookshelf();
-  modal.classList.remove('hidden');
-}
-
-// closePictureBook 已在 pictureBook.js 中定义
-
-function backToBookshelf() {
-  PictureBook.backToBookshelf();
-}
-
-function toggleAutoRead() {
-  PictureBook.toggleAutoRead();
-}
-
-function prevBookPage() {
-  PictureBook.prevPage();
-}
-
-function nextBookPage() {
-  PictureBook.nextPage();
-}
-
-function readBookAgain() {
-  document.getElementById('book-complete-modal').classList.add('hidden');
-  PictureBook.readAgain();
-}
-
-function closeBookComplete() {
-  document.getElementById('book-complete-modal').classList.add('hidden');
-  PictureBook.backToBookshelf();
-}
-
-// ========== P2功能 - 跟读练习控制 ==========
-
-// 同上：pronunciation.js 里有同名定义但被这份覆盖，「最近使用」记录要在这里保留。
-function showPronunciation() {
-  const modal = document.getElementById('pronunciation-modal');
-  if (!modal) return;
-
-  if (typeof RecentlyUsed !== 'undefined') {
-    RecentlyUsed.track('pronunciation');
-  }
-
-  Pronunciation.renderPracticeSelect();
-  modal.classList.remove('hidden');
-}
-
-// closePronunciation 已在 pronunciation.js 中定义
-
-function backToPronunciationSelect() {
-  Pronunciation.backToSelect();
-}
-
-function playDemonstration() {
-  Pronunciation.playDemonstration();
-}
-
-function toggleRecording() {
-  Pronunciation.toggleRecording();
-}
-
-function tryAgain() {
-  Pronunciation.tryAgain();
-}
-
-function nextPracticeItem() {
-  Pronunciation.nextItem();
-}
-
-function closePronunciationComplete() {
-  document.getElementById('pronunciation-complete-modal').classList.add('hidden');
-  Pronunciation.backToSelect();
-}
+// 绘本与跟读的全局入口统一定义在各自模块，避免加载顺序覆盖。

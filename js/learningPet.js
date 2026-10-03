@@ -608,7 +608,7 @@ function renderPetSelection() {
   LearningPet.petTypes.forEach(pet => {
     const petName = I18n.t(`pet.type.${pet.id}`) || pet.name;
     html += `
-      <div class="pet-selection-card" onclick="selectPetType('${pet.id}')">
+      <div class="pet-selection-card" onclick="selectPetForPage('${pet.id}')">
         <div class="pet-selection-emoji">${pet.stages[1]}</div>
         <div class="pet-selection-name">${petName}</div>
       </div>
@@ -624,7 +624,7 @@ function renderPetSelection() {
 }
 
 // 选择宠物类型
-function selectPetType(petTypeId) {
+function selectPetForPage(petTypeId) {
   const petType = LearningPet.petTypes.find(p => p.id === petTypeId);
   if (!petType) return;
 
@@ -852,41 +852,13 @@ function buyAccessory(accessoryId) {
 function showPetAccessories() {
   const modal = document.getElementById('pet-accessories-modal');
   if (!modal) return;
-
-  const owned = LearningPet.data.ownedAccessories;
-  const equipped = LearningPet.data.equippedAccessory;
-
-  let html = '';
-
-  if (owned.length === 0) {
-    html = `<div class="no-accessories">${I18n.t('pet.noAccessories') || '还没有装饰品，去商店看看吧！'}</div>`;
-  } else {
-    html = '<div class="accessories-grid">';
-    owned.forEach(accId => {
-      const acc = LearningPet.accessories.find(a => a.id === accId);
-      if (!acc) return;
-
-      const isEquipped = equipped === accId;
-      const accName = I18n.t(`pet.acc.${acc.id}`) || acc.name;
-      html += `
-        <div class="accessory-item ${isEquipped ? 'equipped' : ''}"
-             onclick="${isEquipped ? 'unequipPetAccessory()' : `equipPetAccessory('${accId}')`}">
-          <div class="accessory-emoji">${acc.emoji}</div>
-          <div class="accessory-name">${accName}</div>
-          ${isEquipped ? `<div class="accessory-status">${I18n.t('pet.acc.equipped') || '已装备'}</div>` : ''}
-        </div>
-      `;
-    });
-    html += '</div>';
-  }
-
-  document.getElementById('pet-accessories-list').innerHTML = html;
+  LearningPet.renderAccessoriesList();
   modal.classList.remove('hidden');
 }
 
 // 关闭装扮页面
 function closePetAccessories() {
-  document.getElementById('pet-accessories-modal').classList.add('hidden');
+  document.getElementById('pet-accessories-modal')?.classList.add('hidden');
 }
 
 // 装备装饰品
@@ -950,11 +922,13 @@ function unequipAccessory() {
 
 // 显示宠物临时消息
 function showPetMessage(message) {
-  const msgEl = document.querySelector('.pet-speech-bubble');
-  if (msgEl) {
-    msgEl.textContent = message;
-    msgEl.classList.add('show');
-    setTimeout(() => msgEl.classList.remove('show'), 2000);
+  const text = document.querySelector('#pet-message .message-text');
+  if (text) text.textContent = message;
+  const bubble = document.querySelector('.pet-speech-bubble');
+  if (bubble) {
+    bubble.textContent = message;
+    bubble.classList.add('show');
+    setTimeout(() => bubble.classList.remove('show'), 2000);
   }
 }
 
@@ -977,7 +951,7 @@ function showPetEvolution(oldStage, newStage) {
 
 // 关闭进化弹窗
 function closePetEvolution() {
-  document.getElementById('pet-evolution-modal').classList.add('hidden');
+  document.getElementById('pet-evolution-modal')?.classList.add('hidden');
 }
 
 // ========== 换装系统扩展 ==========
