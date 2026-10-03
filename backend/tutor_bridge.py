@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import Request
 from backend.learning import check_owner, validate_event
+from backend.study import account_daily_count, account_timezone, load_catalog, plan as study_plan
 
 BRIDGE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS robot_imports (
@@ -67,6 +68,38 @@ def review_plan(db, owner, zone='America/Los_Angeles', now=None):
     return result
 
 
+def curriculum_spoken(question):
+    return question['question'] + '可以选：' + '、'.join(question['choices']) + '。'
+
+
+def robot_review_plan(db, owner, zone='America/Los_Angeles', now=None):
+    """旧加减法仍可复习，新课程只选到期口头题，不加大原会话预算。"""
+    result = review_plan(db, owner, zone, now)
+    if len(result) == 2:
+        return result
+    try:
+        catalog = load_catalog()
+    except (OSError, ValueError):
+        return result  # 课程文件不可用时，保留原加减法与账号服务。
+    events = [json.loads(row['payload']) for row in db.execute('SELECT payload FROM learning_events WHERE account_id=? ORDER BY seq', (owner,))]
+    due = study_plan(catalog, events, now=now, timezone=account_timezone(db, owner, zone), daily_count=account_daily_count(db, owner))
+    if not due['remaining']:
+        return result
+    # 先筛可口答候选再截断，不能让前面的看图题挡住后面的口头题。
+    order = {q['id']:i for i,q in enumerate(catalog['questions'])}
+    candidates = [q for q in catalog['questions'] if q['modality']=='oral' and q['book_id'] is None
+                  and due['states'][q['id']]['seen'] and not due['states'][q['id']]['attempted_today']
+                  and due['states'][q['id']]['due_day'] is not None and due['states'][q['id']]['due_day'] <= due['day']]
+    candidates.sort(key=lambda q:(due['states'][q['id']]['due_day'],order[q['id']]))
+    for question in candidates[:min(2-len(result),due['remaining'])]:
+        result.append({'question_id':question['id'], 'question_version':question['version'],
+                       'question':question['question'], 'spoken':curriculum_spoken(question),
+                       'expected':question['expected']})
+        if len(result) == 2:
+            break
+    return result
+
+
 def atomic_json(path, value):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -91,6 +124,11 @@ class TutorBridge:
         self.last_success = None
         self.topics = {}
         self.version = None
+        try:
+            self.catalog = load_catalog()
+        except (OSError, ValueError):
+            self.catalog = None
+        self.course_questions = {q['id']:q for q in self.catalog['questions']} if self.catalog else {}
         with store.connection() as db:
             db.executescript(BRIDGE_SCHEMA)
         if self.config:
@@ -106,8 +144,13 @@ class TutorBridge:
             return None
         tid = row['topic_id']
         web = arithmetic(tid.removeprefix('web:')) if tid.startswith('web:') else None
+        course = self.course_questions.get(tid.removeprefix('web:')) if tid.startswith('web:') else None
+        if course and (course['modality'] != 'oral' or course['book_id'] is not None
+                       or row['question'] != curriculum_spoken(course) or str(row['expected']) != course['expected']):
+            # 不把另一个版本或任意题干的日志冒充当前审核课程。
+            course = None
         topic = self.topics.get(tid)
-        if not web and not topic:
+        if not web and not topic and not course:
             return None
         if row['serial'] not in ('0dd1a5e9', '00406f0d'):
             raise ValueError('未知机器人日志，未推进游标')
@@ -118,12 +161,15 @@ class TutorBridge:
         if not original:
             original = hashlib.sha256(json.dumps(row, sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:32]
         value = {'id':'robot-' + original, 'occurred_at':stamp, 'source':'robot',
-                 'subject':'math' if web else SUBJECTS[topic['subject']],
-                 'question_id':web['question_id'] if web else 'marble:' + tid,
-                 'question':row['question'], 'expected':str(row['expected'] or '—'),
+                 'subject':course['subject'] if course else 'math' if web else SUBJECTS[topic['subject']],
+                 'question_id':course['id'] if course else web['question_id'] if web else 'marble:' + tid,
+                 'question':course['question'] if course else row['question'], 'expected':str(row['expected'] or '—'),
                  'answer':str(row['answer'] or '—'), 'verdict':row['verdict'],
                  'robot':'Jarvis' if row['serial']=='0dd1a5e9' else 'Friday',
-                 'topic_id':None if web else tid, 'taxonomy_version':None if web else self.version}
+                 'topic_id':course['topic_id'] if course else None if web else tid,
+                 'taxonomy_version':self.catalog['taxonomy_version'] if course else None if web else self.version}
+        if course:
+            value.update(schema_version=2, question_version=course['version'], hint_used=None)
         return value['id'], *validate_event(value, trusted_robot=True)
 
     def tick(self):
@@ -166,8 +212,8 @@ class TutorBridge:
                     db.execute('INSERT INTO learning_events(account_id,event_id,occurred_at,payload,recorded_at) VALUES (?,?,?,?,?)', (owner,event_id,epoch,payload,now))
             end = rows[-1]['id'] if rows else cursor
             db.execute('INSERT INTO robot_imports VALUES (?,?,?,?) ON CONFLICT(account_id,source) DO UPDATE SET generation=excluded.generation,cursor=excluded.cursor', (owner,str(source),generation,end))
-            questions = review_plan(db, owner, self.config.get('timezone','America/Los_Angeles'), now)
-        atomic_json(self.config['plan_file'], {'schema':1,'account_id':owner,'name':active['display_name'],'generated_at':now,'expires_at':now+120,'questions':questions})
+            questions = robot_review_plan(db, owner, self.config.get('timezone','America/Los_Angeles'), now)
+        atomic_json(self.config['plan_file'], {'schema':1,'catalog_version':self.catalog['version'] if self.catalog else None,'account_id':owner,'name':active['display_name'],'generated_at':now,'expires_at':now+120,'questions':questions})
         self.status = 'ready'
         self.last_success = now
 
