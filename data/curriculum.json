@@ -1,0 +1,1105 @@
+{
+  "version": "2026-10-v1",
+  "taxonomy_version": "v1",
+  "language": "zh-CN",
+  "database_license": "ODbL-1.0",
+  "content_license": "CC-BY-SA-4.0",
+  "attribution": "Marble Skill Taxonomy (v1) · © Generative Spark, Inc. (Marble) · https://withmarble.com · ODbL 1.0 (database), CC BY-SA 4.0 (content). 中文题干、选项与讲解由本项目编写；同许可公开。",
+  "source": "https://github.com/withmarbleapp/os-taxonomy",
+  "topics": [
+    {
+      "id": "mt_OvyoRo47K-",
+      "subject": "math",
+      "title": "把两组数量合起来",
+      "marble_id": "mt_OvyoRo47K-",
+      "age_min": 4,
+      "age_max": 6
+    },
+    {
+      "id": "mt_j7cj9eWN7w",
+      "subject": "science",
+      "title": "风是流动的空气",
+      "marble_id": "mt_j7cj9eWN7w",
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "mt_zuKAX6lcYR",
+      "subject": "math",
+      "title": "拿走一些后剩多少",
+      "marble_id": "mt_zuKAX6lcYR",
+      "age_min": 4,
+      "age_max": 6
+    },
+    {
+      "id": "mt_xT6jPzyj92",
+      "subject": "science",
+      "title": "植物的组成部分",
+      "marble_id": "mt_xT6jPzyj92",
+      "age_min": 5,
+      "age_max": 6
+    },
+    {
+      "id": "mt__h7hvT4tEb",
+      "subject": "math",
+      "title": "比较多和少",
+      "marble_id": "mt__h7hvT4tEb",
+      "age_min": 4,
+      "age_max": 6
+    },
+    {
+      "id": "mt_L1469gt34A",
+      "subject": "science",
+      "title": "生物的基本需要",
+      "marble_id": "mt_L1469gt34A",
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "mt_sYpKWbq5ra",
+      "subject": "math",
+      "title": "比原来多一个",
+      "marble_id": "mt_sYpKWbq5ra",
+      "age_min": 4,
+      "age_max": 6
+    },
+    {
+      "id": "mt_nwSWPTENmv",
+      "subject": "science",
+      "title": "认识感官",
+      "marble_id": "mt_nwSWPTENmv",
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "mt_7XcCG43ZZW",
+      "subject": "math",
+      "title": "把数量分成两部分",
+      "marble_id": "mt_7XcCG43ZZW",
+      "age_min": 4,
+      "age_max": 6
+    },
+    {
+      "id": "mt_B3W5EfimJw",
+      "subject": "science",
+      "title": "认识推和拉",
+      "marble_id": "mt_B3W5EfimJw",
+      "age_min": 5,
+      "age_max": 6
+    },
+    {
+      "id": "mt_U0waNfD8PB",
+      "subject": "math",
+      "title": "比较数字大小",
+      "marble_id": "mt_U0waNfD8PB",
+      "age_min": 6,
+      "age_max": 7
+    },
+    {
+      "id": "mt_ZAJvTcroFO",
+      "subject": "science",
+      "title": "常见材料",
+      "marble_id": "mt_ZAJvTcroFO",
+      "age_min": 5,
+      "age_max": 6
+    },
+    {
+      "id": "mt_oIzycTBeE4",
+      "subject": "math",
+      "title": "理解等号",
+      "marble_id": "mt_oIzycTBeE4",
+      "age_min": 6,
+      "age_max": 7
+    },
+    {
+      "id": "mt_iGSfQg3g5c",
+      "subject": "science",
+      "title": "阳光带来温暖",
+      "marble_id": "mt_iGSfQg3g5c",
+      "age_min": 5,
+      "age_max": 6
+    },
+    {
+      "id": "mt_-hTTat0mBR",
+      "subject": "math",
+      "title": "认识一半",
+      "marble_id": "mt_-hTTat0mBR",
+      "age_min": 5,
+      "age_max": 6
+    },
+    {
+      "id": "mt_jc9k_HJQGd",
+      "subject": "science",
+      "title": "认识天气",
+      "marble_id": "mt_jc9k_HJQGd",
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "mt_LpSuPgL31x",
+      "subject": "math",
+      "title": "平均分一分",
+      "marble_id": "mt_LpSuPgL31x",
+      "age_min": 4,
+      "age_max": 6
+    },
+    {
+      "id": "mt_Wr6DDgr_kH",
+      "subject": "science",
+      "title": "毛毛虫的变化",
+      "marble_id": "mt_Wr6DDgr_kH",
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "mt_nvdpxAJTBG",
+      "subject": "math",
+      "title": "两个两个地数",
+      "marble_id": "mt_nvdpxAJTBG",
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "mt_PrWc-HZzDl",
+      "subject": "science",
+      "title": "温度和温度计",
+      "marble_id": "mt_PrWc-HZzDl",
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "reading:three-little-pigs",
+      "subject": "reading",
+      "title": "三只小猪：理解故事",
+      "marble_id": null,
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "reading:little-red-riding-hood",
+      "subject": "reading",
+      "title": "小红帽：理解故事",
+      "marble_id": null,
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "reading:ugly-duckling",
+      "subject": "reading",
+      "title": "丑小鸭：理解故事",
+      "marble_id": null,
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "reading:tortoise-hare",
+      "subject": "reading",
+      "title": "龟兔赛跑：理解故事",
+      "marble_id": null,
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "reading:goldilocks",
+      "subject": "reading",
+      "title": "金发姑娘和三只熊：理解故事",
+      "marble_id": null,
+      "age_min": 5,
+      "age_max": 7
+    },
+    {
+      "id": "reading:emperors-clothes",
+      "subject": "reading",
+      "title": "皇帝的新衣：理解故事",
+      "marble_id": null,
+      "age_min": 5,
+      "age_max": 7
+    }
+  ],
+  "questions": [
+    {
+      "id": "lesson:add-combine:1",
+      "version": "1",
+      "topic_id": "mt_OvyoRo47K-",
+      "subject": "math",
+      "question": "篮子里有2个苹果，又放进3个，一共有几个？",
+      "choices": [
+        "4",
+        "5",
+        "6"
+      ],
+      "expected": "5",
+      "hint": "把2和3合在一起数。",
+      "explanation": "2加3等于5。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:wind:1",
+      "version": "1",
+      "topic_id": "mt_j7cj9eWN7w",
+      "subject": "science",
+      "question": "风是什么在流动？",
+      "choices": [
+        "空气",
+        "石头",
+        "泥土"
+      ],
+      "expected": "空气",
+      "hint": "吹气时，嘴边的空气在移动。",
+      "explanation": "空气移动起来就形成风。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:subtract:1",
+      "version": "1",
+      "topic_id": "mt_zuKAX6lcYR",
+      "subject": "math",
+      "question": "盘子里有5块饼干，吃掉2块，还剩几块？",
+      "choices": [
+        "2",
+        "4",
+        "3"
+      ],
+      "expected": "3",
+      "hint": "从5里拿走2。",
+      "explanation": "5减2等于3。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:plant-parts:1",
+      "version": "1",
+      "topic_id": "mt_xT6jPzyj92",
+      "subject": "science",
+      "question": "植物通常用哪个部分从土里吸收水？",
+      "choices": [
+        "花",
+        "根",
+        "果实"
+      ],
+      "expected": "根",
+      "hint": "这个部分藏在土里。",
+      "explanation": "根从土里吸收水，送到植物其他部分。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:compare-groups:1",
+      "version": "1",
+      "topic_id": "mt__h7hvT4tEb",
+      "subject": "math",
+      "question": "小明有3颗珠子，小红有5颗，谁的珠子多？",
+      "choices": [
+        "小明",
+        "小红",
+        "一样多"
+      ],
+      "expected": "小红",
+      "hint": "比较3和5，哪个更大。",
+      "explanation": "5比3大，所以小红的珠子多。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:needs:1",
+      "version": "1",
+      "topic_id": "mt_L1469gt34A",
+      "subject": "science",
+      "question": "小狗每天需要喝什么？",
+      "choices": [
+        "水",
+        "油漆",
+        "沙子"
+      ],
+      "expected": "水",
+      "hint": "想想小狗口渴时需要什么。",
+      "explanation": "小狗和其他动物需要水。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:one-more:1",
+      "version": "1",
+      "topic_id": "mt_sYpKWbq5ra",
+      "subject": "math",
+      "question": "4个积木再添1个，一共有几个？",
+      "choices": [
+        "3",
+        "5",
+        "6"
+      ],
+      "expected": "5",
+      "hint": "在4后面数一个数。",
+      "explanation": "4再多1是5。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:senses:1",
+      "version": "1",
+      "topic_id": "mt_nwSWPTENmv",
+      "subject": "science",
+      "question": "我们主要用哪个部位听声音？",
+      "choices": [
+        "眼睛",
+        "鼻子",
+        "耳朵"
+      ],
+      "expected": "耳朵",
+      "hint": "音乐响起时你用哪里听。",
+      "explanation": "耳朵帮助我们听声音。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:pairs-ten:1",
+      "version": "1",
+      "topic_id": "mt_7XcCG43ZZW",
+      "subject": "math",
+      "question": "一共有6块积木，分成两组，一组2块，另一组几块？",
+      "choices": [
+        "3",
+        "4",
+        "5"
+      ],
+      "expected": "4",
+      "hint": "6里面拿出2，看看还剩多少。",
+      "explanation": "2和4合起来是6。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:push-pull:1",
+      "version": "1",
+      "topic_id": "mt_B3W5EfimJw",
+      "subject": "science",
+      "question": "把抽屉向自己这边打开，是推还是拉？",
+      "choices": [
+        "推",
+        "拉",
+        "都不是"
+      ],
+      "expected": "拉",
+      "hint": "东西向自己靠近。",
+      "explanation": "把抽屉向自己这边移动是拉。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:number-order:1",
+      "version": "1",
+      "topic_id": "mt_U0waNfD8PB",
+      "subject": "math",
+      "question": "9和6，哪个数更大？",
+      "choices": [
+        "6",
+        "9",
+        "一样大"
+      ],
+      "expected": "9",
+      "hint": "在数数时，越往后的数越大。",
+      "explanation": "9比6大。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:materials:1",
+      "version": "1",
+      "topic_id": "mt_ZAJvTcroFO",
+      "subject": "science",
+      "question": "普通玻璃杯主要由什么材料做成？",
+      "choices": [
+        "纸",
+        "玻璃",
+        "布"
+      ],
+      "expected": "玻璃",
+      "hint": "题目中杯子的名字也给了线索。",
+      "explanation": "玻璃杯主要由玻璃制成。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:equals:1",
+      "version": "1",
+      "topic_id": "mt_oIzycTBeE4",
+      "subject": "math",
+      "question": "等号表示两边的数量怎样？",
+      "choices": [
+        "一样多",
+        "左边一定多",
+        "右边一定多"
+      ],
+      "expected": "一样多",
+      "hint": "等号两边表示相同的数量。",
+      "explanation": "等号表示两边相等。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:sun-warms:1",
+      "version": "1",
+      "topic_id": "mt_iGSfQg3g5c",
+      "subject": "science",
+      "question": "阳光照在地面上，通常会让地面怎样？",
+      "choices": [
+        "变暖",
+        "结冰",
+        "消失"
+      ],
+      "expected": "变暖",
+      "hint": "晒太阳时会觉得更暖和。",
+      "explanation": "阳光能让地面变暖。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:half:1",
+      "version": "1",
+      "topic_id": "mt_-hTTat0mBR",
+      "subject": "math",
+      "question": "4颗糖平均分给2个人，每个人几颗？",
+      "choices": [
+        "1",
+        "3",
+        "2"
+      ],
+      "expected": "2",
+      "hint": "分成数量一样的两组。",
+      "explanation": "4平均分成两组，每组2颗，每组是原来的一半。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:weather:1",
+      "version": "1",
+      "topic_id": "mt_jc9k_HJQGd",
+      "subject": "science",
+      "question": "天空有雨滴落下来，这是什么天气？",
+      "choices": [
+        "雪天",
+        "雨天",
+        "晴天"
+      ],
+      "expected": "雨天",
+      "hint": "从云里落下的是水滴。",
+      "explanation": "有雨滴落下时是雨天。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:share:1",
+      "version": "1",
+      "topic_id": "mt_LpSuPgL31x",
+      "subject": "math",
+      "question": "6个苹果平均分给3个人，每人几个？",
+      "choices": [
+        "2",
+        "3",
+        "1"
+      ],
+      "expected": "2",
+      "hint": "给每人一个，再给每人一个。",
+      "explanation": "6平均分给3个人，每人2个。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:butterfly:1",
+      "version": "1",
+      "topic_id": "mt_Wr6DDgr_kH",
+      "subject": "science",
+      "question": "蝴蝶小时候有一个阶段是什么样子？",
+      "choices": [
+        "小鱼",
+        "毛毛虫",
+        "小鸟"
+      ],
+      "expected": "毛毛虫",
+      "hint": "它会爬，常常吃叶子。",
+      "explanation": "蝴蝶的幼虫阶段是毛毛虫。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:count-two:1",
+      "version": "1",
+      "topic_id": "mt_nvdpxAJTBG",
+      "subject": "math",
+      "question": "两个两个地数：2、4、6，接下来是几？",
+      "choices": [
+        "7",
+        "8",
+        "9"
+      ],
+      "expected": "8",
+      "hint": "每次增加2。",
+      "explanation": "6再加2是8。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:temperature:1",
+      "version": "1",
+      "topic_id": "mt_PrWc-HZzDl",
+      "subject": "science",
+      "question": "哪个工具可以测量温度？",
+      "choices": [
+        "温度计",
+        "尺子",
+        "时钟"
+      ],
+      "expected": "温度计",
+      "hint": "工具的名字里有温度。",
+      "explanation": "温度计用来测量温度。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:add-combine:2",
+      "version": "1",
+      "topic_id": "mt_OvyoRo47K-",
+      "subject": "math",
+      "question": "盒子里有4支笔，又放进2支，一共有几支？",
+      "choices": [
+        "6",
+        "5",
+        "7"
+      ],
+      "expected": "6",
+      "hint": "从4继续数两次。",
+      "explanation": "4加2等于6。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:wind:2",
+      "version": "1",
+      "topic_id": "mt_j7cj9eWN7w",
+      "subject": "science",
+      "question": "风能吹动下面哪样东西？",
+      "choices": [
+        "大山",
+        "轻轻的树叶",
+        "房子的地基"
+      ],
+      "expected": "轻轻的树叶",
+      "hint": "想想轻的东西遇到风会怎样。",
+      "explanation": "风能吹动轻轻的树叶。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:subtract:2",
+      "version": "1",
+      "topic_id": "mt_zuKAX6lcYR",
+      "subject": "math",
+      "question": "有7个气球，送走3个，还剩几个？",
+      "choices": [
+        "4",
+        "5",
+        "3"
+      ],
+      "expected": "4",
+      "hint": "从7往回数3次。",
+      "explanation": "7减3等于4。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:plant-parts:2",
+      "version": "1",
+      "topic_id": "mt_xT6jPzyj92",
+      "subject": "science",
+      "question": "植物通常哪个部分长在土里？",
+      "choices": [
+        "叶子",
+        "花",
+        "根"
+      ],
+      "expected": "根",
+      "hint": "想想拔起小草时下面的部分。",
+      "explanation": "根通常长在土里，帮助植物站稳。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:compare-groups:2",
+      "version": "1",
+      "topic_id": "mt__h7hvT4tEb",
+      "subject": "math",
+      "question": "红盒有6颗糖，蓝盒有2颗糖，哪个盒里的糖少？",
+      "choices": [
+        "一样多",
+        "红盒",
+        "蓝盒"
+      ],
+      "expected": "蓝盒",
+      "hint": "少的一组数量更小。",
+      "explanation": "2比6小，所以蓝盒里的糖少。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:needs:2",
+      "version": "1",
+      "topic_id": "mt_L1469gt34A",
+      "subject": "science",
+      "question": "小鸟要活着，下面哪样是它需要的？",
+      "choices": [
+        "塑料袋",
+        "食物",
+        "玩具车"
+      ],
+      "expected": "食物",
+      "hint": "动物需要吃东西来获得能量。",
+      "explanation": "小鸟需要适合它的食物。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:one-more:2",
+      "version": "1",
+      "topic_id": "mt_sYpKWbq5ra",
+      "subject": "math",
+      "question": "8再多1是多少？",
+      "choices": [
+        "7",
+        "10",
+        "9"
+      ],
+      "expected": "9",
+      "hint": "在8后面数一个数。",
+      "explanation": "8再多1是9。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:senses:2",
+      "version": "1",
+      "topic_id": "mt_nwSWPTENmv",
+      "subject": "science",
+      "question": "我们主要用哪个部位看颜色？",
+      "choices": [
+        "眼睛",
+        "耳朵",
+        "脚"
+      ],
+      "expected": "眼睛",
+      "hint": "看红色和蓝色用哪里。",
+      "explanation": "眼睛帮助我们看颜色和形状。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:pairs-ten:2",
+      "version": "1",
+      "topic_id": "mt_7XcCG43ZZW",
+      "subject": "math",
+      "question": "一共有8颗珠子，一组有5颗，另一组几颗？",
+      "choices": [
+        "2",
+        "4",
+        "3"
+      ],
+      "expected": "3",
+      "hint": "找一个数，和5合起来是8。",
+      "explanation": "5和3合起来是8。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:push-pull:2",
+      "version": "1",
+      "topic_id": "mt_B3W5EfimJw",
+      "subject": "science",
+      "question": "把玩具车向前推远，是推还是拉？",
+      "choices": [
+        "推",
+        "拉",
+        "都不是"
+      ],
+      "expected": "推",
+      "hint": "东西离自己越来越远。",
+      "explanation": "用手把车向前推远是推。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:number-order:2",
+      "version": "1",
+      "topic_id": "mt_U0waNfD8PB",
+      "subject": "math",
+      "question": "12和15，哪个数更小？",
+      "choices": [
+        "15",
+        "一样大",
+        "12"
+      ],
+      "expected": "12",
+      "hint": "比较两个数的个位。",
+      "explanation": "12比15小。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:materials:2",
+      "version": "1",
+      "topic_id": "mt_ZAJvTcroFO",
+      "subject": "science",
+      "question": "一张画画用的纸，属于哪种材料？",
+      "choices": [
+        "金属",
+        "木头",
+        "纸"
+      ],
+      "expected": "纸",
+      "hint": "摸起来薄薄的，能折起来。",
+      "explanation": "画画用的纸属于纸这种材料。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:equals:2",
+      "version": "1",
+      "topic_id": "mt_oIzycTBeE4",
+      "subject": "math",
+      "question": "3加2和4加1，结果一样吗？",
+      "choices": [
+        "不一样",
+        "一样",
+        "不知道"
+      ],
+      "expected": "一样",
+      "hint": "先算两边各是多少。",
+      "explanation": "两边都是5，所以一样。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:sun-warms:2",
+      "version": "1",
+      "topic_id": "mt_iGSfQg3g5c",
+      "subject": "science",
+      "question": "同样的两块石头，一块晒太阳，一块在阴凉处。通常哪块更暖？",
+      "choices": [
+        "阴凉处的",
+        "晒太阳的",
+        "一定一样"
+      ],
+      "expected": "晒太阳的",
+      "hint": "阳光会给晒到的石头带来热。",
+      "explanation": "通常晒太阳的石头更暖。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:half:2",
+      "version": "1",
+      "topic_id": "mt_-hTTat0mBR",
+      "subject": "math",
+      "question": "6块饼干平均分成两份，每份几块？",
+      "choices": [
+        "3",
+        "2",
+        "4"
+      ],
+      "expected": "3",
+      "hint": "找一个数，两个这样的数合起来是6。",
+      "explanation": "两份各3块，数量一样多。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:weather:2",
+      "version": "1",
+      "topic_id": "mt_jc9k_HJQGd",
+      "subject": "science",
+      "question": "天空有很多云遮住太阳，通常叫什么天气？",
+      "choices": [
+        "晴天",
+        "雪天",
+        "阴天"
+      ],
+      "expected": "阴天",
+      "hint": "太阳被云遮住了。",
+      "explanation": "天空有很多云、遮住太阳时，通常叫阴天。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:share:2",
+      "version": "1",
+      "topic_id": "mt_LpSuPgL31x",
+      "subject": "math",
+      "question": "9块积木平均分成3组，每组几块？",
+      "choices": [
+        "2",
+        "4",
+        "3"
+      ],
+      "expected": "3",
+      "hint": "三组一样多，合起来是9。",
+      "explanation": "三组各3块，一共9块。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:butterfly:2",
+      "version": "1",
+      "topic_id": "mt_Wr6DDgr_kH",
+      "subject": "science",
+      "question": "毛毛虫变成蛹以后，会变成什么？",
+      "choices": [
+        "蝴蝶",
+        "石头",
+        "小猫"
+      ],
+      "expected": "蝴蝶",
+      "hint": "完成变化后，它会有翅膀。",
+      "explanation": "毛毛虫经过蛹的阶段会变成蝴蝶。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:count-two:2",
+      "version": "1",
+      "topic_id": "mt_nvdpxAJTBG",
+      "subject": "math",
+      "question": "两个两个地数：4、6、8，接下来是几？",
+      "choices": [
+        "9",
+        "12",
+        "10"
+      ],
+      "expected": "10",
+      "hint": "从8再往后数2。",
+      "explanation": "8再加2是10。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:temperature:2",
+      "version": "1",
+      "topic_id": "mt_PrWc-HZzDl",
+      "subject": "science",
+      "question": "温度说的是东西怎样？",
+      "choices": [
+        "有多重",
+        "有多热或多冷",
+        "有多长"
+      ],
+      "expected": "有多热或多冷",
+      "hint": "想想热水和冷水的区别。",
+      "explanation": "温度表示东西有多热或多冷。",
+      "modality": "oral",
+      "book_id": null
+    },
+    {
+      "id": "lesson:reading:three-little-pigs:1",
+      "version": "1",
+      "topic_id": "reading:three-little-pigs",
+      "subject": "reading",
+      "question": "哪一只小猪的房子没有被大灰狼吹倒？",
+      "choices": [
+        "大哥",
+        "三弟",
+        "二哥"
+      ],
+      "expected": "三弟",
+      "hint": "回想砖头房是谁盖的。",
+      "explanation": "三弟盖的砖头房很结实。",
+      "modality": "screen",
+      "book_id": "three-little-pigs"
+    },
+    {
+      "id": "lesson:reading:three-little-pigs:2",
+      "version": "1",
+      "topic_id": "reading:three-little-pigs",
+      "subject": "reading",
+      "question": "三弟用什么材料盖房子？",
+      "choices": [
+        "稻草",
+        "木头",
+        "砖头"
+      ],
+      "expected": "砖头",
+      "hint": "故事里最后留下的是最结实的房子。",
+      "explanation": "三弟用砖头盖了房子。",
+      "modality": "screen",
+      "book_id": "three-little-pigs"
+    },
+    {
+      "id": "lesson:reading:little-red-riding-hood:1",
+      "version": "1",
+      "topic_id": "reading:little-red-riding-hood",
+      "subject": "reading",
+      "question": "小红帽去看望谁？",
+      "choices": [
+        "奶奶",
+        "老师",
+        "国王"
+      ],
+      "expected": "奶奶",
+      "hint": "故事里生病的是谁。",
+      "explanation": "小红帽带着点心去看望奶奶。",
+      "modality": "screen",
+      "book_id": "little-red-riding-hood"
+    },
+    {
+      "id": "lesson:reading:little-red-riding-hood:2",
+      "version": "1",
+      "topic_id": "reading:little-red-riding-hood",
+      "subject": "reading",
+      "question": "是谁救了小红帽和奶奶？",
+      "choices": [
+        "大灰狼",
+        "猎人",
+        "小猪"
+      ],
+      "expected": "猎人",
+      "hint": "故事最后有一个人赶来了。",
+      "explanation": "猎人救了小红帽和奶奶。",
+      "modality": "screen",
+      "book_id": "little-red-riding-hood"
+    },
+    {
+      "id": "lesson:reading:ugly-duckling:1",
+      "version": "1",
+      "topic_id": "reading:ugly-duckling",
+      "subject": "reading",
+      "question": "丑小鸭长大后是什么动物？",
+      "choices": [
+        "小鸡",
+        "鸭子",
+        "天鹅"
+      ],
+      "expected": "天鹅",
+      "hint": "它长大后脖子长长的，羽毛很漂亮。",
+      "explanation": "丑小鸭其实是一只天鹅。",
+      "modality": "screen",
+      "book_id": "ugly-duckling"
+    },
+    {
+      "id": "lesson:reading:ugly-duckling:2",
+      "version": "1",
+      "topic_id": "reading:ugly-duckling",
+      "subject": "reading",
+      "question": "丑小鸭为什么离开家？",
+      "choices": [
+        "被其他动物嘲笑",
+        "去买礼物",
+        "去上学"
+      ],
+      "expected": "被其他动物嘲笑",
+      "hint": "回想故事开始时大家怎样对待它。",
+      "explanation": "它被嘲笑、很难过，所以离开了家。",
+      "modality": "screen",
+      "book_id": "ugly-duckling"
+    },
+    {
+      "id": "lesson:reading:tortoise-hare:1",
+      "version": "1",
+      "topic_id": "reading:tortoise-hare",
+      "subject": "reading",
+      "question": "比赛中，兔子在树下做了什么？",
+      "choices": [
+        "画画",
+        "睡觉",
+        "唱歌"
+      ],
+      "expected": "睡觉",
+      "hint": "它觉得自己跑得很快，放松了。",
+      "explanation": "兔子跑到一半在树下睡着了。",
+      "modality": "screen",
+      "book_id": "tortoise-hare"
+    },
+    {
+      "id": "lesson:reading:tortoise-hare:2",
+      "version": "1",
+      "topic_id": "reading:tortoise-hare",
+      "subject": "reading",
+      "question": "最后谁先到达终点？",
+      "choices": [
+        "兔子",
+        "同时到达",
+        "乌龟"
+      ],
+      "expected": "乌龟",
+      "hint": "谁一直一步一步向前走。",
+      "explanation": "乌龟坚持走到了终点。",
+      "modality": "screen",
+      "book_id": "tortoise-hare"
+    },
+    {
+      "id": "lesson:reading:goldilocks:1",
+      "version": "1",
+      "topic_id": "reading:goldilocks",
+      "subject": "reading",
+      "question": "金发姑娘在哪张床上睡着了？",
+      "choices": [
+        "小熊的床",
+        "熊爸爸的床",
+        "森林里的床"
+      ],
+      "expected": "小熊的床",
+      "hint": "故事里小熊的东西刚刚好。",
+      "explanation": "她在小熊的床上睡着了。",
+      "modality": "screen",
+      "book_id": "goldilocks"
+    },
+    {
+      "id": "lesson:reading:goldilocks:2",
+      "version": "1",
+      "topic_id": "reading:goldilocks",
+      "subject": "reading",
+      "question": "这个故事提醒我们做什么？",
+      "choices": [
+        "随便进别人家",
+        "进别人家前先征得同意",
+        "把椅子坐坏"
+      ],
+      "expected": "进别人家前先征得同意",
+      "hint": "想想小女孩最后学到的教训。",
+      "explanation": "进别人家、用别人的东西前，要先征得同意。",
+      "modality": "screen",
+      "book_id": "goldilocks"
+    },
+    {
+      "id": "lesson:reading:emperors-clothes:1",
+      "version": "1",
+      "topic_id": "reading:emperors-clothes",
+      "subject": "reading",
+      "question": "是谁说出了皇帝没穿衣服的真相？",
+      "choices": [
+        "皇帝",
+        "骗子",
+        "一个小孩"
+      ],
+      "expected": "一个小孩",
+      "hint": "故事最后有人勇敢说了实话。",
+      "explanation": "一个小孩说出了真相。",
+      "modality": "screen",
+      "book_id": "emperors-clothes"
+    },
+    {
+      "id": "lesson:reading:emperors-clothes:2",
+      "version": "1",
+      "topic_id": "reading:emperors-clothes",
+      "subject": "reading",
+      "question": "大臣们看见那种神奇布料了吗？",
+      "choices": [
+        "没看见",
+        "看见了",
+        "看见一半"
+      ],
+      "expected": "没看见",
+      "hint": "他们什么也没看见，却不敢说。",
+      "explanation": "大臣们没看见布料，骗子根本没有织出那种布料。",
+      "modality": "screen",
+      "book_id": "emperors-clothes"
+    }
+  ]
+}

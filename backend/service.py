@@ -325,4 +325,6 @@ def create_app(settings=None):
 
     install_learning_routes(app, store, account, body)
     bridge.install(app, account)
+    from backend.study import install_study_routes
+    install_study_routes(app, store, account, bridge)
     return app

@@ -5,6 +5,7 @@ import time
 from datetime import datetime, timezone
 
 from fastapi import HTTPException, Request
+from backend.study import COURSE_FIELDS, load_catalog, validate_course_event
 
 EVENT_SCHEMA = """
 CREATE TABLE IF NOT EXISTS learning_events (
@@ -19,14 +20,22 @@ FIELDS = {"id", "occurred_at", "source", "subject", "question_id", "question", "
 
 
 def validate_event(value, *, trusted_robot=False):
-    if not isinstance(value, dict) or set(value) != (FIELDS | {"robot", "topic_id", "taxonomy_version"} if trusted_robot else FIELDS):
+    course = isinstance(value, dict) and "schema_version" in value
+    expected_fields = (COURSE_FIELDS | {"robot"} if trusted_robot else COURSE_FIELDS) if course else FIELDS | {"robot", "topic_id", "taxonomy_version"} if trusted_robot else FIELDS
+    if not isinstance(value, dict) or set(value) != expected_fields:
         raise ValueError("答题记录字段不完整或包含未知字段")
+    if course:
+        try:
+            catalog = load_catalog()
+        except (OSError, ValueError) as error:
+            raise HTTPException(503, "课程暂时无法读取，请稍后重试") from error
+        validate_course_event(catalog, value, trusted_robot=trusted_robot)
     for key, limit in [("id", 64), ("question_id", 120), ("question", 500), ("expected", 200), ("answer", 2000 if trusted_robot else 200)]:
         if not isinstance(value[key], str) or not 1 <= len(value[key]) <= limit:
             raise ValueError("答题记录文字为空或过长")
     if not re.fullmatch(r"[a-zA-Z0-9_-]{16,64}", value["id"]):
         raise ValueError("答题记录 ID 无效")
-    subjects = {"math", "english", "chinese", "science"} | ({"history", "computing", "life_skills", "social", "learning_to_learn"} if trusted_robot else set())
+    subjects = {"math", "english", "chinese", "science"} | ({"history", "computing", "life_skills", "social", "learning_to_learn"} if trusted_robot else set()) | ({"reading"} if course else set())
     if value["source"] != ("robot" if trusted_robot else "web") or value["subject"] not in subjects:
         raise ValueError("不支持的答题来源或学科")
     if trusted_robot and (value["robot"] not in {"Jarvis", "Friday"} or any(value[k] is not None and (not isinstance(value[k], str) or not 1 <= len(value[k]) <= 80) for k in ("topic_id", "taxonomy_version"))):
