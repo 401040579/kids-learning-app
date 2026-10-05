@@ -96,6 +96,9 @@ const server=http.createServer((req,res)=>{
   assert.equal(await second.page.evaluate(()=>LearningAccount.identity),null);
   assert.equal(await second.page.locator('#account-form').isVisible(),true);
   assert.equal(await second.page.evaluate(()=>RewardSystem.data.totalScore),80);
+  await passwordLogin(second.page);
+  await second.page.waitForFunction(()=>!LearningAccount.busy&&AccountSecurity.data?.passkeys.length===0);
+  assert.equal(await second.page.evaluate(()=>AccountSecurity.data.sessions.find(s=>s.current).method),'password');
   assert.deepEqual(pageErrors,[]);
   fs.writeFileSync(path.join(scratch,'result.json'),JSON.stringify({checks:['password-login','browser-credential-create','second-device-passkey-login','guest-profile-retained','session-list','revoke-other-session','passkey-relogin','remove-key-revokes-session','removed-key-blocked','password-fallback'],pageErrors},null,2));
   console.log('PASS: 10 browser WebAuthn/session scenarios; evidence '+scratch);
