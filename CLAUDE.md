@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v83，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v84，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -309,3 +309,11 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - 目录 fetch 和 JSON 正文都有 10 秒超时，失败清缓存允许重试；后端目录缺失时原账号/旧加减法仍可工作，新课程明确不可用。SW 预缓存题库与两个模块，游客离线可用。
 - 同机题单仅把到期 oral 数学/科学课接入下次正常机器人家教，总计最多占两个名额；不信题单自带题干和答案，不送 screen 阅读题、不新增公开唤醒接口。详见 `docs/短课与复习.md`。
 - 报告区分提示/未知提示，周期证据与全部历史到期复习分开；课程与报告共用本账号设置时区。Mac 异机备份工具见 scripts/offsite_backup.py，实际配置/副本/LaunchAgent 均在仓库外；失败保留旧副本。
+
+## 通行密钥与会话管理（2026-10-05）
+
+- `js/accountSecurity.js` 使用浏览器原生 WebAuthn，接入原 `LearningAccount.perform` 的冻结/切号/刷新流程。首次登记须已登录并确认现有密码；用户在自己的设备完成 Face ID/Touch ID/解锁码验证，不收集私钥，不替用户在真实账号登记测试密钥。
+- RP ID 为网页域名 `app.tao.irish`，API 仍为 `api.tao.irish`。挑战五分钟有效、一次消费、绑定 Cookie/Origin；注册还绑定账号/会话/密码哈希。写事务复核身份、撤销与计数器，兼容 iCloud 同步密钥的零计数器。
+- 公钥、会话显示信息与挑战新增独立表；旧 sessions 四列保持兼容。`/api/security` 只读本账号列表；移除密钥撤销经它登录的会话，管理员重置/停用清理密钥。会话名称来自浏览器提示，不称为已认证物理设备或设备白名单。
+- 列表使用 textContent；异步回包检查 owner，设备提示取消不提交登记，现有密码与游客回退保留。密钥移除不会删除 Apple“密码”中的项目。备份保留公钥并清除会话/元数据/挑战。
+- 回归 `tests/browser-passkeys.cjs` 使用临时账号与软件认证器，不接触生产儿童数据和用户钥匙串。HTTP 测试须使用 localhost 域名，不能把环回 IP 用作 RP；重载后的签到提醒正常等待/关闭。真实 Apple 设备登记由用户完成。

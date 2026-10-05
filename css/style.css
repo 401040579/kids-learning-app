@@ -2389,6 +2389,14 @@ body {
 .account-panel p { line-height: 1.6; margin: 10px 0; }
 .account-note { font-size: 14px; color: #666; }
 .account-panel button:disabled { opacity: .5; cursor: not-allowed; }
+.account-security { margin-top: 20px; padding: 14px; border: 1px solid #eadfe7; border-radius: 12px; }
+.account-security summary { cursor: pointer; font-weight: 700; }
+.account-security h4 { margin: 20px 0 10px; }
+.security-list { padding: 0; list-style: none; }
+.security-list li { display: flex; align-items: center; gap: 12px; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+.security-list li > div { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.security-list small { display: block; line-height: 1.5; color: #666; margin-top: 5px; }
+.security-list button { flex-shrink: 0; }
 
 .profile-form {
   background: white;

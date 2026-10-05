@@ -614,6 +614,8 @@
               <button type="submit" class="btn-save-profile" data-i18n="account.login">登录</button>
               <p class="account-note" data-i18n="account.managed">账号由家长联系管理员开通，不提供自行注册。</p>
             </form>
+            <button id="security-login" type="button" class="btn-save-profile" hidden data-i18n="security.login">用通行密钥登录</button>
+            <p id="security-unsupported" class="account-note" hidden data-i18n="security.unsupported">当前浏览器不能使用通行密钥，请在 Safari 等支持的浏览器中打开网站，或使用密码登录。</p>
             <div id="account-tools" hidden>
               <p class="account-note" data-i18n="account.localUnchanged">登录后打开独立学习存档并自动同步。退出会回到原游客存档，游客旧记录不会自动迁入。</p>
               <p id="account-backup-status"></p>
@@ -625,6 +627,26 @@
                 <button id="account-use-cloud" type="button" class="btn-import" data-i18n="account.useCloud">采用云端存档</button>
               </div>
               <button id="account-logout" type="button" class="btn-save-profile" data-i18n="account.logout">退出账号</button>
+              <details id="security-panel" class="account-security" hidden>
+                <summary data-i18n="security.title">通行密钥与登录会话</summary>
+                <p class="account-note" data-i18n="security.note">先用现有密码确认，再由设备创建通行密钥。以后可用 Face ID、Touch ID 或设备密码登录。通行密钥可能通过 iCloud 同步。</p>
+                <form id="security-form">
+                  <label for="security-label" data-i18n="security.label">通行密钥名称，例如 Iris 的 iPad</label>
+                  <input id="security-label" class="form-input" type="text" maxlength="50" required autocomplete="off">
+                  <label for="security-password" data-i18n="security.password">现有账号密码（确认添加）</label>
+                  <input id="security-password" class="form-input" type="password" maxlength="128" required autocomplete="current-password">
+                  <button id="security-add" type="submit" class="btn-save-profile" data-i18n="security.add">添加通行密钥</button>
+                </form>
+                <h4 data-i18n="security.keys">已登记的通行密钥</h4>
+                <ul id="security-keys" class="security-list"></ul>
+                <h4 data-i18n="security.sessions">登录会话</h4>
+                <p class="account-note" data-i18n="security.sessionNote">名称来自浏览器信息，不是硬件认证。同一台设备可能有多个会话；撤销后可使用有效密码或通行密钥重新登录。</p>
+                <ul id="security-sessions" class="security-list"></ul>
+                <div class="data-buttons">
+                  <button id="security-refresh" type="button" class="btn-refresh" data-i18n="security.refresh">刷新密钥与会话</button>
+                  <button id="security-revoke-others" type="button" class="btn-import" data-i18n="security.revokeOthers">退出其他登录会话</button>
+                </div>
+              </details>
             </div>
             <p id="account-message" role="status" aria-live="polite"></p>
           </section>
@@ -2929,6 +2951,7 @@
   <script src="js/safeStorage.js"></script>
   <script src="js/dataBackup.js"></script>
   <script src="js/accountConfig.js"></script>
+  <script src="js/accountSecurity.js"></script>
   <script src="js/account.js"></script>
   <script src="js/learningHistory.js"></script>
   <script src="js/learningPlan.js"></script>

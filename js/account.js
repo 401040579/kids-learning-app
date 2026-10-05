@@ -21,6 +21,7 @@ const LearningAccount = {
     this.element('refresh').addEventListener('click', () => this.refresh());
     this.element('logout').addEventListener('click', () => this.logout());
     this.element('use-cloud').addEventListener('click', () => this.useCloud());
+    AccountSecurity.init();
     window.addEventListener('profileChanged', () => { clearTimeout(this.profileTimer); this.profileTimer = setTimeout(() => this.syncProfile(), 5000); });
     window.addEventListener('online', () => this.syncProfile());
     setInterval(() => { if (document.visibilityState === 'visible') this.syncProfile(); }, 30000);
@@ -50,6 +51,7 @@ const LearningAccount = {
     }
     this.booted = true;
     this.render();
+    if (this.identity) AccountSecurity.refresh();
   },
 
   adoptSnapshot() {
@@ -102,6 +104,7 @@ const LearningAccount = {
     this.element('backup-status').textContent = this.snapshot
       ? (this.snapshot.backup ? this.t('savedAt').replace('{time}', new Date(this.snapshot.updated_at * 1000).toLocaleString()) : this.t('noBackup'))
       : '';
+    AccountSecurity.render();
   },
 
   message(value) { this.element('message').textContent = value; },
