@@ -19,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 from backend.learning import EVENT_SCHEMA, install_learning_routes, check_owner
+from backend.passkeys import SCHEMA as PASSKEY_SCHEMA, record_session, device_label
 
 HASHER = PasswordHasher(time_cost=3, memory_cost=65536, parallelism=1)
 LOGIN_SLOTS = threading.BoundedSemaphore(2)
@@ -83,7 +84,7 @@ class Store:
             self.path.touch(mode=0o600)
         os.chmod(self.path, 0o600)
         with self.connection() as db:
-            db.executescript(SCHEMA + EVENT_SCHEMA)
+            db.executescript(SCHEMA + EVENT_SCHEMA + PASSKEY_SCHEMA)
         self.dummy_hash = HASHER.hash(secrets.token_urlsafe(32))
 
     @contextmanager
@@ -123,6 +124,10 @@ class Store:
             if disable:
                 db.execute("UPDATE accounts SET disabled=1 WHERE id=?", (row["id"],))
             db.execute("DELETE FROM sessions WHERE account_id=?", (row["id"],))
+            # An administrator recovery/reset must also invalidate enrolled credentials.
+            if hashed or disable:
+                db.execute("DELETE FROM passkeys WHERE account_id=?", (row["id"],))
+                db.execute("DELETE FROM passkey_challenges WHERE account_id=?", (row["id"],))
             db.execute("DELETE FROM login_limits WHERE bucket=?", ("user:" + login,))
 
     def consume_login_limit(self, login):
@@ -139,7 +144,16 @@ class Store:
             for bucket, _, duration in limits:
                 db.execute("INSERT INTO login_limits VALUES (?,?,1) ON CONFLICT(bucket) DO UPDATE SET attempts=attempts+1", (bucket, now + duration))
 
-    def login(self, login, password, old_token):
+    def issue_session(self, db, row, old_token, label, method='password', passkey_id=None):
+        token, csrf = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
+        now = int(time.time())
+        db.execute("DELETE FROM sessions WHERE expires<=? OR token_hash=?", (now, digest(old_token)))
+        db.execute("INSERT INTO sessions VALUES (?,?,?,?)", (digest(token), row["id"], csrf, now + SESSION_SECONDS))
+        record_session(db, digest(token), label, method, passkey_id)
+        db.execute("DELETE FROM sessions WHERE account_id=? AND token_hash NOT IN (SELECT token_hash FROM sessions WHERE account_id=? ORDER BY expires DESC, rowid DESC LIMIT 8)", (row["id"], row["id"]))
+        return token, {"id": row["id"], "username": row["username"], "display_name": row["display_name"], "csrf": csrf}
+
+    def login(self, login, password, old_token, label='浏览器 / 服务客户端'):
         self.consume_login_limit(login)
         if not LOGIN_SLOTS.acquire(blocking=False):
             raise HTTPException(429, "登录繁忙，请稍后再试")
@@ -152,19 +166,14 @@ class Store:
                 valid = False
             if not valid or not row or row["disabled"]:
                 raise HTTPException(401, "账号或密码不正确")
-            token, csrf = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
-            now = int(time.time())
             with self.connection() as db:
                 db.execute("BEGIN IMMEDIATE")
                 # 管理员可能在慢哈希计算期间禁用或重置了账号，必须再检查。
                 current = db.execute("SELECT * FROM accounts WHERE id=?", (row["id"],)).fetchone()
                 if not current or current["disabled"] or current["password_hash"] != row["password_hash"]:
                     raise HTTPException(401, "账号或密码不正确")
-                db.execute("DELETE FROM sessions WHERE expires<=? OR token_hash=?", (now, digest(old_token)))
-                db.execute("INSERT INTO sessions VALUES (?,?,?,?)", (digest(token), row["id"], csrf, now + SESSION_SECONDS))
-                # 一个家庭账号最多保留 8 个设备会话。
-                db.execute("DELETE FROM sessions WHERE account_id=? AND token_hash NOT IN (SELECT token_hash FROM sessions WHERE account_id=? ORDER BY expires DESC, rowid DESC LIMIT 8)", (row["id"], row["id"]))
-            return token, {"id": row["id"], "username": row["username"], "display_name": row["display_name"], "csrf": csrf}
+                result = self.issue_session(db, current, old_token, label)
+            return result
         finally:
             LOGIN_SLOTS.release()
 
@@ -173,6 +182,9 @@ class Store:
             row = db.execute("SELECT a.id,a.username,a.display_name,s.csrf FROM sessions s JOIN accounts a ON a.id=s.account_id WHERE s.token_hash=? AND s.expires>? AND a.disabled=0", (digest(token), int(time.time()))).fetchone()
         if not row:
             raise HTTPException(401, "请先登录")
+        with (nullcontext(connection) if connection is not None else self.connection()) as db:
+            db.execute('UPDATE session_details SET last_seen=? WHERE token_hash=? AND '
+                       '(last_seen IS NULL OR last_seen<?)', (int(time.time()), digest(token), int(time.time()) - 60))
         return dict(row)
 
 
@@ -273,7 +285,8 @@ def create_app(settings=None):
         password = values.get("password")
         if not isinstance(password, str) or not 1 <= len(password) <= 128:
             raise HTTPException(401, "账号或密码不正确")
-        token, identity = await run_in_threadpool(store.login, login_name, password, request.cookies.get(cookie))
+        token, identity = await run_in_threadpool(store.login, login_name, password, request.cookies.get(cookie),
+                                                device_label(request.headers.get('user-agent', '')))
         response.set_cookie(cookie, token, max_age=SESSION_SECONDS, httponly=True, secure=settings.secure, samesite="strict", path="/")
         return identity
 
@@ -327,4 +340,6 @@ def create_app(settings=None):
     bridge.install(app, account)
     from backend.study import install_study_routes
     install_study_routes(app, store, account, bridge)
+    from backend.passkeys import install as install_passkeys
+    install_passkeys(app, store, settings, cookie, account, body, digest, HASHER)
     return app

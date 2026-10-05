@@ -29,6 +29,10 @@ def backup_database(source, directory, keep=14):
             original.backup(copy, pages=128, sleep=0.05)
             # 恢复后必须重新登录，备份不携带有效会话。
             copy.execute("DELETE FROM sessions")
+            # Cookie-bound WebAuthn challenges and browser metadata are ephemeral too.
+            for table in ('passkey_challenges', 'session_details'):
+                if copy.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
+                    copy.execute(f'DELETE FROM {table}')
             copy.commit()
             # Backup API 会继承 WAL 模式；独立副本必须收敛到单文件再改名。
             copy.execute("PRAGMA journal_mode=DELETE")
