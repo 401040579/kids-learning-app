@@ -1,0 +1,50 @@
+/* 学校日常：书包清单与阅读日志，沿用粉黄主题，白纸与浅蓝分区便于孩子扫描。 */
+.school-day { position:fixed; inset:0; z-index:12000; overflow:auto; background:#eaf7fd; color:#20334c; overscroll-behavior:contain; }
+.school-day.hidden { display:none; }
+.sd-sheet { max-width:900px; min-height:100%; margin:auto; background:#fff; padding:20px 24px max(24px,env(safe-area-inset-bottom)); }
+.sd-header { display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:4px solid #ffd93d; padding:8px 0 14px; position:sticky; top:0; background:#fff; z-index:4; }
+.sd-header h2 { margin:0; font-size:clamp(24px,5vw,34px); color:#9c2859; }
+.school-day button,.sd-link { font:inherit; min-height:44px; border:1px solid #b2c3d6; border-radius:10px; color:#20334c; background:#f5f9fc; padding:10px 14px; cursor:pointer; }
+.school-day button:hover { background:#eaf7fd; }
+.school-day button:disabled { opacity:.55; cursor:default; }
+.school-day button:focus-visible,.school-day input:focus-visible,.school-day select:focus-visible,.sd-link:focus-visible { outline:3px solid #196b9a; outline-offset:3px; }
+.school-day input,.school-day select { font:inherit; width:100%; min-height:44px; border:1px solid #9badc3; border-radius:8px; padding:10px; background:white; color:#20334c; box-sizing:border-box; }
+.school-day label { text-align:left; }
+.sd-toolbar { display:flex; align-items:end; gap:12px; flex-wrap:wrap; margin:16px 0; }
+.sd-profile-label { display:flex; flex:1; flex-direction:column; gap:6px; }
+.sd-tabs { display:flex; gap:8px; border-bottom:1px solid #d1dce7; padding:8px 0 12px; position:sticky; top:70px; background:#fff; z-index:3; }
+.sd-tabs button[aria-current="true"] { background:#20334c; color:#fff; border-color:#20334c; }
+.sd-status { margin:12px 0; min-height:24px; color:#9c2859; font-weight:600; overflow-wrap:anywhere; }
+.sd-note { color:#4c6079; font-size:14px; line-height:1.55; max-width:75ch; }
+.sd-today-heading { display:flex; gap:16px; justify-content:space-between; font-size:14px; color:#4c6079; }
+.sd-section { margin:0 0 24px; padding:0 0 22px; border-bottom:1px solid #d1dce7; }
+.sd-section h3 { margin:0 0 12px; font-size:22px; }
+.sd-section h4 { font-size:17px; margin:18px 0 8px; }
+.sd-section p { line-height:1.55; overflow-wrap:anywhere; }
+.sd-reading-goals { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.sd-goal { padding:16px; border-radius:16px 16px 4px 4px; background:#eaf7fd; }
+.sd-goal strong { font-size:22px; }
+.sd-goal p { margin:8px 0; }
+.sd-goal progress { display:block; width:100%; margin:0 0 12px; height:12px; accent-color:#167366; }
+.sd-checks { display:grid; gap:8px; }
+.school-day .sd-check { display:flex; gap:12px; align-items:center; min-height:48px; padding:6px 10px; border:1px solid #d1dce7; border-radius:8px; cursor:pointer; }
+.school-day .sd-check input { width:24px; min-height:24px; height:24px; flex-shrink:0; accent-color:#167366; }
+.sd-check:has(input:checked) { background:#e4f6ed; }
+.sd-field { display:flex; flex-direction:column; gap:6px; margin:0 0 14px; font-size:15px; }
+.sd-field[hidden] { display:none; }
+.sd-fields { display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
+.school-day .sd-primary { display:block; margin-top:12px; background:#167366; color:#fff; border-color:#167366; font-weight:600; }
+.school-day .sd-primary:hover { background:#11584e; }
+.sd-timer { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:12px 0; }
+.sd-timer output { flex-basis:100%; font-size:44px; font-variant-numeric:tabular-nums; font-weight:600; }
+.school-day [hidden] { display:none !important; }
+.sd-record-row { border-top:1px solid #d1dce7; padding:10px 0; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.sd-record-row p { flex:1 1 100%; margin:0 0 4px; }
+.sd-link { display:inline-block; text-decoration:none; margin:8px 0; box-sizing:border-box; }
+.sd-table { width:100%; border-collapse:collapse; font-size:14px; table-layout:fixed; }
+.sd-table caption { text-align:left; margin:10px 0; font-weight:600; }
+.sd-table th,.sd-table td { padding:8px 5px; border-bottom:1px solid #d1dce7; text-align:left; overflow-wrap:anywhere; vertical-align:top; }
+.sd-table th:nth-child(2) { width:30%; }
+.sd-print { display:none; }
+@media (max-width:500px) { .sd-sheet { padding:12px 14px max(20px,env(safe-area-inset-bottom)); } .sd-fields { grid-template-columns:1fr; } .sd-reading-goals { gap:10px; } .sd-goal { padding:12px; } .sd-goal strong { font-size:20px; } .sd-tabs { gap:6px; } .sd-tabs button { flex:1; padding:10px 6px; } .sd-today-heading { gap:8px; } }
+@media print { body > * { display:none !important; } body > #school-day { display:block !important; position:static; overflow:visible; background:white; } .sd-sheet { padding:0; max-width:none; } .sd-sheet > * { display:none !important; } .sd-sheet > .sd-print { display:block !important; } .sd-table { font-size:11pt; } .sd-table tr { break-inside:avoid; } .sd-table thead { display:table-header-group; } }

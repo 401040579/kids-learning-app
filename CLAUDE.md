@@ -317,3 +317,10 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - 公钥、会话显示信息与挑战新增独立表；旧 sessions 四列保持兼容。`/api/security` 只读本账号列表；移除密钥撤销经它登录的会话，管理员重置/停用清理密钥。会话名称来自浏览器提示，不称为已认证物理设备或设备白名单。
 - 列表使用 textContent；异步回包检查 owner，设备提示取消不提交登记，现有密码与游客回退保留。密钥移除不会删除 Apple“密码”中的项目。备份保留公钥并清除会话/元数据/挑战。
 - 回归 `tests/browser-passkeys.cjs` 使用临时账号与软件认证器，不接触生产儿童数据和用户钥匙串。HTTP 测试须使用 localhost 域名，不能把环回 IP 用作 RP；重载后的签到提醒正常等待/关闭。真实 Apple 设备登记由用户完成。
+
+## 学校日常（2026-10-07）
+
+- 首页第一屏「🎒 学校日常」使用 `schoolDayStore.js` / `schoolDay.js`；契约、隐私例外和验证见 `docs/学校日常.md`。
+- 学校记录使用独立本机账号/档案键，有意排除 `DataBackup`、云 dirty/同步、学习事件、Bark、Analytics、AI 与机器人。不要加入普通备份或学习云允许表；家长可单独下载学校备份。
+- Pacific 日期；计时和补记需确认。iReady Reading 可计英文，Math 不计；校内周总量 null 表示未知，不能推算补足。月度书籍列表不含 iReady。通用模板未核验学校原始 PPT，发布代码不含真实儿童资料。
+- v85 预缓存学校 JS/CSS。回归见 `tests/school-day.test.cjs` 和 `tests/browser-school-day.cjs`（180秒上限，临时账号/SQLite）。手机截图不进公开仓库。

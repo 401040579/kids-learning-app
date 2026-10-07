@@ -144,6 +144,8 @@ const Analytics = {
 
   // 发送事件到 GA
   sendEvent(eventName, params = {}) {
+    // 学校私密面板不产生 Analytics 事件；自动 GA 收集也由面板暂停。
+    if (typeof SchoolDay !== 'undefined' && SchoolDay.isOpen) return;
     if (typeof gtag === 'function') {
       gtag('event', eventName, params);
       console.log('📊 Analytics:', eventName, params);
