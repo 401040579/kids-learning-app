@@ -26,7 +26,14 @@
 .photo-reading .pr-speaking { background: #f4e4ff; border-color: #9453b6; box-shadow: 0 0 0 2px #9453b622; }
 .pr-sentence textarea { grid-column: 1 / -1; width: 100%; min-height: 110px; font: inherit; line-height: 1.6; padding: 12px; box-sizing: border-box; border: 1px solid #bba5c8; border-radius: 12px; }
 .pr-error { color: #963d32; grid-column: 2 / -1; }
-.pr-original { width: 100%; max-height: 70vh; object-fit: contain; margin-top: 12px; }
+.pr-image-tools { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+.pr-image-viewport { overflow: auto; max-height: 70dvh; border: 1px solid #ded5e3; border-radius: 10px; background: #eee9e3; }
+.pr-image-stage { position: relative; line-height: 0; }
+.pr-original { display: block; width: 100%; height: auto; }
+.photo-reading .pr-image-sentence { position: absolute; min-height: 0; padding: 0; border: 1px solid #996a2299; border-radius: 3px; background: #ffd65a16; }
+.photo-reading .pr-image-sentence:hover { background: #ffd65a40; }
+.photo-reading .pr-image-sentence.pr-speaking { background: #ad68e24d; border-color: #7835a6; box-shadow: 0 0 0 2px #9453b644; }
+.pr-usage { margin: 14px 0; font-size: .9rem; color: #6d6473; }
 #pr-video { display: block; width: 100%; max-height: 45vh; border-radius: 14px; background: #24212a; object-fit: contain; }
 #pr-status, #pr-play-status { min-height: 1.5em; color: #794662; }
 .pr-empty-icon { font-size: 64px; margin-top: 45px; }

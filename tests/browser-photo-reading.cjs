@@ -32,7 +32,7 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
   env.PHOTO_READING_KEY_FILE=path.join(scratch,'missing.key');
   const created=spawnSync(python,['-m','backend.manage','create','photo-reader','--name','Reader','--password-stdin'],{cwd:root,env,input:password+'\n',encoding:'utf8'});assert.equal(created.status,0,created.stderr);
   const fixture=path.join(scratch,'fixture.py');
-  fs.writeFileSync(fixture,`import io,wave,uvicorn,asyncio\nfrom backend.service import create_app\napp=create_app()\ns=app.state.photo_reading\ns.provider.key='local-fixture-only'\nasync def recognize(image):\n return {'sentences':[{'text':'The little cat sat on a mat.','language':'en-US','uncertain':False},{'text':'小猫坐在垫子上。','language':'zh-CN','uncertain':True},{'text':'<img src=x onerror=alert(1)>','language':'en-US','uncertain':True}],'needs_review':True}\nasync def speech(text,language):\n if text=='Slow sentence.': await asyncio.sleep(5)\n b=io.BytesIO()\n with wave.open(b,'wb') as w:\n  w.setnchannels(1);w.setsampwidth(2);w.setframerate(24000);w.writeframes(b'\\x01\\x00'*48000)\n return b.getvalue()\ns.provider.recognize=recognize\ns.provider.speech=speech\nuvicorn.run(app,host='127.0.0.1',port=${port},access_log=False)\n`);
+  fs.writeFileSync(fixture,`import io,wave,uvicorn,asyncio\nfrom backend.service import create_app\napp=create_app()\ns=app.state.photo_reading\ns.provider.key='local-fixture-only'\nasync def recognize(image):\n return {'sentences':[{'text':'The little cat sat on a mat.','language':'en-US','uncertain':False,'regions':[{'x1':50,'y1':100,'x2':650,'y2':180},{'x1':50,'y1':200,'x2':350,'y2':280}]},{'text':'小猫坐在垫子上。','language':'zh-CN','uncertain':True,'regions':[{'x1':50,'y1':400,'x2':650,'y2':480}]},{'text':'<img src=x onerror=alert(1)>','language':'en-US','uncertain':True}],'needs_review':True,'usage':{'input_tokens':1801,'output_tokens':711,'total_tokens':2512,'cached_input_tokens':0,'cache_write_tokens':1798,'estimated_usd':0.00058055,'price_date':'2026-10-15','cache_hit':False}}\nasync def speech(text,language):\n if text=='Slow sentence.': await asyncio.sleep(5)\n b=io.BytesIO()\n with wave.open(b,'wb') as w:\n  w.setnchannels(1);w.setsampwidth(2);w.setframerate(24000);w.writeframes(b'\\x01\\x00'*48000)\n return b.getvalue()\ns.provider.recognize=recognize\ns.provider.speech=speech\nuvicorn.run(app,host='127.0.0.1',port=${port},access_log=False)\n`);
   api=spawn(python,[fixture],{cwd:root,env,stdio:['ignore','ignore','pipe']});api.stderr.on('data',d=>apiError+=d);
   for(let i=0;i<60;i++){try{if((await fetch(endpoint+'/api/health')).ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}
   assert.equal(api.exitCode,null,apiError);
@@ -79,8 +79,8 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
     assert.equal(await page.locator('.pr-sentence-play[lang="zh-CN"]').count(),1);
     assert.equal(await page.locator('.pr-sentence-play img').count(),0);
     assert.equal(await page.evaluate(()=>PhotoReading.root.scrollWidth<=PhotoReading.root.clientWidth),true);
-    await page.locator('#pr-content summary').click();assert.equal(await page.locator('.pr-original').isVisible(),true);
-    await page.locator('#pr-content summary').click();
+    assert.equal(await page.locator('.pr-original').isVisible(),true);
+    await page.locator('.pr-usage summary').click();assert.match(await page.locator('.pr-usage').textContent(),/0.000581/);
     await page.locator('.pr-sentence-play').first().scrollIntoViewIfNeeded();
     await page.screenshot({path:path.join(scratch,'photo-reader-mobile.png'),fullPage:true});
   });
@@ -92,6 +92,24 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
     await page.locator('#pr-stop').click();await page.locator('.pr-sentence-play').first().click();await page.waitForFunction(()=>!PhotoReading.audio.paused);
     assert.equal(count(),before);await page.locator('#pr-stop').click();
   });
+  await test('图片跨行点击朗读同一句，缩放保持比例，文字与原图同步高亮',async()=>{
+    const regions=page.locator('.pr-image-sentence');assert.equal(await regions.count(),3);
+    await regions.nth(1).click();await page.waitForFunction(()=>!PhotoReading.audio.paused);
+    assert.match(await page.evaluate(()=>PhotoReading.activeSentence),/:0$/);
+    assert.equal(await page.locator('.pr-image-sentence.pr-speaking').count(),2);
+    assert.equal(await page.locator('.pr-sentence-play.pr-speaking').count(),1);
+    await page.locator('#pr-stop').click();
+    const first=await regions.first().boundingBox();
+    await page.getByRole('combobox',{name:'放大',exact:true}).selectOption('2');
+    const enlarged=await regions.first().boundingBox();assert.ok(Math.abs(enlarged.width/first.width-2)<0.02);
+    const alignment=await page.evaluate(()=>{
+      const image=document.querySelector('.pr-original').getBoundingClientRect(),hit=document.querySelector('.pr-image-sentence').getBoundingClientRect();
+      return [(hit.x-image.x)/image.width,(hit.y-image.y)/image.height,PhotoReading.root.scrollWidth<=PhotoReading.root.clientWidth];
+    });assert.ok(Math.abs(alignment[0]-0.05)<0.005);assert.ok(Math.abs(alignment[1]-0.1)<0.005);assert.equal(alignment[2],true);
+    await regions.nth(2).click();await page.waitForFunction(()=>!PhotoReading.audio.paused);assert.match(await page.evaluate(()=>PhotoReading.activeSentence),/:1$/);
+    await page.locator('#pr-stop').click();await page.getByRole('combobox',{name:'放大',exact:true}).selectOption('1');
+    assert.match(await page.locator('#pr-content').textContent(),/部分句子未能定位/);
+  });
   await test('修改文字和语言后只朗读修订内容',async()=>{
     await page.locator('.pr-sentence').first().getByRole('button',{name:'修改文字',exact:true}).click();
     await page.locator('.pr-sentence textarea').fill('你好，小猫。');await page.locator('.pr-sentence select').selectOption('zh-CN');
@@ -101,6 +119,10 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
   });
   await test('异步语音返回前切句，旧结果不会播放',async()=>{
     let delayed=false;
+    await page.evaluate(()=>{
+      const row=PhotoReading.pages.find(p=>p.id===PhotoReading.selected).sentences[1],key=row.language+'\n'+row.text;
+      const cached=PhotoReading.audioCache.get(key);if(cached)URL.revokeObjectURL(cached.url);PhotoReading.audioCache.delete(key);
+    });
     await page.route('**/api/photo-reading/speech',async route=>{delayed=true;await new Promise(r=>setTimeout(r,400));try{await route.continue();}catch{}});
     await page.locator('.pr-sentence-play').nth(1).click();await page.waitForFunction(()=>PhotoReading.activeSentence?.endsWith(':1'));
     await page.locator('.pr-sentence-play').first().click();await page.waitForFunction(()=>!PhotoReading.audio.paused);
@@ -130,7 +152,7 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
     await page.evaluate(()=>window.dispatchEvent(new CustomEvent('accountChanged')));
     assert.deepEqual(await page.evaluate(()=>[PhotoReading.pages.length,PhotoReading.audioCache.size,PhotoReading.isOpen]),[0,0,false]);
   });
-  await test('PWA 从 v85 升级到 v87，点读资源完整缓存并可离线打开',async()=>{
+  await test('PWA 从 v85 升级到 v88，点读资源完整缓存并可离线打开',async()=>{
     baseline=true;const upgrade=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
     await upgrade.route('**/*',route=>route.request().url().startsWith(origin+'/')||route.request().url().startsWith(endpoint+'/')?route.continue():route.abort());
     await upgrade.addInitScript(()=>localStorage.setItem('appLanguage','zh'));
@@ -142,7 +164,7 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
     await p.locator('#update-notification .update-btn').click();
     await p.waitForFunction(()=>typeof PhotoReading!=='undefined'&&PhotoReading.root&&LearningAccount.booted);
     await ready(p);await open(p);
-    const cache=await p.evaluate(async()=>{const c=await caches.open('kids-learning-v87');return [!!await c.match('/js/photoReading.js'),!!await c.match('/css/photoReading.css'),(await caches.keys()).includes('kids-learning-v85')];});
+    const cache=await p.evaluate(async()=>{const c=await caches.open('kids-learning-v88');return [!!await c.match('/js/photoReading.js'),!!await c.match('/css/photoReading.css'),(await caches.keys()).includes('kids-learning-v85')];});
     assert.deepEqual(cache,[true,true,false]);await p.locator('#pr-close').click();
     await upgrade.setOffline(true);await p.reload();await ready(p);await open(p);assert.equal(await p.locator('#photo-reading').isVisible(),true);
     await upgrade.close();

@@ -178,7 +178,7 @@ const PhotoReading = {
         try {
           const result = await this.request('recognize',{image:page.image});
           if (!this.valid(epoch,owner) || !this.pages.includes(page)) break;
-          page.sentences = result.sentences; page.review = result.needs_review;
+          page.sentences = result.sentences; page.review = result.needs_review; page.usage = result.usage;
           page.state = 'ready';
         } catch (error) {
           if (!this.valid(epoch,owner)) break;
@@ -239,6 +239,54 @@ const PhotoReading = {
       else { this.stopAudio(); this.el('play-status').textContent = this.t('speechFailed'); }
     }
   },
+  renderImage(page, content) {
+    const controls = this.node('div',undefined,'pr-image-tools');
+    controls.append(this.node('strong',this.t('imageRead')));
+    const label = this.node('label',this.t('zoom') + ' '), zoom = this.node('select');
+    zoom.setAttribute('aria-label',this.t('zoom'));
+    for (const value of [1,1.5,2,3]) {
+      const option = this.node('option',value === 1 ? this.t('fit') : value + '×');
+      option.value = value; zoom.append(option);
+    }
+    zoom.value = page.zoom || 1; label.append(zoom); controls.append(label);
+    const viewport = this.node('div',undefined,'pr-image-viewport');
+    const stage = this.node('div',undefined,'pr-image-stage');
+    stage.style.width = ((page.zoom || 1) * 100) + '%';
+    zoom.onchange = () => { page.zoom = Number(zoom.value); stage.style.width = (page.zoom * 100) + '%'; };
+    const img = this.node('img'); img.src = page.image; img.alt = this.t('original'); img.className='pr-original';
+    stage.append(img);
+    let mapped = 0;
+    page.sentences.forEach((row,index) => {
+      let hasRegion = false;
+      for (const box of Array.isArray(row.regions) ? row.regions.slice(0,16) : []) {
+        if (!box) continue;
+        const {x1,y1,x2,y2} = box;
+        if (![x1,y1,x2,y2].every(n => Number.isFinite(n) && n >= 0 && n <= 1000) || x2 <= x1 || y2 <= y1) continue;
+        const hit = this.node('button',undefined,'pr-image-sentence'); hit.type='button';
+        hit.dataset.sentence = page.id+':'+index; hit.lang=row.language;
+        hit.setAttribute('aria-label',this.t('readSentence',{number:index+1,text:row.text})); hit.title=row.text;
+        Object.assign(hit.style,{left:x1/10+'%',top:y1/10+'%',width:(x2-x1)/10+'%',height:(y2-y1)/10+'%'});
+        hit.onclick = () => this.play(page,index); stage.append(hit); hasRegion=true;
+      }
+      if (hasRegion) mapped++;
+    });
+    viewport.append(stage); content.append(controls,viewport);
+    if (page.state === 'ready' && page.sentences.length) {
+      content.append(this.node('p',this.t(mapped === page.sentences.length ? 'imageHint' : 'mappingPartial'),'pr-note'));
+    }
+  },
+  renderUsage(page, content) {
+    const usage = page.usage;
+    if (!usage) return;
+    const details = this.node('details',undefined,'pr-usage');
+    details.append(this.node('summary',this.t('usageTitle')));
+    details.append(this.node('p',this.t('usageTokens',{input:usage.input_tokens,output:usage.output_tokens,
+      cached:usage.cached_input_tokens,writes:usage.cache_write_tokens || 0,total:usage.total_tokens}),'pr-note'));
+    const cost = Number.isFinite(usage.estimated_usd) ? this.t('usageCost',{cost:usage.estimated_usd.toFixed(6),date:usage.price_date}) : this.t('usageUnknown');
+    details.append(this.node('p',usage.cache_hit ? this.t('usageCached') : cost,'pr-note'));
+    if (usage.cache_hit) details.append(this.node('p',this.t('usageOriginal') + ' ' + cost,'pr-note'));
+    content.append(details);
+  },
   render() {
     this.el('count').textContent = this.t('pages',{count:this.pages.length});
     this.el('recognize').disabled = this.recognizing || this.importing || !this.pages.some(p => p.state !== 'ready');
@@ -260,15 +308,16 @@ const PhotoReading = {
     const content = this.el('content'); content.replaceChildren();
     const page = this.pages.find(p => p.id===this.selected);
     if (!page) { content.append(this.node('div','📖','pr-empty-icon'),this.node('h3',this.t('empty')),this.node('p',this.t('emptyHint'),'pr-note')); return; }
-    const original = this.node('details'); original.append(this.node('summary',this.t('original')));
-    const img = this.node('img'); img.src = page.image; img.alt = this.t('original'); img.className='pr-original'; original.append(img); content.append(original);
+    this.renderImage(page,content);
     if (page.state==='error') {
       content.append(this.node('p',this.t(page.error),'pr-error'));
       const retry = this.button('retry',() => this.recognize(page)); retry.disabled=this.recognizing; content.append(retry);
     }
     if (page.state!=='ready') { content.append(this.node('p',this.t(page.state))); return; }
+    this.renderUsage(page,content);
     if (!page.sentences.length) content.append(this.node('p',this.t('noText')));
     if (page.review) content.append(this.node('p',this.t('review'),'pr-error'));
+    if (page.sentences.length) content.append(this.node('h3',this.t('sentenceList')));
     page.sentences.forEach((row,index) => {
       const section = this.node('section',undefined,'pr-sentence');
       const play = this.node('button',row.text,'pr-sentence-play'); play.type='button'; play.lang=row.language;
