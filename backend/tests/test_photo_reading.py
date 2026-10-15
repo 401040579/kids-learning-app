@@ -15,8 +15,9 @@ from backend.service import Settings, create_app
 
 ORIGIN = 'https://app.tao.irish'
 PASSWORD = 'photo-test-password-123456'
-PAGE = {'sentences': [{'text': 'Hello, little cat!', 'language': 'en-US', 'uncertain': False},
-                      {'text': '小猫，你好。', 'language': 'zh-CN', 'uncertain': True}], 'needs_review': True}
+PAGE = {'sentences': [{'text': 'Hello, little cat!', 'language': 'en-US', 'uncertain': False,
+                      'regions': [{'x1': 50, 'y1': 100, 'x2': 700, 'y2': 180}, {'x1': 50, 'y1': 200, 'x2': 300, 'y2': 280}]},
+                      {'text': '小猫，你好。', 'language': 'zh-CN', 'uncertain': True, 'regions': []}], 'needs_review': True}
 
 
 @pytest.fixture(autouse=True)
@@ -166,8 +167,51 @@ def test_http_provider_contract(monkeypatch):
     client = httpx.AsyncClient
     monkeypatch.setattr(reading.httpx, 'AsyncClient', lambda **kw: client(transport=httpx.MockTransport(handle), **kw))
     result = asyncio.run(reading.Provider().recognize(photo()))
-    assert result == PAGE
+    assert result == {**PAGE, 'usage': None}
     assert len(seen) == 1
+
+
+def test_regions_invalid_coordinates_fall_back_to_text():
+    for bad in [None, {}, [None], [{'x1': True, 'y1': 0, 'x2': 100, 'y2': 100}],
+                [{'x1': -1, 'y1': 0, 'x2': 100, 'y2': 100}],
+                [{'x1': 0, 'y1': 0, 'x2': float('nan'), 'y2': 100}],
+                [{'x1': 100, 'y1': 0, 'x2': 10, 'y2': 100}],
+                [{'x1': 0, 'y1': 0, 'x2': 1001, 'y2': 100}], [{}] * 17]:
+        row = {**PAGE['sentences'][0], 'regions': bad}
+        result = reading.sentences_result({'sentences': [row], 'needs_review': False})
+        assert result['sentences'][0] == {**row, 'regions': []}
+    assert reading.sentences_result(PAGE) == PAGE
+
+
+def test_usage_cost_accounts_for_cache_writes_reads_and_unknown_models():
+    result = {'model': 'gpt-6-luna', 'service_tier': 'default', 'usage': {
+        'input_tokens': 1801, 'input_tokens_details': {'cached_tokens': 0, 'cache_write_tokens': 1798},
+        'output_tokens': 711}}
+    usage = reading.recognition_usage(result, 'gpt-6-luna')
+    assert usage['estimated_usd'] == 0.00058055
+    assert usage['total_tokens'] == 2512
+    result['usage']['input_tokens_details'] = {'cached_tokens': 1000, 'cache_write_tokens': 700}
+    assert reading.recognition_usage(result, 'gpt-6-luna')['estimated_usd'] == 0.0004631
+    assert reading.recognition_usage(result, 'custom-model')['estimated_usd'] is None
+    result['service_tier'] = 'fast'
+    assert reading.recognition_usage(result, 'gpt-6-luna')['estimated_usd'] is None
+    result['usage']['input_tokens_details']['cache_write_tokens'] = 2000
+    assert reading.recognition_usage(result, 'gpt-6-luna') is None
+    assert reading.recognition_usage({}, 'gpt-6-luna') is None
+
+
+def test_cached_usage_is_marked_without_mutating_original(setup):
+    app, browser, owner = setup
+    service = app.state.photo_reading
+    service.provider.key = 'test'
+    original = {**PAGE, 'usage': {'input_tokens': 100, 'output_tokens': 20, 'cache_hit': False}}
+    async def recognize(image): return original
+    service.provider.recognize = recognize
+    first = post(browser, owner, image=photo()).json()
+    second = post(browser, owner, image=photo()).json()
+    assert first['usage']['cache_hit'] is False
+    assert second['usage']['cache_hit'] is True
+    assert original['usage']['cache_hit'] is False
 
 
 def test_realtime_provider_wav_and_incomplete_rejection(monkeypatch):
