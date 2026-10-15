@@ -1,9 +1,11 @@
-const CACHE_NAME = 'kids-learning-v85';
+const CACHE_NAME = 'kids-learning-v86';
 const urlsToCache = [
   '/',
   '/index.html',
   '/css/style.css',
   '/css/schoolDay.css',
+  '/css/photoReading.css',
+  '/js/photoReading.js',
   '/js/schoolDayStore.js',
   '/js/schoolDay.js',
   // 探索视频列表：由 GitHub Actions 定时抓取并写入仓库的同源静态 JSON。

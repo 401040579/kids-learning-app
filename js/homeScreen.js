@@ -22,6 +22,7 @@ const HomeScreen = {
   // 4 屏配置。id 与 RecentlyUsed.features 的 key 保持一致（注意 'sleep-music' 带连字符）
   PAGES: [
     { apps: [
+      { id: 'photoReading', icon: '📷', i18nKey: 'photo.title', fallback: '拍照点读', action: () => PhotoReading.open() },
       { id: 'schoolDay', icon: '🎒', i18nKey: 'school.title', fallback: '学校日常', action: () => SchoolDay.open() },
       { id: 'explore', icon: '🎬', i18nKey: 'menu.explore', fallback: '探索视频', action: () => navigateTo('explore') },
       { id: 'math', icon: '🔢', i18nKey: 'menu.math', fallback: '数学游戏', action: () => navigateTo('math') },
