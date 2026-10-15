@@ -342,4 +342,6 @@ def create_app(settings=None):
     install_study_routes(app, store, account, bridge)
     from backend.passkeys import install as install_passkeys
     install_passkeys(app, store, settings, cookie, account, body, digest, HASHER)
+    from backend.photo_reading import install as install_photo_reading
+    install_photo_reading(app, store, account, body)
     return app

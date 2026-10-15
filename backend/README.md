@@ -212,3 +212,33 @@ RP ID 固定为首个 `LEARNING_ORIGINS` 的网页主机，生产为 `app.tao.ir
 备份继续使用 SQLite Backup API，保留已登记公钥，删除副本中的会话、会话显示信息和未完成挑战。恢复后密码或已有有效密钥可重新登录。后端回滚保留新增表即可恢复旧密码入口；旧客户端不依赖通行密钥。回滚期间不得使用旧管理员重置工具恢复账号，因为旧工具不会撤销密钥。
 
 验证：`pytest backend/tests -q`、`node --test tests/*.test.cjs`、`node tests/browser-passkeys.cjs`。后者需要 Playwright 和 Chrome，使用临时账号、数据库及 CTAP2 软件认证器，覆盖浏览器注册、第二环境登录、撤销、移除及备用密码，不接触用户钥匙串。软件认证器结果不能代替用户 Apple 设备的真实登记验收。
+
+## 拍照点读 API（2026-10-15）
+
+`backend/photo_reading.py` 接入独立学习服务，保持现有 Cookie、Origin、CSRF 和账号归属校验。
+照片和识别文字不写入数据库、云存档或学习日志。每页单独识别，可保留成功页并重试失败页。
+
+| 方法 | 路径 | 契约 |
+| --- | --- | --- |
+| GET | `/api/photo-reading/status` | 登录后返回 `configured`，仅代表找到密钥，不保证上游可用 |
+| POST | `/api/photo-reading/recognize` | `expected_account_id`、JPEG/PNG `image` data URL；返回 `account_id/sentences/needs_review` |
+| POST | `/api/photo-reading/speech` | `expected_account_id/text/language`；返回 `audio/wav`，语言为 `zh-CN` 或 `en-US` |
+
+服务端配置（绝不能写入前端、仓库或静态站点）：
+
+- 默认从 `~/.local/share/kids-learning/openai.key` 读取纯 key，文件权限必须为 0600，必须位于仓库外。也可指定 `PHOTO_READING_KEY_FILE`。原用户级 `run.sh` 无需额外 source 文件。
+- `PHOTO_READING_OPENAI_KEY` 是可选的专用环境变量，优先于文件。不会自动使用其他应用的 `OPENAI_API_KEY`。
+- `PHOTO_READING_VISION_MODEL` 默认 `gpt-6-luna`；`PHOTO_READING_VOICE_MODEL` 默认 `gpt-realtime-2.1-mini`。修改配置后重启独立学习服务，不重启机器人。
+- 新依赖：`httpx`、`Pillow`、`websockets`，版本见 requirements。没有密钥时原功能仍可用，点读接口明确返回 `notConfigured`。
+
+识别使用 Responses API 的结构化输出和 `store:false`，最多 120 句、每句 800 字符、每页总计 20,000 字符；超限/不完整响应拒绝，不返回成功截断。图片最大 3 MiB，实际解码格式和像素数也校验。模糊/无法完整转写内容由模型标记待核对，仍可能有未标出的识别错误，前端提供原图与修改文字。
+朗读使用独立 Realtime WebSocket 生成每句 24kHz 单声道 PCM，并包装为 WAV；不采集麦克风、不累积对话历史。提示要求逐字朗读，并将供应商返回的朗读文本与原文校验（忽略标点、空白和大小写）；不一致则拒绝播放。数字转写等同义形式也可能被拒绝，可修改为实际读法后重试。此校验不是对声波的独立语音识别，真实发音仍需试听。
+
+成功结果按账号和内容摘要缓存，30 分钟有效，最多 256 项/32 MiB；过期条目在下次请求清理。前端当前页面最多缓存 40 句/24 MiB，刷新、清空或切换账号后移除。缓存命中不再次调用供应商；超时/错误不缓存、不自动重试。浏览器取消后终止上游任务，释放并发槽；结果返回前复查会话撤销。
+
+每账号 OCR 12 次/分钟、50 次/24 小时，TTS 40 次/分钟、300 次/24 小时；全服务 OCR 100 次、TTS 600 次/24 小时，最多同时 4 项。24 小时窗口自首次计数起算，SQLite 只保存计数与过期时间；失败尝试也计数。这是请求限额，不是美元硬预算。上游未知结果或超时后手动重试仍可能再次计费。
+
+2026-10-15 价格参考：`gpt-6-luna` 标准输入 $0.10/百万 token、输出 $0.50/百万 token；语音模型音频输出 $20/百万 token，按每 50ms 一个输出音频 token 估算约 $0.024/分钟，另加文字费用。每天新生成 10 分钟约 $7.20/月语音费用；图片识别按尺寸、页数与输出计算。不是固定月费，缓存失效后再生成会收费。
+官方依据：[识别模型价格](https://developers.openai.com/api/docs/models/gpt-6-luna)、[价格](https://developers.openai.com/api/docs/pricing)、[语音计费](https://developers.openai.com/api/docs/guides/voice-latency-cost?voice-api=realtime)、[图片输入](https://developers.openai.com/api/docs/guides/images-vision)、[语音事件](https://developers.openai.com/api/docs/guides/realtime-conversations)。
+
+验证：`python -m pytest backend/tests/test_photo_reading.py -q`；`node tests/browser-photo-reading.cjs` 需要 Playwright。后者使用临时测试账号、数据库、合成相机和 AI 测试夹具，不连接生产或付费 API。真实 API 验收必须另外执行。
