@@ -1713,7 +1713,7 @@ Object.assign(I18n.translations.en, {
   "photo.eyebrow": "A page to capture. A sentence to hear.",
   "photo.title": "Photo Reader",
   "photo.close": "Close",
-  "photo.privacy": "Photos and text stay in this page until you reload or clear them. Recognizing sends pages to the AI service; tapping a sentence generates AI speech. Sign in first.",
+  "photo.privacy": "Photos and text on this device are removed on reload or clear. Recognition and speech send content to the AI service, with temporary result caching. Voices are AI-generated. Sign in first.",
   "photo.camera": "📷 Open camera",
   "photo.album": "＋ Add photos",
   "photo.nativeCamera": "Device camera",

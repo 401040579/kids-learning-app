@@ -224,6 +224,8 @@ RP ID 固定为首个 `LEARNING_ORIGINS` 的网页主机，生产为 `app.tao.ir
 | POST | `/api/photo-reading/recognize` | `expected_account_id`、JPEG/PNG `image` data URL；返回 `account_id/sentences/needs_review` |
 | POST | `/api/photo-reading/speech` | `expected_account_id/text/language`；返回 `audio/wav`，语言为 `zh-CN` 或 `en-US` |
 
+本应用不将书页写入持久存储，但内容会传给 OpenAI。`store:false` 不等于供应商零保留；上游处理按所用 API 和账号的数据政策执行。
+
 服务端配置（绝不能写入前端、仓库或静态站点）：
 
 - 默认从 `~/.local/share/kids-learning/openai.key` 读取纯 key，文件权限必须为 0600，必须位于仓库外。也可指定 `PHOTO_READING_KEY_FILE`。原用户级 `run.sh` 无需额外 source 文件。

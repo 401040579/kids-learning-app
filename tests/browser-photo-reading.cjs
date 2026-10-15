@@ -130,7 +130,7 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
     await page.evaluate(()=>window.dispatchEvent(new CustomEvent('accountChanged')));
     assert.deepEqual(await page.evaluate(()=>[PhotoReading.pages.length,PhotoReading.audioCache.size,PhotoReading.isOpen]),[0,0,false]);
   });
-  await test('PWA 从 v85 升级到 v86，点读资源完整缓存并可离线打开',async()=>{
+  await test('PWA 从 v85 升级到 v87，点读资源完整缓存并可离线打开',async()=>{
     baseline=true;const upgrade=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
     await upgrade.route('**/*',route=>route.request().url().startsWith(origin+'/')||route.request().url().startsWith(endpoint+'/')?route.continue():route.abort());
     await upgrade.addInitScript(()=>localStorage.setItem('appLanguage','zh'));
@@ -142,7 +142,7 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
     await p.locator('#update-notification .update-btn').click();
     await p.waitForFunction(()=>typeof PhotoReading!=='undefined'&&PhotoReading.root&&LearningAccount.booted);
     await ready(p);await open(p);
-    const cache=await p.evaluate(async()=>{const c=await caches.open('kids-learning-v86');return [!!await c.match('/js/photoReading.js'),!!await c.match('/css/photoReading.css'),(await caches.keys()).includes('kids-learning-v85')];});
+    const cache=await p.evaluate(async()=>{const c=await caches.open('kids-learning-v87');return [!!await c.match('/js/photoReading.js'),!!await c.match('/css/photoReading.css'),(await caches.keys()).includes('kids-learning-v85')];});
     assert.deepEqual(cache,[true,true,false]);await p.locator('#pr-close').click();
     await upgrade.setOffline(true);await p.reload();await ready(p);await open(p);assert.equal(await p.locator('#photo-reading').isVisible(),true);
     await upgrade.close();

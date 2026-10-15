@@ -1717,7 +1717,7 @@ Object.assign(I18n.translations.zh, {
   "photo.eyebrow": "拍下这一页，听懂这一句",
   "photo.title": "拍照点读",
   "photo.close": "关闭",
-  "photo.privacy": "照片与文字只保留在当前页面，刷新或清空后移除。点击识别会将书页发送给 AI 服务；点句子会生成 AI 语音。请先登录。",
+  "photo.privacy": "本机照片与文字在刷新或清空后移除。识别与朗读会将内容发送给 AI 服务，并短时缓存处理结果。声音由 AI 生成，请先登录。",
   "photo.camera": "📷 连续拍照",
   "photo.album": "＋ 从相册添加",
   "photo.nativeCamera": "手机相机",
