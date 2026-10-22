@@ -48,3 +48,11 @@
   .pr-sentence > button:last-of-type { grid-column: 2; justify-self: end; }
   .photo-reading .pr-sentence-play { font-size: 1.12rem; padding: 12px; }
 }
+.pr-library { padding: 12px 16px; background: #f7edf3; border: 1px solid #e7d7e1; border-radius: 16px; }
+.pr-library .pr-add { margin: 8px 0; }
+.pr-library label { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.pr-library input { width: min(220px,100%); min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid #ded5e3; border-radius: 10px; font: inherit; box-sizing: border-box; }
+#pr-books { max-height: 160px; overflow-y: auto; }
+.pr-book { max-width: 100%; overflow-wrap: anywhere; text-align: left; }
+.pr-book[aria-pressed=true] { background: #ead5e5; border-color: #a65684; }
+#pr-book-status { font-size: .92rem; color: #794662; line-height: 1.6; }

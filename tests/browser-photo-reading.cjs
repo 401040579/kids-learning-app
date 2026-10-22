@@ -121,10 +121,12 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
     let delayed=false;
     await page.evaluate(()=>{
       const row=PhotoReading.pages.find(p=>p.id===PhotoReading.selected).sentences[1],key=row.language+'\n'+row.text;
-      const cached=PhotoReading.audioCache.get(key);if(cached)URL.revokeObjectURL(cached.url);PhotoReading.audioCache.delete(key);
+      PhotoReading.cancelSpeech();row.text='Delayed sentence.';
     });
     await page.route('**/api/photo-reading/speech',async route=>{delayed=true;await new Promise(r=>setTimeout(r,400));try{await route.continue();}catch{}});
-    await page.locator('.pr-sentence-play').nth(1).click();await page.waitForFunction(()=>PhotoReading.activeSentence?.endsWith(':1'));
+    await page.evaluate(()=>PhotoReading.render());
+    const outgoing=page.waitForRequest(r=>r.url().endsWith('/speech')&&r.postDataJSON().text==='Delayed sentence.');
+    await page.locator('.pr-sentence-play').nth(1).click();await outgoing;await page.waitForFunction(()=>PhotoReading.activeSentence?.endsWith(':1'));
     await page.locator('.pr-sentence-play').first().click();await page.waitForFunction(()=>!PhotoReading.audio.paused);
     await page.waitForTimeout(600);assert.equal(delayed,true);assert.match(await page.evaluate(()=>PhotoReading.activeSentence),/:0$/);
     await page.locator('#pr-stop').click();await page.unroute('**/api/photo-reading/speech');
@@ -152,7 +154,53 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
     await page.evaluate(()=>window.dispatchEvent(new CustomEvent('accountChanged')));
     assert.deepEqual(await page.evaluate(()=>[PhotoReading.pages.length,PhotoReading.audioCache.size,PhotoReading.isOpen]),[0,0,false]);
   });
-  await test('PWA 从 v85 升级到 v88，点读资源完整缓存并可离线打开',async()=>{
+  await test('本机事务拒绝旧窗口覆盖，清理副本不删除其他书共用语音',async()=>{
+    const result=await page.evaluate(async()=>{
+      const owner=LearningAccount.identity.id,row={text:'Shared fixture.',language:'en-US'};
+      const b={owner,id:crypto.randomUUID(),title:'temporary',pages:[{state:'ready',image:'data:fixture',sentences:[row]}]};
+      await PhotoLibrary.save(b);const stale=await PhotoLibrary.book(owner,b.id),current=await PhotoLibrary.book(owner,b.id);
+      current.title='new';await PhotoLibrary.save(current);stale.title='stale';
+      let rejected=false;try{await PhotoLibrary.save(stale);}catch(e){rejected=e.code==='localConflict';}
+      const kept=(await PhotoLibrary.book(owner,b.id)).title;
+      const other={...b,id:crypto.randomUUID(),_stamp:undefined};await PhotoLibrary.save(other);
+      await PhotoLibrary.saveAudio(owner,PhotoLibrary.key(row),new Blob(['shared'],{type:'audio/wav'}));
+      await PhotoLibrary.remove(b);const shared=!!await PhotoLibrary.audio(owner,PhotoLibrary.key(row));
+      await PhotoLibrary.remove(other);const removed=!await PhotoLibrary.audio(owner,PhotoLibrary.key(row));
+      return {rejected,kept,shared,removed};
+    });assert.deepEqual(result,{rejected:true,kept:'new',shared:true,removed:true});
+  });
+  let offlineBook;
+  await test('拍书自动保存，完整下载可恢复，预加载中的同句不重复请求',async()=>{
+    await open(page);await page.locator('#pr-new-book').click();
+    await page.waitForFunction(()=>PhotoReading.book && !PhotoReading.importing);
+    await page.locator('#pr-book-title').fill('Iris offline story');await page.locator('#pr-book-title').blur();
+    await page.locator('#pr-files').setInputFiles({name:'offline.png',mimeType:'image/png',buffer:png});
+    await page.waitForFunction(()=>!PhotoReading.importing&&PhotoReading.pages.length===1);
+    await page.locator('#pr-recognize').click();await page.waitForFunction(()=>!PhotoReading.recognizing&&PhotoReading.pages[0].state==='ready');
+    await page.evaluate(()=>PhotoReading.syncBook());
+    await page.waitForFunction(()=>PhotoReading.book.revision>0&&!PhotoReading.book.dirty);
+    offlineBook=await page.evaluate(()=>PhotoReading.book.id);
+    // Unique sentences + held first preload: foreground click must join the pending request.
+    let release,started;const entered=new Promise(r=>started=r),hold=new Promise(r=>release=r);
+    await page.route('**/api/photo-reading/speech',async route=>{
+      if (route.request().postDataJSON().text==='Preload joins once.') { started();await hold; }
+      await route.continue();
+    });
+    await page.evaluate(()=>{PhotoReading.cancelSpeech();const p=PhotoReading.pages[0];p.sentences[0].text='Preload joins once.';p.sentences[1].text='Next ready sentence.';PhotoReading.changed();PhotoReading.render();PhotoReading.preload(p,0);});
+    await entered;
+    const before=requests.filter(r=>r.url.endsWith('/speech')&&JSON.parse(r.body).text==='Preload joins once.').length;
+    await page.locator('.pr-sentence-play').first().click();release();await page.waitForFunction(()=>!PhotoReading.audio.paused);
+    assert.equal(requests.filter(r=>r.url.endsWith('/speech')&&JSON.parse(r.body).text==='Preload joins once.').length,before);
+    await page.locator('#pr-download').click();await page.waitForFunction(()=>!PhotoReading.downloading&&document.getElementById('pr-offline-state').textContent.includes('✓'));
+    await page.evaluate(()=>PhotoReading.syncBook());await page.waitForFunction(()=>!PhotoReading.book.dirty);
+    await page.unroute('**/api/photo-reading/speech');
+    await page.locator('#pr-close').click();await page.reload();await ready(page);await open(page);
+    await page.locator('[data-book="'+offlineBook+'"]').click();await page.waitForFunction(()=>PhotoReading.pages.length===1);
+    assert.equal(await page.locator('#pr-book-title').inputValue(),'Iris offline story');
+    assert.equal(await page.locator('.pr-sentence-play').first().textContent(),'Preload joins once.');
+    await page.locator('#pr-close').click();
+  });
+  await test('PWA 从 v85 升级到 v89，点读资源完整缓存并可离线打开',async()=>{
     baseline=true;const upgrade=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
     await upgrade.route('**/*',route=>route.request().url().startsWith(origin+'/')||route.request().url().startsWith(endpoint+'/')?route.continue():route.abort());
     await upgrade.addInitScript(()=>localStorage.setItem('appLanguage','zh'));
@@ -164,9 +212,32 @@ async function test(name,fn){await fn();passed.push(name);console.log('PASS '+na
     await p.locator('#update-notification .update-btn').click();
     await p.waitForFunction(()=>typeof PhotoReading!=='undefined'&&PhotoReading.root&&LearningAccount.booted);
     await ready(p);await open(p);
-    const cache=await p.evaluate(async()=>{const c=await caches.open('kids-learning-v88');return [!!await c.match('/js/photoReading.js'),!!await c.match('/css/photoReading.css'),(await caches.keys()).includes('kids-learning-v85')];});
+    const cache=await p.evaluate(async()=>{const c=await caches.open('kids-learning-v89');return [!!await c.match('/js/photoReading.js'),!!await c.match('/css/photoReading.css'),(await caches.keys()).includes('kids-learning-v85')];});
     assert.deepEqual(cache,[true,true,false]);await p.locator('#pr-close').click();
-    await upgrade.setOffline(true);await p.reload();await ready(p);await open(p);assert.equal(await p.locator('#photo-reading').isVisible(),true);
+    await p.locator('.nav-item').last().click();await p.locator('#account-username').fill('photo-reader');await p.locator('#account-password').fill(password);
+    await p.locator('#account-form button[type=submit]').click();await p.waitForFunction(()=>LearningAccount.identity&&LearningAccount.booted);await ready(p);await open(p);
+    await p.locator('[data-book="'+offlineBook+'"]').click();await p.waitForFunction(()=>PhotoReading.pages.length===1);
+    assert.equal(await p.locator('.pr-sentence-play').first().textContent(),'Preload joins once.');
+    await p.locator('#pr-download').click();await p.waitForFunction(()=>!PhotoReading.downloading&&document.getElementById('pr-offline-state').textContent.includes('✓'));
+    await p.evaluate(()=>{PhotoReading.root.scrollTop=0;});
+    assert.equal(await p.evaluate(()=>PhotoReading.root.scrollWidth<=PhotoReading.root.clientWidth),true);
+    await p.screenshot({path:path.join(scratch,'bookshelf-mobile.png'),fullPage:true});
+    await upgrade.setOffline(true);await p.reload();await ready(p);await open(p);
+    assert.equal(await p.locator('#photo-reading').isVisible(),true);
+    assert.equal(await p.evaluate(()=>LearningAccount.identity),null);
+    await p.getByRole('button',{name:'Reader 的离线书架（本机）',exact:true}).click();
+    await p.locator('[data-book="'+offlineBook+'"]').click();await p.waitForFunction(()=>PhotoReading.pages.length===1);
+    const offlineRequests=[];p.on('request',r=>{if(r.url().includes('/api/photo-reading/'))offlineRequests.push(r.url());});
+    for (let i=0;i<3;i++) {await p.locator('.pr-sentence-play').nth(i).click();await p.waitForFunction(()=>!PhotoReading.audio.paused);await p.locator('#pr-stop').click();}
+    assert.deepEqual(offlineRequests,[]);
+    assert.equal(await p.locator('.pr-image-sentence').count(),3);
+    assert.match(await p.locator('#pr-offline-state').textContent(),/✓/);
+    await p.evaluate(()=>{PhotoReading.root.scrollTop=0;});
+    await p.screenshot({path:path.join(scratch,'bookshelf-offline-mobile.png'),fullPage:true});
+    p.on('dialog',d=>d.accept());await p.locator('.pr-manage summary').click();await p.locator('#pr-remove-local').click();
+    await p.waitForFunction(()=>PhotoReading.book===null);
+    const cleared=await p.evaluate(async()=>({books:(await PhotoLibrary.books()).length,audio:(await PhotoLibrary.audioKeys(PhotoReading.offlineOwner)).size}));
+    assert.deepEqual(cleared,{books:0,audio:0});
     await upgrade.close();
   });
   assert.deepEqual(errors,[]);console.log(JSON.stringify({passed:passed.length,evidence:scratch,errors}));
