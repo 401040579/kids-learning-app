@@ -216,7 +216,7 @@ RP ID 固定为首个 `LEARNING_ORIGINS` 的网页主机，生产为 `app.tao.ir
 ## 拍照点读 API（2026-10-15）
 
 `backend/photo_reading.py` 接入独立学习服务，保持现有 Cookie、Origin、CSRF 和账号归属校验。
-照片和识别文字不写入数据库、云存档或学习日志。每页单独识别，可保留成功页并重试失败页。
+登录后的书页通过独立书架接口保存到账号数据库，图片与语音以私有 BLOB 保存；不进入学习统计或逐题日志。每页单独识别，可保留成功页并重试失败页。
 
 | 方法 | 路径 | 契约 |
 | --- | --- | --- |
@@ -224,7 +224,7 @@ RP ID 固定为首个 `LEARNING_ORIGINS` 的网页主机，生产为 `app.tao.ir
 | POST | `/api/photo-reading/recognize` | `expected_account_id`、JPEG/PNG `image` data URL；返回 `account_id/sentences/needs_review/usage` |
 | POST | `/api/photo-reading/speech` | `expected_account_id/text/language`；返回 `audio/wav`，语言为 `zh-CN` 或 `en-US` |
 
-本应用不将书页写入持久存储，但内容会传给 OpenAI。`store:false` 不等于供应商零保留；上游处理按所用 API 和账号的数据政策执行。
+书架会持久保存图片、识别文字、点读区域与已生成语音；识别和语音内容会传给 OpenAI。`store:false` 不等于供应商零保留；上游处理按所用 API 和账号的数据政策执行。
 
 服务端配置（绝不能写入前端、仓库或静态站点）：
 
@@ -236,15 +236,39 @@ RP ID 固定为首个 `LEARNING_ORIGINS` 的网页主机，生产为 `app.tao.ir
 识别使用 Responses API 的结构化输出和 `store:false`，最多 120 句、每句 800 字符、每页总计 20,000 字符；超限/不完整响应拒绝，不返回成功截断。图片最大 3 MiB，实际解码格式和像素数也校验。模糊/无法完整转写内容由模型标记待核对，仍可能有未标出的识别错误，前端提供原图与修改文字。
 每句新增 `regions:[{x1,y1,x2,y2}]`，使用整张图片左上角为原点的 0–1000 归一化坐标；跨行每行单独一个框，最多 16 个。非法/缺失框降级为空数组，保留识别文字。前端按实际图片宽高同比缩放，默认显示原图，可放大至 3× 并滚动，跨行区域共用一句音频和高亮。模型定位是近似值，倾斜、模糊、小字或复杂版式仍可能不准，保留文字列表点读与校对。
 
-`usage` 来自供应商响应，包含输入、缓存读取、缓存写入、输出（含推理）、总 token 和 `estimated_usd`、`price_date`、`cache_hit`；供应商没有 usage 时返回 null，不伪造零消耗。仅为已知 gpt-6-luna 标准档位估算，其他模型/档位估价为 null。费用包含 cache-write 独立费率，不与普通输入重复相加。命中应用服务端缓存时标记 `cache_hit=true`，原用量保留供参考，本次没有新增识别请求。用量与页面一样仅临时保留，不是账单历史；失败/取消请求可能仍被上游收费，不能从成功结果合计推断账号总账单。
+`usage` 来自供应商响应，包含输入、缓存读取、缓存写入、输出（含推理）、总 token 和 `estimated_usd`、`price_date`、`cache_hit`；供应商没有 usage 时返回 null，不伪造零消耗。仅为已知 gpt-6-luna 标准档位估算，其他模型/档位估价为 null。费用包含 cache-write 独立费率，不与普通输入重复相加。命中应用服务端缓存时标记 `cache_hit=true`，原用量保留供参考，本次没有新增识别请求。用量保留在当前设备的书页副本中，不同步到跨设备书架，也不是账单历史；失败/取消请求可能仍被上游收费，不能从成功结果合计推断账号总账单。
 
 朗读使用独立 Realtime WebSocket 生成每句 24kHz 单声道 PCM，并包装为 WAV；不采集麦克风、不累积对话历史。提示要求逐字朗读，并将供应商返回的朗读文本与原文校验（忽略标点、空白和大小写）；不一致则拒绝播放。数字转写等同义形式也可能被拒绝，可修改为实际读法后重试。此校验不是对声波的独立语音识别，真实发音仍需试听。
 
-成功结果按账号和内容摘要缓存，30 分钟有效，最多 256 项/32 MiB；过期条目在下次请求清理。前端当前页面最多缓存 40 句/24 MiB，刷新、清空或切换账号后移除。缓存命中不再次调用供应商；超时/错误不缓存、不自动重试。浏览器取消后终止上游任务，释放并发槽；结果返回前复查会话撤销。
+识别结果按账号和内容摘要临时缓存，30 分钟有效，最多 256 项/32 MiB；过期条目在下次请求清理。成功生成的语音另外按账号、语音模型、朗读规则版本、语言与文字持久保存，刷新、服务重启或供应商密钥暂时不可用时仍可复用。前端音频播放 URL 最多缓存 40 句/24 MiB，音频文件另存 IndexedDB；刷新或切号只清理内存，不删除离线副本。缓存命中不再次调用供应商；超时/错误不缓存、不自动重试。浏览器取消后终止上游任务，释放并发槽；语音落库事务与返回结果前复查会话撤销。
 
-每账号 OCR 12 次/分钟、50 次/24 小时，TTS 40 次/分钟、300 次/24 小时；全服务 OCR 100 次、TTS 600 次/24 小时，最多同时 4 项。24 小时窗口自首次计数起算，SQLite 只保存计数与过期时间；失败尝试也计数。这是请求限额，不是美元硬预算。上游未知结果或超时后手动重试仍可能再次计费。
+每账号 OCR 12 次/分钟、50 次/24 小时，TTS 40 次/分钟、300 次/24 小时；全服务 OCR 100 次、TTS 600 次/24 小时，最多同时 4 项。24 小时窗口自首次计数起算，请求限额使用 SQLite 持久计数与过期时间；失败尝试也计数。这是请求限额，不是美元硬预算。上游未知结果或超时后手动重试仍可能再次计费。
 
 2026-10-15 价格参考：`gpt-6-luna` 标准输入 $0.10/百万 token、缓存读取 $0.01/百万、缓存写入 $0.125/百万、输出 $0.50/百万 token；语音模型音频输出 $20/百万 token，按每 50ms 一个输出音频 token 估算约 $0.024/分钟，另加文字费用。每天新生成 10 分钟约 $7.20/月语音费用；图片识别按尺寸、页数与输出计算。不是固定月费，缓存失效后再生成会收费。
 官方依据：[缓存计费](https://developers.openai.com/api/docs/guides/prompt-caching)、[识别模型价格](https://developers.openai.com/api/docs/models/gpt-6-luna)、[价格](https://developers.openai.com/api/docs/pricing)、[语音计费](https://developers.openai.com/api/docs/guides/voice-latency-cost?voice-api=realtime)、[图片输入](https://developers.openai.com/api/docs/guides/images-vision)、[语音事件](https://developers.openai.com/api/docs/guides/realtime-conversations)。
 
 验证：`python -m pytest backend/tests/test_photo_reading.py -q`；`node tests/browser-photo-reading.cjs` 需要 Playwright。后者使用临时测试账号、数据库、合成相机和 AI 测试夹具，不连接生产或付费 API。真实 API 验收必须另外执行。
+
+
+### 账号书架与离线语音（2026-10-21）
+
+`backend/photo_books.py` 在同一私有 SQLite 中增加 `photo_books/photo_assets/photo_audio`。沿用账号 Cookie、Origin、CSRF；所有读写从会话确认 owner，上传另核对 `expected_account_id`，不允许用客户端 owner 跨账号取书。BLOB 不放公开静态目录，响应均为 `no-store`。现有 SQLite Backup API 自动包含书架和音频，无需额外复制媒体目录。
+
+| 方法 | 路径 | 用途 |
+| --- | --- | --- |
+| GET | `/api/photo-reading/books` | 当前账号的书名、版本、更新时间、页数 |
+| GET | `/api/photo-reading/books/{id}` | 书名、版本和按顺序排列的文字/点读位置/图片 ID，不内嵌图片 |
+| POST | `/api/photo-reading/assets` | 校验 JPEG/PNG 后以内容摘要幂等保存图片，返回图片 ID |
+| GET | `/api/photo-reading/assets/{id}` | 会话鉴权后读取本账号私有图片 |
+| POST | `/api/photo-reading/books/{id}` | `revision/mutation_id/title/pages`，事务内原子替换完整书页清单 |
+| POST | `/api/photo-reading/books/{id}/delete` | 核对 `revision` 后删除，回收没有其他书引用的图片与当前模型语音 |
+
+图片先上传，清单提交时校验图片归属及存在性；失败不覆盖旧清单。相同 mutation 与相同内容重试返回原版本，内容不同或旧 revision 返回 `bookConflict`，保留本机修改并允许另存为新书。每账号最多 100 本书，每本 100 页，图片/语音/清单合计上限 512 MiB。该限制独立于原 OCR/TTS 请求限额。删除不会自动删除其他设备已保存的离线副本；还没有账号级跨设备离线撤销。
+
+`js/photoLibrary.js` 使用独立 IndexedDB `kids-photo-library`，书本与音频分别以 `[owner,id]` 和 `[owner,key]` 隔离；本机写入比较版本标记，另一个窗口修改后不会静默覆盖。账号退出后副本保留，未登录时必须明确选择该账号的“本机离线书架”，只读取本机文件，不使用缓存 owner 向服务端认证。因此只应在私人浏览器配置中保存；共用设备需使用“清除本机副本”。书架不包含在原 localStorage 学习存档导出中，服务端完整备份则包含书架。
+
+识别完成/打开书页准备前两句，点读后准备后两句；语音队列串行、当前句优先，同句预加载与点击复用一个 Promise。跳到其他句会取消不同句的慢预加载，关闭、切号或切到后台停止准备。预加载可能为尚未点过的句子生成付费语音，但只预取两句；整本准备必须点击“下载离线阅读”。语音首轮仍受供应商延迟与已有日限额影响。
+
+下载按不同句子去重、逐句保存并显示进度；中断后复用已完成音频。每次打开都从真实本机图片、识别状态与全部语音键重算“可离线阅读”，不会靠一个下载成功标记。断网冷启动进入访客后，可以从账号名称入口选择本机书架并点读。浏览器可能清理设备数据；会请求持久存储，但不能保证系统永不回收。联网后可从账号重新下载。
+
+验证：`python -m pytest backend/tests/test_photo_books.py backend/tests/test_photo_reading.py backend/tests/test_backup.py -q`；`node --test tests/photo-reading.test.cjs`；`node tests/browser-photo-reading.cjs`。浏览器场景包含预加载请求复用、慢句取消、刷新恢复、第二设备取书与整本语音下载、PWA 升级、离线冷启动及逐句播放，全部使用临时账号和合成语音，不调用生产或付费服务。真实 iPhone/iPad 的播放权限与系统存储回收仍需设备验收。

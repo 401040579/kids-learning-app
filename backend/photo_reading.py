@@ -1,4 +1,4 @@
-"""拍照点读：有界、按账号隔离的临时缓存；不保存照片/文字到数据库。"""
+"""拍照点读：按账号隔离的识别缓存与持久语音。书架见 photo_books。"""
 import asyncio
 import base64
 import hashlib
@@ -253,7 +253,14 @@ class ReadingService:
                 db.execute('INSERT INTO login_limits VALUES (?,?,1) ON CONFLICT(bucket) DO UPDATE SET attempts=attempts+1',
                            (bucket, now + seconds))
 
-    async def run(self, owner, kind, content, generate):
+    async def run(self, owner, kind, content, generate, authorize=None):
+        # 重复播放与新设备下载复用持久音频；不依赖临时缓存或供应商密钥。
+        from backend.photo_books import audio_id, stored_audio, save_audio
+        speech_key = audio_id(self.provider.voice_model, content)
+        if kind == 'tts':
+            saved = await run_in_threadpool(stored_audio, self.store, owner, speech_key)
+            if saved is not None:
+                return saved
         if not self.provider.key:
             fail('notConfigured', 503)
         now = time.monotonic()
@@ -285,6 +292,8 @@ class ReadingService:
             self.limit(owner, kind)
             async with asyncio.timeout(75):
                 result = await generate()
+            if kind == 'tts':
+                await run_in_threadpool(save_audio, self.store, owner, speech_key, result, authorize)
             size = len(result) if isinstance(result, bytes) else len(json.dumps(result).encode())
             self.cache[key] = (time.monotonic() + 1800, result, size)
             self.cache_bytes += size
@@ -299,6 +308,8 @@ class ReadingService:
 
 
 def install(app, store, account, body):
+    from backend.photo_books import install as install_books
+    install_books(app, store, account, body)
     service = ReadingService(store)
     app.state.photo_reading = service
 
@@ -355,6 +366,7 @@ def install(app, store, account, body):
             fail('textInvalid')
         text = text.strip()
         result = await connected(request, service.run(identity['id'], 'tts', language + '\n' + text,
-                                                      lambda: service.provider.speech(text, language)))
+                                                      lambda: service.provider.speech(text, language),
+                                                      lambda db: account(request, write=True, connection=db)))
         account(request, write=True)
         return Response(result, media_type='audio/wav')
