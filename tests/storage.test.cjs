@@ -66,6 +66,84 @@ test('合法 JSON 但字段类型错误时也不破坏启动', () => {
   assert.equal(a.run('DailyCheckin.isCheckedToday()'), false);
 });
 
+function startCheckin(a) {
+  a.run(`I18n = { t: () => '' };
+    RewardSystem.init(); AchievementSystem.init();
+    DailyCheckin.showCheckinReminder = () => { throw Error('不应弹出手动签到提醒'); };
+    DailyCheckin.init()`);
+}
+
+test('打开应用自动签到并保存积分，同日重复初始化或重新打开不重复奖励', () => {
+  const a = app({ kidsLearningData: '{"totalScore":80}' });
+  startCheckin(a);
+  assert.equal(a.run('DailyCheckin.isCheckedToday()'), true);
+  assert.equal(a.run('DailyCheckin.data.totalDays'), 1);
+  assert.equal(a.run('RewardSystem.data.totalScore'), 85);
+  assert.equal(JSON.parse(a.disk.get('kidsLearningData')).totalScore, 85);
+  a.run('DailyCheckin.checkAndAutoCheckin(); DailyCheckin.init()');
+  const reopened = app(Object.fromEntries(a.disk));
+  startCheckin(reopened);
+  assert.equal(reopened.run('DailyCheckin.data.totalDays'), 1);
+  assert.equal(reopened.run('RewardSystem.data.totalScore'), 85);
+});
+
+test('自动签到沿用连续天数、第三天奖励与成就，断签后从第一天重新计算', () => {
+  const a = app();
+  a.run(`RewardSystem.init(); AchievementSystem.init();
+    AchievementSystem.showUnlockPopup = () => {};
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+    const key = [yesterday.getFullYear(), String(yesterday.getMonth()+1).padStart(2,'0'), String(yesterday.getDate()).padStart(2,'0')].join('-');
+    AppStorage.setItem('kidsDailyCheckin', JSON.stringify({
+      checkins: {[key]: {checked:true}}, currentStreak:2, longestStreak:2, totalDays:2
+    })); DailyCheckin.init()`);
+  assert.equal(a.run('DailyCheckin.data.currentStreak'), 3);
+  assert.equal(a.run('RewardSystem.data.totalScore'), 10);
+  assert.equal(a.run("AchievementSystem.data.unlocked.includes('checkin_3')"), true);
+  const afterGap = app({ kidsDailyCheckin: JSON.stringify({
+    checkins: { '2000-01-01': {checked:true} }, currentStreak:6, longestStreak:6, totalDays:6
+  }) });
+  startCheckin(afterGap);
+  assert.equal(afterGap.run('DailyCheckin.data.currentStreak'), 1);
+  assert.equal(afterGap.run('DailyCheckin.data.longestStreak'), 6);
+  assert.equal(afterGap.run('DailyCheckin.data.totalDays'), 7);
+  assert.equal(afterGap.run('RewardSystem.data.totalScore'), 5);
+});
+
+test('登录后只对当前账号自动签到，不继承游客签到或积分', () => {
+  const guest = app({ kidsLearningData: '{"totalScore":80}' });
+  startCheckin(guest);
+  const account = app(Object.fromEntries(guest.disk));
+  account.run("AppStorage.activate('iris')");
+  startCheckin(account);
+  assert.equal(account.run('RewardSystem.data.totalScore'), 5);
+  assert.equal(JSON.parse(account.disk.get('kidsLearningData')).totalScore, 85);
+  assert.equal(JSON.parse(account.disk.get('kids-learning-account:iris:kidsDailyCheckin')).totalDays, 1);
+  const reopened = app(Object.fromEntries(account.disk));
+  reopened.run("AppStorage.activate('iris')");
+  startCheckin(reopened);
+  assert.equal(reopened.run('RewardSystem.data.totalScore'), 5);
+});
+
+test('账号写锁阻止自动签到，避免只读标签页产生奖励或存储错误', () => {
+  const a = app();
+  a.run('AppStorage.blocked = true');
+  startCheckin(a);
+  assert.equal(a.run('DailyCheckin.isCheckedToday()'), false);
+  assert.equal(a.run('RewardSystem.data.totalScore'), 0);
+  assert.equal(a.run('SafeStorage.issues.size'), 0);
+  assert.equal(a.disk.size, 0);
+});
+
+for (const key of ['kidsDailyCheckin', 'kidsLearningData', 'kidsAchievements']) {
+  test(`${key} 损坏时启动不自动签到或覆盖原始存档`, () => {
+    const a = app({ [key]: '{broken' });
+    startCheckin(a);
+    assert.equal(a.run('DailyCheckin.isCheckedToday()'), false);
+    assert.equal(a.disk.size, 1);
+    assert.equal(a.disk.get(key), '{broken');
+  });
+}
+
 test('学会的题再次答错会重新进入短间隔复习', () => {
   const a = app();
   a.run(`WrongQuestions.addWrongQuestion('math', { questionId: 'q', question: '1+1',

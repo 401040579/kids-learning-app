@@ -58,6 +58,13 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
   assert.equal(api.exitCode, null, apiErrors);
   browser = await chromium.launch({ channel: 'chrome', headless: true });
   const errors = [];
+  async function assertAutoCheckin(page) {
+    assert.equal(await page.evaluate(() => DailyCheckin.isCheckedToday()), true);
+    assert.equal(await page.evaluate(() => DailyCheckin.data.totalDays), 1);
+    assert.equal(await page.evaluate(() => JSON.parse(AppStorage.getItem('kidsDailyCheckin')).totalDays), 1);
+    assert.equal(await page.locator('#checkin-reminder-modal').isVisible(), false);
+    assert.equal(await page.locator('#checkin-success-modal').isVisible(), false);
+  }
   async function device(enabled = true) {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
     await context.route('**/*', route => {
@@ -76,12 +83,8 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
     page.on('dialog', dialog => dialog.accept());
     await page.goto(origin);
     await page.waitForFunction(() => typeof LearningAccount !== 'undefined' && LearningAccount.booted && typeof LearningHistory !== 'undefined' && typeof RewardSystem !== 'undefined');
-    await page.locator('#checkin-reminder-modal').waitFor({ state: 'visible' });
-    await page.locator('.btn-checkin-later').click();
-    await page.evaluate(() => {
-      document.getElementById('checkin-reminder-modal')?.classList.add('hidden');
-      navigateTo('profile');
-    });
+    await assertAutoCheckin(page);
+    await page.evaluate(() => navigateTo('profile'));
     return { context, page };
   }
   async function reloadAction(page, action) {
@@ -108,10 +111,7 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
     await reloadAction(page, () => page.locator('#account-logout').click());
     assert.equal(await page.evaluate(() => AppStorage.owner), 'guest');
     assert.equal(await page.evaluate(() => LearningAccount.identity), null);
-    if (!await page.evaluate(() => DailyCheckin.isCheckedToday())) {
-      await page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
-      await page.locator('.btn-checkin-later').click();
-    }
+    await assertAutoCheckin(page);
   }
   async function signIn(page, name = 'iris') {
     await page.evaluate(() => navigateTo('profile'));
@@ -119,10 +119,7 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
     await page.locator('#account-password').fill(password);
     await reloadAction(page, () => page.locator('#account-form button').click());
     await page.waitForFunction(name => LearningAccount.booted && LearningAccount.identity?.username === name && AppStorage.owner===LearningAccount.identity.id && !!LearningAccount.snapshot && !LearningAccount.busy, name);
-    if (!await page.evaluate(() => DailyCheckin.isCheckedToday())) {
-      await page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
-      await page.locator('.btn-checkin-later').click();
-    }
+    await assertAutoCheckin(page);
     await page.evaluate(() => navigateTo('profile'));
     await page.evaluate(() => LearningHistory.sync());
   }
@@ -218,8 +215,7 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
     assert.equal(await page.evaluate(() => JSON.parse(AppStorage.getItem('musicCompositions'))[0].events.length),2);
     await page.reload();
     await page.waitForFunction(() => LearningAccount.booted);
-    await page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
-    await page.locator('.btn-checkin-later').click();
+    await assertAutoCheckin(page);
     await page.evaluate(() => openMusic());
     await page.locator('#music-open-saved').click();
     assert.equal(await page.evaluate(() => MusicApp.recorder.events.length),2);
@@ -241,7 +237,7 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
   const a = await device();
   await answer(a.page, 'before login');
   await signIn(a.page);
-  assert.equal(await a.page.evaluate(()=>RewardSystem.data.totalScore),0);
+  assert.equal(await a.page.evaluate(()=>RewardSystem.data.totalScore),5);
   await count(a.page, 0); // 游客历史没有迁移。
   await a.page.evaluate(() => {
     generateMathQuestion();
@@ -299,10 +295,7 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
   await count(b.page, 6);
   await b.page.reload();
   await b.page.waitForFunction(() => LearningAccount.booted && LearningAccount.identity?.username === 'iris' && AppStorage.owner === LearningAccount.identity.id);
-  if (!await b.page.evaluate(() => DailyCheckin.isCheckedToday())) {
-    await b.page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
-    await b.page.locator('.btn-checkin-later').click();
-  }
+  await assertAutoCheckin(b.page);
   await count(b.page, 6); // IndexedDB 与会话重新加载仍然正常。
   // 同一浏览器的第二标签页只能提示重载，不能并发改当前账号存档。
   const duplicate = await a.context.newPage();
@@ -313,7 +306,7 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
   assert.equal(await duplicate.evaluate(()=>{try{AppStorage.setItem('kidsProfileData','{"name":"collision"}');return false;}catch{return true;}}),true);
   await duplicate.close();
   // 真实模块计分进入账号分区，旧游客积分与画作保持原样。
-  assert.equal(await a.page.evaluate(()=>JSON.parse(localStorage.getItem('kidsLearningData')).totalScore),80);
+  assert.equal(await a.page.evaluate(()=>JSON.parse(localStorage.getItem('kidsLearningData')).totalScore),85);
   await a.page.evaluate(()=>AppStorage.setItem('artworkGallery','[{"id":"iris-art"}]'));
   await a.page.evaluate(()=>LearningAccount.save());
   const expectedScore=await a.page.evaluate(()=>JSON.parse(AppStorage.getItem('kidsLearningData')).totalScore);
@@ -332,10 +325,7 @@ Path(os.environ['LEARNING_ROBOT_CONFIG']).write_text(json.dumps({'account_id':ow
   await reloadAction(b.page, () => b.page.locator('#account-use-cloud').click());
   await b.page.waitForFunction(score=>LearningAccount.booted&&RewardSystem.data.totalScore===score,expectedScore);
   assert.equal(await b.page.evaluate(()=>JSON.parse(AppStorage.getItem('artworkGallery'))[0].id),'iris-art');
-  if (!await b.page.evaluate(()=>DailyCheckin.isCheckedToday())) {
-    await b.page.locator('#checkin-reminder-modal').waitFor({state:'visible'});
-    await b.page.locator('.btn-checkin-later').click();
-  }
+  await assertAutoCheckin(b.page);
   const downloadPromise = b.page.waitForEvent('download');
   await b.page.evaluate(() => { navigateTo('profile'); document.getElementById('science-feedback-modal')?.classList.add('hidden'); });
   await b.page.locator('#history-download').click();
@@ -447,7 +437,7 @@ TutorBridge(Store(Settings.environment().database)).tick()
   await lesson.page.locator('#study-close').click();
   await lesson.page.reload();
   await lesson.page.waitForFunction(()=>LearningAccount.booted&&StudySession.initialized);
-  await lesson.page.locator('.btn-checkin-later').click();
+  await assertAutoCheckin(lesson.page);
   // 已保存完成会话保持不变；重新载入只恢复理解入口，不新开阅读会话。
   const resumed=await lesson.page.evaluate(async({readingBook,completionId})=>{
     PictureBook.currentBook=PictureBook.books.find(book=>book.id===readingBook);
@@ -475,7 +465,7 @@ TutorBridge(Store(Settings.environment().database)).tick()
   await lesson.page.waitForFunction(()=>document.getElementById('study-stop').textContent==='先休息');
   await lesson.context.close();
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ passed: ['guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork', 'web wrong to robot review to cross-device report', 'same-account tab write lock', 'period reports use real events', 'book resume and completion rewards', 'honest word matching feedback', 'single module button entrypoints', 'recording deadline and saved performance restore', 'SOS failed service feedback', 'offline daily lesson with hint evidence', 'idempotent answer retry after storage failure', 'daily question budget and skip', 'optional reading comprehension with reference', 'reading completion deduplicates after reload', 'parent course evidence report', 'reused lesson controls follow language changes'], pageErrors: errors, screenshot: path.join(scratch, 'history.png'), reportScreenshot:path.join(scratch,'report.png'),musicScreenshot:path.join(scratch,'music.png'),studyScreenshot:path.join(scratch,'study.png'),studyReportScreenshot:path.join(scratch,'study-report.png') }, null, 2));
+  console.log(JSON.stringify({ passed: ['automatic check-in without prompts', 'same-day check-in persists without duplicate rewards', 'guest isolation', 'four quiz hooks and duplicate guards', 'two devices', 'offline queue', 'lost acknowledgement replay', 'account switching', 'reload persistence', 'history export', 'full profile cold restore', 'profile conflict preserves local data', 'cloud choice restores score and artwork', 'web wrong to robot review to cross-device report', 'same-account tab write lock', 'period reports use real events', 'book resume and completion rewards', 'honest word matching feedback', 'single module button entrypoints', 'recording deadline and saved performance restore', 'SOS failed service feedback', 'offline daily lesson with hint evidence', 'idempotent answer retry after storage failure', 'daily question budget and skip', 'optional reading comprehension with reference', 'reading completion deduplicates after reload', 'parent course evidence report', 'reused lesson controls follow language changes'], pageErrors: errors, screenshot: path.join(scratch, 'history.png'), reportScreenshot:path.join(scratch,'report.png'),musicScreenshot:path.join(scratch,'music.png'),studyScreenshot:path.join(scratch,'study.png'),studyReportScreenshot:path.join(scratch,'study-report.png') }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
   if (browser) await browser.close();
   if (api) api.kill('SIGTERM');

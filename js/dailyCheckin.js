@@ -50,11 +50,13 @@ const DailyCheckin = {
     return this.data.checkins[todayStr]?.checked === true;
   },
 
-  // 检查并自动签到（首次打开应用时）
+  // learningReady 后账号存档、积分和成就已加载，直接完成签到，不弹出提醒打断使用。
   checkAndAutoCheckin() {
+    // 只读标签页或坏存档不能因自动签到被写入、覆盖。
+    if (AppStorage.blocked || ['kidsDailyCheckin', 'kidsLearningData', 'kidsAchievements']
+      .some(key => SafeStorage.issues.has(key))) return;
     if (!this.isCheckedToday()) {
-      // 显示签到提醒
-      this.showCheckinReminder();
+      this.doCheckin();
     }
   },
 
