@@ -1,0 +1,314 @@
+{
+  "B": {
+    "positions": {
+      "pole_z0": 7.8,
+      "holder_z0": 30.4,
+      "ring_z0": 63.4,
+      "led_z0": 46.4,
+      "shell_bottom_z": 85.0,
+      "contact_z": 90.5,
+      "pole_len": 10.8
+    },
+    "mesh": {
+      "base": {
+        "watertight": true,
+        "winding_consistent": true,
+        "is_volume": true,
+        "bodies": 1,
+        "volume_cm3": 100.76,
+        "bbox_mm": [
+          86.0,
+          86.0,
+          20.0
+        ],
+        "faces": 6506
+      },
+      "pole": {
+        "watertight": true,
+        "winding_consistent": true,
+        "is_volume": true,
+        "bodies": 1,
+        "volume_cm3": 2.53,
+        "bbox_mm": [
+          12.0,
+          12.0,
+          34.8
+        ],
+        "faces": 3068
+      },
+      "holder": {
+        "watertight": true,
+        "winding_consistent": true,
+        "is_volume": true,
+        "bodies": 1,
+        "volume_cm3": 21.03,
+        "bbox_mm": [
+          46.8,
+          46.8,
+          36.0
+        ],
+        "faces": 3860
+      },
+      "ring": {
+        "watertight": true,
+        "winding_consistent": true,
+        "is_volume": true,
+        "bodies": 1,
+        "volume_cm3": 11.2,
+        "bbox_mm": [
+          62.0,
+          62.0,
+          27.1
+        ],
+        "faces": 32168
+      }
+    },
+    "overhang": {
+      "base": {
+        "steep_overhang_area_mm2": 0.0,
+        "at_z": []
+      },
+      "pole": {
+        "steep_overhang_area_mm2": 0.6,
+        "at_z": [
+          0.8,
+          12.0
+        ]
+      },
+      "holder": {
+        "steep_overhang_area_mm2": 55.4,
+        "at_z": [
+          2.5,
+          13.0
+        ]
+      },
+      "ring": {
+        "steep_overhang_area_mm2": 75.9,
+        "at_z": [
+          22.0,
+          22.1,
+          22.2,
+          22.3,
+          22.4,
+          22.5,
+          22.6,
+          22.7,
+          22.8
+        ]
+      }
+    },
+    "shell_rest": {
+      "modeled_shell_bottom_z": 86.51,
+      "param_shell_bottom_z": 85.0,
+      "actual_sag_mm": 3.99
+    },
+    "interference_mm3": {
+      "base-pole": 0.354,
+      "pole-holder": 0.6,
+      "holder-ring": 0.0,
+      "holder-candle": 0.0,
+      "ring-candle": 0.0,
+      "ring-shell": 0.0,
+      "candle-shell": 0.0,
+      "holder-shell": 0.0,
+      "base-holder": 0.0
+    },
+    "min_gap_mm": {
+      "candle-holder(侧壁，不含杯底承托)": 0.109,
+      "candle-ring": 3.099,
+      "candle-shell": 9.515,
+      "ring_rim-shell(不含接触唇)": 3.98
+    },
+    "removal": {
+      "candle_sweep_vs_holder_mm3": 0.0,
+      "candle_sweep_vs_ring_mm3": 0.0,
+      "ring_min_inner_r": 21.7,
+      "holder_max_r_above_ledge": 21.4
+    },
+    "led_light_path_blocked_mm3": {
+      "holder": 0.0,
+      "ring": 0.0
+    },
+    "tentacle_slots": {
+      "slots": 12,
+      "clear_2.4x6.4_passes": 12,
+      "oversize_3.4x7.4_blocked": 12,
+      "note": "通道体长 4 mm，垂直于 45° 裙面；只检查裙边本身，穿过后纸条可自由弯折"
+    },
+    "stability": {
+      "mass_g": {
+        "base": 31.3,
+        "pole": 1.3,
+        "holder": 10.4,
+        "ring": 10.6,
+        "candle(假设 30 g)": 30.0,
+        "shell(假设 15 g)": 15.0
+      },
+      "total_g": 98.6,
+      "cg_height_mm": 52.3,
+      "static_tip_angle_deg": 38.8,
+      "with_40g_weights": {
+        "cg_height_mm": 38.4,
+        "static_tip_angle_deg": 47.6
+      }
+    },
+    "tentacle_space_mm": 66.51,
+    "overall_height_mm": 125.29
+  },
+  "A": {
+    "positions": {
+      "pole_z0": 7.8,
+      "holder_z0": 30.4,
+      "ring_z0": 75.9,
+      "led_z0": 67.9,
+      "shell_bottom_z": 85.0,
+      "contact_z": 90.5,
+      "pole_len": 10.8
+    },
+    "mesh": {
+      "base": {
+        "watertight": true,
+        "winding_consistent": true,
+        "is_volume": true,
+        "bodies": 1,
+        "volume_cm3": 100.76,
+        "bbox_mm": [
+          86.0,
+          86.0,
+          20.0
+        ],
+        "faces": 6506
+      },
+      "pole": {
+        "watertight": true,
+        "winding_consistent": true,
+        "is_volume": true,
+        "bodies": 1,
+        "volume_cm3": 2.53,
+        "bbox_mm": [
+          12.0,
+          12.0,
+          34.8
+        ],
+        "faces": 3068
+      },
+      "holder": {
+        "watertight": true,
+        "winding_consistent": true,
+        "is_volume": true,
+        "bodies": 1,
+        "volume_cm3": 21.22,
+        "bbox_mm": [
+          46.8,
+          46.8,
+          48.5
+        ],
+        "faces": 3836
+      },
+      "ring": {
+        "watertight": true,
+        "winding_consistent": true,
+        "is_volume": true,
+        "bodies": 1,
+        "volume_cm3": 8.0,
+        "bbox_mm": [
+          62.0,
+          62.0,
+          14.6
+        ],
+        "faces": 32168
+      }
+    },
+    "overhang": {
+      "base": {
+        "steep_overhang_area_mm2": 0.0,
+        "at_z": []
+      },
+      "pole": {
+        "steep_overhang_area_mm2": 0.6,
+        "at_z": [
+          0.8,
+          12.0
+        ]
+      },
+      "holder": {
+        "steep_overhang_area_mm2": 55.4,
+        "at_z": [
+          2.5,
+          13.0
+        ]
+      },
+      "ring": {
+        "steep_overhang_area_mm2": 75.9,
+        "at_z": [
+          9.5,
+          9.6,
+          9.7,
+          9.8,
+          9.9,
+          10.0,
+          10.1,
+          10.2,
+          10.3
+        ]
+      }
+    },
+    "shell_rest": {
+      "modeled_shell_bottom_z": 89.13,
+      "param_shell_bottom_z": 85.0,
+      "actual_sag_mm": 1.37
+    },
+    "interference_mm3": {
+      "base-pole": 0.354,
+      "pole-holder": 0.6,
+      "holder-ring": 0.0,
+      "holder-candle": 0.0,
+      "ring-candle": 0.0,
+      "ring-shell": 0.0,
+      "candle-shell": 0.0,
+      "holder-shell": 0.0,
+      "base-holder": 0.0
+    },
+    "min_gap_mm": {
+      "candle-holder(侧壁，不含杯底承托)": 0.115,
+      "candle-ring": 3.099,
+      "candle-shell": 1.738,
+      "ring_rim-shell(不含接触唇)": 3.98
+    },
+    "removal": {
+      "candle_sweep_vs_holder_mm3": 0.0,
+      "candle_sweep_vs_ring_mm3": 0.0,
+      "ring_min_inner_r": 21.7,
+      "holder_max_r_above_ledge": 21.4
+    },
+    "led_light_path_blocked_mm3": {
+      "holder": 0.0,
+      "ring": 0.0
+    },
+    "tentacle_slots": {
+      "slots": 12,
+      "clear_2.4x6.4_passes": 12,
+      "oversize_3.4x7.4_blocked": 12,
+      "note": "通道体长 4 mm，垂直于 45° 裙面；只检查裙边本身，穿过后纸条可自由弯折"
+    },
+    "stability": {
+      "mass_g": {
+        "base": 31.3,
+        "pole": 1.3,
+        "holder": 9.7,
+        "ring": 7.6,
+        "candle(假设 30 g)": 30.0,
+        "shell(假设 15 g)": 15.0
+      },
+      "total_g": 94.8,
+      "cg_height_mm": 60.0,
+      "static_tip_angle_deg": 35.0,
+      "with_40g_weights": {
+        "cg_height_mm": 43.4,
+        "static_tip_angle_deg": 44.1
+      }
+    },
+    "tentacle_space_mm": 69.13,
+    "overall_height_mm": 125.29
+  }
+}
