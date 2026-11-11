@@ -58,6 +58,7 @@ const HomeScreen = {
       { id: 'timer', icon: '⏰', i18nKey: 'menu.timer', fallback: '玩耍计时', action: () => navigateTo('timer') },
       { id: 'calendar', icon: '🗓️', i18nKey: 'menu.calendar', fallback: '我的日历', action: () => navigateTo('calendar') },
       { id: 'sleep-music', icon: '🌙', i18nKey: 'menu.sleepMusic', fallback: '睡眠音乐', action: () => navigateTo('sleep-music') },
+      { id: 'jellyfishLamp', icon: '🪼', i18nKey: 'menu.jellyfishLamp', fallback: '水母小夜灯', action: () => showJellyfishLamp() },
       { id: 'profile', icon: '👤', i18nKey: 'menu.profile', fallback: '我的信息', action: () => navigateTo('profile') },
       { id: 'achievements', icon: '🏆', i18nKey: 'menu.achievements', fallback: '我的成就', action: () => showAchievements() },
       { id: 'wrongQuestions', icon: '📕', i18nKey: 'menu.wrongQuestions', fallback: '错题本', action: () => showWrongQuestions() },

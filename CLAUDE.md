@@ -76,7 +76,8 @@ kids-learning-app/
 │   ├── choreTracker.js    # 家庭积分榜
 │   ├── birthdayParty.js   # 生日派对
 │   ├── parkWallpaper.js   # 魔法公园（声音互动壁纸）
-│   └── toothFairy.js      # 牙仙子传统（掉牙记录/惊喜信/收藏证书）
+│   ├── toothFairy.js      # 牙仙子传统（掉牙记录/惊喜信/收藏证书）
+│   └── jellyfishLamp.js   # 水母小夜灯（全屏 + 屏幕常亮，样式在 css/jellyfishLamp.css）
 ├── docs/
 │   ├── 踩坑记录.md     # ⚠️ 改代码前先看：那些与官方文档/直觉相反的实测结论
 │   └── 审计报告-2026-07.md # 全项目审计：66 条已验证问题（含已修复清单）
@@ -86,6 +87,7 @@ kids-learning-app/
 │   └── videos.json     # ★ CI 预生成的视频列表（同源静态文件，应用运行时读它）
 ├── .github/workflows/
 │   └── update-videos.yml # 每日定时重跑抓取脚本，有变化才提交 + 自动 bump sw.js 版本
+├── Iris_Jellyfish_V6/  # Iris 海胆水母实体小夜灯：OpenSCAD 源文件、4 个 STL、预览图、检查脚本（与网页无关）
 ├── music/              # 背景音乐
 └── icons/              # 应用图标
 ```
@@ -146,6 +148,7 @@ kids-learning-app/
 | 家庭积分榜 | choreTracker.js | ✅ 完成（任务打卡/加减分/奖励兑换/语音输入） |
 | 生日派对 | birthdayParty.js | ✅ 完成（倒计时/许愿墙/吹蜡烛/贺卡制作） |
 | 魔法公园 | parkWallpaper.js | ✅ 完成（声音互动壁纸/麦克风风力/全屏Canvas） |
+| 水母小夜灯 | jellyfishLamp.js | ✅ 完成（SVG 海胆水母灯/开关/4 种光色/调暗；Wake Lock + iOS 静音视频兜底常亮；不写存档） |
 | 牙仙子传统 | toothFairy.js | ✅ 完成（20颗牙齿地图/掉牙记录/牙仙子的信/收藏证书/惊喜揭晓/家长奖励规则） |
 
 ## 常用命令

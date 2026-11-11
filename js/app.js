@@ -200,7 +200,8 @@ const RecentlyUsed = {
     'englishBoost': { icon: '🌟', nameKey: 'menu.englishBoost', action: () => showEnglishBoost() },
     'birthdayParty': { icon: '🦄', nameKey: 'menu.birthdayParty', action: () => showBirthdayParty() },
     'parkWallpaper': { icon: '🏞️', nameKey: 'menu.parkWallpaper', action: () => showParkWallpaper() },
-    'toothFairy': { icon: '🧚', nameKey: 'menu.toothFairy', action: () => showToothFairy() }
+    'toothFairy': { icon: '🧚', nameKey: 'menu.toothFairy', action: () => showToothFairy() },
+    'jellyfishLamp': { icon: '🪼', nameKey: 'menu.jellyfishLamp', action: () => showJellyfishLamp() }
   },
 
   init() {

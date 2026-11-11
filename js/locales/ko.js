@@ -1144,6 +1144,7 @@ I18n.translations['ko'] = {
   'birthday.happyBirthdayShort': '생일 축하해요',
   'birthday.fsWish': '매일이 웃음과 놀라움으로 가득하길',
   'menu.toothFairy': '이빨 요정',
+  'menu.jellyfishLamp': '해파리 수면등',
   'menu.toothFairy.desc': '빠진 이와 요정의 편지 기록',
   'tooth.title': '이빨 요정',
   'tooth.defaultName': '우리 아기',

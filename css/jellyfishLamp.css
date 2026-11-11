@@ -1,0 +1,291 @@
+/* ========== 水母小夜灯 ========== */
+body.jl-open { overflow: hidden; }
+
+.jl-modal {
+  --jl-core: #fff6d8;
+  --jl-mid: #ffc56b;
+  --jl-edge: #ff8fb8;
+  --jl-flicker: 1;
+  --jl-dim: 0;
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 10000;
+  overflow: hidden;
+  color: #f3eeff;
+  background: radial-gradient(120% 80% at 50% 100%, #2a1a52 0%, #141236 45%, #0a0d26 100%);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.jl-modal.hidden { display: none; }
+
+/* 星星与气泡 */
+.jl-sky, .jl-bubbles { position: absolute; inset: 0; pointer-events: none; }
+.jl-sky i {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: .25;
+  animation: jl-twinkle 4.2s ease-in-out infinite;
+}
+.jl-bubbles i {
+  position: absolute;
+  bottom: -30px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(190, 230, 255, .35);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), rgba(255,255,255,0) 60%);
+  opacity: 0;
+  animation: jl-rise linear infinite;
+  transition: opacity 1s;
+}
+.jl-on .jl-bubbles i { opacity: .8; }
+
+@keyframes jl-twinkle { 0%, 100% { opacity: .15; } 50% { opacity: .7; } }
+@keyframes jl-rise {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(14px, -55vh); }
+  100% { transform: translate(-6px, -110vh); }
+}
+
+/* 舞台：灯居中，给上下控制条留位置 */
+.jl-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(64px, calc(env(safe-area-inset-top) + 56px)) 16px max(200px, calc(env(safe-area-inset-bottom) + 190px));
+  transition: padding .5s ease;
+}
+.jl-ui-hidden .jl-stage { padding-top: 24px; padding-bottom: 24px; }
+
+.jl-lamp-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  height: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 40px;
+}
+.jl-lamp-btn:focus-visible { outline: 3px solid rgba(255, 214, 120, .7); outline-offset: 6px; }
+/* SVG 盒子比灯宽：只有灯本身的图形可以点（开关灯），旁边空白处用于唤出按钮 */
+.jl-lamp-btn, .jl-svg { pointer-events: none; }
+.jl-shell, .jl-tentacles, .jl-base { pointer-events: auto; }
+
+.jl-svg {
+  display: block;
+  height: 100%;
+  max-height: 640px;
+  width: auto;
+  max-width: 100%;
+  aspect-ratio: 300 / 440;
+  overflow: visible;
+  filter: saturate(.55) brightness(.72);
+  transition: filter .8s ease;
+}
+.jl-on .jl-svg {
+  filter: none;
+  animation: jl-float 7s ease-in-out infinite;
+}
+@keyframes jl-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+/* 灯的发光部分：关灯时隐藏，开灯时随 --jl-flicker 轻微闪烁 */
+.jl-halo, .jl-shell-lit, .jl-inner-glow, .jl-base-glow, .jl-tentacle-glow {
+  opacity: 0;
+  transition: opacity .7s ease;
+}
+.jl-on .jl-halo { opacity: calc(.75 + .25 * var(--jl-flicker)); }
+.jl-on .jl-shell-lit { opacity: calc(.55 + .45 * var(--jl-flicker)); }
+.jl-on .jl-inner-glow { opacity: calc(.5 * var(--jl-flicker)); }
+.jl-on .jl-base-glow { opacity: .35; }
+.jl-on .jl-tentacle-glow { opacity: .55; }
+.jl-tentacle-glow { stroke: #fff; }
+
+.jl-dots circle { fill: rgba(255, 255, 255, .16); transition: fill .7s; }
+.jl-on .jl-dots circle { fill: rgba(255, 255, 255, .62); }
+.jl-shine { opacity: .18; }
+.jl-on .jl-shine { opacity: .45; }
+
+.jl-tentacle {
+  transform-box: view-box;
+  animation: jl-sway calc(4.2s + var(--i) * .37s) ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -.6s);
+}
+@keyframes jl-sway { from { transform: rotate(-2.2deg); } to { transform: rotate(2.6deg); } }
+
+/* 调暗遮罩（不影响按钮） */
+.jl-dim {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--jl-dim);
+  pointer-events: none;
+}
+
+/* 控制层 */
+.jl-ui { position: absolute; inset: 0; pointer-events: none; transition: opacity .5s ease; }
+.jl-ui-hidden .jl-ui { opacity: 0; }
+.jl-ui-hidden .jl-ui * { pointer-events: none !important; }
+
+.jl-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 8px max(16px, env(safe-area-inset-left));
+}
+.jl-close {
+  pointer-events: auto;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .25);
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+.jl-title { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: .5px; color: #f6eaff; }
+.jl-top-spacer { width: 44px; }
+
+.jl-bottom {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 8px max(16px, env(safe-area-inset-right)) max(18px, calc(env(safe-area-inset-bottom) + 10px)) max(16px, env(safe-area-inset-left));
+}
+.jl-hint {
+  margin: 0;
+  max-width: 460px;
+  min-height: 2.6em;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(240, 232, 255, .72);
+}
+
+.jl-power {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 20px 6px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.jl-power-track {
+  position: relative;
+  width: 84px; height: 46px;
+  border-radius: 999px;
+  background: #3a3360;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, .45);
+  transition: background .5s;
+}
+.jl-on .jl-power-track { background: linear-gradient(90deg, var(--jl-edge), var(--jl-mid)); }
+.jl-power-knob {
+  position: absolute;
+  top: 4px; left: 4px;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: #f4f0ff;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .35);
+  transition: transform .35s cubic-bezier(.4, 1.6, .5, 1);
+}
+.jl-on .jl-power-knob { transform: translateX(38px); }
+
+.jl-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 22px;
+}
+.jl-swatches { display: flex; gap: 10px; }
+.jl-swatch {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 48px;
+  background: none;
+  border: 0;
+  padding: 2px;
+  color: rgba(240, 232, 255, .75);
+  font-size: 11px;
+  cursor: pointer;
+}
+.jl-swatch span {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--dot);
+  border: 2px solid rgba(255, 255, 255, .25);
+}
+.jl-swatch em { font-style: normal; }
+.jl-swatch.active span { border-color: #fff; box-shadow: 0 0 0 3px rgba(255, 255, 255, .25), 0 0 14px var(--jl-mid); }
+.jl-swatch.active { color: #fff; }
+
+.jl-bright {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+.jl-bright input { width: 150px; accent-color: var(--jl-mid); }
+
+.jl-nosleep {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 横屏矮屏（iPhone 横放、折叠屏外屏横放）：控制条放到右侧 */
+@media (orientation: landscape) and (max-height: 560px) {
+  .jl-stage {
+    padding: max(12px, env(safe-area-inset-top)) max(280px, calc(env(safe-area-inset-right) + 270px)) max(12px, env(safe-area-inset-bottom)) max(70px, env(safe-area-inset-left));
+  }
+  .jl-ui-hidden .jl-stage { padding-right: 70px; }
+  .jl-top { right: auto; }
+  .jl-title { display: none; }
+  .jl-bottom {
+    left: auto;
+    top: 0;
+    width: 270px;
+    justify-content: center;
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+  .jl-hint { font-size: 12px; }
+}
+
+/* 平板与折叠屏内屏：灯更大，选项一行 */
+@media (min-width: 700px) and (min-height: 600px) {
+  .jl-title { font-size: 22px; }
+  .jl-stage { padding-bottom: max(170px, calc(env(safe-area-inset-bottom) + 160px)); }
+  .jl-hint { font-size: 15px; }
+  .jl-svg { max-height: 820px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jl-tentacle, .jl-on .jl-svg, .jl-sky i, .jl-bubbles i { animation: none; }
+}
