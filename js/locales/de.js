@@ -1148,6 +1148,7 @@ I18n.translations['de'] = {
   'birthday.fsWish': 'Möge jeder Tag voller Lachen und Überraschungen sein',
   'menu.toothFairy': 'Zahnfee',
   'menu.jellyfishLamp': 'Quallen-Nachtlicht',
+  'menu.bedtime': 'Schlafmond',
   'menu.toothFairy.desc': 'Zähne & Zauberbriefe festhalten',
   'tooth.title': 'Zahnfee',
   'tooth.defaultName': 'Schatz',

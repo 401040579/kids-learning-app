@@ -138,6 +138,9 @@ document.addEventListener('learningReady', () => {
   if (typeof ToothFairy !== 'undefined') {
     initialize('ToothFairy', () => ToothFairy.init());
   }
+  if (typeof Bedtime !== 'undefined') {
+    initialize('Bedtime', () => Bedtime.init());
+  }
   // 初始化各模块
   if (typeof VideoWhitelist !== 'undefined') {
     initialize('VideoWhitelist', () => VideoWhitelist.init());
@@ -201,7 +204,8 @@ const RecentlyUsed = {
     'birthdayParty': { icon: '🦄', nameKey: 'menu.birthdayParty', action: () => showBirthdayParty() },
     'parkWallpaper': { icon: '🏞️', nameKey: 'menu.parkWallpaper', action: () => showParkWallpaper() },
     'toothFairy': { icon: '🧚', nameKey: 'menu.toothFairy', action: () => showToothFairy() },
-    'jellyfishLamp': { icon: '🪼', nameKey: 'menu.jellyfishLamp', action: () => showJellyfishLamp() }
+    'jellyfishLamp': { icon: '🪼', nameKey: 'menu.jellyfishLamp', action: () => showJellyfishLamp() },
+    'bedtime': { icon: '🌛', nameKey: 'menu.bedtime', action: () => showBedtime() }
   },
 
   init() {

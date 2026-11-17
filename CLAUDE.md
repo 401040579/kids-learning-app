@@ -77,7 +77,8 @@ kids-learning-app/
 │   ├── birthdayParty.js   # 生日派对
 │   ├── parkWallpaper.js   # 魔法公园（声音互动壁纸）
 │   ├── toothFairy.js      # 牙仙子传统（掉牙记录/惊喜信/收藏证书）
-│   └── jellyfishLamp.js   # 水母小夜灯（全屏 + 屏幕常亮，样式在 css/jellyfishLamp.css）
+│   ├── jellyfishLamp.js   # 水母小夜灯（全屏 + 屏幕常亮，样式在 css/jellyfishLamp.css）
+│   └── bedtime.js         # 睡前小月亮（小灯时间/翻卡片/月亮票，css/bedtime.css）
 ├── docs/
 │   ├── 踩坑记录.md     # ⚠️ 改代码前先看：那些与官方文档/直觉相反的实测结论
 │   └── 审计报告-2026-07.md # 全项目审计：66 条已验证问题（含已修复清单）
@@ -149,6 +150,7 @@ kids-learning-app/
 | 生日派对 | birthdayParty.js | ✅ 完成（倒计时/许愿墙/吹蜡烛/贺卡制作） |
 | 魔法公园 | parkWallpaper.js | ✅ 完成（声音互动壁纸/麦克风风力/全屏Canvas） |
 | 水母小夜灯 | jellyfishLamp.js | ✅ 完成（SVG 海胆水母灯/开关/4 种光色/调暗；Wake Lock + iOS 静音视频兜底常亮；不写存档） |
+| 睡前小月亮 | bedtime.js | ✅ 完成（小灯时间/孩子排序翻卡片/月亮票/连续晚数/日历提醒） |
 | 牙仙子传统 | toothFairy.js | ✅ 完成（20颗牙齿地图/掉牙记录/牙仙子的信/收藏证书/惊喜揭晓/家长奖励规则） |
 
 ## 常用命令
@@ -181,7 +183,7 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 ## 数据存储
 
 通过 `AppStorage` 访问 localStorage：游客沿用原键，账号键以 `kids-learning-account:<id>:` 分区。
-完整本机备份登记 31 个键；账号存档同步/整体恢复处理其中 28 个，语言、通知配置和视频缓存属于设备。
+完整本机备份登记 32 个键；账号存档同步/整体恢复处理其中 29 个，语言、通知配置和视频缓存属于设备。
 根类型以 `DataBackup` 和后端允许表为准。新增嵌套字段应保留旧数据，不能把累计记录猜成逐题事件。
 
 | 键名 | 说明 |
@@ -200,6 +202,7 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 | kidsChoreTracker | 家庭积分榜 |
 | kidsBirthdayParty | 生日派对 |
 | kidsToothFairy | 牙仙子掉牙及奖励规则 |
+| kidsBedtime | 睡前小月亮：设置、卡片顺序、近 60 晚记录 |
 | kidsLogicGames | 逻辑游戏 |
 | kidsReactionGames | 反应游戏 |
 | kidsDrawSmash | 画线砸怪兽 |
@@ -259,11 +262,11 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - **只有用户明确要求时才开通账号**。无公开注册入口、无 HTTP 创建用户接口。首个专属账号为 `iris`；通过 `python -m backend.manage` 在服务器操作。
 - 独立后端代码位于 `backend/`，运维与测试见该目录 README。不得将机器人 8090 全部转发到公网；不得把账号数据库、密码、实际备份放进仓库或公开静态目录。
 - 公网学习 API 为 `https://api.tao.irish`，前端仍由 GitHub Pages 在 `https://app.tao.irish` 提供；2026-10-02 公网 HTTPS 与现有 Iris 登录/退出已验证。`js/accountConfig.js` 的 `apiBase` 为空时不发后端请求。公网 Cookie 要求 Secure/HttpOnly/SameSite=Strict；API 与网页应同站或使用同源代理。
-- `AppStorage` 管理 28 个学习存档键，游客沿用原键，账号使用独立前缀；登录不自动搬入游客数据。语言、家长通知凭据和视频缓存留在设备，不进入账号云存档。模块只能通过 AppStorage 读写。
+- `AppStorage` 管理 29 个学习存档键，游客沿用原键，账号使用独立前缀；登录不自动搬入游客数据。语言、家长通知凭据和视频缓存留在设备，不进入账号云存档。模块只能通过 AppStorage 读写。
 - `scope: learning` 的 v2 备份只恢复包含的键，不能删除其他本机设置；排除家长通知凭据和视频缓存，前后端登记表必须一致。SW 不拦截 `/api/` 与写请求。
 - 逐题事件接口在 `backend/learning.py`：追加与分页读取均从会话取账号；`expected_account_id` 仅检查队列归属。以 `(account_id, event_id)` 去重，同 ID 不同内容整批回滚；写入事务中重新检查撤销/过期会话。公开上传接口只允许 `source: web`；受信机器人适配器另行导入。
 - `js/learningHistory.js` 使用 IndexedDB `kids-learning-history`，`events` 以 `[owner,id]` 为键。数学/英语/中文/科学每次有效作答即时固定账号归属，确认答对后不可重复提交。游客日志不迁移、不上传；原账号的断网队列只能在再次登录该账号后补传。
-- 日志上传确认后才标记已同步；拉取日志和推进游标必须在一个 IndexedDB 事务中提交。使用写入序号而非作答时间分页，避免迟到的离线作答漏拉。日志独立导出，不在 localStorage 的 31 键备份内。
+- 日志上传确认后才标记已同步；拉取日志和推进游标必须在一个 IndexedDB 事务中提交。使用写入序号而非作答时间分页，避免迟到的离线作答漏拉。日志独立导出，不在 localStorage 的 32 键备份内。
 - 离线重新打开网页时不凭本机标记冒充已登录身份，进入游客模式。共用设备的 IndexedDB 不做加密隔离；账号 UI/云端隔离不能替代设备访问控制。
 - Orin 的独立服务目录为 `~/robots/kids-learning-service`，`backend/run.sh` 用独立 `flock` 防止多实例，仅监听 `127.0.0.1:8091`，不使用机器人大脑的停止命令。用户 crontab 保留原机器人自启，另加学习服务自启、5 分钟启动兜底和每日 04:35 备份。
 - `python -m backend.backup` 通过 SQLite Backup API 生成私有副本（默认保留 14 份、删除副本中的会话），不直接复制活跃数据库。WAL 模式会传给副本：须改为 DELETE journal 并真正关闭连接后再改名；sqlite3 的 `with connection` 只管理事务，不关闭连接。本轮已复制私有副本到 Mac 并临时恢复登录，未替换线上库。
@@ -327,3 +330,9 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - 学校记录使用独立本机账号/档案键，有意排除 `DataBackup`、云 dirty/同步、学习事件、Bark、Analytics、AI 与机器人。不要加入普通备份或学习云允许表；家长可单独下载学校备份。
 - Pacific 日期；计时和补记需确认。iReady Reading 可计英文，Math 不计；校内周总量 null 表示未知，不能推算补足。月度书籍列表不含 iReady。通用模板未核验学校原始 PPT，发布代码不含真实儿童资料。
 - v85 预缓存学校 JS/CSS。回归见 `tests/school-day.test.cjs` 和 `tests/browser-school-day.cjs`（180秒上限，临时账号/SQLite）。手机截图不进公开仓库。
+
+## 睡前小月亮（2026-11-17）
+
+- `js/bedtime.js` + `css/bedtime.css`，首页第一屏 🌛。三步：关灯前 60 分钟小灯时间 → 关灯前 20 分钟翻卡片（孩子用「排一排」定顺序，做完翻一张）→ 做完发一张月亮票，关灯后可用一次。
+- 「今晚」以凌晨 4 点为界；小灯时间之前且未开始时不能翻卡片，防止白天玩一遍占掉当晚。网页开着时到点自动弹出并语音提醒；网页关着无法提醒，家长设置可下载每日重复 .ics 加进手机日历。
+- 存档键 `kidsBedtime`（object）已登记 `DataBackup` 和 `backend/backup_keys.json`；新增学习存档键必须先把后端白名单部署到 Orin，否则账号云同步会 422 拒收整个快照。损坏存档保留原文、不覆盖。回归见 `tests/bedtime.test.cjs`。

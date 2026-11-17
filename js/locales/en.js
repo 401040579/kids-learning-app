@@ -1321,6 +1321,7 @@ I18n.translations['en'] = {
   'jellyfish.hintOff': 'Tap the jellyfish or the switch. The screen stays on while the light is on.',
   'jellyfish.hintAwake': 'The screen will stay on. Tap anywhere to show or hide the buttons.',
   'jellyfish.hintNoAwake': 'This device cannot keep the screen on automatically. Set Auto-Lock to Never in Settings.',
+  'menu.bedtime': 'Bedtime Moon',
   'menu.toothFairy.desc': 'Log teeth & magic letters',
   'tooth.title': 'Tooth Fairy',
   'tooth.defaultName': 'Sweetie',

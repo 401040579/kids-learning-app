@@ -1148,6 +1148,7 @@ I18n.translations['fr'] = {
   'birthday.fsWish': 'Que chaque jour soit rempli de rires et de surprises',
   'menu.toothFairy': 'La Fée des Dents',
   'menu.jellyfishLamp': 'Veilleuse Méduse',
+  'menu.bedtime': 'Lune du dodo',
   'menu.toothFairy.desc': 'Note tes dents et les lettres magiques',
   'tooth.title': 'La Fée des Dents',
   'tooth.defaultName': 'Mon trésor',

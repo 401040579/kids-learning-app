@@ -8,7 +8,8 @@ const DataBackup = {
     'kidsPictureBookData', 'kidsPronunciationStats', 'kidsEnglishBoost', 'kidsChoreTracker',
     'kidsBirthdayParty', 'kidsToothFairy', 'kidsLogicGames', 'kidsReactionGames',
     'kidsDrawSmash', 'kidsRagdollRobot', 'lifeSkillsStats', 'mathGameConfig',
-    'parentNotifyConfig', 'writingProgress', 'petGamesStats', 'videoWhitelistCache', 'kidsFamilyPK'
+    'parentNotifyConfig', 'writingProgress', 'petGamesStats', 'videoWhitelistCache', 'kidsFamilyPK',
+    'kidsBedtime'
   ],
   ARRAY_KEYS: ['artworkGallery', 'musicCompositions', 'recentlyUsed'],
   TEXT_KEYS: ['appLanguage', 'aiChatEnabled', 'sleepMusicTimer'],

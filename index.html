@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="css/schoolDay.css">
   <link rel="stylesheet" href="css/photoReading.css">
   <link rel="stylesheet" href="css/jellyfishLamp.css">
+  <link rel="stylesheet" href="css/bedtime.css">
 </head>
 <body>
   <div id="profile-loading" class="profile-loading" role="status" aria-live="polite">
@@ -2865,6 +2866,18 @@
     <button class="bp-fs-close-btn" onclick="BirthdayParty.stopFullscreen()">✕</button>
   </div>
 
+  <!-- 睡前小月亮 -->
+  <div id="bedtime-modal" class="bedtime-modal hidden" data-view="home" role="dialog" aria-modal="true" aria-labelledby="bt-title">
+    <div class="bt-stars" aria-hidden="true"><i style="left:42%;top:20%;animation-delay:1.2s"></i><i style="left:7%;top:10%;animation-delay:2.5s"></i><i style="left:13%;top:47%;animation-delay:1.7s"></i><i style="left:65%;top:28%;animation-delay:0.1s"></i><i style="left:56%;top:54%;animation-delay:0.2s"></i><i style="left:12%;top:55%;animation-delay:0.2s"></i><i style="left:73%;top:16%;animation-delay:2.8s"></i><i style="left:81%;top:8%;animation-delay:1.7s"></i><i style="left:51%;top:7%;animation-delay:2.9s"></i><i style="left:6%;top:18%;animation-delay:0.9s"></i><i style="left:19%;top:70%;animation-delay:0.4s"></i><i style="left:40%;top:24%;animation-delay:0.3s"></i><i style="left:74%;top:25%;animation-delay:1.1s"></i><i style="left:71%;top:9%;animation-delay:1.7s"></i><i style="left:80%;top:27%;animation-delay:1.5s"></i><i style="left:69%;top:55%;animation-delay:2.3s"></i><i style="left:60%;top:59%;animation-delay:1.1s"></i><i style="left:32%;top:24%;animation-delay:2.1s"></i><i style="left:32%;top:11%;animation-delay:1.7s"></i><i style="left:68%;top:64%;animation-delay:2.6s"></i><i style="left:94%;top:58%;animation-delay:0.9s"></i><i style="left:10%;top:16%;animation-delay:1.5s"></i><i style="left:22%;top:44%;animation-delay:0.5s"></i><i style="left:63%;top:54%;animation-delay:0.1s"></i><i style="left:86%;top:10%;animation-delay:2.3s"></i><i style="left:74%;top:41%;animation-delay:1.0s"></i><i style="left:45%;top:64%;animation-delay:1.7s"></i><i style="left:59%;top:9%;animation-delay:2.5s"></i></div>
+    <div class="bt-header">
+      <button id="bt-back" onclick="Bedtime.back()" aria-label="返回">‹</button>
+      <h2 id="bt-title">睡前小月亮</h2>
+      <button onclick="Bedtime.close()" aria-label="关闭">✕</button>
+    </div>
+    <div id="bt-body" class="bt-body"></div>
+    <div id="bt-toast" class="bt-toast" role="status"></div>
+  </div>
+
   <!-- 牙仙子传统 -->
   <div id="tooth-fairy-modal" class="tooth-fairy-modal hidden">
     <div class="tf-floating-particles"></div>
@@ -3014,6 +3027,7 @@
   <script src="js/parkWallpaper.js"></script>
   <script src="js/toothFairy.js"></script>
   <script src="js/jellyfishLamp.js"></script>
+  <script src="js/bedtime.js"></script>
   <script src="js/videoWhitelistConfig.js"></script>
   <script src="js/videoWhitelist.js"></script>
   <script src="js/homeScreen.js"></script>
