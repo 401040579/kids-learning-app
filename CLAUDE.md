@@ -334,5 +334,6 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 ## 睡前小月亮（2026-11-17）
 
 - `js/bedtime.js` + `css/bedtime.css`，首页第一屏 🌛。三步：关灯前 60 分钟小灯时间 → 关灯前 20 分钟翻卡片（孩子用「排一排」定顺序，做完翻一张）→ 做完发一张月亮票，关灯后可用一次。
+- 关灯页「🪼 打开水母小夜灯」直接亮灯（同一次点击内才能全屏/常亮），关掉小夜灯回到关灯页，月亮票仍可用；`JellyfishLamp.open({on, onClose})`，首页打开不受影响。
 - 「今晚」以凌晨 4 点为界；小灯时间之前且未开始时不能翻卡片，防止白天玩一遍占掉当晚。网页开着时到点自动弹出并语音提醒；网页关着无法提醒，家长设置可下载每日重复 .ics 加进手机日历。
 - 存档键 `kidsBedtime`（object）已登记 `DataBackup` 和 `backend/backup_keys.json`；新增学习存档键必须先把后端白名单部署到 Orin，否则账号云同步会 422 拒收整个快照。损坏存档保留原文、不覆盖。回归见 `tests/bedtime.test.cjs`。

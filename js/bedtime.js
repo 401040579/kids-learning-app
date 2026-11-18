@@ -373,8 +373,14 @@ const Bedtime = {
           ? `<p class="bt-night-say">月亮票用完啦，明天还有 🌙</p>
              <p class="bt-night-small">（真的不舒服、害怕、要上厕所，爸爸妈妈照常管）</p>`
           : `<button class="bt-big bt-use-ticket" onclick="Bedtime.useTicket()">🎫 用月亮票（喝口水 / 抱一下）</button>`}
+        ${typeof JellyfishLamp !== 'undefined' ? `<button class="bt-big bt-lamp-link" onclick="Bedtime.openNightLight()">🪼 打开水母小夜灯</button>` : ''}
         <button class="bt-link bt-night-exit" onclick="Bedtime.close()">关掉屏幕</button>
       </div>`;
+  },
+  // 关灯后直接亮起水母小夜灯；关掉小夜灯回到这里，月亮票还能用
+  openNightLight() {
+    this.close();
+    JellyfishLamp.open({ on: true, onClose: () => this.open('lights') });
   },
   useTicket() {
     const night = this.tonight();

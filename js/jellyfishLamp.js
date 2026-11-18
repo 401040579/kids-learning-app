@@ -33,17 +33,20 @@ const JellyfishLamp = {
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   },
 
-  open() {
+  // options.on：打开即亮灯（须在点击事件里调用，全屏/常亮才被允许）
+  // options.onClose：关灯离开后回到来源页面（睡前小月亮）
+  open(options = {}) {
     const modal = document.getElementById('jellyfish-lamp-modal');
     if (!modal) return;
+    this._onClose = options.onClose || null;
     if (typeof RecentlyUsed !== 'undefined') RecentlyUsed.track('jellyfishLamp');
     if (!modal.dataset.built) this.build(modal);
     modal.classList.remove('hidden');
     document.body.classList.add('jl-open');
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) { this._prevTheme = meta.content; meta.content = '#0a0d26'; }
-    this.setPower(false);
-    this.showControls(true);
+    this.setPower(!!options.on);
+    if (!options.on) this.showControls(true);
     this._onVisibility = () => { if (document.visibilityState === 'visible' && this.on) this.keepAwake(); };
     document.addEventListener('visibilitychange', this._onVisibility);
   },
@@ -58,6 +61,9 @@ const JellyfishLamp = {
     if (meta && this._prevTheme) meta.content = this._prevTheme;
     document.removeEventListener('visibilitychange', this._onVisibility);
     clearTimeout(this.hideTimer);
+    const back = this._onClose;
+    this._onClose = null;
+    if (back) back();
   },
 
   // ---------- 界面 ----------

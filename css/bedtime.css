@@ -153,3 +153,4 @@
 }
 .bedtime-modal[data-view="lights"] .bt-header h2 { color:#8a84c0; text-shadow:none; }
 .bedtime-modal[data-view="lights"] .bt-header button { background:rgba(255,255,255,.06); color:#8a84c0; }
+.bt-lamp-link { background:linear-gradient(135deg,#2c3a7a,#1c2457); color:#c9f0ff; box-shadow:0 5px 0 #11163a, 0 0 22px rgba(127,220,245,.25); }
