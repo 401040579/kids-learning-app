@@ -1,38 +1,40 @@
 // ========== 睡前小月亮 ==========
-// 三步睡前流程：① 小灯时间（关灯前一小时暗下来，玩安静的）② 翻卡片（孩子自己排顺序，做完一件翻一张）
+// 三步睡前流程：① 小灯时间（关灯前一小时暗下来，玩安静的）② 翻卡片（任选卡片，做完一件勾一张）
 // ③ 月亮票（关灯后能用一次）。只存本机/账号存档键 kidsBedtime，不上报、不发通知。
 // 「今晚」以凌晨 4 点为界：过了午夜还算前一晚。
 
 const Bedtime = {
   KEY: 'kidsBedtime',
   KEEP_NIGHTS: 60,
-  MAX_CARDS: 6,
 
-  // 卡片池：孩子在这里挑三四件睡前要做的事，顺序由孩子自己排
+  // 卡片池：挑选每晚要做的事
   POOL: {
     teeth:   { emoji: '🪥', name: '刷牙', say: '刷刷小牙齿，上上下下' },
     potty:   { emoji: '🚽', name: '尿尿', say: '去尿尿，再洗洗小手' },
     book:    { emoji: '📖', name: '讲一本', say: '选一本书，听一个故事' },
     hug:     { emoji: '🤗', name: '抱一抱', say: '和爸爸妈妈抱一抱' },
+    undress: { emoji: '👚', name: '脱衣服' },
+    nose:    { emoji: '👃', name: '洗鼻子' },
+    sleep:   { emoji: '🛏️', name: '睡觉' },
     bath:    { emoji: '🛁', name: '洗澡', say: '洗个香香的澡' },
     face:    { emoji: '🧼', name: '洗脸', say: '洗洗小脸和小手' },
     pajamas: { emoji: '👕', name: '换睡衣', say: '换上软软的睡衣' },
     water:   { emoji: '💧', name: '喝口水', say: '喝一小口水' },
     tidy:    { emoji: '🧸', name: '收玩具', say: '玩具们也要回家睡觉啦' }
   },
-  DEFAULT_CARDS: ['teeth', 'potty', 'book', 'hug'],
+  DEFAULT_CARDS: ['teeth', 'potty', 'book', 'hug', 'undress', 'nose', 'bath', 'sleep'],
   QUIET_PLAY: [['🧱', '搭积木'], ['🎨', '画画'], ['🧩', '拼图'], ['📚', '看书']],
 
   data: null,
   broken: false,      // 存档损坏时保留原文，不覆盖
   view: 'home',
   timer: 0,
-  flipping: false,
 
   defaults() {
     return {
       settings: { lightsOut: '21:00', dimMinutes: 60, routineMinutes: 20 },
       cards: [...this.DEFAULT_CARDS],
+      customCards: {},
       nights: {}
     };
   },
@@ -53,11 +55,17 @@ const Bedtime = {
     try {
       const saved = JSON.parse(raw);
       if (!saved || typeof saved !== 'object' || Array.isArray(saved)) throw Error('type');
-      const cards = Array.isArray(saved.cards) ? saved.cards.filter(id => this.POOL[id]) : base.cards;
+      const customCards = Object.fromEntries(Object.entries(saved.customCards || {}).filter(
+        ([id, name]) => /^custom-[a-z0-9-]+$/.test(id) && typeof name === 'string' && name.trim()
+      ));
+      const cards = Array.isArray(saved.cards) ? saved.cards.filter(id =>
+        typeof id === 'string' && (Object.hasOwn(this.POOL, id) || Object.hasOwn(customCards, id))
+      ) : base.cards;
       this.data = {
         ...saved,
+        customCards,
         settings: { ...base.settings, ...(saved.settings || {}) },
-        cards: cards.length ? [...new Set(cards)].slice(0, this.MAX_CARDS) : base.cards,
+        cards: cards.length ? [...new Set(cards)] : base.cards,
         nights: saved.nights && typeof saved.nights === 'object' ? saved.nights : {}
       };
     } catch {
@@ -123,7 +131,7 @@ const Bedtime = {
     if (now >= s.cards && now < s.out + 60 && !night.cardCall) {
       this.tonight().cardCall = true; this.save();
       this.open('cards');
-      this.speak('卡片时间到啦，我们来翻第一张卡片吧');
+      this.speak('卡片时间到啦，做完哪件事，就勾哪张卡片吧');
     } else if (now >= s.dim && now < s.cards && !night.dimCall) {
       this.tonight().dimCall = true; this.save();
       this.open('dim');
@@ -176,7 +184,7 @@ const Bedtime = {
     body.scrollTop = 0;
     document.getElementById('bt-title').textContent = {
       home: '睡前小月亮', dim: '小灯时间', cards: '翻卡片', ticket: '月亮票',
-      lights: '晚安', order: '排一排卡片', settings: '家长设置'
+      lights: '晚安', order: '选一选卡片', settings: '家长设置'
     }[view] || '睡前小月亮';
     document.getElementById('bt-back').hidden = view === 'home';
   },
@@ -195,7 +203,7 @@ const Bedtime = {
     else if (now >= s.cards) main = `<button class="bt-big" onclick="Bedtime.go('cards')">🃏 开始翻卡片</button>`;
     else if (now >= s.dim) main = `<button class="bt-big bt-lamp-btn" onclick="Bedtime.go('dim')">🪔 小灯时间到啦</button>
       <button class="bt-soft" onclick="Bedtime.go('cards')">提前开始翻卡片</button>`;
-    else main = `<button class="bt-big" onclick="Bedtime.go('order')">🔢 先排一排今晚的卡片</button>`;
+    else main = `<button class="bt-big" onclick="Bedtime.go('order')">🃏 先选一选睡前卡片</button>`;
 
     const week = this.weekRow();
     const broken = this.broken ? `<p class="bt-warn">睡前存档读不出来，原记录已保留没有删除；今晚的进度暂时不会保存。请家长检查备份。</p>` : '';
@@ -218,7 +226,7 @@ const Bedtime = {
       <div class="bt-week">${week}</div>
       ${streak >= 7 ? `<p class="bt-badge">🌕 满月徽章！连续 ${streak} 晚，太棒啦！</p>` : `<p class="bt-hint">再坚持 ${7 - (streak % 7)} 晚，就能点亮满月 🌕</p>`}
       <div class="bt-grid2">
-        <button class="bt-tile" onclick="Bedtime.go('order')">🔢<span>排一排卡片</span></button>
+        <button class="bt-tile" onclick="Bedtime.go('order')">🃏<span>选一选卡片</span></button>
         <button class="bt-tile" onclick="Bedtime.go('settings')">👨‍👩‍👧<span>家长设置</span></button>
       </div>`;
   },
@@ -258,36 +266,26 @@ const Bedtime = {
   // ========== 页面：翻卡片 ==========
   render_cards() {
     const n = this.peekTonight(), cards = this.data.cards;
-    const nextId = cards.find(id => !n.done.includes(id));
-    if (!nextId) return this.render_ticket();
-    const s = this.schedule(), left = s.out - this.nowMinutes();
-    // 白天点进来不算今晚，避免白天玩一遍、晚上就没得翻
+    if (n.finishedAt) return this.render_lights();
+    const s = this.schedule();
     if (!n.done.length && this.nowMinutes() < s.dim) return this.render_daytime();
-    const doneCount = cards.filter(id => n.done.includes(id)).length;
-    const card = this.POOL[nextId];
-    const strip = cards.map((id, i) => {
-      const done = n.done.includes(id), cur = id === nextId;
-      return `<div class="bt-mini${done ? ' done' : ''}${cur ? ' cur' : ''}">${done ? this.POOL[id].emoji : (cur ? '❓' : i + 1)}${done ? '<i>✓</i>' : ''}</div>`;
-    }).join('<span class="bt-mini-dash"></span>');
     return `
-      <div class="bt-strip">${strip}</div>
-      <p class="bt-ask">${doneCount ? '下一张是什么？' : '第一张是什么？'}</p>
-      <div class="bt-card-wrap">
-        <div class="bt-card" id="bt-card" onclick="Bedtime.speak('${card.name}，${card.say}')">
-          <div class="bt-card-face bt-card-front">
-            <div class="bt-card-emoji">${card.emoji}</div>
-            <div class="bt-card-name">${card.name}</div>
-            <div class="bt-card-say">🔈 ${card.say}</div>
-          </div>
-          <div class="bt-card-face bt-card-back">
-            <div class="bt-card-emoji">⭐</div>
-            <div class="bt-card-name">做完啦！</div>
-          </div>
-        </div>
-      </div>
-      <button class="bt-big bt-done-btn" onclick="Bedtime.finishCard('${nextId}')">✋ 我做完啦，翻过去！</button>
-      <p class="bt-count">${left <= 0 ? '🌙 关灯时间到啦，做完这张就睡觉' : `🌙 ${this.fmt(s.out)} 关灯${left <= 60 ? ` · 还有 ${left} 分钟` : ''}`}</p>
-      ${doneCount ? `<button class="bt-link" onclick="Bedtime.undoCard()">↩︎ 刚才翻错了</button>` : ''}`;
+      <p class="bt-sub">做完哪件事，就勾哪张。再点一次可以取消。</p>
+      <p class="bt-count" aria-live="polite">已完成 <b>${n.done.length} / ${cards.length}</b></p>
+      <div class="bt-checklist">${cards.map(id => {
+        const card = this.card(id), done = n.done.includes(id);
+        return `<button class="bt-choice" data-card="${id}" aria-pressed="${done}" onclick="Bedtime.finishCard('${id}')">
+          <i aria-hidden="true">${done ? '✓' : ''}</i><span aria-hidden="true">${card.emoji}</span>${this.escape(card.name)}
+        </button>`;
+      }).join('')}</div>
+      <p class="bt-count">🌙 ${this.fmt(s.out)} 关灯</p>
+      <button class="bt-link" onclick="Bedtime.go('order')">选一选卡片</button>`;
+  },
+  card(id) {
+    return this.POOL[id] || { emoji: '🌟', name: this.data.customCards[id] };
+  },
+  escape(text) {
+    return text.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   },
   render_daytime() {
     const s = this.schedule();
@@ -295,36 +293,40 @@ const Bedtime = {
       <div class="bt-sky-hero"><div class="bt-hero-moon">☀️</div></div>
       <h3 class="bt-day-title">现在还不是睡觉时间哦</h3>
       <p class="bt-sub">晚上 <b>${this.fmt(s.dim)}</b> 小灯亮了，<br><b>${this.fmt(s.cards)}</b> 再来翻卡片</p>
-      <button class="bt-big" onclick="Bedtime.go('order')">🔢 先排一排卡片</button>
+      <button class="bt-big" onclick="Bedtime.go('order')">🃏 先选一选卡片</button>
       <button class="bt-soft" onclick="Bedtime.go('home')">好的</button>`;
   },
   finishCard(id) {
-    if (this.flipping) return;
     const night = this.tonight();
-    if (night.done.includes(id)) return;
-    this.flipping = true;
-    if (!night.startedAt) night.startedAt = Date.now();
-    night.done.push(id);
-    const cards = this.data.cards;
-    const allDone = cards.every(c => night.done.includes(c));
-    if (allDone) {
-      night.finishedAt = Date.now();
-      night.onTime = this.nowMinutes() <= this.schedule().out;
-      night.ticket = 'unused';
+    if (night.finishedAt || !this.data.cards.includes(id)) return;
+    const index = night.done.indexOf(id);
+    if (index >= 0) night.done.splice(index, 1);
+    else {
+      if (!night.startedAt) night.startedAt = Date.now();
+      night.done.push(id);
     }
+    const allDone = this.completeIfReady(night);
     this.save();
-    document.getElementById('bt-card')?.classList.add('flipped');
-    this.sparkle();
-    const left = cards.filter(c => !night.done.includes(c)).length;
-    this.speak(allDone ? '全部做完啦！你得到了一张月亮票' : (left === 1 ? '真棒！还剩最后一张' : '真棒！下一张是什么？'));
-    setTimeout(() => { this.flipping = false; this.go(allDone ? 'ticket' : 'cards'); }, 1300);
+    const body = document.getElementById('bt-body');
+    const scroll = body?.scrollTop;
+    this.go(allDone ? 'ticket' : 'cards');
+    if (allDone) {
+      this.sparkle();
+      this.speak('全部做完啦！你得到了一张月亮票');
+    } else {
+      if (body) {
+        body.scrollTop = scroll;
+        body.querySelector(`[data-card="${id}"]`)?.focus({ preventScroll: true });
+      }
+      if (index < 0) this.speak(this.POOL[id]?.say || '做完啦');
+    }
   },
-  undoCard() {
-    const night = this.tonight();
-    if (night.finishedAt) return;
-    night.done.pop();
-    this.save();
-    this.go('cards');
+  completeIfReady(night) {
+    if (night.finishedAt || !this.data.cards.every(id => night.done.includes(id))) return false;
+    night.finishedAt = Date.now();
+    night.onTime = this.nowMinutes() <= this.schedule().out;
+    night.ticket = 'unused';
+    return true;
   },
   sparkle() {
     const box = document.getElementById('bt-body');
@@ -399,33 +401,33 @@ const Bedtime = {
     } catch { return '宝贝'; }
   },
 
-  // ========== 页面：孩子排顺序 ==========
+  // ========== 页面：选择卡片 ==========
   render_order() {
-    const cards = this.data.cards;
-    return `
-      <p class="bt-sub">睡前要做的事，<b>你来排顺序</b>！</p>
-      <ol class="bt-order">
-        ${cards.map((id, i) => `<li>
-          <span class="bt-order-num">${i + 1}</span>
-          <span class="bt-order-emoji">${this.POOL[id].emoji}</span>
-          <span class="bt-order-name">${this.POOL[id].name}</span>
-          <button aria-label="往前" ${i === 0 ? 'disabled' : ''} onclick="Bedtime.move(${i},-1)">⬆️</button>
-          <button aria-label="往后" ${i === cards.length - 1 ? 'disabled' : ''} onclick="Bedtime.move(${i},1)">⬇️</button>
-        </li>`).join('')}
-      </ol>
-      <button class="bt-big" onclick="Bedtime.speakOrder()">🔈 读一读我的顺序</button>
-      <button class="bt-soft" onclick="Bedtime.go('home')">✅ 排好啦</button>`;
+    const ids = [...Object.keys(this.POOL), ...Object.keys(this.data.customCards)];
+    return `<div class="bt-panel"><h4>每晚用哪些卡片？</h4>
+      <p class="bt-note">点亮想用的卡片，至少留两张。</p>
+      <div class="bt-pool">${ids.map(id => {
+        const c = this.card(id), on = this.data.cards.includes(id);
+        return `<button aria-pressed="${on}" class="bt-pool-item${on ? ' on' : ''}" onclick="Bedtime.toggleCard('${id}')">${c.emoji}<span>${this.escape(c.name)}</span></button>`;
+      }).join('')}</div>
+      <form class="bt-add" onsubmit="Bedtime.addCard(this.elements.cardName.value);return false">
+        <label for="bt-custom">自己的卡片</label>
+        <input id="bt-custom" name="cardName" maxlength="32" required placeholder="例如：给小熊盖被子">
+        <button class="bt-soft">添加卡片</button>
+      </form></div>
+      <button class="bt-big" onclick="Bedtime.go('cards')">选好了</button>`;
   },
-  move(i, delta) {
-    const cards = this.data.cards, j = i + delta;
-    if (j < 0 || j >= cards.length) return;
-    [cards[i], cards[j]] = [cards[j], cards[i]];
+  addCard(value) {
+    const name = value.trim();
+    if (!name || name.length > 32) return this.toast('请输入 1 到 32 个字');
+    const match = [...Object.keys(this.POOL), ...Object.keys(this.data.customCards)]
+      .find(id => this.card(id).name === name);
+    const id = match || 'custom-' + crypto.randomUUID();
+    if (!match) this.data.customCards[id] = name;
+    if (!this.data.cards.includes(id)) this.data.cards.push(id);
     this.save();
     this.go('order');
-  },
-  speakOrder() {
-    const words = ['第一', '第二', '第三', '第四', '第五', '第六'];
-    this.speak(this.data.cards.map((id, i) => `${words[i]}，${this.POOL[id].name}`).join('。'));
+    this.toast('这张卡片已选好');
   },
 
   // ========== 页面：家长设置 ==========
@@ -451,17 +453,14 @@ const Bedtime = {
         <button class="bt-soft" onclick="Bedtime.downloadCalendar()">📅 加到手机日历</button>
       </div>
       <div class="bt-panel">
-        <h4>🃏 卡片（选 2~${this.MAX_CARDS} 张，顺序让孩子排）</h4>
-        <div class="bt-pool">
-          ${Object.entries(this.POOL).map(([id, c]) => `<button class="bt-pool-item${cards.includes(id) ? ' on' : ''}" onclick="Bedtime.toggleCard('${id}')">${c.emoji}<span>${c.name}</span></button>`).join('')}
-        </div>
+        <button class="bt-soft" onclick="Bedtime.go('order')">🃏 选一选卡片（已选 ${cards.length} 张）</button>
       </div>
       <div class="bt-panel">
         <h4>💡 几点经验</h4>
         <ul class="bt-tips">
           <li>头几晚孩子还会试探，照样做。</li>
           <li>故事说好讲几本，每晚一样。</li>
-          <li>磨蹭时别说「快点」，问一句「下一张是什么？」</li>
+          <li>磨蹭时别说「快点」，问一句「你想勾哪一张？」</li>
           <li>月亮票用完再叫，平平地说一句「月亮票用完啦，明天还有」，然后不再回话。真不舒服、害怕、要上厕所，照常管。</li>
         </ul>
       </div>
@@ -478,13 +477,15 @@ const Bedtime = {
       if (cards.length <= 2) return this.toast('至少留 2 张卡片');
       cards.splice(at, 1);
     } else {
-      if (cards.length >= this.MAX_CARDS) return this.toast(`最多 ${this.MAX_CARDS} 张，睡前事情少一点更好`);
       cards.push(id);
     }
     // 今晚已翻过的卡片如果被移走，进度里也去掉，避免完成判断错乱
     const n = this.data.nights[this.nightKey()];
-    if (n && !n.finishedAt) n.done = n.done.filter(c => cards.includes(c));
-    this.save(); this.go('settings');
+    if (n && !n.finishedAt) {
+      n.done = n.done.filter(c => cards.includes(c));
+      this.completeIfReady(n);
+    }
+    this.save(); this.go('order');
   },
   resetTonight() {
     if (!confirm('重新开始今晚的卡片？今晚的月亮票也会收回。')) return;
@@ -506,7 +507,7 @@ const Bedtime = {
     ];
     return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//kids-learning-app//bedtime//ZH', 'CALSCALE:GREGORIAN',
       ...ev('dim', sc.dim, sc.cards - sc.dim, '🪔 小灯时间到啦', '关大灯、电视和平板，只留小灯，玩安静的'),
-      ...ev('cards', sc.cards, sc.out - sc.cards, '🃏 翻卡片时间', '打开宝贝学习乐园·睡前小月亮，一张一张翻'),
+      ...ev('cards', sc.cards, sc.out - sc.cards, '🃏 翻卡片时间', '打开宝贝学习乐园·睡前小月亮，做完一件勾一张'),
       'END:VCALENDAR'].join('\r\n');
   },
   downloadCalendar() {

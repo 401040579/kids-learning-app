@@ -40,7 +40,8 @@ test('做完全部卡片发一张月亮票，只能用一次，并写入存档',
   const a = load();
   a.run(`Bedtime.go = () => {}; Bedtime.speak = () => {}; Bedtime.sparkle = () => {};
     globalThis.document = { getElementById: () => null };`);
-  for (const id of ['teeth', 'potty', 'book', 'hug']) a.run(`Bedtime.flipping = false; Bedtime.finishCard('${id}')`);
+  const cards = Array.from(a.run('Bedtime.data.cards'));
+  for (const id of cards.slice().reverse()) a.run(`Bedtime.finishCard('${id}')`);
   let night = a.run('JSON.stringify(Bedtime.peekTonight())');
   night = JSON.parse(night);
   assert.equal(night.ticket, 'unused');
@@ -48,7 +49,7 @@ test('做完全部卡片发一张月亮票，只能用一次，并写入存档',
   a.run('Bedtime.useTicket(); Bedtime.useTicket();');
   const saved = JSON.parse(a.disk.get('kidsBedtime'));
   assert.equal(Object.values(saved.nights)[0].ticket, 'used');
-  assert.deepEqual(saved.cards, ['teeth', 'potty', 'book', 'hug']);
+  assert.deepEqual(saved.cards, cards);
 });
 
 test('损坏存档保留原文，不被覆盖', () => {
@@ -74,4 +75,19 @@ test('日历提醒每天重复且带闹铃', () => {
   assert.match(ics, /DTSTART:20261117T204000/);
   assert.equal((ics.match(/RRULE:FREQ=DAILY/g) || []).length, 2);
   assert.equal((ics.match(/BEGIN:VALARM/g) || []).length, 2);
+});
+
+test('旧卡组中途升级、乱序勾选与取消、自定义卡刷新后保留', () => {
+  const a = load({ kidsBedtime: JSON.stringify({ cards: ['teeth','book','hug'] }) });
+  a.run(`Bedtime.go = () => {}; Bedtime.speak = () => {};
+    globalThis.document = { getElementById: () => null };
+    globalThis.crypto = { randomUUID: () => 'test-id' };
+    Bedtime.tonight().done = ['book'];
+    Bedtime.addCard('给小熊盖被子');
+    Bedtime.finishCard('custom-test-id');
+    Bedtime.finishCard('book');
+    Bedtime.load();`);
+  assert.deepEqual(Array.from(a.run('Bedtime.peekTonight().done')), ['custom-test-id']);
+  assert.deepEqual(Array.from(a.run('Bedtime.data.cards')), ['teeth','book','hug','custom-test-id']);
+  assert.equal(a.run("Bedtime.card('custom-test-id').name"), '给小熊盖被子');
 });

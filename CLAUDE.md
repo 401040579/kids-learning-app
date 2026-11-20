@@ -150,7 +150,7 @@ kids-learning-app/
 | 生日派对 | birthdayParty.js | ✅ 完成（倒计时/许愿墙/吹蜡烛/贺卡制作） |
 | 魔法公园 | parkWallpaper.js | ✅ 完成（声音互动壁纸/麦克风风力/全屏Canvas） |
 | 水母小夜灯 | jellyfishLamp.js | ✅ 完成（SVG 海胆水母灯/开关/4 种光色/调暗；Wake Lock + iOS 静音视频兜底常亮；不写存档） |
-| 睡前小月亮 | bedtime.js | ✅ 完成（小灯时间/孩子排序翻卡片/月亮票/连续晚数/日历提醒） |
+| 睡前小月亮 | bedtime.js | ✅ 完成（小灯时间/自选卡片打勾/月亮票/连续晚数/日历提醒） |
 | 牙仙子传统 | toothFairy.js | ✅ 完成（20颗牙齿地图/掉牙记录/牙仙子的信/收藏证书/惊喜揭晓/家长奖励规则） |
 
 ## 常用命令
@@ -202,7 +202,7 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 | kidsChoreTracker | 家庭积分榜 |
 | kidsBirthdayParty | 生日派对 |
 | kidsToothFairy | 牙仙子掉牙及奖励规则 |
-| kidsBedtime | 睡前小月亮：设置、卡片顺序、近 60 晚记录 |
+| kidsBedtime | 睡前小月亮：设置、自定义卡片、已选卡片、近 60 晚记录 |
 | kidsLogicGames | 逻辑游戏 |
 | kidsReactionGames | 反应游戏 |
 | kidsDrawSmash | 画线砸怪兽 |
@@ -333,7 +333,7 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 
 ## 睡前小月亮（2026-11-17）
 
-- `js/bedtime.js` + `css/bedtime.css`，首页第一屏 🌛。三步：关灯前 60 分钟小灯时间 → 关灯前 20 分钟翻卡片（孩子用「排一排」定顺序，做完翻一张）→ 做完发一张月亮票，关灯后可用一次。
+- `js/bedtime.js` + `css/bedtime.css`，首页第一屏 🌛。三步：关灯前 60 分钟小灯时间 → 关灯前 20 分钟翻卡片（全部并排，做完一件勾一张，可添加自定义卡片）→ 做完发一张月亮票，关灯后可用一次。
 - 关灯页「🪼 打开水母小夜灯」直接亮灯（同一次点击内才能全屏/常亮），关掉小夜灯回到关灯页，月亮票仍可用；`JellyfishLamp.open({on, onClose})`，首页打开不受影响。
 - 「今晚」以凌晨 4 点为界；小灯时间之前且未开始时不能翻卡片，防止白天玩一遍占掉当晚。网页开着时到点自动弹出并语音提醒；网页关着无法提醒，家长设置可下载每日重复 .ics 加进手机日历。
 - 存档键 `kidsBedtime`（object）已登记 `DataBackup` 和 `backend/backup_keys.json`；新增学习存档键必须先把后端白名单部署到 Orin，否则账号云同步会 422 拒收整个快照。损坏存档保留原文、不覆盖。回归见 `tests/bedtime.test.cjs`。
