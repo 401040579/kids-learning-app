@@ -2874,6 +2874,32 @@
         <h2 id="bd-title" data-i18n="menu.butterflyDance">彩虹蝴蝶舞会</h2>
         <div class="bd-tools"><button type="button" data-bd="sound"></button><button type="button" data-bd="close"></button></div>
       </header>
+      <div class="bd-modes">
+        <button type="button" data-mode="trail" data-i18n="btMap.trails">海湾闯关</button>
+        <button type="button" data-mode="studio" data-i18n="btMap.studio">舞步练习</button>
+      </div>
+      <section class="bt-map" hidden>
+        <div class="bt-level-bar">
+          <select class="bt-picker"></select>
+          <strong class="bt-trail-count"></strong>
+        </div>
+        <div class="bt-layout">
+          <div class="bt-landscape"><div class="bt-board">
+            <div class="bt-cells"></div>
+            <div class="bt-actor" aria-hidden="true"><div class="bt-bearing"><div class="bd-dancer">
+              <i class="bd-wing bd-left"></i><i class="bd-wing bd-right"></i><i class="bd-body"></i>
+            </div><i class="bt-nose">▲</i></div></div>
+          </div></div>
+          <div class="bt-desk">
+            <strong data-i18n="btMap.blocks">方向和动作图块</strong>
+            <div class="bt-palette"></div>
+            <p class="bt-help"></p>
+            <button type="button" class="bt-undo" data-map="undo" data-i18n="btMap.undo">撤销上一步</button>
+          </div>
+        </div>
+        <div class="bt-footer"><p class="bt-status" role="status"></p><button type="button" class="bt-run" data-map="run"></button></div>
+      </section>
+      <section class="bd-studio" hidden>
       <nav class="bd-acts"></nav>
       <div class="bd-stage">
         <div class="bd-trail" aria-hidden="true"></div>
@@ -2886,6 +2912,7 @@
         <div class="bd-score"><strong data-i18n="bd.steps">我的舞步</strong><div class="bd-slots"></div></div>
         <div class="bd-controls"><div class="bd-moves"></div><button type="button" class="bd-play" data-bd="play"></button></div>
       </div>
+      </section>
     </div>
   </dialog>
 
@@ -3050,6 +3077,8 @@
   <script src="js/parkWallpaper.js"></script>
   <script src="js/toothFairy.js"></script>
   <script src="js/jellyfishLamp.js"></script>
+  <script src="js/butterflyTrail.js"></script>
+  <script src="js/butterflyBoard.js"></script>
   <script src="js/butterflyDance.js"></script>
   <script src="js/bedtime.js"></script>
   <script src="js/videoWhitelistConfig.js"></script>

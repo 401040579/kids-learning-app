@@ -52,6 +52,57 @@ async function run() {
     await page.locator('button[onclick*=butterflyDance]').tap();
 
     const dialog = page.locator('#butterfly-dance');
+    const {solve} = require('./butterfly-solver.cjs');
+    const trail = require('../js/butterflyTrail.js');
+    const map = dialog.locator('.bt-map');
+    const paint = async (tool,key) => {
+      await map.locator('[data-tool="'+tool+'"]').click();
+      await map.locator('[data-cell="'+key+'"]').click();
+    };
+    const startTrail = () => map.locator('[data-map="run"]').click();
+    await map.waitFor();
+    await page.clock.install();
+    // 初次尝试停在缺块的位置，然后真正从工具盘拖到起点。
+    await startTrail();
+    await page.clock.fastForward(200);
+    assert.match(await map.locator('.bt-status').textContent(),/缺/);
+    const block = await map.locator('[data-tool="forward"]').boundingBox();
+    const dest = await map.locator('[data-cell="0,0"]').boundingBox();
+    await page.mouse.move(block.x+block.width/2,block.y+block.height/2);
+    await page.mouse.down();
+    await page.mouse.move(dest.x+dest.width/2,dest.y+dest.height/2,{steps:8});
+    await page.mouse.up();
+    assert.equal(await map.locator('[data-cell="0,0"] .bt-glyphs').textContent(),'↑');
+    await map.locator('[data-map="undo"]').click();
+    assert.equal(await map.locator('[data-cell="0,0"] .bt-glyphs').textContent(),'');
+    for (const [level,rows] of trail.levels.entries()) {
+      assert.equal(await map.locator('.bt-picker').inputValue(),String(level));
+      const program = new Map(solve(rows));
+      for (const [key,tile] of program) {
+        if (tile.heading) await paint(tile.heading,key);
+        if (tile.flower) await paint('nectar',key);
+        await paint(tile.action,key);
+      }
+      await startTrail();
+      for (const [i,frame] of [...trail.run(rows,program)].entries()) {
+        await page.clock.fastForward(i===0 ? 155 : 520);
+        assert.equal(await map.locator('.bt-actor').getAttribute('data-pose'),
+          [frame.pose.x,frame.pose.y,frame.pose.dir].join(','),'level '+(level+1)+' beat '+(i+1));
+      }
+      assert(await map.evaluate(el=>el.classList.contains('bt-duet')));
+      await page.clock.fastForward(1300);
+      assert.match(await map.locator('.bt-trail-count').textContent(),new RegExp('已过 '+(level+1)+'/20'));
+      if (level < 19) await startTrail();
+    }
+    assert.match(await map.locator('.bt-status').textContent(),/全部完成/);
+    await map.locator('.bt-picker').selectOption('19');
+    for (const [width,height] of [[320,568],[390,844],[844,390],[768,1024]]) {
+      await page.setViewportSize({width,height});
+      assert(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth+1),'map overflow '+width);
+    }
+    await page.clock.resume();
+    const studio = () => dialog.locator('button[data-mode="studio"]').click();
+    await studio();
     const play = dialog.locator('.bd-play');
     const act = i => dialog.locator('[data-act="' + i + '"]').tap();
     const add = move => dialog.locator('[data-add="' + move + '"]').tap();
@@ -82,6 +133,7 @@ async function run() {
     await dialog.locator('[data-bd="close"]').tap();
     await dialog.waitFor({ state: 'hidden' });
     await page.locator('.recent-item[onclick*=butterflyDance]').click();
+    await studio();
     await cue('从左到右');
 
     for (const [width, height] of [[320, 568], [390, 844], [844, 390], [768, 1024]]) {
@@ -94,11 +146,11 @@ async function run() {
     await dialog.locator('[data-bd="close"]').tap();
     await page.goto(new URL('#butterfly-dance', site).href);
     await dialog.waitFor();
-    await cue('从左到右');
+    await map.waitFor();
     await page.evaluate(() => navigator.serviceWorker.ready);
     await page.waitForFunction(async () => !!(await caches.match('/icons/butterfly/lagoon.webp')));
     await page.reload({ waitUntil: 'domcontentloaded' });
-    await cue('从左到右');
+    await map.waitFor();
     if (server) {
       // 停掉静态源站，实际断开回源，浏览器只能从已安装的 SW 取回游戏。
       server.close();
@@ -108,9 +160,13 @@ async function run() {
     }
     await page.reload({ waitUntil: 'domcontentloaded' });
     await dialog.waitFor();
-    await perform(['jump', 'cha'], '鼓掌');
+    await map.waitFor();
+    assert.match(await map.locator('.bt-trail-count').textContent(),/20\/20/);
+    await paint('forward','0,0'); await paint('cha','1,0'); await startTrail();
+    await page.waitForFunction(()=>document.querySelector('.bt-map').classList.contains('bt-duet'));
+    await studio(); await perform(['jump', 'cha'], '鼓掌');
     assert.deepEqual(errors, []);
-    console.log('通过：入口、三幕挑战、自由编舞、改步、停止、最近使用、四种尺寸、直达链接与离线演出。');
+    console.log('通过：20张地图逐拍走位、拖放与撤销、合舞存档、三幕练习、自由编舞、改步、停止、最近使用、四种尺寸、直达链接与离线演出。');
   } finally {
     if (server?.listening) server.close();
     await browser.close();

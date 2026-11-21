@@ -10,7 +10,8 @@ const ButterflyDance = (() => {
   const el = selector => dialog.querySelector(selector);
   const t = key => I18n.t('bd.' + key);
   let act = 0, slots = [], selected = 0, beat = -1, playing = false, won = false;
-  let sound = true, audio, timer, message;
+  let sound = true, audio, timer, message, mode;
+  const board = ButterflyBoard(dialog, { wakeAudio, melody, silence });
   const free = () => act === acts.length - 1;
   const position = i => 7 + (i + 1) * 84 / slots.length;
   function cue(key, params = {}) {
@@ -74,7 +75,14 @@ const ButterflyDance = (() => {
   function melody(id) {
     if (!sound || !audio) return;
     const start = audio.currentTime;
-    for (const [offset, hz] of moves[id].notes) {
+    const accents = {
+      samba: [[0,392],[.09,523],[.32,659],[.43,523],[.65,784],[.86,659]],
+      twirl: [[0,523],[.13,659],[.26,784],[.39,1047],[.57,784],[.76,659],[.9,523]],
+      nectar: [[0,587],[.09,740],[.21,880]],
+      glide: [[0,392],[.09,494],[.18,587],[.27,740]]
+    };
+    const notes = moves[id]?.notes || accents[id] || [[0, id === 'forward' ? 440 : 349], [.1, 523]];
+    for (const [offset, hz] of notes) {
       const oscillator = audio.createOscillator(), volume = audio.createGain();
       oscillator.type = id === 'cha' ? 'triangle' : 'sine';
       oscillator.frequency.value = hz;
@@ -129,6 +137,7 @@ const ButterflyDance = (() => {
   dialog.addEventListener('click', event => {
     const b = event.target.closest('button');
     if (!b || b.disabled) return;
+    if (b.dataset.mode) { switchMode(b.dataset.mode); return; }
     if (b.dataset.act !== undefined) {
       setAct(Number(b.dataset.act));
       el(`[data-act="${act}"]`).focus();
@@ -152,25 +161,49 @@ const ButterflyDance = (() => {
     } else if (b.dataset.bd === 'sound') {
       sound = !sound;
       if (!sound) silence();
-      if (sound && playing) wakeAudio();
+      if (sound && (playing || board.running())) wakeAudio();
       render();
-    } else if (b.dataset.bd === 'close') dialog.close();
+    } else if (b.dataset.bd === 'close') {
+      unlink();
+      dialog.close();
+    }
   });
-  dialog.addEventListener('close', () => {
-    stop();
+  function unlink() {
     if (location.hash === '#butterfly-dance') {
       history.replaceState(history.state, '', location.pathname + location.search);
     }
+  }
+  dialog.addEventListener('cancel', unlink);
+  dialog.addEventListener('close', () => {
+    if (dialog.open) return;
+    board.stop();
+    stop();
   });
   document.addEventListener('visibilitychange', () => {
+    if (document.hidden && board.running()) board.pause();
     if (document.hidden && playing) { stop(); cue('ready'); render(); }
   });
   window.addEventListener('languageChanged', () => {
-    if (dialog.open) { render(); cue(...message); }
+    if (dialog.open) { render(); cue(...message); if (mode === 'trail') board.translate(); }
   });
+  function switchMode(next) {
+    board.pause();
+    stop();
+    mode = next;
+    dialog.dataset.mode = mode;
+    el('.bd-studio').hidden = mode !== 'studio';
+    el('.bt-map').hidden = mode !== 'trail';
+    for (const button of dialog.querySelectorAll('[data-mode]')) {
+      button.setAttribute('aria-pressed', String(button.dataset.mode === mode));
+    }
+    if (mode === 'studio') setAct(0);
+    else board.translate();
+  }
   function open() {
     if (dialog.open) return;
     setAct(0);
+    board.open();
+    switchMode('trail');
     dialog.showModal();
     RecentlyUsed.track('butterflyDance');
   }
