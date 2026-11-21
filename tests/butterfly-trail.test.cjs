@@ -2,31 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const trail = require('../js/butterflyTrail.js');
 
-// 独立按地形广度搜索，找最少的飞行动作；再把路线铺成图块交给真正的解释器。
-function solve(rows) {
-  const start = trail.start(rows);
-  const queue = [{ ...start, path: [] }], seen = new Set();
-  for (const node of queue) {
-    const {x, y, dir, path} = node;
-    const key = [x,y].join(',');
-    if (rows[y][x] === 'M') return [...path, [key, { action: 'cha' }]];
-    if (seen.has([x,y,dir].join(','))) continue;
-    seen.add([x,y,dir].join(','));
-    for (const [delta, heading] of [[0, undefined], [-1, 'left'], [1, 'right']]) {
-      const nextDir = (dir + delta + 4) % 4;
-      const [dx, dy] = [[0,-1],[1,0],[0,1],[-1,0]][nextDir];
-      const water = rows[y + dy]?.[x + dx] === '~';
-      if (water && rows[y][x] === '*') continue;
-      const n = water ? 2 : 1;
-      const nx = x + dx*n, ny = y + dy*n;
-      if (!trail.isLand(rows[ny]?.[nx])) continue;
-      const action = water ? 'jump' : rows[y][x] === '*' ? 'flip' : 'forward';
-      queue.push({ x: nx, y: ny, dir: nextDir, path: [...path, [key, { heading, action }]] });
-    }
-  }
-  throw Error('Unreachable mermaid');
-}
-module.exports = { solve };
+const { solve } = require('./butterfly-solver.cjs');
 
 test('20 distinct maps, progressively longer routes, each actually danceable with stationary tiles', () => {
   assert.equal(trail.levels.length, 20);
@@ -34,7 +10,7 @@ test('20 distinct maps, progressively longer routes, each actually danceable wit
   let previous = 0;
   for (const rows of trail.levels) {
     assert(rows.every(r => r.length === rows[0].length));
-    assert.equal(rows.join('').match(/M/g).length, 1);
+    assert.equal(rows.join('').match(/[MBO]/g).length, 1);
     assert.equal(rows.join('').match(/[<>^v]/g).length, 1);
     const solution = solve(rows);
     const frames = [...trail.run(rows, new Map(solution))];
@@ -66,4 +42,18 @@ test('missing tile, early dance, water, rock, boundary, bad landing, gym mat and
   }
   const ring = new Map(['0,0','1,0','0,1','1,1'].map(key=>[key,{heading:'right',action:'forward'}]));
   assert.equal([...trail.run(['^.','..'],ring)].at(-1).error,'loop');
+});
+
+test('turn back, harvest in place, glide two squares, match the invited duet', () => {
+  const rows = ['<FR.O'];
+  const tiles = new Map([['0,0',{heading:'back',action:'forward'}],['1,0',{flower:true,action:'forward'}],
+    ['2,0',{action:'glide'}],['4,0',{action:'twirl'}]]);
+  const run = () => [...trail.run(rows,tiles)];
+  assert.deepEqual(run().map(f=>[f.move,f.pose.x]),[['back',0],['forward',1],['nectar',1],['forward',2],['glide',4],['twirl',4]]);
+  assert(run().at(-1).win);
+  tiles.set('4,0',{action:'samba'});assert.equal(run().at(-1).wanted,'twirl');
+  tiles.set('4,0',{action:'twirl'});tiles.set('1,0',{action:'forward'});assert.equal(run().at(-1).error,'needNectar');
+  tiles.set('2,0',{action:'forward'});assert.equal(run().at(-1).error,'needGlide');
+  tiles.set('1,0',{action:'glide'});assert.equal(run().at(-1).error,'noRainbow');
+  tiles.set('0,0',{flower:true});assert.equal(run().at(-1).error,'noFlower');
 });
