@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v94';
+const CACHE_NAME = 'kids-learning-v95';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -7,6 +7,9 @@ const urlsToCache = [
   '/css/photoReading.css',
   '/css/jellyfishLamp.css',
   '/css/bedtime.css',
+  '/css/butterflyDance.css',
+  '/js/butterflyDance.js',
+  '/icons/butterfly/lagoon.webp',
   '/js/photoReading.js',
   '/js/photoLibrary.js',
   '/js/schoolDayStore.js',

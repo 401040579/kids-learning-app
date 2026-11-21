@@ -198,6 +198,7 @@ const RecentlyUsed = {
     'logicGames': { icon: '🧩', nameKey: 'menu.logicGames', action: () => showLogicGames() },
     'reactionGames': { icon: '⚡', nameKey: 'menu.reactionGames', action: () => showReactionGames() },
     'drawSmash': { icon: '✏️', nameKey: 'menu.drawSmash', action: () => showDrawSmash() },
+    'butterflyDance': { icon: '🦋', nameKey: 'menu.butterflyDance', action: () => ButterflyDance.open() },
     'ragdollRobot': { icon: '🤖', nameKey: 'menu.ragdollRobot', action: () => showRagdollRobot() },
     'choreTracker': { icon: '📋', nameKey: 'menu.choreTracker', action: () => showChoreTracker() },
     'englishBoost': { icon: '🌟', nameKey: 'menu.englishBoost', action: () => showEnglishBoost() },

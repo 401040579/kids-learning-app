@@ -43,6 +43,7 @@ const HomeScreen = {
       { id: 'englishBoost', icon: '🌟', i18nKey: 'menu.englishBoost', fallback: '英语提升', action: () => showEnglishBoost() }
     ] },
     { apps: [
+      { id: 'butterflyDance', icon: '🦋', i18nKey: 'menu.butterflyDance', fallback: '彩虹蝴蝶舞会', action: () => ButterflyDance.open() },
       { id: 'memory', icon: '🧠', i18nKey: 'menu.memory', fallback: '记忆训练', action: () => showMemoryGame() },
       { id: 'pet', icon: '🐱', i18nKey: 'menu.pet', fallback: '学习宠物', action: () => showLearningPet() },
       { id: 'music', icon: '🎵', i18nKey: 'menu.music', fallback: '音乐创作', action: () => openMusic() },
