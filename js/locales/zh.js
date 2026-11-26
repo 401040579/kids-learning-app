@@ -1449,6 +1449,7 @@ I18n.translations['zh'] = {
   'jellyfish.hintAwake': '屏幕会一直亮着。点空白处显示/隐藏按钮',
   'jellyfish.hintNoAwake': '这台设备不支持自动常亮，请在系统设置里把“自动锁定”改成“永不”',
   'menu.bedtime': '睡前小月亮',
+  'menu.holidayCards': '节日贺卡',
   'menu.toothFairy.desc': '掉牙记录·惊喜信',
   'tooth.title': '牙仙子',
   'tooth.defaultName': '宝贝',

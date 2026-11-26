@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v84，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v97，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -78,7 +78,8 @@ kids-learning-app/
 │   ├── parkWallpaper.js   # 魔法公园（声音互动壁纸）
 │   ├── toothFairy.js      # 牙仙子传统（掉牙记录/惊喜信/收藏证书）
 │   ├── jellyfishLamp.js   # 水母小夜灯（全屏 + 屏幕常亮，样式在 css/jellyfishLamp.css）
-│   └── bedtime.js         # 睡前小月亮（小灯时间/翻卡片/月亮票，css/bedtime.css）
+│   ├── bedtime.js         # 睡前小月亮（小灯时间/翻卡片/月亮票，css/bedtime.css）
+│   └── holidayCards.js    # 节日贺卡（可翻开的立体贺卡，css/holidayCards.css）
 ├── docs/
 │   ├── 踩坑记录.md     # ⚠️ 改代码前先看：那些与官方文档/直觉相反的实测结论
 │   └── 审计报告-2026-07.md # 全项目审计：66 条已验证问题（含已修复清单）
@@ -151,6 +152,7 @@ kids-learning-app/
 | 魔法公园 | parkWallpaper.js | ✅ 完成（声音互动壁纸/麦克风风力/全屏Canvas） |
 | 水母小夜灯 | jellyfishLamp.js | ✅ 完成（SVG 海胆水母灯/开关/4 种光色/调暗；Wake Lock + iOS 静音视频兜底常亮；不写存档） |
 | 睡前小月亮 | bedtime.js | ✅ 完成（小灯时间/自选卡片打勾/月亮票/连续晚数/日历提醒） |
+| 节日贺卡 | holidayCards.js | ✅ 完成（Iris 生日 3/28 + 10 个大节日；信封拆开/翻页/中英双语祝福/认词·吹蜡烛·惊喜彩带） |
 | 牙仙子传统 | toothFairy.js | ✅ 完成（20颗牙齿地图/掉牙记录/牙仙子的信/收藏证书/惊喜揭晓/家长奖励规则） |
 
 ## 常用命令
@@ -337,3 +339,10 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - 关灯页「🪼 打开水母小夜灯」直接亮灯（同一次点击内才能全屏/常亮），关掉小夜灯回到关灯页，月亮票仍可用；`JellyfishLamp.open({on, onClose})`，首页打开不受影响。
 - 「今晚」以凌晨 4 点为界；小灯时间之前且未开始时不能翻卡片，防止白天玩一遍占掉当晚。网页开着时到点自动弹出并语音提醒；网页关着无法提醒，家长设置可下载每日重复 .ics 加进手机日历。
 - 存档键 `kidsBedtime`（object）已登记 `DataBackup` 和 `backend/backup_keys.json`；新增学习存档键必须先把后端白名单部署到 Orin，否则账号云同步会 422 拒收整个快照。损坏存档保留原文、不覆盖。回归见 `tests/bedtime.test.cjs`。
+
+## 节日贺卡（2026-11-26）
+
+- `js/holidayCards.js` + `css/holidayCards.css`，首页第一屏 💌。11 张：Iris 生日 3/28、感恩节、圣诞、元旦、春节、情人节、复活节、六一、独立日、中秋、万圣节；列表按「下一次日期」排序，今天/最近的置顶。
+- 每张：信封拆开 → 封面 → 翻开（美人鱼珍珠 + 彩虹兔 + 节日元素的 SVG 互动场景 / 中英双语祝福信）→ 再翻（认词翻牌、感恩叶子、复活节彩蛋或生日吹蜡烛）→ 最后一页（聊一聊 + 落款 + 惊喜彩带）。竖屏上下翻，宽屏（≥700 且横向）左右翻；字号按页宽 `--u` 缩放。
+- 纯展示不写存档；名字/落款/生日在模块顶部常量。春节、中秋公历日期查表到 2032，之后需补表；感恩节按 11 月第 4 个星期四、复活节按公式算。回归见 `tests/holiday-cards.test.cjs`。
+- 本地 `python3 -m http.server` 在两个浏览器同时加载 80+ 资源时会 ERR_CONNECTION_RESET（默认 backlog 5），浏览器回归用自定义 `request_queue_size` 的 ThreadingHTTPServer 更稳。

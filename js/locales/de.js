@@ -1149,6 +1149,7 @@ I18n.translations['de'] = {
   'menu.toothFairy': 'Zahnfee',
   'menu.jellyfishLamp': 'Quallen-Nachtlicht',
   'menu.bedtime': 'Schlafmond',
+  'menu.holidayCards': 'Festtagskarten',
   'menu.toothFairy.desc': 'Zähne & Zauberbriefe festhalten',
   'tooth.title': 'Zahnfee',
   'tooth.defaultName': 'Schatz',

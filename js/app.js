@@ -206,7 +206,8 @@ const RecentlyUsed = {
     'parkWallpaper': { icon: '🏞️', nameKey: 'menu.parkWallpaper', action: () => showParkWallpaper() },
     'toothFairy': { icon: '🧚', nameKey: 'menu.toothFairy', action: () => showToothFairy() },
     'jellyfishLamp': { icon: '🪼', nameKey: 'menu.jellyfishLamp', action: () => showJellyfishLamp() },
-    'bedtime': { icon: '🌛', nameKey: 'menu.bedtime', action: () => showBedtime() }
+    'bedtime': { icon: '🌛', nameKey: 'menu.bedtime', action: () => showBedtime() },
+    'holidayCards': { icon: '💌', nameKey: 'menu.holidayCards', action: () => showHolidayCards() }
   },
 
   init() {
