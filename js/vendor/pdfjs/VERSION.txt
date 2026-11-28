@@ -1,0 +1,2 @@
+pdfjs-dist 6.5.438 (legacy build), Apache-2.0, https://github.com/mozilla/pdf.js
+只用于「作业本」在本机渲染家长导入的 PDF。
