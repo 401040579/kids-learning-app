@@ -1152,6 +1152,7 @@ I18n.translations['es'] = {
   'menu.jellyfishLamp': 'Lámpara Medusa',
   'menu.bedtime': 'Luna de dormir',
   'menu.holidayCards': 'Tarjetas festivas',
+  'menu.homework': 'Tareas',
   'menu.toothFairy.desc': 'Registra dientes y cartas mágicas',
   'tooth.title': 'Hada de los Dientes',
   'tooth.defaultName': 'Cariño',

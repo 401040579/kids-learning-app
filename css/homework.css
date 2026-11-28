@@ -1,0 +1,89 @@
+/* 作业本：作业列表 + 全屏写作业页（Apple Pencil / 手指书写） */
+.hw-modal { position:fixed; inset:0; z-index:12600; display:flex; flex-direction:column; overflow:hidden;
+  background:linear-gradient(165deg, #fff4fa 0%, #eef6ff 100%); color:#3b3150; font-family:inherit;
+  overscroll-behavior:contain; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+.hw-modal.hidden { display:none; }
+.hw-modal button { font-family:inherit; -webkit-tap-highlight-color:transparent; cursor:pointer; }
+
+.hw-top { display:flex; align-items:center; gap:8px; padding:max(10px, env(safe-area-inset-top)) 12px 6px; }
+.hw-top h2 { margin:0; flex:1; min-width:0; text-align:center; font-size:21px; line-height:1.15; color:#5a2a5f; }
+.hw-top h2 small { display:block; font-size:12px; font-weight:600; opacity:.7; }
+.hw-top-page h2 { font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hw-top-page h2 span { display:block; overflow:hidden; text-overflow:ellipsis; }
+.hw-round, .hw-round-spacer { flex:0 0 44px; width:44px; height:44px; }
+.hw-round { border:none; border-radius:50%; background:#fff; color:#5a2a5f; font-size:22px; box-shadow:0 3px 10px rgba(90,42,95,.15); }
+.hw-done-btn { flex:0 0 auto; min-height:44px; padding:0 16px; border:none; border-radius:22px; font-size:16px; font-weight:800;
+  background:#FF69B4; color:#fff; box-shadow:0 3px 0 #d94f97; }
+.hw-done-btn.is-done { background:#2f9e44; box-shadow:0 3px 0 #237a34; }
+
+/* ========== 作业列表 ========== */
+.hw-shelf { flex:1; overflow-y:auto; padding:4px 14px max(24px, env(safe-area-inset-bottom)); -webkit-overflow-scrolling:touch; }
+.hw-shelf > * { max-width:900px; margin-left:auto; margin-right:auto; }
+.hw-intro { text-align:center; font-size:17px; margin:6px auto 4px; }
+.hw-intro b { color:#FF69B4; font-size:22px; }
+.hw-sec { font-size:17px; margin:18px auto 8px; color:#5a2a5f; }
+.hw-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:12px; }
+.hw-card { display:flex; flex-direction:column; align-items:flex-start; gap:4px; min-height:92px; padding:14px 14px 12px; text-align:left;
+  border:none; border-radius:16px; background:#fff; color:#3b3150; box-shadow:0 4px 0 rgba(90,42,95,.08), 0 6px 16px rgba(90,42,95,.1);
+  border-left:7px solid #FF69B4; transition:transform .12s; }
+.hw-card:active { transform:scale(.97); }
+.hw-card-title { font-size:18px; font-weight:800; line-height:1.25; }
+.hw-card-meta { font-size:13px; opacity:.7; }
+.hw-card-state { font-size:14px; font-weight:700; color:#c2357f; min-height:18px; }
+.hw-card.is-done { border-left-color:#2f9e44; background:#f3fbf4; }
+.hw-card.is-done .hw-card-state { color:#2f9e44; }
+.hw-kind-reading { border-left-color:#1c7ed6; }
+.hw-kind-answer, .hw-kind-other { border-left-color:#adb5bd; }
+.hw-parent { margin-top:22px; }
+.hw-parent summary { font-size:15px; font-weight:700; color:#6b5b7b; padding:8px 0; cursor:pointer; }
+.hw-parent .hw-grid { margin-top:6px; }
+.hw-hint { text-align:center; font-size:16px; margin:40px auto; }
+.hw-error { color:#c92a2a; }
+.hw-small { font-size:12px; opacity:.6; text-align:center; margin-top:18px; }
+.hw-empty { text-align:center; padding:40px 10px 10px; font-size:17px; line-height:1.6; }
+.hw-empty-icon { font-size:72px; }
+.hw-parent-actions { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:18px; }
+.hw-btn { display:inline-flex; align-items:center; min-height:46px; padding:0 18px; border:none; border-radius:23px; font-size:16px; font-weight:700;
+  background:#FFD93D; color:#5a3b00; box-shadow:0 3px 0 #e0b800; cursor:pointer; }
+.hw-btn-ghost { background:#fff; color:#868e96; box-shadow:0 2px 0 #dee2e6; font-weight:600; }
+
+/* ========== 写作业页 ========== */
+.hw-scroll { flex:1; min-height:0; overflow:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+  display:flex; padding:8px; background:#e9e4ef; }
+.hw-paper { position:relative; margin:auto; flex:0 0 auto; background:#fff; box-shadow:0 4px 18px rgba(0,0,0,.18); }
+.hw-paper canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+#hw-ink { touch-action:none; cursor:crosshair; }
+.hw-loading { position:absolute; inset:0; display:grid; place-items:center; font-size:16px; color:#868e96; background:rgba(255,255,255,.6); pointer-events:none; }
+.hw-loading[hidden] { display:none; }
+
+.hw-tools { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px; padding:8px 8px max(8px, env(safe-area-inset-bottom));
+  background:#fff; box-shadow:0 -3px 12px rgba(90,42,95,.1); }
+.hw-tool { min-width:48px; height:48px; padding:0 10px; border:none; border-radius:14px; background:#f4eef8; font-size:21px; color:#3b3150; }
+.hw-tool.is-on { background:#FF69B4; box-shadow:inset 0 0 0 3px #fff, 0 0 0 2px #FF69B4; }
+.hw-tool:disabled { opacity:.35; }
+.hw-finger, #hw-zoom { font-size:15px; font-weight:700; }
+.hw-colors, .hw-sizes, .hw-nav { display:inline-flex; align-items:center; gap:4px; padding:0 4px; }
+.hw-color { width:36px; height:36px; border-radius:50%; border:3px solid #fff; background:var(--c); box-shadow:0 0 0 1px #ced4da; }
+.hw-color.is-on { box-shadow:0 0 0 3px var(--c); transform:scale(1.08); }
+.hw-size { width:40px; height:40px; border:none; border-radius:12px; background:#f4eef8; display:grid; place-items:center; }
+.hw-size i { width:var(--d); height:var(--d); border-radius:50%; background:#3b3150; }
+.hw-size.is-on { background:#ffd6ea; box-shadow:inset 0 0 0 2px #FF69B4; }
+.hw-nav span { min-width:54px; text-align:center; font-weight:800; font-size:16px; }
+
+.hw-toast { position:absolute; left:50%; bottom:calc(96px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:5; max-width:88vw;
+  padding:12px 18px; border-radius:18px; background:rgba(59,49,80,.92); color:#fff; font-size:16px; font-weight:700; text-align:center;
+  animation:hw-pop .25s ease-out; pointer-events:none; }
+.hw-confetti { position:absolute; inset:0; z-index:6; pointer-events:none; overflow:hidden; }
+.hw-confetti span { position:absolute; top:-40px; font-size:30px; animation:hw-fall 1.9s ease-in forwards; }
+@keyframes hw-fall { to { transform:translateY(110vh) rotate(360deg); } }
+@keyframes hw-pop { from { transform:translate(-50%, 10px); opacity:0; } }
+
+@media (max-width:600px) {
+  .hw-tool { min-width:42px; height:42px; font-size:18px; }
+  .hw-color { width:30px; height:30px; }
+  .hw-size { width:34px; height:34px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .hw-confetti { display:none; }
+  .hw-toast { animation:none; }
+}

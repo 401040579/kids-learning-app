@@ -25,11 +25,11 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v98，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v99，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
-│   ├── homeScreen.js   # 首页分屏（iPhone 风图标 4 屏，36 个功能入口配置）
+│   ├── homeScreen.js   # 首页分屏（iPhone 风图标 4 屏，43 个功能入口配置）
 │   ├── i18n.js         # 国际化核心模块
 │   ├── locales/        # 多语言翻译文件
 │   │   ├── en.js       # English
@@ -79,7 +79,9 @@ kids-learning-app/
 │   ├── toothFairy.js      # 牙仙子传统（掉牙记录/惊喜信/收藏证书）
 │   ├── jellyfishLamp.js   # 水母小夜灯（全屏 + 屏幕常亮，样式在 css/jellyfishLamp.css）
 │   ├── bedtime.js         # 睡前小月亮（小灯时间/翻卡片/月亮票，css/bedtime.css）
-│   └── holidayCards.js    # 节日贺卡（3D 拆信封开场 + 可翻开的立体贺卡，css/holidayCards.css）
+│   ├── holidayCards.js    # 节日贺卡（3D 拆信封开场 + 可翻开的立体贺卡，css/holidayCards.css）
+│   ├── homework.js        # 作业本（本机导入学校 PDF + Apple Pencil 书写，css/homework.css）
+│   └── vendor/pdfjs/      # PDF.js 6.5.438 legacy 构建（Apache-2.0），只给作业本用
 ├── docs/
 │   ├── 踩坑记录.md     # ⚠️ 改代码前先看：那些与官方文档/直觉相反的实测结论
 │   └── 审计报告-2026-07.md # 全项目审计：66 条已验证问题（含已修复清单）
@@ -153,6 +155,7 @@ kids-learning-app/
 | 水母小夜灯 | jellyfishLamp.js | ✅ 完成（SVG 海胆水母灯/开关/4 种光色/调暗；Wake Lock + iOS 静音视频兜底常亮；不写存档） |
 | 睡前小月亮 | bedtime.js | ✅ 完成（小灯时间/自选卡片打勾/月亮票/连续晚数/日历提醒） |
 | 节日贺卡 | holidayCards.js | ✅ 完成（Iris 生日 3/28 + 13 个节日；3D 拆信封开场/翻页光影/立体书场景/中英双语祝福/认词·吹蜡烛·惊喜彩带） |
+| 作业本 | homework.js | ✅ 完成（本机导入作业 PDF/按页眉分作业/Apple Pencil 压感书写/橡皮撤销/放大/完成标记） |
 | 牙仙子传统 | toothFairy.js | ✅ 完成（20颗牙齿地图/掉牙记录/牙仙子的信/收藏证书/惊喜揭晓/家长奖励规则） |
 
 ## 常用命令
@@ -347,3 +350,11 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 - 开场（2026-11-27）：3.4s 的 3D 时间线，CSS 关键帧与 JS 计时对齐（1.05s 封蜡迸开、3.4s 结束，点一下可跳过）。结构 `.hc-stage(perspective) > .hc-world > 信封各层 + .hc-rise > .hc-float > .hc-book`；`.hc-world`/`.hc-book` 不能加 preserve-3d（iOS z-fighting），翻盖内外两面用 `rotateX(θ)` 与 `rotateX(θ) rotateY(180deg)` 两个独立元素实现，不靠 preserve-3d（clip-path/opacity 会强制拍平）。翻页带明暗光影；翻开后场景按 `.hc-pop` 像立体书一样立起、彩虹描线、文字依次浮现。
 - 纯展示不写存档；名字/落款/生日在模块顶部常量。春节、中秋、端午公历日期查表到 2032，之后需补表（Node 的 `Intl` 中文历可用来核对，但 2027/2030 春节与官方差一天，以官方为准）；感恩节、母亲节（5 月第 2 个周日）、父亲节（6 月第 3 个周日）按规则算，复活节按公式算。回归见 `tests/holiday-cards.test.cjs`。
 - 本地 `python3 -m http.server` 在两个浏览器同时加载 80+ 资源时会 ERR_CONNECTION_RESET（默认 backlog 5），浏览器回归用自定义 `request_queue_size` 的 ThreadingHTTPServer 更稳。
+
+## 作业本（2026-11-27）
+
+- `js/homework.js` + `css/homework.css`，首页第一屏 📒。家长从「文件」导入老师作业 PDF，孩子按作业翻页、直接在页面上写；PDF.js 在 `js/vendor/pdfjs/`（legacy 构建，SW 预缓存，离线可用）。
+- **作业 PDF 含学校、老师和版权教材，仓库是公开的：PDF 不能放进仓库或公开目录**，只能在设备上导入。数据在 IndexedDB `kids-homework`（files/ink/done），设备级，不进 `DataBackup`、账号云同步和 Analytics；不写 localStorage（测试会检查）。只保留一份 PDF，重新导入即替换。
+- 分组靠每页页眉「日期 | 老师 | 作业名 n/m」（取页面顶部 7% 的文字按 x 拼接）；无页眉页归「封面和目录」。标题含「答案」进家长折叠区，「阅读参考」单列。笔迹键是「作业 key + 作业内页码」，换成追加了新作业的 PDF 后旧笔迹仍对得上。
+- 书写：Pointer Events；pen 读 `pressure` 调粗细、用 `getCoalescedEvents` 补点。第一次检测到笔后手指改为滚动（手掌误触不画线），工具栏可切回「手指写」。画布始终 `touch-action:none`（Chrome 里笔也受 touch-action 影响），手指滚动由代码平移，笔落下立刻停止平移；Safari 里 stylus 的 touchstart 再 `preventDefault` 一次。笔迹按页宽归一化保存，放大重绘不偏移；canvas 限 10M 像素防 iOS 内存上限。
+- PDF.js 6 的 `PDFDocumentProxy` 没有 `destroy()`，要用 `doc.loadingTask.destroy()`。浏览器回归改 homework.js 后要先注销 SW 并清缓存，否则 cache-first 一直读旧文件。回归见 `tests/homework.test.cjs`；Apple Pencil 真机手感需在 iPad 上实测。

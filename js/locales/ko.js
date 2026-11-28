@@ -1147,6 +1147,7 @@ I18n.translations['ko'] = {
   'menu.jellyfishLamp': '해파리 수면등',
   'menu.bedtime': '잠자리 달님',
   'menu.holidayCards': '축하 카드',
+  'menu.homework': '숙제',
   'menu.toothFairy.desc': '빠진 이와 요정의 편지 기록',
   'tooth.title': '이빨 요정',
   'tooth.defaultName': '우리 아기',

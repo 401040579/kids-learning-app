@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kids-learning-v98';
+const CACHE_NAME = 'kids-learning-v99';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -8,6 +8,7 @@ const urlsToCache = [
   '/css/jellyfishLamp.css',
   '/css/bedtime.css',
   '/css/holidayCards.css',
+  '/css/homework.css',
   '/css/butterflyDance.css',
   '/js/butterflyDance.js',
   '/js/butterflyTrail.js',
@@ -68,6 +69,10 @@ const urlsToCache = [
   '/js/jellyfishLamp.js',
   '/js/bedtime.js',
   '/js/holidayCards.js',
+  '/js/homework.js',
+  // 作业本用的 PDF.js（约 1.8MB），预缓存后离线也能打开已导入的作业
+  '/js/vendor/pdfjs/pdf.min.mjs',
+  '/js/vendor/pdfjs/pdf.worker.min.mjs',
   // i18n files
   '/js/safeStorage.js',
   '/js/appStorage.js',

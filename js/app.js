@@ -207,7 +207,8 @@ const RecentlyUsed = {
     'toothFairy': { icon: '🧚', nameKey: 'menu.toothFairy', action: () => showToothFairy() },
     'jellyfishLamp': { icon: '🪼', nameKey: 'menu.jellyfishLamp', action: () => showJellyfishLamp() },
     'bedtime': { icon: '🌛', nameKey: 'menu.bedtime', action: () => showBedtime() },
-    'holidayCards': { icon: '💌', nameKey: 'menu.holidayCards', action: () => showHolidayCards() }
+    'holidayCards': { icon: '💌', nameKey: 'menu.holidayCards', action: () => showHolidayCards() },
+    'homework': { icon: '📒', nameKey: 'menu.homework', action: () => showHomework() }
   },
 
   init() {

@@ -1447,6 +1447,7 @@ I18n.translations['en'] = {
   'jellyfish.hintNoAwake': 'This device cannot keep the screen on automatically. Set Auto-Lock to Never in Settings.',
   'menu.bedtime': 'Bedtime Moon',
   'menu.holidayCards': 'Holiday Cards',
+  'menu.homework': 'Homework',
   'menu.toothFairy.desc': 'Log teeth & magic letters',
   'tooth.title': 'Tooth Fairy',
   'tooth.defaultName': 'Sweetie',

@@ -1150,6 +1150,7 @@ I18n.translations['fr'] = {
   'menu.jellyfishLamp': 'Veilleuse Méduse',
   'menu.bedtime': 'Lune du dodo',
   'menu.holidayCards': 'Cartes de fête',
+  'menu.homework': 'Devoirs',
   'menu.toothFairy.desc': 'Note tes dents et les lettres magiques',
   'tooth.title': 'La Fée des Dents',
   'tooth.defaultName': 'Mon trésor',

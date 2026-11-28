@@ -1,5 +1,5 @@
 // ========== 首页分屏（iPhone 风主屏） ==========
-// 39 个功能入口按 4 屏组织：⭐常用 / 📚学习 / 🎮游戏 / 🔧工具
+// 43 个功能入口按 4 屏组织：⭐常用 / 📚学习 / 🎮游戏 / 🔧工具
 // 横向滑动翻屏（CSS scroll-snap），顶部 tab + 底部圆点指示当前屏
 
 const HomeScreen = {
@@ -24,6 +24,7 @@ const HomeScreen = {
     { apps: [
       { id: 'photoReading', icon: '📷', i18nKey: 'photo.title', fallback: '拍照点读', action: () => PhotoReading.open() },
       { id: 'schoolDay', icon: '🎒', i18nKey: 'school.title', fallback: '学校日常', action: () => SchoolDay.open() },
+      { id: 'homework', icon: '📒', i18nKey: 'menu.homework', fallback: '作业本', action: () => showHomework() },
       { id: 'holidayCards', icon: '💌', i18nKey: 'menu.holidayCards', fallback: '节日贺卡', action: () => showHolidayCards() },
       { id: 'bedtime', icon: '🌛', i18nKey: 'menu.bedtime', fallback: '睡前小月亮', action: () => showBedtime() },
       { id: 'explore', icon: '🎬', i18nKey: 'menu.explore', fallback: '探索视频', action: () => navigateTo('explore') },

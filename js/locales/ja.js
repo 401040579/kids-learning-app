@@ -1147,6 +1147,7 @@ I18n.translations['ja'] = {
   'menu.jellyfishLamp': 'クラゲのナイトライト',
   'menu.bedtime': 'おやすみ月',
   'menu.holidayCards': 'お祝いカード',
+  'menu.homework': '宿題',
   'menu.toothFairy.desc': '抜けた歯と魔法のお手紙を記録',
   'tooth.title': '歯の妖精',
   'tooth.defaultName': 'おちびちゃん',
