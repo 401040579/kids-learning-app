@@ -25,7 +25,7 @@
 kids-learning-app/
 ├── index.html          # 单页应用主文件
 ├── manifest.json       # PWA 配置
-├── sw.js               # Service Worker (当前 v97，CI 更新视频列表时会自动 +1)
+├── sw.js               # Service Worker (当前 v98，CI 更新视频列表时会自动 +1)
 ├── css/style.css       # 所有样式
 ├── js/
 │   ├── app.js          # 主应用逻辑、数学/英语/中文、最近使用、视频播放器
@@ -79,7 +79,7 @@ kids-learning-app/
 │   ├── toothFairy.js      # 牙仙子传统（掉牙记录/惊喜信/收藏证书）
 │   ├── jellyfishLamp.js   # 水母小夜灯（全屏 + 屏幕常亮，样式在 css/jellyfishLamp.css）
 │   ├── bedtime.js         # 睡前小月亮（小灯时间/翻卡片/月亮票，css/bedtime.css）
-│   └── holidayCards.js    # 节日贺卡（可翻开的立体贺卡，css/holidayCards.css）
+│   └── holidayCards.js    # 节日贺卡（3D 拆信封开场 + 可翻开的立体贺卡，css/holidayCards.css）
 ├── docs/
 │   ├── 踩坑记录.md     # ⚠️ 改代码前先看：那些与官方文档/直觉相反的实测结论
 │   └── 审计报告-2026-07.md # 全项目审计：66 条已验证问题（含已修复清单）
@@ -152,7 +152,7 @@ kids-learning-app/
 | 魔法公园 | parkWallpaper.js | ✅ 完成（声音互动壁纸/麦克风风力/全屏Canvas） |
 | 水母小夜灯 | jellyfishLamp.js | ✅ 完成（SVG 海胆水母灯/开关/4 种光色/调暗；Wake Lock + iOS 静音视频兜底常亮；不写存档） |
 | 睡前小月亮 | bedtime.js | ✅ 完成（小灯时间/自选卡片打勾/月亮票/连续晚数/日历提醒） |
-| 节日贺卡 | holidayCards.js | ✅ 完成（Iris 生日 3/28 + 10 个大节日；信封拆开/翻页/中英双语祝福/认词·吹蜡烛·惊喜彩带） |
+| 节日贺卡 | holidayCards.js | ✅ 完成（Iris 生日 3/28 + 13 个节日；3D 拆信封开场/翻页光影/立体书场景/中英双语祝福/认词·吹蜡烛·惊喜彩带） |
 | 牙仙子传统 | toothFairy.js | ✅ 完成（20颗牙齿地图/掉牙记录/牙仙子的信/收藏证书/惊喜揭晓/家长奖励规则） |
 
 ## 常用命令
@@ -342,7 +342,8 @@ gh run list --workflow=update-videos.yml --limit 5   # 看历史/排查抓取失
 
 ## 节日贺卡（2026-11-26）
 
-- `js/holidayCards.js` + `css/holidayCards.css`，首页第一屏 💌。11 张：Iris 生日 3/28、感恩节、圣诞、元旦、春节、情人节、复活节、六一、独立日、中秋、万圣节；列表按「下一次日期」排序，今天/最近的置顶。
+- `js/holidayCards.js` + `css/holidayCards.css`，首页第一屏 💌。14 张：Iris 生日 3/28、感恩节、圣诞、元旦、春节、情人节、复活节、母亲节、六一、父亲节、端午、独立日、中秋、万圣节；列表按「下一次日期」排序，今天/最近的置顶。母亲节/父亲节是 Iris 送给妈妈/爸爸的（卡片 `to`/`from` 覆盖收件人和落款）。
 - 每张：信封拆开 → 封面 → 翻开（美人鱼珍珠 + 彩虹兔 + 节日元素的 SVG 互动场景 / 中英双语祝福信）→ 再翻（认词翻牌、感恩叶子、复活节彩蛋或生日吹蜡烛）→ 最后一页（聊一聊 + 落款 + 惊喜彩带）。竖屏上下翻，宽屏（≥700 且横向）左右翻；字号按页宽 `--u` 缩放。
-- 纯展示不写存档；名字/落款/生日在模块顶部常量。春节、中秋公历日期查表到 2032，之后需补表；感恩节按 11 月第 4 个星期四、复活节按公式算。回归见 `tests/holiday-cards.test.cjs`。
+- 开场（2026-11-27）：3.4s 的 3D 时间线，CSS 关键帧与 JS 计时对齐（1.05s 封蜡迸开、3.4s 结束，点一下可跳过）。结构 `.hc-stage(perspective) > .hc-world > 信封各层 + .hc-rise > .hc-float > .hc-book`；`.hc-world`/`.hc-book` 不能加 preserve-3d（iOS z-fighting），翻盖内外两面用 `rotateX(θ)` 与 `rotateX(θ) rotateY(180deg)` 两个独立元素实现，不靠 preserve-3d（clip-path/opacity 会强制拍平）。翻页带明暗光影；翻开后场景按 `.hc-pop` 像立体书一样立起、彩虹描线、文字依次浮现。
+- 纯展示不写存档；名字/落款/生日在模块顶部常量。春节、中秋、端午公历日期查表到 2032，之后需补表（Node 的 `Intl` 中文历可用来核对，但 2027/2030 春节与官方差一天，以官方为准）；感恩节、母亲节（5 月第 2 个周日）、父亲节（6 月第 3 个周日）按规则算，复活节按公式算。回归见 `tests/holiday-cards.test.cjs`。
 - 本地 `python3 -m http.server` 在两个浏览器同时加载 80+ 资源时会 ERR_CONNECTION_RESET（默认 backlog 5），浏览器回归用自定义 `request_queue_size` 的 ThreadingHTTPServer 更稳。

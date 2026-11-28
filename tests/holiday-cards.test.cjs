@@ -26,6 +26,20 @@ test('复活节与查表节日', () => {
   assert.equal(ymd(HC.dateOf(card('birthday'), 2027)), '2027-3-28');
 });
 
+test('母亲节、父亲节与端午节', () => {
+  assert.equal(ymd(HC.dateOf(card('mothersDay'), 2026)), '2026-5-10');
+  assert.equal(ymd(HC.dateOf(card('mothersDay'), 2027)), '2027-5-9');
+  assert.equal(ymd(HC.dateOf(card('fathersDay'), 2026)), '2026-6-21');
+  assert.equal(ymd(HC.dateOf(card('fathersDay'), 2027)), '2027-6-20');
+  assert.equal(ymd(HC.dateOf(card('dragonBoat'), 2026)), '2026-6-19');
+  assert.equal(ymd(HC.dateOf(card('dragonBoat'), 2027)), '2027-6-9');
+  assert.equal(ymd(HC.dateOf(card('dragonBoat'), 2028)), '2028-5-28');
+  // 送给妈妈/爸爸的卡写明收件人和落款
+  assert.equal(card('mothersDay').to.en, 'Mommy');
+  assert.match(card('fathersDay').from.zh, /艾瑞斯/);
+  assert.equal(HC.CARDS.length, 14);
+});
+
 test('当天的节日排第一，过了的排到明年', () => {
   const list = HC.ordered(new Date(2026, 10, 26, 15, 0));
   assert.equal(list[0].card.id, 'thanksgiving');

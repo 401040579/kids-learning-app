@@ -3,6 +3,7 @@
 // 每张：信封拆开 → 封面 → 翻开（左/上：美人鱼和彩虹兔的互动场景；右/下：中英双语祝福）
 // → 再翻（小活动：认单词/感恩叶子/吹蜡烛）→ 最后一页（聊一聊 + 落款 + 惊喜按钮）。
 // 纯展示，不写存档；节日日期在本机计算，农历节日用查表。
+// 开场是 3D 动效：信封从远处飘来 → 封蜡迸开 → 翻盖打开 → 贺卡升起、飞到眼前；翻页带光影，翻开后场景像立体书一样立起来。
 
 const HolidayCards = {
   KID: { en: 'Iris', zh: '艾瑞斯' },
@@ -12,6 +13,9 @@ const HolidayCards = {
   // 农历节日公历日期（春节 / 中秋），按年查表
   LUNAR_NEW_YEAR: { 2026: '02-17', 2027: '02-06', 2028: '01-26', 2029: '02-13', 2030: '02-03', 2031: '01-23', 2032: '02-11' },
   MID_AUTUMN: { 2026: '09-25', 2027: '09-15', 2028: '10-03', 2029: '09-22', 2030: '09-12', 2031: '10-01', 2032: '09-19' },
+  DRAGON_BOAT: { 2026: '06-19', 2027: '06-09', 2028: '05-28', 2029: '06-16', 2030: '06-05', 2031: '06-24', 2032: '06-12' },
+  // 没有粽子 emoji，用一个小 SVG 代替（只用在翻牌里）
+  ZONGZI: '<svg class="hc-emoji-svg" viewBox="0 0 40 40" aria-hidden="true"><path d="M21 9 L38 31 Q24 37 4 32 Z" fill="#3f9b45"/><path d="M21 9 L4 32 Q12 35 19 35 Z" fill="#7bcf63"/><path d="M21 9 L19 35" stroke="#2f7a35" stroke-width="1.2"/><path d="M8 26 Q20 31 34 25 M13 19 Q22 22 30 18" stroke="#e8d29a" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle cx="21" cy="28.5" r="2.4" fill="#e0453a"/></svg>',
   ZODIAC: [['🐀', 'Rat', '鼠'], ['🐂', 'Ox', '牛'], ['🐅', 'Tiger', '虎'], ['🐇', 'Rabbit', '兔'], ['🐉', 'Dragon', '龙'], ['🐍', 'Snake', '蛇'],
     ['🐎', 'Horse', '马'], ['🐐', 'Goat', '羊'], ['🐒', 'Monkey', '猴'], ['🐓', 'Rooster', '鸡'], ['🐕', 'Dog', '狗'], ['🐖', 'Pig', '猪']],
   MONTHS: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -179,6 +183,72 @@ const HolidayCards = {
       talk: { en: 'What game should we play together today?', zh: '今天我们一起玩什么游戏？' }
     },
     {
+      id: 'mothersDay', hero: '💐', seal: '🌸',
+      en: "Happy Mother's Day!", zh: '母亲节快乐！', short: { en: "Mother's Day", zh: '母亲节' },
+      date: { type: 'nth', month: 5, weekday: 0, n: 2 },
+      // 这张是 Iris 送给妈妈的
+      to: { en: 'Mommy', zh: '妈妈' }, from: { en: 'Love, Iris & Daddy', zh: '爱你的艾瑞斯和爸爸' },
+      theme: { sky: ['#ffdbe9', '#fff1e4'], cover: ['#ff9cc2', '#ff7f8e'], paper: '#fff6f8', ink: '#8a2848', accent: '#ff4f7f', sea: ['#a8e6ff', '#72cbee'], orb: 'sun' },
+      hats: { mermaid: 'flowers', bunny: 'hearts' },
+      fx: { type: 'fall', emoji: ['🌸', '🌷', '🌸', '💮'] },
+      props: ['🌷', '💌', '🧁', '🌸', '💖', '🐚'],
+      confetti: ['🌸', '💐', '💖', '🌷', '✨', '💕'],
+      message: {
+        en: "Happy Mother's Day, Mommy! Pearl the mermaid picked the prettiest sea flowers, and Rainbow Bunny tied them with a rainbow ribbon, all for you. Thank you for your warm hugs, bedtime stories, and endless love. We love you so much!",
+        zh: '妈妈，母亲节快乐！美人鱼珍珠摘来最漂亮的海底花，彩虹兔用彩虹丝带把它们扎成一束，全都送给你。谢谢你温暖的拥抱、睡前故事和满满的爱。我们好爱你！'
+      },
+      activity: {
+        type: 'reveal', cover: '🌸',
+        title: { en: 'Tap a flower: what do you love about Mommy?', zh: '点一朵花：你最爱妈妈的什么？' },
+        items: [['🤗', 'warm hugs', '温暖的拥抱'], ['📖', 'bedtime stories', '睡前故事'], ['🍳', 'yummy cooking', '好吃的饭菜'],
+          ['😘', 'good-night kisses', '晚安吻'], ['🎶', 'sweet songs', '好听的歌'], ['💖', 'her big love', '满满的爱']]
+      },
+      talk: { en: 'Give Mommy a big hug and tell her one thing you love about her.', zh: '给妈妈一个大大的拥抱，告诉她你最爱她哪一点。' }
+    },
+    {
+      id: 'fathersDay', hero: '🦸', seal: '⭐',
+      en: "Happy Father's Day!", zh: '父亲节快乐！', short: { en: "Father's Day", zh: '父亲节' },
+      date: { type: 'nth', month: 6, weekday: 0, n: 3 },
+      // 这张是 Iris 送给爸爸的
+      to: { en: 'Daddy', zh: '爸爸' }, from: { en: 'Love, Iris & Mommy', zh: '爱你的艾瑞斯和妈妈' },
+      theme: { sky: ['#cdeaff', '#eef9ff'], cover: ['#3d7bf0', '#2ec4b6'], paper: '#f5fbff', ink: '#1d3f7a', accent: '#2f6fe0', sea: ['#7fd3ff', '#3fa8e8'], orb: 'sun' },
+      hats: { mermaid: 'stars', bunny: 'cap' },
+      fx: { type: 'fly', emoji: ['✈️', '🪁', '⭐'] },
+      props: ['🏆', '🔧', '⚽', '💙', '🎣', '🐚'],
+      confetti: ['⭐', '💙', '🏆', '🎉', '✨', '👍'],
+      message: {
+        en: "Happy Father's Day, Daddy! Pearl the mermaid says you are as strong as a whale, and Rainbow Bunny loves your piggyback rides. Thank you for playing with us, fixing things, and keeping us safe. You are our superhero!",
+        zh: '爸爸，父亲节快乐！美人鱼珍珠说你像鲸鱼一样强壮，彩虹兔最喜欢骑在你背上玩。谢谢你陪我们玩、帮我们修东西、保护我们。你是我们的超级英雄！'
+      },
+      activity: {
+        type: 'reveal', cover: '⭐',
+        title: { en: 'Tap a star: what is Daddy great at?', zh: '点一颗星星：爸爸最厉害的是什么？' },
+        items: [['🐎', 'piggyback rides', '骑大马'], ['🔧', 'fixing things', '修东西'], ['⚽', 'playing ball', '踢球'],
+          ['📚', 'reading stories', '讲故事'], ['🤣', 'silly jokes', '讲笑话'], ['🐻', 'big bear hugs', '大熊抱']]
+      },
+      talk: { en: 'Ask Daddy: what was your favorite game when you were little?', zh: '问问爸爸：你小时候最喜欢玩什么游戏？' }
+    },
+    {
+      id: 'dragonBoat', hero: '🐲', seal: '🌿',
+      en: 'Happy Dragon Boat Festival!', zh: '端午节快乐！', short: { en: 'Dragon Boat Festival', zh: '端午节' },
+      date: { type: 'DRAGON_BOAT' },
+      theme: { sky: ['#c9f3e6', '#f3ffe9'], cover: ['#2fae7a', '#e9b93f'], paper: '#f7fff8', ink: '#1f5c3d', accent: '#e0453a', sea: ['#5fd3c4', '#2a9d8f'], orb: 'sun' },
+      hats: { mermaid: 'flowers', bunny: 'headband' },
+      fx: { type: 'boat' },
+      props: ['🥁', '🌿', '🐉', '🍃', '🛶', '🐚'],
+      confetti: ['🐲', '🌿', '🥁', '🍃', '✨', '🛶'],
+      message: {
+        en: "Happy Dragon Boat Festival, {kid}! Boom, boom, boom go the drums! Pearl the mermaid is cheering for the dragon boats racing over the waves, and Rainbow Bunny is wrapping sticky rice in green leaves. Let's eat zongzi together!",
+        zh: '端午节快乐，{kidZh}！咚、咚、咚，鼓声响起来啦！美人鱼珍珠在浪花里为龙舟加油，彩虹兔用绿绿的粽叶包粽子。我们一起吃粽子吧！'
+      },
+      activity: {
+        type: 'reveal', title: { en: 'Tap a picture to learn the word!', zh: '点一点图片，学一个词！' },
+        items: [['🛶', 'dragon boat', '龙舟'], ['ZONGZI', 'rice dumpling', '粽子'], ['🥁', 'drum', '鼓'],
+          ['🐉', 'dragon', '龙'], ['🌿', 'mugwort', '艾草'], ['🧵', 'lucky threads', '五彩绳']]
+      },
+      talk: { en: 'If you rowed a dragon boat, what would you name it?', zh: '如果你来划龙舟，你想给它起什么名字？' }
+    },
+    {
       id: 'july4', hero: '🎇', seal: '⭐',
       en: 'Happy 4th of July!', zh: '独立日快乐！', short: { en: 'Fourth of July', zh: '美国独立日' },
       date: { type: 'fixed', month: 7, day: 4 },
@@ -331,6 +401,7 @@ const HolidayCards = {
 
   close() {
     this.clearTimers();
+    this._picking = false;
     document.getElementById('holiday-cards-modal')?.classList.add('hidden');
     document.body.style.overflow = '';
   },
@@ -353,8 +424,11 @@ const HolidayCards = {
     const modal = document.getElementById('holiday-cards-modal');
     const list = this.ordered();
     modal.dataset.view = 'gallery';
+    this._picking = false;
     modal.style.removeProperty('--hc-a');
+    modal.style.removeProperty('--hc-b');
     modal.innerHTML = `
+      ${this.dream()}
       <div class="hc-top">
         <button class="hc-round" data-hc-act="back" aria-label="关闭">✕</button>
         <h2>💌 节日贺卡 <small>Holiday Cards</small></h2>
@@ -399,15 +473,19 @@ const HolidayCards = {
     modal.dataset.view = 'card';
     modal.style.setProperty('--hc-a', t.cover[0]);
     modal.style.setProperty('--hc-b', t.cover[1]);
+    const to = card.to || this.KID;
     modal.innerHTML = `
+      ${this.dream(true)}
       <div class="hc-top">
         <button class="hc-round" data-hc-act="back" aria-label="返回">←</button>
         <h2>${this.esc(card.short.zh)} <small>${this.esc(card.short.en)}${card.when ? ' · ' + this.dateLabel(card.when.date) : ''}</small></h2>
         <span class="hc-round-spacer"></span>
       </div>
-      <div class="hc-stage" style="--paper:${t.paper};--ink:${t.ink};--accent:${t.accent};--c1:${t.cover[0]};--c2:${t.cover[1]}">
+      <div class="hc-stage intro" data-state="0" style="--paper:${t.paper};--ink:${t.ink};--accent:${t.accent};--c1:${t.cover[0]};--c2:${t.cover[1]}">
+        <div class="hc-world">
         <div class="hc-env-part hc-env-back"></div>
-        <div class="hc-rise">
+        <div class="hc-env-part hc-env-liner"></div>
+        <div class="hc-rise"><div class="hc-float">
           <div class="hc-book" data-state="0">
             <div class="hc-page hc-base"><div class="hc-face hc-front">${this.pageFinal(card)}</div></div>
             <div class="hc-page hc-leaf" data-leaf="1">
@@ -419,10 +497,11 @@ const HolidayCards = {
               <div class="hc-face hc-back hc-scene-page">${this.pageScene(card)}</div>
             </div>
           </div>
-        </div>
-        <div class="hc-env-part hc-env-front"><span>To: ${this.esc(this.KID.en)} 💕</span></div>
+        </div></div>
+        <div class="hc-env-part hc-env-front"><span>To: ${this.esc(to.en)} 💕</span></div>
         <div class="hc-env-part hc-env-flap"></div>
         <div class="hc-env-part hc-env-seal">${card.seal}</div>
+        </div>
       </div>
       <div class="hc-nav">
         <button class="hc-nav-btn" data-hc-act="prev" aria-label="上一页">◀</button>
@@ -432,10 +511,46 @@ const HolidayCards = {
       <div class="hc-fx" aria-hidden="true"></div>`;
     this.layout();
     this.syncLeaves();
-    const stage = modal.querySelector('.hc-stage');
-    stage.classList.add('intro');
+    // 开场时间线与 CSS 的 3.4s 关键帧对齐：1.05s 封蜡迸开，3.4s 结束（可点击跳过）
+    const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.chime('open');
-    this.later(() => stage.classList.remove('intro'), 1900);
+    if (calm) { this.later(() => this.finishIntro(true), 60); return; }
+    this.later(() => this.sealPop(), 1050);
+    this.later(() => this.chime('flip'), 1300);
+    this.later(() => this.finishIntro(), 3400);
+  },
+
+  sealPop() {
+    const seal = document.querySelector('#holiday-cards-modal .hc-env-seal');
+    if (!seal || !this.current) return;
+    const r = seal.getBoundingClientRect();
+    this.burst(r.left + r.width / 2, r.top + r.height / 2, ['✨', '💫', '⭐', this.current.seal], 14);
+    this.chime('sparkle');
+  },
+
+  // 开场结束：卡片四周闪一圈星光；skip 为点击跳过
+  finishIntro(skip) {
+    const stage = document.querySelector('#holiday-cards-modal .hc-stage');
+    if (!stage || !stage.classList.contains('intro')) return;
+    if (skip) this.clearTimers();
+    stage.classList.remove('intro');
+    if (skip) return;
+    const cover = stage.querySelector('.hc-cover');
+    if (!cover) return;
+    const r = cover.getBoundingClientRect();
+    [[0, 0], [1, 0], [0, 1], [1, 1], [0.5, 0], [0.5, 1], [0, 0.5], [1, 0.5]].forEach(([fx, fy], i) =>
+      this.later(() => this.burst(r.left + r.width * fx, r.top + r.height * fy, ['✨', '💫', '⭐'], 4), i * 50));
+    this.chime('sparkle');
+  },
+
+  // 背景：柔光光斑 +（贺卡页）缓慢旋转的光芒
+  dream(rays) {
+    const dots = Array.from({ length: 16 }, (_, i) => {
+      const size = 18 + Math.random() * 70;
+      return `<i class="c${i % 3}" style="left:${Math.random() * 100}%;top:${Math.random() * 100}%;width:${size}px;height:${size}px;` +
+        `--x:${Math.random() * 60 - 30}px;--y:${Math.random() * -70 - 10}px;--d:${7 + Math.random() * 7}s;--dl:${-Math.random() * 12}s"></i>`;
+    }).join('');
+    return `<div class="hc-dream" aria-hidden="true">${rays ? '<b class="hc-rays"></b>' : ''}${dots}</div>`;
   },
 
   // 宽屏横向翻（像书），窄屏/竖屏纵向翻（像台历）
@@ -452,13 +567,21 @@ const HolidayCards = {
     const moving = n > this.state ? this.state : n;
     this.state = n;
     const modal = document.getElementById('holiday-cards-modal');
-    modal.querySelector('.hc-book').dataset.state = n;
+    const book = modal.querySelector('.hc-book');
+    book.dataset.state = n;
+    modal.querySelector('.hc-stage').dataset.state = n;
+    // 正在翻的那页和书本加 turning：翻页过程中的明暗光影
+    const leaf = modal.querySelector(`.hc-leaf[data-leaf="${moving}"]`);
+    [leaf, book].forEach(el => { el.classList.remove('turning'); void el.offsetWidth; el.classList.add('turning'); });
+    const tok = this._turnTok = (this._turnTok || 0) + 1;
+    this.later(() => { if (tok === this._turnTok) [leaf, book].forEach(el => el.classList.remove('turning')); }, 1200);
     modal.querySelectorAll('.hc-dots i').forEach((d, i) => d.classList.toggle('on', i === n));
     this.syncLeaves(moving);
     this.chime('flip');
     if (n === 1 && !this.current.cheered) {
       this.current.cheered = true;
       this.later(() => this.rain(this.current.confetti, 18), 500);
+      this.later(() => this.chime('sparkle'), 650);
     }
   },
 
@@ -472,7 +595,7 @@ const HolidayCards = {
       leaf.style.zIndex = i === moving ? 50 : (flipped ? 10 + i : 10 + this.LEAVES - i);
     });
     if (moving !== undefined) {
-      this.later(() => this.syncLeaves(), 950);
+      this.later(() => this.syncLeaves(), 1150);
     }
   },
 
@@ -484,6 +607,7 @@ const HolidayCards = {
         <div class="hc-ribbon">${this.esc(card.en)}</div>
         <div class="hc-cover-zh">${this.esc(card.zh)}</div>
       </div>
+      <div class="hc-shine"></div>
       <div class="hc-tap">点我打开 ✨ Tap to open</div>`;
   },
 
@@ -499,7 +623,7 @@ const HolidayCards = {
       <div class="hc-paper">
         <span class="hc-corner tl">${c[0]}</span><span class="hc-corner tr">${c[1]}</span>
         <span class="hc-corner bl">${c[2]}</span><span class="hc-corner br">${c[3]}</span>
-        <h3>Dear ${this.esc(this.KID.en)}, <span>亲爱的${this.esc(this.KID.zh)}：</span></h3>
+        <h3>Dear ${this.esc((card.to || this.KID).en)}, <span>亲爱的${this.esc((card.to || this.KID).zh)}：</span></h3>
         <p class="hc-en">${this.esc(card.message.en)}</p>
         <div class="hc-divider"><i></i>🌈<i></i></div>
         <p class="hc-zh">${this.esc(card.message.zh)}</p>
@@ -531,11 +655,11 @@ const HolidayCards = {
       <div class="hc-paper hc-activity">
         ${title}
         <div class="hc-tiles">
-          ${a.items.map(([emoji, en, zh], i) => `
+          ${a.items.map(([pic, en, zh], i) => { const emoji = pic === 'ZONGZI' ? this.ZONGZI : pic; return `
             <button class="hc-tile" data-hc-act="tile" data-i="${i}">
               <span class="hc-tile-front">${a.cover || emoji}</span>
               <span class="hc-tile-back"><b>${emoji}</b><em>${this.esc(en)}</em><small>${this.esc(zh)}</small></span>
-            </button>`).join('')}
+            </button>`; }).join('')}
         </div>
       </div>`;
   },
@@ -549,8 +673,8 @@ const HolidayCards = {
           <p class="hc-zh">${this.esc(card.talk.zh)}</p>
         </div>
         <div class="hc-sign">
-          <span>${this.esc(this.FROM.en)}</span>
-          <span>${this.esc(this.FROM.zh)}</span>
+          <span>${this.esc((card.from || this.FROM).en)}</span>
+          <span>${this.esc((card.from || this.FROM).zh)}</span>
           <span class="hc-sign-x">XOXO 💕</span>
         </div>
         <button class="hc-surprise" data-hc-act="surprise">🎁 惊喜！Surprise!</button>
@@ -578,7 +702,18 @@ const HolidayCards = {
   // ========== 交互 ==========
   onClick(e) {
     const envBtn = e.target.closest('[data-hc-card]');
-    if (envBtn) { this.openCard(envBtn.dataset.hcCard); return; }
+    if (envBtn) {
+      if (this._picking) return;
+      this._picking = true;
+      envBtn.classList.add('picked');
+      envBtn.closest('.hc-grid').classList.add('picking');
+      this.chime('pop');
+      this.later(() => { this._picking = false; this.openCard(envBtn.dataset.hcCard); }, 420);
+      return;
+    }
+    // 开场动画中点一下 = 跳过
+    const stage = e.target.closest('.hc-stage');
+    if (stage && stage.classList.contains('intro')) { this.finishIntro(true); return; }
     const act = e.target.closest('[data-hc-act]');
     if (act) { this.act(act.dataset.hcAct, act, e); return; }
     // 点右/下方当前页翻到下一页
@@ -810,6 +945,10 @@ const HolidayCards = {
       case 'witch': return `<g transform="rotate(-8)"><ellipse cy="2" rx="27" ry="6" fill="#3b2a5c"/>
           <path d="M-14 1 L2 -34 Q7 -40 12 -33 L8 -30 L14 1 Z" fill="#53388a"/>
           <path d="M-13 -4 L13.4 -4 L14 1 L-14 1 Z" fill="#ff8a2a"/>${this.star(6, -20, 4, '#ffd43b')}</g>`;
+      case 'cap': return `<g transform="rotate(-8)"><path d="M-16 4 C-16 -18 16 -18 16 4 Z" fill="#2f6fe0"/>
+          <path d="M9 1 L30 4 Q28 9 9 6 Z" fill="#1d4fb0"/><circle cy="-13.5" r="2.4" fill="#ffd43b"/>${this.star(0, -4, 4.6, '#fff')}</g>`;
+      case 'headband': return `<g><path d="M-21 14 Q0 4 21 14" stroke="#e0453a" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M19 13 L30 6 M19 13 L31 17" stroke="#e0453a" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="13" r="3.2" fill="#ffd43b"/></g>`;
       case 'moon': return `<g transform="translate(13 4)"><path d="M0 -12 A12 12 0 1 0 10 6 A9 9 0 1 1 0 -12 Z" fill="#ffd84d" stroke="#f2b400" stroke-width="1"/>
           ${this.star(10, -8, 4, '#fff3a8')}</g>`;
       default: return '';
@@ -873,7 +1012,7 @@ const HolidayCards = {
   rainbowArc(cx, cy, r0, w, opacity) {
     return this.RAINBOW.map((c, i) => {
       const r = r0 - i * w;
-      return `<path d="M${cx - r} ${cy}A${r} ${r} 0 0 1 ${cx + r} ${cy}" stroke="${c}" stroke-width="${w + 0.6}" fill="none" opacity="${opacity}"/>`;
+      return `<path d="M${cx - r} ${cy}A${r} ${r} 0 0 1 ${cx + r} ${cy}" pathLength="1" stroke="${c}" stroke-width="${w + 0.6}" fill="none" opacity="${opacity}"/>`;
     }).join('');
   },
 
@@ -902,6 +1041,7 @@ const HolidayCards = {
           return `<line x1="${(Math.cos(a) * 6).toFixed(1)}" y1="${(Math.sin(a) * 6).toFixed(1)}" x2="${(Math.cos(a) * 26).toFixed(1)}" y2="${(Math.sin(a) * 26).toFixed(1)}" stroke="${k % 2 ? '#fff' : c}" stroke-width="2.4" stroke-linecap="round"/>`;
         }).join('')}<circle r="3" fill="#fff"/></g></g>`).join('');
     }
+    if (fx.type === 'boat') return `<g transform="translate(0 222)"><g class="hc-boat">${this.dragonBoat()}</g></g>`;
     const e = fx.emoji;
     if (fx.type === 'hang') {
       return [[60, 46], [200, 30], [370, 44]].map(([x, len], i) => `<g transform="translate(${x} 0)"><g class="hc-swing" style="animation-delay:${i * 0.5}s">
@@ -920,6 +1060,23 @@ const HolidayCards = {
     }).join('');
   },
 
+  // 龙舟：船头朝右，五个小划手 + 鼓
+  dragonBoat() {
+    const rb = this.RAINBOW;
+    const rowers = [22, 42, 62, 82, 102].map((x, i) => `<g transform="translate(${x} 0)">
+        <rect x="-4.5" y="-9" width="9" height="9" rx="3" fill="${rb[i % 6]}"/><circle cy="-13" r="4.6" fill="#ffe0cf"/>
+        <path d="M-1 -16 Q0 -20 4 -17" stroke="#3a2340" stroke-width="2" fill="none"/>
+        <g class="hc-oar" style="animation-delay:${-i * 0.12}s"><line x1="3" y1="-6" x2="-9" y2="13" stroke="#8a5a2b" stroke-width="2.2" stroke-linecap="round"/></g></g>`).join('');
+    return `<g class="hc-boat-bob">
+      <path d="M-4 -2 Q-12 -14 -2 -18 Q2 -10 4 -2 Z" fill="#e9b93f"/>
+      ${rowers}
+      <circle cx="116" cy="-6" r="6" fill="#c0392b" stroke="#ffd43b" stroke-width="1.6"/>
+      <path d="M0 -2 Q62 10 128 -4 L122 6 Q62 18 6 7 Z" fill="#e0453a"/>
+      <path d="M8 3 Q62 13 120 1" stroke="#ffd43b" stroke-width="2" fill="none" stroke-dasharray="5 4"/>
+      <text x="136" y="-12" font-size="24" text-anchor="middle" dominant-baseline="central">🐲</text>
+    </g>`;
+  },
+
   svgScene(card) {
     const t = card.theme, u = `hc${this.uid}s`;
     const p = card.props;
@@ -929,19 +1086,19 @@ const HolidayCards = {
       <rect width="400" height="320" fill="url(#${u}sky)"/>
       ${t.night ? this.nightStars() : ''}
       ${this.orb(t).replaceAll('U_', u)}
-      ${this.rainbowArc(200, 252, 176, 9, t.night ? 0.45 : 0.6)}
+      <g class="hc-arc">${this.rainbowArc(200, 252, 176, 9, t.night ? 0.45 : 0.6)}</g>
       ${this.sceneFx(card.fx)}
       <path class="hc-wave1" d="M-20 236Q30 224 80 236T180 236T280 236T380 236T480 236V340H-20Z" fill="url(#${u}sea)" opacity=".75"/>
-      <ellipse cx="300" cy="250" rx="74" ry="17" fill="#ffe3a3"/><ellipse cx="300" cy="246" rx="62" ry="10" fill="#fff0c8"/>
-      <path d="M248 244q4-10 8 0M346 246q3-9 7 0" stroke="#5fbf6a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-      <path d="M40 262C34 236 60 212 98 214C132 208 172 222 174 250C176 268 140 276 104 274C70 276 44 276 40 262Z" fill="#a597d4"/>
+      <g class="hc-pop" style="animation-delay:.42s"><ellipse cx="300" cy="250" rx="74" ry="17" fill="#ffe3a3"/><ellipse cx="300" cy="246" rx="62" ry="10" fill="#fff0c8"/>
+      <path d="M248 244q4-10 8 0M346 246q3-9 7 0" stroke="#5fbf6a" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>
+      <g class="hc-pop" style="animation-delay:.36s"><path d="M40 262C34 236 60 212 98 214C132 208 172 222 174 250C176 268 140 276 104 274C70 276 44 276 40 262Z" fill="#a597d4"/>
       <path d="M58 236C70 224 92 220 112 224" stroke="#c7bdf0" stroke-width="5" fill="none" stroke-linecap="round"/>
-      <circle cx="150" cy="258" r="4" fill="#ffc6e0"/><circle cx="64" cy="252" r="3" fill="#fff"/>
-      ${this.bunny(300, 178, 0.95, u, card.hats.bunny)}
-      ${this.mermaid(106, 120, 0.95, u, card.hats.mermaid)}
+      <circle cx="150" cy="258" r="4" fill="#ffc6e0"/><circle cx="64" cy="252" r="3" fill="#fff"/></g>
+      <g class="hc-pop" style="animation-delay:.62s">${this.bunny(300, 178, 0.95, u, card.hats.bunny)}</g>
+      <g class="hc-pop" style="animation-delay:.52s">${this.mermaid(106, 120, 0.95, u, card.hats.mermaid)}</g>
       <path class="hc-wave2" d="M-20 280Q20 268 60 280T140 280T220 280T300 280T380 280T460 280V340H-20Z" fill="url(#${u}sea)"/>
       <g class="hc-bubbles"><circle cx="70" cy="290" r="3" fill="#fff" opacity=".7"/><circle cx="180" cy="296" r="4" fill="#fff" opacity=".6"/><circle cx="330" cy="292" r="3" fill="#fff" opacity=".7"/></g>
-      ${slots.map(([x, y, s], i) => `<g transform="translate(${x} ${y})"><text class="hc-prop" data-hc-act="prop" font-size="${s}" text-anchor="middle" dominant-baseline="central">${p[i]}</text></g>`).join('')}
+      ${slots.map(([x, y, s], i) => `<g transform="translate(${x} ${y})"><g class="hc-pop" style="animation-delay:${0.75 + i * 0.07}s"><text class="hc-prop" data-hc-act="prop" font-size="${s}" text-anchor="middle" dominant-baseline="central">${p[i]}</text></g></g>`).join('')}
     </svg>`;
   },
 
